@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static i18n socialaccount %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<!-- TAILWIND CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- DEPENDENCY: Alpine.js & Lucide Icons -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- TYPOGRAPHY ALIGNED WITH HOMEPAGE -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    /* ==========================================================================
+       1. SYNCHRONIZED THEME VARIABLES & BASE
+       ========================================================================== */
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+
+        --color-surface: #FFFFFF;
+        --color-surface-alt: #F8FAFC;
+        --color-core-dark: #0F172A;
+
+        --brand-link-blue: #2563EB;
+        --accent-cyan: #06B6D4;
+
+        --shadow-elevation-1: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-elevation-2: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-surface-alt) !important;
+        color: var(--color-core-dark) !important;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    .font-heading { font-family: var(--font-heading); }
+
+    /* Homepage Cyber Grid */
+    .bg-grid-cyber {
+        background-size: 80px 80px;
+        background-image: linear-gradient(to right, rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+        -webkit-mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
+        mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
+        position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+
+    /* Premium Card Design */
+    .premium-card {
+        background: var(--color-surface);
+        border: 1px solid #E2E8F0;
+        border-radius: 2rem;
+        box-shadow: var(--shadow-elevation-2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Clean Autofill - iOS / Chrome fixes */
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+        -webkit-text-fill-color: var(--color-core-dark) !important;
+        border-radius: 1rem;
+    }
+
+    /* Input Focus Styles */
+    .input-standard {
+        background-color: #F8FAFC;
+        border-color: #E2E8F0;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .input-standard:hover {
+        border-color: #CBD5E1;
+    }
+    .input-standard:focus-within {
+        background-color: #FFFFFF;
+        border-color: var(--brand-link-blue);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Smooth Fade-in */
+    @keyframes smoothAppear {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-smooth-appear { animation: smoothAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+
+<!-- Background Effects (Matched with Signup & Homepage) -->
+<div class="bg-grid-cyber"></div>
+<div class="fixed top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[var(--brand-link-blue)]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[var(--accent-cyan)]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+<div class="min-h-[100dvh] flex flex-col justify-center py-10 px-4 sm:px-6 relative z-10 anim-smooth-appear">
+
+    <!-- Wrapper keeps everything aligned perfectly on mobile -->
+    <div class="w-full max-w-[28rem] mx-auto">
+
+        <!-- Clean Back Button Aligned with Card -->
+        <div class="mb-6">
+            <a href="/" class="inline-flex items-center gap-2 text-slate-500 hover:text-[var(--brand-link-blue)] font-bold text-[13px] uppercase tracking-widest transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Return Home" %}
+            </a>
+        </div>
+
+        <!-- The Main Premium Card -->
+        <main class="premium-card p-8 sm:p-10 relative">
+
+            <!-- Homepage card gradient top bar -->
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]"></div>
+
+            <div class="text-center mb-8 relative z-10">
+                <h1 class="font-heading text-3xl sm:text-[2rem] font-black text-slate-900 tracking-tight leading-tight mb-2">
+                    {% trans "Welcome back" %}
+                </h1>
+                <p class="text-sm sm:text-base text-slate-500 font-medium">
+                    {% trans "Enter your credentials to access the network." %}
+                </p>
+            </div>
+
+            <!-- Django Messages -->
+            {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                    {% if "Welcome" not in message.message and "logged out" not in message.message %}
+                        <div class="flex items-start gap-3 p-4 rounded-xl text-sm font-bold leading-snug border
+                            {% if message.tags == 'error' or 'not approved' in message.message|lower or 'failed' in message.message|lower or 'error' in message.message|lower %}
+                                bg-red-50 text-red-700 border-red-100
+                            {% else %}
+                                bg-blue-50 text-blue-700 border-blue-100
+                            {% endif %}">
+                            <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Identifier (Phone/Email) -->
+                <div class="space-y-2">
+                    <label class="block text-[0.85rem] font-bold text-slate-800 tracking-wide">{% trans "Phone Number or Email" %}</label>
+                    <div class="relative flex items-center border rounded-xl input-standard">
+                        <div class="absolute left-4 flex items-center pointer-events-none">
+                            <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <input type="text"
+                               name="login_identifier"
+                               required
+                               placeholder="{% trans 'e.g. 0911234567 or Email' %}"
+                               class="w-full bg-transparent border-none outline-none pl-11 pr-4 py-3.5 text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 rounded-xl">
+                    </div>
+                </div>
+
+                <!-- Password (No more PIN restrictions) -->
+                <div class="space-y-2">
+                    <label class="block text-[0.85rem] font-bold text-slate-800 tracking-wide">{% trans "Password" %}</label>
+                    <div class="relative flex items-center border rounded-xl input-standard">
+                        <div class="absolute left-4 flex items-center pointer-events-none">
+                            <i data-lucide="lock" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                        <input type="password"
+                               id="password-input"
+                               name="password"
+                               required
+                               placeholder="••••••••"
+                               class="w-full bg-transparent border-none outline-none pl-11 pr-16 py-3.5 text-lg font-bold text-slate-900 placeholder:text-slate-300 placeholder:font-normal rounded-xl">
+
+                        <!-- Inside Input Toggle -->
+                        <button type="button" title="Toggle password visibility" aria-label="Toggle password visibility" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-[var(--brand-link-blue)] transition-colors focus:outline-none flex items-center justify-center rounded-lg hover:bg-slate-100">
+                            <i data-lucide="eye" id="toggle-icon" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center pt-1">
+                    <label class="flex items-center gap-2.5 cursor-pointer group">
+                        <div class="relative flex items-center">
+                            <input type="checkbox" class="peer h-5 w-5 appearance-none border border-slate-300 rounded-md bg-white checked:bg-[var(--brand-link-blue)] checked:border-[var(--brand-link-blue)] transition-all focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                            <i data-lucide="check" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-600 select-none group-hover:text-slate-900 transition-colors">{% trans "Remember me for 30 days" %}</span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[var(--brand-link-blue)] text-white font-black text-[15px] uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] transition-all hover:bg-[var(--accent-cyan)] hover:shadow-[0_10px_30px_-5px_rgba(6,182,212,0.6)] focus:outline-none focus:ring-4 focus:ring-blue-200 hover:-translate-y-1">
+                        {% trans "Sign in" %}
+                    </button>
+                </div>
+
+                <a href="{% url 'google_auth_start' %}" class="w-full flex items-center justify-center gap-3 py-3.5 bg-white text-slate-700 border border-slate-300 rounded-xl font-bold text-sm hover:bg-slate-50 hover:border-slate-400 active:scale-[0.98] transition-all duration-200 focus:outline-none" aria-label="Sign in with Google">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.8-6-6.2s2.7-6.2 6-6.2c1.9 0 3.1.8 3.8 1.5l2.6-2.6C16.9 2.9 14.7 2 12 2 6.9 2 2.8 6.5 2.8 12s4.1 10 9.2 10c5.3 0 8.8-3.8 8.8-9.1 0-.6-.1-1.1-.1-1.6H12z"/>
+                    </svg>
+                    {% trans "Continue with Google" %}
+                </a>
+
+                <!-- Divider -->
+                <div class="relative flex items-center justify-center py-4">
+                    <div class="h-px flex-grow bg-slate-200"></div>
+                    <span class="mx-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">{% trans "Forgot your password?" %}</span>
+                    <div class="h-px flex-grow bg-slate-200"></div>
+                </div>
+
+                <!-- Automated Telegram Bot Button -->
+                <a href="https://t.me/corelinkhelpbot" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2.5 py-3.5 bg-white text-slate-700 border border-slate-200 shadow-sm rounded-xl font-bold text-sm hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:scale-[0.98] transition-all duration-200 focus:outline-none">
+                    <i data-lucide="send" class="w-4 h-4 text-[#0088cc]"></i>
+                    {% trans "Recover Password via Telegram" %}
+                </a>
+
+                <!-- Human Support Text Fallback -->
+                <p class="text-[12px] text-center text-slate-500 mt-4 leading-relaxed font-medium">
+                    {% blocktrans %}Need further assistance? Contact support at{% endblocktrans %}
+                    <a href="https://t.me/corelinkteam" target="_blank" rel="noopener noreferrer" class="text-[var(--brand-link-blue)] font-bold hover:text-[var(--accent-cyan)] transition-colors">@corelinkteam</a>
+                    {% trans "or" %}
+                    <a href="mailto:corelinkethiopia@gmail.com" class="text-[var(--brand-link-blue)] font-bold hover:text-[var(--accent-cyan)] transition-colors">email</a>.
+                </p>
+
+            </form>
+        </main>
+
+        <!-- Sign Up Link -->
+        <div class="mt-8 text-center pb-6">
+            <p class="text-sm text-slate-500 font-medium">
+                {% trans "Don't have an account yet?" %}
+                <a href="{% url 'unified_onboarding' %}" class="font-bold text-[var(--brand-link-blue)] hover:text-[var(--accent-cyan)] transition-colors ml-1 border-b-2 border-transparent hover:border-[var(--accent-cyan)] pb-0.5">
+                    {% trans "Apply for Access" %}
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password-input');
+        const icon = document.getElementById('toggle-icon');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
+
+{% endblock %}

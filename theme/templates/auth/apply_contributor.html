@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+
+<!-- FONTS: Inter + JetBrains Mono (For the System/Simulation look) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --bg-color: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --border-color: #CBD5E1;
+        --border-focus: #0F172A;
+        --text-primary: #0F172A;
+        --text-secondary: #475569;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+    }
+
+    /* SOLID "SIMULATION" INPUTS */
+    /* Highly visible, boxy, technical look */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="url"],
+    input[type="tel"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        background-color: #FFFFFF;
+        border: 2px solid #E2E8F0; /* Thicker border for visibility */
+        border-radius: 4px; /* Square/Tech look */
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #0F172A;
+        transition: all 0.2s ease;
+        box-shadow: 2px 2px 0px rgba(0,0,0,0.02); /* Subtle depth */
+    }
+
+    /* EXPANDED TEXTAREAS */
+    textarea {
+        min-height: 240px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    /* FOCUS STATE: HIGH CONTRAST */
+    input:focus, select:focus, textarea:focus {
+        border-color: #0F172A; /* Solid Black Border */
+        background-color: #F8FAFC;
+        outline: none;
+        box-shadow: 4px 4px 0px rgba(15, 23, 42, 0.1); /* Simulation "Pop" effect */
+    }
+
+    /* Placeholder Styling */
+    input::placeholder, textarea::placeholder {
+        color: #94a3b8;
+        font-style: italic;
+    }
+
+    /* LABELS: TECHNICAL STYLE */
+    label {
+        display: block;
+        font-family: 'JetBrains Mono', monospace; /* Tech font for labels */
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #334155;
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.02em;
+    }
+
+    /* BUTTONS */
+    .submit-btn {
+        background-color: #0F172A;
+        color: white;
+        border: 2px solid #0F172A;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+    }
+    .submit-btn:hover {
+        background-color: #334155;
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+    }
+
+    /* HEADER STYLING */
+    .page-header {
+        background: #FFFFFF;
+        border-bottom: 1px solid #CBD5E1;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    /* SECTION DIVIDERS */
+    .form-section {
+        border-bottom: 1px solid #E2E8F0;
+        padding: 3rem 2rem;
+    }
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    .section-number {
+        font-family: 'JetBrains Mono', monospace;
+        background: #0F172A;
+        color: white;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+</style>
+
+<!-- 1. HEADER & INTRO -->
+<div class="page-header px-6">
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Back Button -->
+        <a href="{% url 'unified_onboarding' %}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-8 font-medium text-sm uppercase tracking-wide">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Back to Selection" %}
+        </a>
+
+        <!-- Title & Description -->
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">
+                {% trans "Community Volunteer" %}
+            </h1>
+            <p class="text-lg text-slate-600 leading-relaxed font-light">
+                {% trans "To apply to join the CoreLink team as a contributor, please fill out the simple form below. We are looking for people who are passionate about our mission and ready to work together on building this ecosystem. Tell us how you would like to contribute your time so we can connect you with the right team members and start shaping the future together." %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 2. MAIN FORM -->
+<div class="min-h-screen py-12 px-6">
+    <div class="max-w-4xl mx-auto">
+
+        <form method="POST" class="bg-white rounded-lg shadow-lg border border-slate-300 overflow-hidden">
+            {% csrf_token %}
+
+            <!-- Global Errors -->
+            {% if form.non_field_errors %}
+            <div class="p-6 bg-red-50 text-red-600 text-sm font-medium flex gap-3 items-start border-b border-red-100">
+                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                <div>{{ form.non_field_errors }}</div>
+            </div>
+            {% endif %}
+
+            <!-- SECTION 1: Personal Details -->
+            <div class="form-section">
+                <h3 class="text-xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+                    <span class="section-number">1</span>
+                    {% trans "Personal Details" %}
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Full Name -->
+                    <div class="space-y-1">
+                        <label for="{{ form.full_name.id_for_label }}">{% trans "Full Name" %}</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="text-red-500 text-sm mt-1 font-mono uppercase">{{ form.full_name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1">
+                        <label for="{{ form.email.id_for_label }}">{% trans "Email Address" %}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1 font-mono uppercase">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Telegram -->
+                    <div class="space-y-1">
+                        <label for="{{ form.telegram_username.id_for_label }}">{% trans "Telegram Username" %}</label>
+                        {{ form.telegram_username }}
+                        {% if form.telegram_username.errors %}
+                            <div class="text-red-500 text-sm mt-1 font-mono uppercase">{{ form.telegram_username.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Contribution Area -->
+            <div class="form-section bg-slate-50">
+                <h3 class="text-xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+                    <span class="section-number">2</span>
+                    {% trans "How You Can Help" %}
+                </h3>
+
+                <div class="space-y-8">
+                    <!-- Contribution Area -->
+                    <div class="space-y-1">
+                        <label for="{{ form.contribution_area.id_for_label }}">{% trans "How do you want to contribute?" %}</label>
+                        {{ form.contribution_area }}
+                        {% if form.contribution_area.errors %}
+                            <div class="text-red-500 text-sm mt-1 font-mono uppercase">{{ form.contribution_area.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Message -->
+                    <div class="space-y-1">
+                        <label for="{{ form.message.id_for_label }}">{% trans "Message (Why CoreLink?)" %}</label>
+                        <p class="text-slate-500 text-xs mb-3 font-mono">{% trans "Tell us briefly about your skills and why you want to join the mission." %}</p>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="text-red-500 text-sm mt-1 font-mono uppercase">{{ form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Action -->
+            <div class="p-8 md:p-12 bg-slate-100 border-t border-slate-300">
+                <button type="submit" class="submit-btn w-full py-5 px-6 rounded text-lg uppercase tracking-wide flex items-center justify-center gap-3">
+                    {% trans "Send Message" %}
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+                <p class="text-center text-slate-500 text-sm mt-6 font-mono">
+                    {% trans "We will review your message and contact you via Telegram directly." %}
+                </p>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+
+        // 1. Force placeholder for Full Name with translation support
+        const fullNameInput = document.getElementById('id_full_name');
+        if(fullNameInput) {
+            fullNameInput.placeholder = "{% trans 'your actual name' %}";
+        }
+    });
+</script>
+
+{% endblock %}

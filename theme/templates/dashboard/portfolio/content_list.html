@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- Same navbar as above omitted for brevity -->
+{% endblock navbar %}
+
+{% block content %}
+<style>
+    body { background-color: #F8FAFC; color: #0F172A; }
+    .premium-card { background: #FFFFFF; border: 1px solid rgba(226, 232, 240, 0.6); border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.04); }
+    .btn-add { display: inline-flex; align-items: center; gap: 0.5rem; background: #0A66C2; color: white; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 9999px; font-size: 0.9rem; transition: all 0.2s; }
+    .btn-add:hover { background: #0052a3; transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(10,102,194,0.4); }
+</style>
+
+<div class="relative z-10 pt-28 md:pt-40 pb-20 px-4 md:px-8 min-h-screen max-w-[50rem] mx-auto animate-fade-in-up">
+    <div class="premium-card overflow-hidden">
+        
+        <div class="px-6 py-8 md:px-10 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">{% trans "Journal & Essays" %}</h1>
+                <p class="text-[14px] text-slate-500 font-medium mt-1">Publish your thoughts, daily logs, and long-term vision.</p>
+            </div>
+            <a href="{% url 'content_create' %}" class="btn-add shrink-0 self-start md:self-auto">
+                <i data-lucide="edit-3" class="w-4 h-4"></i> {% trans "Write Post" %}
+            </a>
+        </div>
+
+        <div class="divide-y divide-slate-100 bg-slate-50/30">
+            {% for post in object_list %}
+                <div class="p-6 md:px-10 hover:bg-white transition-colors flex flex-col gap-4 group relative">
+                    
+                    <!-- Action Menu -->
+                    <div class="absolute top-6 right-6 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="{% url 'content_edit' post.pk %}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
+                        <a href="{% url 'content_delete' post.pk %}" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                    </div>
+
+                    <div class="flex items-center gap-3 pr-16">
+                        <span class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-md border
+                            {% if post.post_type == 'ESSAY' %}bg-purple-50 border-purple-200 text-purple-700
+                            {% elif post.post_type == 'VISION_BLOCK' %}bg-amber-50 border-amber-200 text-amber-700
+                            {% else %}bg-blue-50 border-blue-200 text-blue-700{% endif %}">
+                            {{ post.get_post_type_display }}
+                        </span>
+                        <span class="text-xs font-bold text-slate-400">{{ post.created_at|date:"M d, Y" }}</span>
+                        {% if post.visibility == 'PRIVATE' %}
+                            <span class="text-xs font-bold text-slate-400 flex items-center gap-1" title="Private Draft"><i data-lucide="lock" class="w-3.5 h-3.5"></i></span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="text-xl font-bold text-slate-900 pr-16 leading-tight">{{ post.title }}</h3>
+                    
+                    <!-- Text Preview -->
+                    <p class="text-[14.5px] text-slate-600 font-medium leading-relaxed line-clamp-3">{{ post.content }}</p>
+
+                    <!-- Media Indicator -->
+                    {% if post.media_proof %}
+                        <div class="inline-flex items-center gap-2 mt-2 px-3 py-1.5 bg-slate-100 rounded-lg w-max text-xs font-bold text-slate-600">
+                            <i data-lucide="image" class="w-3.5 h-3.5"></i> Contains Image Proof
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="p-16 text-center flex flex-col items-center">
+                    <div class="w-20 h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-5">
+                        <i data-lucide="book-open" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Your Journal is Empty</h3>
+                    <p class="text-[15px] text-slate-500 mb-8 max-w-sm">Start documenting your journey. Write a daily growth log, publish a deep essay, or declare your 5-year vision.</p>
+                    <a href="{% url 'content_create' %}" class="btn-add py-3 px-6 text-[15px]"><i data-lucide="edit-3" class="w-5 h-5"></i> Start Writing</a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });</script>
+{% endblock %}

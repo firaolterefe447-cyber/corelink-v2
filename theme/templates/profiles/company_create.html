@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- Minimal Focus Mode Navigation -->
+<div class="fixed top-8 left-0 right-0 z-[60] flex justify-center pointer-events-none px-4 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-lg rounded-full">
+        <a href="{% url 'profile_settings' %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Settings" %}
+        </a>
+    </div>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<style>
+    body { background-color: #F8FAFC; background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%); }
+    .magic-input { width: 100%; background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 500; color: #0F172A; outline: none; transition: all 0.3s; }
+    .magic-input:focus { background-color: #FFFFFF; border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    .premium-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 0.5rem; display: block; }
+</style>
+
+<div class="pt-32 pb-20 px-4 min-h-screen flex items-center justify-center">
+    
+    <div class="w-full max-w-2xl bg-white rounded-[2rem] border border-slate-200 shadow-2xl shadow-emerald-900/5 overflow-hidden">
+        
+        <!-- Header Section -->
+        <div class="px-8 pt-10 pb-8 bg-emerald-50/50 border-b border-emerald-100 text-center relative overflow-hidden">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5 rotate-3 border border-emerald-200 shadow-sm">
+                <i data-lucide="rocket" class="w-8 h-8"></i>
+            </div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">{% trans "Register Your Startup" %}</h1>
+            <p class="text-slate-500 font-medium text-[15px] mt-2 max-w-md mx-auto">
+                {% trans "To unlock the Founder dashboard, create your company entity. You will be assigned as the Owner and CEO." %}
+            </p>
+        </div>
+
+        <!-- Form Section -->
+        <form method="POST" action="{% url 'company_create' %}" class="p-8 md:p-10 space-y-6">
+            {% csrf_token %}
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="p-4 bg-blue-50 text-blue-700 rounded-xl text-sm font-bold border border-blue-200 mb-6">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <label class="premium-label">{% trans "Company / Startup Name" %} <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" required placeholder="e.g. CoreLink Technologies" class="magic-input">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="premium-label">{% trans "Industry Sector" %} <span class="text-rose-500">*</span></label>
+                    <input type="text" name="sector" required placeholder="e.g. FinTech, Agritech, AI" class="magic-input">
+                </div>
+                <div>
+                    <label class="premium-label">{% trans "HQ Location" %} <span class="text-rose-500">*</span></label>
+                    <input type="text" name="location" required placeholder="e.g. Addis Ababa, Ethiopia" class="magic-input">
+                </div>
+            </div>
+
+            <div>
+                <label class="premium-label">{% trans "Mission Statement (Optional)" %}</label>
+                <textarea name="mission_stmt" rows="3" placeholder="What problem is your company solving in the world?" class="magic-input resize-none"></textarea>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 mt-8">
+                <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[15px] transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-5 h-5"></i> {% trans "Create Company & Continue" %}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>
+{% endblock %}

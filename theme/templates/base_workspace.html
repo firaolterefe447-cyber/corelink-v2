@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid bg-light min-vh-100">
+    <div class="row">
+        
+        <!-- SIDEBAR (Desktop) / TOPBAR (Mobile) -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse border-end py-4">
+            <div class="position-sticky">
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase">
+                    <span>🚀 Creator Studio</span>
+                </h6>
+                <ul class="nav flex-column">
+                    <!-- Dashboard Link -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'workspace_list' %}active fw-bold text-primary{% else %}text-dark{% endif %}" 
+                           href="{% url 'opportunities:workspace_list' %}">
+                            <i class="bi bi-kanban me-2"></i>
+                            My Opportunities
+                        </a>
+                    </li>
+                    
+                    <!-- Create Link -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'create' %}active fw-bold text-primary{% else %}text-dark{% endif %}" 
+                           href="{% url 'opportunities:create' %}">
+                            <i class="bi bi-plus-circle-dotted me-2"></i>
+                            Post Opportunity
+                        </a>
+                    </li>
+                </ul>
+
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-3 text-muted text-uppercase">
+                    <span>⚙️ Quick Actions</span>
+                </h6>
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="{% url 'profiles:profile' request.user.username %}">
+                            <i class="bi bi-person-badge me-2"></i>
+                            View My Profile
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            
+            <!-- Mobile Toggle (Visible only on small screens) -->
+            <div class="d-md-none mb-3">
+                <div class="btn-group w-100">
+                    <a href="{% url 'opportunities:workspace_list' %}" class="btn btn-outline-primary">My Jobs</a>
+                    <a href="{% url 'opportunities:create' %}" class="btn btn-outline-primary">Post New</a>
+                </div>
+            </div>
+
+            <!-- The specific page content (Create Form or List) injects here -->
+            {% block workspace_content %}
+                <!-- If a child template uses 'content', we bridge it here -->
+            {% endblock %}
+            
+            <!-- Bridge for templates that just use 'content' -->
+            {% block content_bridge %}
+                <!-- Note: Since we are inside 'block content' of base.html, 
+                     we simply render the child content here. 
+                     Adjusting child templates to use 'block content' is standard. -->
+            {% endblock %}
+
+        </main>
+    </div>
+</div>
+{% endblock %}

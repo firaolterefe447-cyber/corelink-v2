@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!--
+    ==============================================
+    DESKTOP NAVIGATION (Professional & Clean)
+    ==============================================
+-->
+<div class="hidden md:flex fixed top-4 left-0 right-0 z-50 justify-center pointer-events-none px-4 pt-safe transition-all duration-300">
+
+    {% if not is_inspector %}
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] rounded-full transition-all duration-300 gap-1">
+
+        <!-- 1. Dashboard -->
+        <a href="{% url 'dashboard' %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Dashboard" %}
+        </a>
+
+        <!-- 2. My Workspace / Activities -->
+        <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Activities" %}
+        </a>
+
+        <!-- 3. The Pool (ACTIVE) -->
+        <div class="px-5 py-2 rounded-full text-[13px] font-semibold bg-[#0A66C2] text-white shadow-sm cursor-default flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4"></i> <span class="hidden lg:inline">{% trans "Network" %}</span>
+        </div>
+
+        <!-- 4. Jobs -->
+        <a href="{% url 'opportunities:feed' %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="briefcase" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Opportunities" %}
+        </a>
+
+        <!-- 5. Profile -->
+        <a href="{{ user.get_absolute_url }}" target="_blank" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2 group">
+            <i data-lucide="user-circle" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "My Profile" %} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+
+        <div class="w-px h-5 bg-[#E2E8F0] mx-1"></div>
+
+        <!-- Language Switcher -->
+        <div class="relative group pointer-events-auto">
+            <button class="p-2.5 px-3 rounded-full text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition-all flex items-center gap-1.5" title="{% trans 'Change Language' %}">
+                <span class="text-[12px] font-semibold uppercase tracking-wider hidden lg:block">{{ request.LANGUAGE_CODE|upper }}</span>
+            </button>
+            <div class="absolute top-full right-0 pt-4 w-56 opacity-0 pointer-events-none transform translate-y-2 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 z-[100]">
+                <form action="{% url 'set_language' %}" method="post" class="bg-white border border-[#E2E8F0] shadow-lg rounded-xl p-2 flex flex-col gap-1 relative">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" name="language" value="en" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'en' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "English" %} {% if request.LANGUAGE_CODE == 'en' %}<span class="text-[10px] font-bold text-[#94A3B8]">EN</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="am" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'am' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "አማርኛ" %} {% if request.LANGUAGE_CODE == 'am' %}<span class="text-[10px] font-bold text-[#94A3B8]">AM</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="om" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'om' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "Afaan Oromoo" %} {% if request.LANGUAGE_CODE == 'om' %}<span class="text-[10px] font-bold text-[#94A3B8]">OM</span>{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-px h-5 bg-[#E2E8F0] mx-1"></div>
+
+        <button onclick="copyExactProfileLink('{{ user.get_absolute_url }}')" class="p-2.5 rounded-full text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition-all flex items-center gap-2" title="{% trans 'Share Profile' %}">
+            <span class="text-[13px] font-semibold px-1">{% trans "Share" %}</span>
+        </button>
+    </div>
+    {% else %}
+    <!-- Inspector Back Button -->
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white border border-[#E2E8F0] shadow-sm rounded-full transition-all duration-300 gap-1">
+        <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="px-5 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Pool Browser" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!--
+    ==============================================
+    MOBILE TOP ACTIONS (High-End & Balanced)
+    ==============================================
+-->
+<div class="fixed top-4 left-0 right-0 z-50 flex justify-between items-center px-4 md:hidden pointer-events-none pt-safe gap-2">
+
+    <!-- LEFT SIDE: Sleek Language Toggle -->
+    <button onclick="toggleMobileLangDrawer()" class="pointer-events-auto px-4 py-2.5 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#334155] hover:bg-[#F8FAFC] rounded-full text-[13px] font-semibold flex items-center gap-2 transition-colors">
+        {{ request.LANGUAGE_CODE|upper }}
+    </button>
+
+    <!-- RIGHT SIDE: My Inbox & Actions -->
+    <div class="flex items-center gap-2 pointer-events-auto">
+        {% if is_inspector %}
+        <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="w-10 h-10 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#475569] hover:text-[#0A66C2] rounded-full flex items-center justify-center transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </a>
+        {% endif %}
+
+        {% if not is_inspector %}
+        <!-- Premium 'My Inbox' Button -->
+        <a href="{% url 'chat_hub' %}" class="relative px-5 py-2.5 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[13px] font-bold transition-all flex items-center gap-2 active:scale-95">
+            <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-white shadow-sm">
+                    {{ unread_msg_count }}
+                </span>
+            {% endif %}
+        </a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<div class="min-h-screen bg-[#F8FAFC] pt-24 md:pt-32 pb-16 px-4" style="font-family: 'Inter', sans-serif;">
+    <div class="max-w-3xl mx-auto">
+
+        <!-- Top Navigation -->
+        <div class="mb-6 relative z-10">
+            <a href="{% url 'nexus_feed' %}" class="inline-flex items-center gap-2 text-[13px] font-bold text-[#64748B] hover:text-[#0A66C2] transition-colors bg-white border border-[#E2E8F0] px-4 py-2 rounded-full shadow-sm">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Community Posts" %}
+            </a>
+        </div>
+
+        {% with author=post.author profile=post.author.visionary_profile|default:post.author.founder_profile|default:post.author.expert_profile %}
+        <!-- MAIN DETAIL CARD -->
+        <div class="bg-white border border-[#E2E8F0] rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden relative z-10 pt-4">
+
+            <div class="p-6 md:p-10">
+
+                <!-- BADGES -->
+                <div class="flex flex-wrap items-center gap-2 mb-6">
+
+                    <!-- Project Type Badge -->
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold uppercase tracking-wider
+                        {% if post.project_type == 'STARTUP' %}bg-emerald-50 text-emerald-600 border border-emerald-200
+                        {% else %}bg-blue-50 text-blue-600 border border-blue-200{% endif %}">
+                        {% if post.project_type == 'STARTUP' %}<i data-lucide="rocket" class="w-3.5 h-3.5"></i>
+                        {% else %}<i data-lucide="layout-template" class="w-3.5 h-3.5"></i>{% endif %}
+                        {{ post.get_project_type_display }}
+                    </span>
+
+                    <!-- Project Stage Badge -->
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F8FAFC] text-[#64748B] text-[12px] font-bold border border-[#E2E8F0]">
+                        <i data-lucide="bar-chart" class="w-3.5 h-3.5"></i> {{ post.get_project_stage_display }}
+                    </span>
+
+                    <!-- Need Type Badge -->
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-[12px] font-bold uppercase border border-indigo-200 shadow-sm">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i> {% trans "Needs:" %} {{ post.get_need_type_display }}
+                    </span>
+
+                    <!-- Co-Founder Highlight -->
+                    {% if post.need_type == 'COFOUNDER' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 text-[12px] font-bold uppercase border border-yellow-300 shadow-sm">
+                        <i data-lucide="handshake" class="w-4 h-4"></i> {% trans "Co-Founder Role" %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- HEADLINE -->
+                <h1 class="text-2xl md:text-4xl font-extrabold text-[#0F172A] leading-tight mb-8" style="font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.015em;">
+                    {{ post.headline }}
+                </h1>
+
+                <!-- AUTHOR IDENTITY BAR -->
+                <div class="flex items-center justify-between p-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl mb-8">
+                    <div class="flex items-center gap-4">
+                        <div class="shrink-0 h-[50px] w-[50px] rounded-full bg-white overflow-hidden border border-[#E2E8F0] shadow-sm">
+                            {% if author.avatar %}
+                                <img src="{{ author.get_avatar_url }}" alt="{{ author.display_name }}" class="h-full w-full object-cover">
+                            {% else %}
+                                <div class="h-full w-full flex items-center justify-center text-[20px] font-extrabold text-[#94A3B8]">
+                                    {{ author.display_name|slice:":1" }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-[#0F172A] text-[16px] hover:text-[#0A66C2] transition-colors">
+                                <a href="{{ author.get_absolute_url }}">{{ author.display_name }}</a>
+                            </h3>
+                            <p class="text-[13px] font-medium text-[#64748B]">
+                                {% if author.role == 'VISIONARY' %}{% trans "Visionary" %}
+                                {% elif author.role == 'EXPERT' %}{% trans "Professional" %}
+                                {% elif author.role == 'FOUNDER' %}{% trans "Founder" %}{% endif %}
+                                • {{ post.created_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Connect / Message Author -->
+                    {% if request.user != author %}
+                        <a href="{% url 'chat_with' author.id %}" class="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-[#0A66C2] text-white rounded-lg font-bold text-[13px] shadow-sm hover:bg-[#004182] transition-colors active:scale-95">
+                            <i data-lucide="send" class="w-4 h-4"></i> {% trans "Message" %}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- FULL DESCRIPTION / OVERVIEW -->
+                <div class="text-[16px] md:text-[17px] text-[#334155] leading-relaxed whitespace-pre-line mb-8 font-medium">
+                    {{ post.description }}
+                </div>
+
+                <!-- WHAT I AM LOOKING FOR BOX -->
+                <div class="mt-8 bg-[#F0F6FF] border border-[#BFDBFE] rounded-xl p-6 mb-4">
+                    <h4 class="text-[14px] font-bold text-[#0A66C2] flex items-center gap-2 mb-3 uppercase tracking-wider">
+                        <i data-lucide="target" class="w-4 h-4"></i> {% trans "What I'm Looking For" %}
+                    </h4>
+                    <div class="text-[15.5px] text-[#0F172A] leading-relaxed font-medium whitespace-pre-line">
+                        {{ post.looking_for }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FOOTER ACTIONS -->
+            <div class="bg-[#F8FAFC] border-t border-[#E2E8F0] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+                <button onclick="copyExactProfileLink('{{ request.path }}')" class="w-full sm:w-auto flex items-center justify-center gap-2 text-[14px] font-bold text-[#64748B] hover:text-[#0F172A] transition-colors bg-white px-4 py-2.5 border border-[#E2E8F0] rounded-xl shadow-sm">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> {% trans "Share Post" %}
+                </button>
+
+                <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+                    {% if request.user == author %}
+                        <a href="{% url 'signal_update' post.id %}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-white border border-[#E2E8F0] text-[#475569] hover:text-[#0A66C2] rounded-xl text-[14px] font-bold transition-all shadow-sm">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i> <span class="hidden sm:inline">{% trans "Edit" %}</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'chat_with' author.id %}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-2.5 bg-[#0A66C2] text-white rounded-xl text-[14px] font-bold shadow-sm shadow-blue-500/20 hover:bg-[#004182] transition-colors active:scale-95">
+                            <i data-lucide="send" class="w-4 h-4"></i> {% trans "Message Author" %}
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+        {% endwith %}
+
+    </div>
+</div>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION
+     ============================================== -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-[#E2E8F0] flex justify-between items-center w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box;">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Dashboard" %}</span>
+    </a>
+
+    <!-- Role-Based Workspace Navigation (Mobile) -->
+    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="layers" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Activities" %}</span>
+    </a>
+
+    <!-- Network is ACTIVE -->
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#0A66C2] relative">
+        <div class="absolute top-0 w-full h-[3px] bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="users" class="w-6 h-6"></i>
+        <span class="text-[10px] font-bold mt-1">{% trans "Network" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="briefcase" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="{{ user.get_absolute_url }}" target="_blank" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="user-circle" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "My Profile" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- MOBILE LANGUAGE DRAWER -->
+<div id="mobile-lang-backdrop" onclick="toggleMobileLangDrawer()" class="md:hidden fixed inset-0 bg-black/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 ease-out backdrop-blur-sm"></div>
+
+<div id="mobile-lang-drawer" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[120] transform translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex flex-col max-h-[85vh] w-full">
+    <div class="w-full pt-4 pb-2 flex justify-center shrink-0 cursor-pointer" onclick="toggleMobileLangDrawer()">
+        <div class="w-12 h-1.5 bg-[#E2E8F0] rounded-full"></div>
+    </div>
+    <div class="px-6 pb-4 shrink-0 flex items-center justify-between border-b border-[#E2E8F0] w-full">
+        <h3 class="font-bold text-[18px] text-[#0F172A] flex items-center gap-2">
+            <i data-lucide="globe" class="w-5 h-5 text-[#0A66C2]"></i> {% trans "Select Language" %}
+        </h3>
+        <button onclick="toggleMobileLangDrawer()" class="w-8 h-8 flex items-center justify-center bg-[#F8FAFC] text-[#64748B] rounded-full active:scale-95 transition-transform border border-[#E2E8F0]">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    </div>
+    <form action="{% url 'set_language' %}" method="post" class="px-4 py-4 overflow-y-auto custom-scroll space-y-2 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'en' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'en' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "English" %}</span>
+        </button>
+        <button type="submit" name="language" value="am" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'am' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'am' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "አማርኛ" %}</span>
+        </button>
+        <button type="submit" name="language" value="om" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'om' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'om' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "Afaan Oromoo" %}</span>
+        </button>
+    </form>
+    <div class="h-6"></div>
+</div>
+
+<!-- TOAST FOR SHARE BUTTON -->
+<div id="share-toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-[#0F172A] text-white px-6 py-3 rounded-full shadow-xl transition-all duration-300 transform translate-y-20 opacity-0 z-[100] text-[13px] font-semibold flex items-center gap-2 pointer-events-none w-max max-w-[90vw]">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i> {% trans "Link Copied to Clipboard" %}
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    function toggleMobileLangDrawer() {
+        const bd = document.getElementById('mobile-lang-backdrop');
+        const dw = document.getElementById('mobile-lang-drawer');
+        if (dw.classList.contains('translate-y-full')) {
+            bd.classList.remove('opacity-0', 'pointer-events-none');
+            bd.classList.add('opacity-100', 'pointer-events-auto');
+            dw.classList.remove('translate-y-full');
+            document.body.style.overflow = 'hidden';
+        } else {
+            bd.classList.add('opacity-0', 'pointer-events-none');
+            bd.classList.remove('opacity-100', 'pointer-events-auto');
+            dw.classList.add('translate-y-full');
+            document.body.style.overflow = '';
+        }
+    }
+
+    let shareToastTimeout;
+    function copyExactProfileLink(djangoUrlPath) {
+        const fullUrl = window.location.origin + djangoUrlPath;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            const toast = document.getElementById('share-toast');
+            clearTimeout(shareToastTimeout);
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            if (navigator.vibrate) navigator.vibrate(10);
+            shareToastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        });
+    }
+</script>
+{% endblock %}

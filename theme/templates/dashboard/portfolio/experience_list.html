@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- ==============================================
+     FLOATING BACK NAVIGATION
+     ============================================== -->
+<div class="hidden md:flex fixed top-8 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full">
+        <a href="javascript:history.back()" class="px-8 py-3 rounded-full text-[14px] font-bold bg-gradient-to-r from-[#0A66C2] to-[#0052a3] text-white shadow-md shadow-blue-600/20 hover:shadow-[0_12px_24px_-8px_rgba(10,102,194,0.5)] hover:-translate-y-0.5 transition-all flex items-center gap-2.5 active:scale-95">
+            <i data-lucide="arrow-left" class="w-4 h-4 opacity-90"></i>
+            <span>{% trans "Go Back" %}</span>
+        </a>
+    </div>
+</div>
+<div class="fixed top-5 left-4 z-50 flex items-center md:hidden pointer-events-none animate-fade-in-down pt-safe">
+    <a href="javascript:history.back()" class="pointer-events-auto px-5 py-3 bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] text-slate-700 hover:text-[#0A66C2] rounded-full flex items-center justify-center gap-2.5 transition-all active:scale-95 group font-bold text-[13px]">
+        <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
+        <span>{% trans "Back" %}</span>
+    </a>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root { --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif; }
+    body { font-family: var(--font-body); background-color: #F8FAFC; color: #0F172A; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-fade-in-down { animation: fadeInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    .premium-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.04); }
+    .bento-item { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1.5rem; transition: all 0.3s ease; }
+    .bento-item:hover { border-color: #CBD5E1; box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.06); transform: translateY(-2px); }
+
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 1rem; font-weight: 800; background: linear-gradient(135deg, #0A66C2, #0052a3); color: #FFFFFF; padding: 0.75rem 1.5rem; font-size: 14px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
+    .btn-primary:active { transform: scale(0.96); }
+</style>
+
+<div class="relative z-10 pt-28 md:pt-40 pb-safe px-4 md:px-8 min-h-screen max-w-[56rem] mx-auto animate-fade-in-up">
+
+    <!-- Title & Action Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-8 px-2">
+        <div>
+            <h1 class="text-3xl md:text-[2.2rem] font-black text-slate-900 tracking-tight leading-none mb-2">{% trans "Experience & Journey" %}</h1>
+            <p class="text-[14.5px] text-slate-500 font-medium">{% trans "Map out your professional roles, past jobs, and community activities." %}</p>
+        </div>
+        <a href="{% url 'experience_create' %}" class="btn-primary shrink-0 self-start sm:self-auto">
+            <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Experience" %}
+        </a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="premium-card p-4 sm:p-6 lg:p-8 relative overflow-hidden bg-slate-50/30">
+        <!-- Subtle decorative blob -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-slate-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+
+        <div class="flex flex-col gap-4 relative z-10">
+            {% for exp in object_list %}
+                <div class="bento-item p-5 sm:p-6 flex flex-col sm:flex-row gap-5 justify-between items-start">
+
+                    <div class="flex gap-4 sm:gap-5 flex-1 min-w-0 w-full">
+                        <!-- Visual Icon Indicator -->
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-[1rem] flex items-center justify-center border bg-slate-50 border-slate-100 text-slate-600">
+                            <i data-lucide="briefcase" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <!-- Status Badge -->
+                            {% if exp.is_current %}
+                                <div class="mb-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-100/50 text-emerald-700">Current Role</span>
+                                </div>
+                            {% endif %}
+
+                            <h3 class="text-[1.15rem] font-black text-slate-800 leading-tight truncate">{{ exp.role_title }}</h3>
+                            <p class="text-[13.5px] font-bold text-[#0A66C2] mt-1 truncate">{{ exp.company_name }} <span class="text-slate-400 mx-1 font-normal">•</span> <span class="text-slate-500 font-semibold">{{ exp.get_location_type_display }}</span></p>
+
+                            {% if exp.description %}
+                                <p class="text-[13.5px] font-medium text-slate-600 mt-3 leading-relaxed max-w-2xl whitespace-pre-line">{{ exp.description }}</p>
+                            {% endif %}
+
+                            <!-- Metadata Pills -->
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-[11px] font-bold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 opacity-70"></i>
+                                    {{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 shrink-0 self-end sm:self-start w-full sm:w-auto justify-end mt-4 sm:mt-0 pt-4 sm:pt-0 border-t border-slate-100 sm:border-0">
+                        <a href="{% url 'experience_edit' exp.pk %}" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 rounded-[10px] shadow-sm transition-all" title="{% trans 'Edit' %}">
+                            <i data-lucide="edit-2" class="w-4.5 h-4.5"></i>
+                        </a>
+                        <a href="{% url 'experience_delete' exp.pk %}" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-[10px] shadow-sm transition-all" title="{% trans 'Delete' %}">
+                            <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                        </a>
+                    </div>
+
+                </div>
+            {% empty %}
+                <!-- Highly Professional Empty State -->
+                <div class="py-12 sm:py-16 text-center flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[1.5rem] bg-white">
+                    <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[1rem] flex items-center justify-center mb-4 shadow-sm">
+                        <i data-lucide="briefcase" class="w-8 h-8 text-slate-500"></i>
+                    </div>
+                    <h3 class="text-[1.1rem] font-black text-slate-800 mb-1.5">{% trans "No experience added yet" %}</h3>
+                    <p class="text-[13px] text-slate-500 font-medium mb-6 max-w-xs">
+                        {% trans "Add your past jobs, internships, or long-term volunteer roles." %}
+                    </p>
+                    <a href="{% url 'experience_create' %}" class="btn-primary">
+                        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Experience" %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>
+{% endblock content %}

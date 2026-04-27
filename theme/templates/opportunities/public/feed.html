@@ -1,0 +1,600 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block meta_tags %}
+<!-- TELEGRAM / SOCIAL PREVIEW -->
+<title>Explore Opportunities | CoreLink</title>
+<meta name="title" content="Explore Opportunities on CoreLink">
+<meta name="description" content="Discover every opportunity in Ethiopia—from part-time, freelance, and gigs to co-founder bounties.">
+
+<!-- Open Graph / Facebook / Telegram -->
+<meta property="og:site_name" content="CoreLink">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://corelink.et{{ request.path }}">
+<meta property="og:title" content="Explore Opportunities on CoreLink">
+<meta property="og:description" content="Discover every opportunity in Ethiopia—from part-time, freelance, and gigs to co-founder bounties.">
+<meta property="og:image" content="https://corelink.et/static/img/opportunities_preview.jpg">
+{% endblock %}
+
+{% block navbar %}
+<!-- ==============================================
+     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
+    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
+        <!-- Logo -->
+        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+
+        <!-- Desktop Navigation Links (Exactly 5 Links) -->
+        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
+            </a>
+
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
+            </a>
+
+            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
+            </a>
+
+            <!-- ACTIVE: Opportunities -->
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm" aria-current="page">
+                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
+            </a>
+
+            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
+                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- MOBILE TOP BAR (Premium Glass) -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
+            <span class="text-slate-900">Core</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+        <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+    </button>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --app-bg: #F8FAFC;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    .custom-scroll::-webkit-scrollbar { display: none; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* PREMIUM PC CANVAS LAYOUT - INCREASED PADDING AND OPTIMIZED FOR FLOATING NAVBAR */
+    .app-canvas { max-width: 1350px; margin: 0 auto; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; position: relative; z-index: 10; }
+    @media (min-width: 768px) { .app-canvas { padding: 9rem 4.5rem 6rem 4.5rem; max-width: 1400px; } }
+
+    /* AMBIENT MAGIC BACKGROUND BLOBS */
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob { animation: blob 7s infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
+
+    /* PREMIUM COVER CARDS */
+    .bento-card {
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+    .bento-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+        border-color: #CBD5E1;
+    }
+
+    /* MAGICAL SEARCH PALETTE */
+    .command-palette {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.6);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .command-palette:focus-within {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: #0A66C2;
+        box-shadow: 0 25px 50px -12px rgba(10, 102, 194, 0.2), 0 0 0 4px rgba(10, 102, 194, 0.1);
+        transform: translateY(-2px);
+    }
+    .magic-input { width: 100%; background-color: transparent; border: none; outline: none; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.5s ease-out forwards; }
+
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    .drawer-closed { transform: translateY(100%); }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+</style>
+
+<!-- AMBIENT GLOW LAYER -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] pointer-events-none z-0 overflow-hidden">
+    <div class="absolute top-[-10%] left-[20%] w-[400px] h-[400px] bg-[#0A66C2]/10 rounded-full mix-blend-multiply filter blur-[80px] animate-blob"></div>
+    <div class="absolute top-[10%] right-[20%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-2000"></div>
+    <div class="absolute bottom-[10%] left-[35%] w-[450px] h-[450px] bg-purple-500/10 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-4000"></div>
+</div>
+
+<main class="app-canvas animate-up">
+
+    <!-- ==============================================
+         LOCAL DUAL-TAB TOP NAVIGATION
+         ============================================== -->
+    <div class="flex items-center justify-start gap-6 md:gap-8 border-b border-slate-200/80 mb-4 md:mb-8 overflow-x-auto custom-scroll w-full pl-2 relative z-10">
+        <!-- ACTIVE TAB: Discover Jobs -->
+        <a href="{% url 'opportunities:feed' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]">
+            <span class="text-[12.5px] md:text-[13.5px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Discover Jobs" %}</span>
+        </a>
+
+        <!-- INACTIVE TAB: Live Opportunity -->
+        <a href="javascript:void(0)" onclick="showToast('{% trans "Live opportunities coming soon!" %}')" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-transparent text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all group shrink-0 top-[2px]">
+            <span class="text-[12.5px] md:text-[13.5px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                {% trans "Live Opportunity" %}
+                <small class="text-[8px] bg-slate-100 font-black px-1.5 py-0.5 rounded uppercase text-slate-500">SOON</small>
+            </span>
+        </a>
+    </div>
+
+    <!-- ==========================================
+         1. MAGICAL HERO SECTION
+         ========================================== -->
+    <div class="flex flex-col items-center text-center mb-6 md:mb-12 max-w-4xl mx-auto mt-4 relative z-10">
+
+        <h1 class="text-[clamp(2.4rem,5.5vw,4.5rem)] font-black text-slate-900 tracking-tighter leading-[1.1] mb-3 md:mb-5 nav-heading drop-shadow-sm">
+            {% trans "Discover Every" %} <br class="hidden sm:block" />
+            <span class="relative inline-block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] via-indigo-600 to-purple-600">{% trans "Opportunity in Ethiopia." %}</span>
+                <!-- Sparkle Accents -->
+                <i data-lucide="sparkle" class="absolute -top-4 -right-8 w-6 h-6 text-amber-400 opacity-80 animate-pulse"></i>
+                <i data-lucide="sparkle" class="absolute -bottom-2 -left-6 w-4 h-4 text-blue-400 opacity-60 animate-pulse animation-delay-2000"></i>
+            </span>
+        </h1>
+        <p class="text-[15.5px] md:text-[17px] text-slate-600 font-medium leading-relaxed max-w-2xl px-2">
+            {% trans "Dive into the ecosystem. From high-impact full-time roles and flexible freelance contracts, to quick local gigs and dynamic startup co-founder bounties." %}
+        </p>
+    </div>
+
+    <!-- ==========================================
+         2. STICKY DYNAMIC COMMAND PALETTE
+         ========================================== -->
+    <div class="sticky top-[85px] md:top-[100px] z-[50] max-w-[1050px] mx-auto mb-8 md:mb-16 px-2 transition-all duration-300 group/search">
+        <!-- Compact wrap layout for mobile footprint optimization -->
+        <form method="GET" action="." class="command-palette rounded-[2rem] p-1.5 flex flex-wrap md:flex-nowrap items-center w-full relative overflow-hidden">
+
+            <!-- Shimmer Effect inside the form -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-[100%] group-hover/search:animate-[shimmer_2s_infinite] pointer-events-none"></div>
+
+            <!-- Keyword Input -->
+            <div class="w-full md:w-[40%] flex items-center px-4 py-3 md:px-5 border-b md:border-b-0 border-slate-200/60 hover:bg-slate-50/50 transition-colors md:rounded-l-[1.5rem] md:border-r">
+                <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-50 flex items-center justify-center mr-2 md:mr-3 shrink-0">
+                    <i data-lucide="search" class="w-3.5 h-3.5 md:w-4 md:h-4 text-[#0A66C2]"></i>
+                </div>
+                <input type="text" name="q" value="{{ search_form.q.value|default:'' }}"
+                    class="magic-input text-[14px] md:text-[15px] font-bold text-slate-900 placeholder:text-slate-400"
+                    placeholder="{% trans 'Search roles, skills, or companies...' %}">
+            </div>
+
+            <!-- Location Input -->
+            <div class="w-1/2 md:w-[25%] flex items-center px-3 py-3 md:px-5 border-b border-r md:border-b-0 border-slate-200/60 hover:bg-slate-50/50 transition-colors">
+                <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-indigo-50 flex items-center justify-center mr-2 md:mr-3 shrink-0">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 md:w-4 md:h-4 text-indigo-500"></i>
+                </div>
+                <input type="text" name="location" value="{{ search_form.location.value|default:'' }}"
+                    class="magic-input text-[13.5px] md:text-[15px] font-bold text-slate-900 placeholder:text-slate-400"
+                    placeholder="{% trans 'Location...' %}">
+            </div>
+
+            <!-- Job Type Select -->
+            <div class="w-1/2 md:w-[20%] flex items-center px-3 py-3 md:px-5 relative border-b md:border-b-0 border-slate-200/60 hover:bg-slate-50/50 transition-colors bg-transparent md:border-r">
+                <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-purple-50 flex items-center justify-center mr-2 md:mr-3 shrink-0">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 md:w-4 md:h-4 text-purple-500"></i>
+                </div>
+                <select name="job_type" class="magic-input text-[13.5px] md:text-[15px] font-bold text-slate-900 appearance-none cursor-pointer pr-6 bg-transparent z-10 relative">
+                    {% for value, label in search_form.fields.job_type.choices %}
+                        <option value="{{ value }}" {% if search_form.job_type.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-4 pointer-events-none"></i>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="w-full md:w-[15%] p-1.5 shrink-0 relative z-10">
+                <button type="submit" class="w-full h-11 md:h-12 bg-gradient-to-r from-slate-900 to-slate-800 hover:from-black hover:to-slate-900 active:scale-[0.97] text-white font-black text-[14px] rounded-[1.2rem] transition-all flex items-center justify-center shadow-lg shadow-slate-900/20 group/btn">
+                    <span class="flex items-center gap-2 group-hover/btn:scale-105 transition-transform">
+                        {% trans "Explore" %} <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ==========================================
+         3. FEED HEADER
+         ========================================== -->
+    <div class="flex items-center justify-between mb-6 px-1 border-b border-slate-200/80 pb-3 relative z-10">
+        <h2 class="text-[1.5rem] font-black text-slate-900 nav-heading tracking-tight">
+            {% if opportunities %}{% trans "Marketplace Feed" %}{% else %}{% trans "Search Results" %}{% endif %}
+        </h2>
+
+        <a href="{% if user.is_authenticated %}{% url 'opportunities:create' %}{% else %}{% url 'opportunities:public_post' %}{% endif %}" class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-[1rem] bg-white border border-slate-200 text-[13px] font-bold text-slate-700 hover:text-[#0A66C2] hover:border-[#0A66C2] hover:shadow-md transition-all active:scale-95 shadow-sm group">
+            <i data-lucide="plus" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i> {% trans "Post Opportunity" %}
+        </a>
+    </div>
+
+    <!-- ==========================================
+         4. OVERLAPPING COLORED COVER CARDS
+         ========================================== -->
+    {% if opportunities %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-10">
+        {% for job in opportunities %}
+
+            <a href="{% if user.is_authenticated %}{% url 'opportunities:detail' job.slug %}{% else %}{% url 'login' %}?next={% url 'opportunities:detail' job.slug %}{% endif %}" class="bento-card group">
+
+                <!-- TOP COVER: CUSTOM IMAGE OR FALLBACK COLORED PATTERN -->
+                {% if job.cover_image %}
+                <div class="h-28 w-full relative bg-cover bg-center" style="background-image: url('{{ job.cover_image.url }}');">
+                    <!-- Subtle dark overlay to ensure badge readability over light images -->
+                    <div class="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/10 transition-colors duration-500"></div>
+                {% else %}
+                <div class="h-28 w-full relative bg-gradient-to-br {% cycle 'from-blue-500 to-indigo-600' 'from-emerald-400 to-teal-500' 'from-rose-500 to-pink-600' 'from-amber-400 to-orange-500' 'from-violet-500 to-fuchsia-600' 'from-cyan-400 to-blue-500' %} overflow-hidden">
+                    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                    <!-- Magic gradient overlay on hover -->
+                    <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-500"></div>
+                {% endif %}
+
+                    <!-- Job Type Badge -->
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-sm">
+                            {{ job.get_job_type_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- BOTTOM WHITE BODY WITH OVERLAPPING LOGO -->
+                <div class="px-6 pb-6 relative flex-1 flex flex-col bg-white">
+
+                    <!-- Overlapping Logo -->
+                    <div class="w-[4.5rem] h-[4.5rem] rounded-2xl bg-white p-1 shadow-[0_8px_20px_rgba(0,0,0,0.08)] border border-slate-100 -mt-9 mb-4 relative z-10 group-hover:-translate-y-1 group-hover:shadow-[0_12px_25px_rgba(0,0,0,0.12)] transition-all duration-400">
+                        <div class="w-full h-full bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100/50">
+                            {% if job.get_company_logo %}
+                                <img src="{{ job.get_company_logo }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <span class="font-black text-2xl text-slate-400 nav-heading">
+                                    {% if job.company and job.company.name %}
+                                        {{ job.company.name|slice:":1"|upper }}
+                                    {% elif job.external_company_name %}
+                                        {{ job.external_company_name|slice:":1"|upper }}
+                                    {% elif job.title %}
+                                        {{ job.title|slice:":1"|upper }}
+                                    {% else %}
+                                        O
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Text Data -->
+                    <div class="mb-5 flex-1">
+                        <h4 class="text-[12px] font-black text-[#0A66C2] uppercase tracking-widest mb-1.5 line-clamp-1">
+                            <!-- Prioritize Official Company Name, then External, then Poster -->
+                            {% if job.company and job.company.name %}
+                                {{ job.company.name }}
+                            {% elif job.external_company_name %}
+                                {{ job.external_company_name }}
+                            {% elif job.posted_by %}
+                                {% if job.posted_by.get_full_name %}{{ job.posted_by.get_full_name }}{% else %}{{ job.posted_by.username }}{% endif %}
+                            {% else %}
+                                {{ job.get_company_name }}
+                            {% endif %}
+                        </h4>
+                        <h2 class="text-[19px] font-black text-slate-900 leading-[1.2] mb-3 tracking-tight line-clamp-2 group-hover:text-[#0A66C2] transition-colors nav-heading">{{ job.title }}</h2>
+                        <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed line-clamp-3">
+                            {{ job.description|striptags }}
+                        </p>
+                    </div>
+
+                    <!-- Footer Data -->
+                    <div class="mt-auto border-t border-slate-100 pt-4 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            {% if job.location %}
+                            <span class="flex items-center gap-1.5 text-[12px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> {{ job.location|truncatechars:15 }}
+                            </span>
+                            {% endif %}
+                            <span class="text-[11px] font-bold text-slate-400">{{ job.published_at|default:job.created_at|timesince }} ago</span>
+                        </div>
+
+                        <!-- Apply/View Button -->
+                        <div class="px-4 py-2 rounded-full bg-slate-900 text-white flex items-center justify-center gap-1.5 group-hover:bg-[#0A66C2] transition-all shadow-md">
+                            <span class="text-[12px] font-bold whitespace-nowrap">{% trans "View Detail" %}</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+        {% endfor %}
+    </div>
+
+    <!-- CLEAN PAGINATION -->
+    {% if is_paginated %}
+    <div class="mt-12 flex justify-center pb-8 relative z-10">
+        <nav class="inline-flex bg-white/80 backdrop-blur-md border border-slate-200 rounded-full shadow-sm p-1.5 gap-1 items-center" aria-label="Pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ search_form.q.value|default:'' }}" class="px-5 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-100 rounded-full transition-colors flex items-center gap-1.5"><i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Prev" %}</a>
+            {% endif %}
+            <span class="px-5 py-2.5 text-[13px] font-black text-[#0A66C2] bg-blue-50 border border-blue-100 rounded-full shadow-sm">{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ search_form.q.value|default:'' }}" class="px-5 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-100 rounded-full transition-colors flex items-center gap-1.5">{% trans "Next" %} <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- EMPTY STATE -->
+    <div class="bento-card p-16 flex flex-col items-center justify-center text-center mt-6 border-dashed border-2 border-slate-300 bg-white/50 backdrop-blur-sm shadow-none relative z-10">
+        <div class="w-20 h-20 mb-6 bg-gradient-to-br from-slate-100 to-slate-200 border border-white rounded-[1.5rem] flex items-center justify-center text-slate-400 shadow-[0_8px_20px_rgba(0,0,0,0.05)]">
+            <i data-lucide="telescope" class="w-10 h-10 text-slate-500"></i>
+        </div>
+        <h3 class="text-[22px] font-black text-slate-900 mb-3 nav-heading tracking-tight">{% trans "Expand Your Horizon" %}</h3>
+        <p class="text-[15px] text-slate-500 mb-8 max-w-md leading-relaxed font-medium">{% trans "No opportunities currently match those exact magic parameters. Clear your filters to explore the full ecosystem." %}</p>
+        <a href="{% url 'opportunities:feed' %}" class="px-6 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-[#0A66C2] hover:shadow-md transition-all active:scale-95">
+            {% trans "Reset Search Criteria" %}
+        </a>
+    </div>
+    {% endif %}
+
+</main>
+
+
+<!-- ==============================================
+     MOBILE NAVIGATION DOCK & FAB
+     ============================================== -->
+
+<!-- MOBILE FAB: POST JOB -->
+<a href="{% if user.is_authenticated %}{% url 'opportunities:create' %}{% else %}{% url 'opportunities:public_post' %}{% endif %}" class="md:hidden fixed bottom-[calc(80px+env(safe-area-inset-bottom,0px))] right-4 z-[80] h-[56px] w-[56px] bg-gradient-to-tr from-slate-900 to-slate-800 text-white rounded-[1.2rem] shadow-[0_8px_20px_rgba(15,23,42,0.4)] flex items-center justify-center active:scale-90 transition-transform border border-slate-700">
+    <i data-lucide="plus" class="w-6 h-6 drop-shadow-md"></i>
+</a>
+
+<!-- BOTTOM NAVIGATION (Exactly 5 Links) -->
+{% if not is_inspector %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Portfolio" %}</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
+    </a>
+
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
+    </a>
+
+    <!-- ACTIVE STATE: Opportunities -->
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
+        <i data-lucide="briefcase" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+    </a>
+
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white animate-pulse">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
+    </a>
+
+</nav>
+{% endif %}
+
+<!-- ==============================================
+     MODALS & DRAWERS (FIXED Z-INDEX & STRUCTURE)
+     ============================================== -->
+
+<!-- Mobile Nav Drawer (Exactly 5 Main Links) -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</button>
+        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</button>
+        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</button>
+        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Opportunities" %}</button>
+        <button onclick="window.location.href='/workspace/messages/'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</button>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+    </div>
+</div>
+
+<!-- Language Drawer -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" aria-label="Select English" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" aria-label="Select Amharic" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
+<!-- ELEGANT LOGIN GATE MODAL -->
+<div id="login-gate-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title" class="hidden fixed inset-0 z-[300] flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md transition-opacity duration-300">
+    <div class="bento-card bg-white max-w-sm w-full p-8 text-center transform scale-100 transition-transform shadow-2xl">
+        <div class="w-16 h-16 bg-blue-50 rounded-[1.2rem] flex items-center justify-center mx-auto mb-5 border border-blue-100 shadow-sm">
+            <i data-lucide="lock" class="w-8 h-8 text-[#0A66C2]"></i>
+        </div>
+        <h3 id="login-modal-title" class="text-[20px] font-black text-slate-900 mb-2 tracking-tight nav-heading">{% trans "Unlock Network" %}</h3>
+        <p class="text-slate-500 text-[14.5px] font-medium mb-8 leading-relaxed">
+            {% trans "Join CoreLink to message and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.
+        </p>
+        <div class="space-y-3">
+            <a href="{% url 'unified_onboarding' %}" class="flex items-center justify-center w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-[14px] py-3.5 rounded-xl shadow-md transition-all active:scale-95 tracking-wide">{% trans "Create Free Account" %}</a>
+            <a href="{% url 'login' %}?next={{ request.path }}" class="flex items-center justify-center w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[14px] py-3.5 rounded-xl shadow-sm transition-all active:scale-95">{% trans "Log In" %}</a>
+        </div>
+        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" aria-label="Close" class="mt-6 text-[13px] font-bold text-slate-400 hover:text-slate-600 transition-colors">{% trans "Cancel" %}</button>
+    </div>
+</div>
+
+<!-- Clean Toast -->
+<div id="share-toast" role="alert" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
+    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+    <span id="toast-msg">{% trans "Success!" %}</span>
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    let shareTimeout;
+    function showToast(message) {
+        const toast = document.getElementById('share-toast');
+        const toastMsg = document.getElementById('toast-msg');
+        if (toastMsg && message) toastMsg.textContent = message;
+        clearTimeout(shareTimeout); toast.classList.remove('translate-y-10', 'opacity-0');
+        if (navigator.vibrate) {
+            try { navigator.vibrate([20, 30, 20]); } catch (e) {}
+        }
+        shareTimeout = setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); }, 3000);
+    }
+
+    function openLoginModal(name) {
+        document.getElementById('target-name').innerText = name;
+        document.getElementById('login-gate-modal').classList.remove('hidden');
+    }
+
+    // Reset all drawers securely
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    // Hide bottom nav when typing on mobile so it doesn't block the screen
+    document.addEventListener("DOMContentLoaded", function() {
+        const bottomNav = document.getElementById('mobile-bottom-nav');
+        if (bottomNav) {
+            document.addEventListener('focusin', (e) => {
+                if (window.innerWidth < 768 &&['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'none';
+                }
+            });
+            document.addEventListener('focusout', (e) => {
+                if (window.innerWidth < 768 &&['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'flex';
+                }
+            });
+        }
+    });
+</script>
+{% endblock content %}

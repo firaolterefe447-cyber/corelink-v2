@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div class="max-w-lg w-full space-y-8">
+        
+        <div class="text-center">
+            <span class="inline-block p-3 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </span>
+            <h2 class="mt-2 text-3xl font-extrabold text-slate-900">
+                Join the Team
+            </h2>
+            <p class="mt-2 text-sm text-slate-600">
+                Define your role and contribution level.
+            </p>
+        </div>
+
+        <div class="bg-white py-8 px-8 shadow-xl rounded-xl border border-slate-100">
+            <form class="space-y-6" method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="text-red-600 text-sm bg-red-50 p-3 rounded-md mb-4">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <!-- Role Input -->
+                <div>
+                    <label for="{{ form.role.id_for_label }}" class="block text-sm font-bold text-slate-700">
+                        {{ form.role.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ form.role }}
+                    </div>
+                    {% if form.role.help_text %}
+                        <p class="mt-1 text-xs text-slate-500">{{ form.role.help_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Category Select -->
+                <div>
+                    <label for="{{ form.category.id_for_label }}" class="block text-sm font-bold text-slate-700">
+                        {{ form.category.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ form.category }}
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Confirm Membership
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <!-- FIXED URL -->
+                <a href="{% url 'workspace_dashboard' %}" class="text-sm font-medium text-slate-500 hover:text-slate-900">
+                    Cancel and return to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

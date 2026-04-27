@@ -1,0 +1,1232 @@
+"""
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    CORELINK UNIFIED PORTFOLIO VIEWS                          ║
+║                    Zero-Loss, High-Performance, Secure                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+This module serves as the central nervous system for CoreLink's Unified Profiles.
+It handles user portfolios, public routing, company management, and media assets.
+"""
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 0. SYSTEM IMPORTS & DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════════
+import logging
+import json
+from django.utils.text import slugify
+from django.utils import timezone
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import Http404, JsonResponse
+from django.urls import reverse_lazy, reverse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db import transaction
+from django.core.exceptions import PermissionDenied
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.decorators.http import require_POST, require_GET
+from django.db.models import Q
+
+# Custom Models & Forms
+from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMethod
+from profiles.models.new_unified_profile import (
+    UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject,
+    ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity,
+    RightNowPost, RightNowMedia, RightNowLike, RightNowComment
+)
+from profiles.models import (
+    Company, CompanyMember, CompanyService, ServiceGalleryImage,
+    CompanyNews, NewsGalleryImage, CompanyMilestone, CompanySocialLink, CompanyContactMethod
+)
+from profiles.forms import (
+    UserProfileForm, ProfileHeadlineForm, SkillForm, CredentialForm, PortfolioProjectForm,
+    WorkExperienceForm, ContentPostForm, JobPreferenceForm, LiveOpportunityForm,
+    CompanyProfileUpdateForm, CompanyServiceForm, CompanyNewsForm, CompanyMilestoneForm,
+    CompanySocialLinkForm, CompanyContactMethodForm, SocialLinkForm, ContactMethodForm,
+    IdentityMediaForm, AddCompanyMemberForm, RightNowPostForm
+)
+
+logger = logging.getLogger(__name__)
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 1: CORE SECURITY & ARCHITECTURE MIXINS                             ║
+# ║ Human Context: These mixins form the bedrock of our security and UX. They  ║
+# ║ ensure users can never modify someone else's data, handle dynamic form     ║
+# ║ routing, and auto-attach portfolios to new records silently.               ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+class RoleAwareFormMixin:
+    """Injects the request.user into the form so it dynamically adapts to roles."""
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+class PortfolioSecurityMixin(LoginRequiredMixin):
+    """Locks queries so users can only ever view/edit/delete their own portfolio blocks."""
+    def get_queryset(self):
+        return self.model.objects.filter(profile__user=self.request.user)
+
+class ContentPostSuccessUrlMixin:
+    """Dynamically returns the success URL based on the saved object's post_type."""
+    def get_success_url(self):
+        post_type = self.object.post_type
+
+        # Note: Replace the strings inside reverse() with the ACTUAL names
+        # you defined in your urls.py for those list views.
+        if post_type == 'GROWTH_LOG':
+            return reverse('manage_growth_logs')
+        elif post_type == 'VISION_BLOCK':
+            return reverse('manage_vision_blocks')
+        elif post_type == 'ESSAY':
+            return reverse('manage_essays')
+
+        # Fallback just in case
+        return reverse('manage_contents')
+
+class PortfolioCreateMixin:
+    """Automatically attaches the user's portfolio to the object being created."""
+    def form_valid(self, form):
+        # 1. Get or create the user's profile
+        portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+        # 2. Attach the profile to the form instance before saving
+        form.instance.profile = portfolio
+        messages.success(self.request, "Added successfully.")
+        return super().form_valid(form)
+
+class CompanyContextMixin(LoginRequiredMixin):
+    """Fetches the user's active company and ensures they are an OWNER or ADMIN."""
+    def get_company(self):
+        membership = self.request.user.company_memberships.filter(
+            is_active=True, role__in=['OWNER', 'ADMIN']
+        ).select_related('company').first()
+
+        if not membership:
+            raise PermissionDenied("You do not have administrative access to an active company.")
+        return membership.company
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['company'] = self.get_company()
+        return context
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 2: THE ROUTING HUB (DASHBOARD & PUBLIC)                            ║
+# ║ Human Context: The Grand Central Station of the app. This determines what  ║
+# ║ a user sees when they log in, and how the outside world views their profile.║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+@login_required
+def dashboard_view(request):
+    """
+    The Unified Command Center.
+    Loads the user's complete portfolio and company data (if applicable) for the dashboard.
+    """
+    user = CustomUser.objects.prefetch_related('social_links', 'contact_methods').get(pk=request.user.pk)
+
+    # 1. Ensure Portfolio exists and prefetch all related blocks to prevent N+1 query issues
+    portfolio, created = UserProfile.objects.prefetch_related(
+        'headlines', 'skills', 'credentials', 'projects__gallery',
+        'experiences', 'content_posts', 'job_preferences', 'live_opportunities'
+    ).get_or_create(user=user)
+    
+    # Ensure slug is generated for new portfolios
+    if created and not portfolio.slug:
+        portfolio.save()
+
+    # 2. Fetch Founder/Company Data if the user is a Founder
+    company_data = None
+    if user.role == 'FOUNDER':
+        membership = user.company_memberships.filter(is_active=True).select_related('company').first()
+        company_data = membership.company if membership else None
+
+    context = {
+        'user': user,
+        'portfolio': portfolio,
+        'company': company_data,
+        'headlines': portfolio.headlines.all(),
+        'skills': portfolio.skills.all(),
+        'credentials': portfolio.credentials.all(),
+        'projects': portfolio.projects.all(),
+        'experiences': portfolio.experiences.all().order_by('-is_current', '-start_date'),
+        'posts': portfolio.content_posts.all(),
+        'opportunities': portfolio.live_opportunities.filter(is_active=True),
+        'preferences': portfolio.job_preferences.all(),
+        # THIS IS THE NEW PART:
+        'growth_logs': portfolio.content_posts.filter(post_type='GROWTH_LOG')[:2],
+        'essays': portfolio.content_posts.filter(post_type='ESSAY')[:2],
+        'vision_blocks': portfolio.content_posts.filter(post_type='VISION_BLOCK')[:2],
+
+        'opportunities': portfolio.live_opportunities.filter(is_active=True),
+        'preferences': portfolio.job_preferences.all(),
+
+    }
+    return render(request, 'dashboard/main_dashboard.html', context)
+
+
+def public_profile_view(request, identifier):
+    """
+    Universal Profile Router.
+    Routes identifiers to Company pages or Unified User Portfolios.
+    """
+    # 1. Check for Company Slug
+    company = Company.objects.filter(slug=identifier).first()
+    if company:
+        return company_public_profile(request, slug=company.slug)
+
+    # 2. Check for Unified Portfolio Slug
+    target_user = None
+    portfolio = UserProfile.objects.filter(slug=identifier).first()
+
+    if portfolio:
+        target_user = portfolio.user
+    else:
+        # 3. Fallback: Search by CoreLink ID (e.g., VIS-2024-001)
+        target_user = get_object_or_404(CustomUser, corelink_id=identifier)
+
+        # SEO Redirect: If found by ID, force-redirect to their proper Slug
+        found_slug = getattr(target_user.portfolio, 'slug', None) if hasattr(target_user, 'portfolio') else None
+        if found_slug:
+            return redirect('public_profile', identifier=found_slug)
+
+    # 4. Gather Data (Founder Routing Block skipped to allow personal portfolios)
+    if not hasattr(target_user, 'portfolio'):
+        raise Http404("Profile not found.")
+
+    profile = target_user.portfolio
+    contact_methods = UniversalContactMethod.objects.filter(user=target_user).order_by('-created_at')
+    social_links = UniversalSocialLink.objects.filter(user=target_user).order_by('order')
+
+    # 5. Build Context with Modular Blocks
+    context = {
+        'profile': profile,
+        'user': target_user,
+        'role_title': target_user.get_role_display(),
+
+        # Infrastructure
+        'contact_methods': contact_methods,
+        'social_links': social_links,
+
+        # Identity Blocks
+        'headlines': profile.headlines.all(),
+        'skills': profile.skills.all(),
+        'credentials': profile.credentials.all(),
+        'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
+
+        # Assets & Content
+        'projects': profile.projects.all().prefetch_related('gallery'),
+        'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
+
+        # Intent & 10X Opportunities
+        'job_preferences': profile.job_preferences.filter(is_active=True),
+        'live_opportunities': profile.live_opportunities.filter(
+            is_active=True,
+            expires_at__gt=timezone.now()
+        )
+    }
+
+    return render(request, 'profiles/public_portfolio.html', context)
+
+
+def company_public_profile(request, slug):
+    """Renders the public company page at /p/company/<slug>/"""
+    company = get_object_or_404(Company, slug=slug)
+    team_members = company.members.filter(is_active=True).select_related('user')
+    services = company.services.filter(is_active=True).order_by('order')
+
+    context = {
+        'company': company,
+        'team_members': team_members,
+        'services': services,
+        'milestones': company.milestones.all().order_by('-year'),
+        'news_list': company.news_articles.filter(is_published=True).order_by('-published_date'),
+    }
+    return render(request, 'profiles/public_company.html', context)
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 3: LOBBY & IDENTITY SETTINGS                                       ║
+# ║ Human Context: Where users manage the overarching identity details that    ║
+# ║ wrap around their Lego blocks. Avatars, covers, roles, and global intent.  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+class ProfileSettingsView(RoleAwareFormMixin, LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = 'dashboard/portfolio/settings.html'
+    success_url = reverse_lazy('profile_settings')
+
+    def get_object(self):
+        portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+        return portfolio
+
+    def form_valid(self, form):
+        # 1. Save the form (This now saves UserProfile AND CustomUser fields safely)
+        response = super().form_valid(form)
+
+        # 2. Update the User Role (Kept exactly as you had it)
+        new_role = self.request.POST.get('role')
+        valid_roles = ['VISIONARY', 'EXPERT', 'FOUNDER']
+        needs_company_setup = False
+
+        if new_role in valid_roles:
+            user = self.request.user
+            user.role = new_role
+            user.save(update_fields=['role'])
+
+            if new_role == 'FOUNDER':
+                has_company = CompanyMember.objects.filter(
+                    user=user,
+                    is_active=True
+                ).exists()
+
+                if not has_company:
+                    needs_company_setup = True
+
+        # 3. Handle Conditional Redirect
+        if needs_company_setup:
+            messages.info(self.request, "Almost done! To be a Founder, you need to register your startup first.")
+            return redirect('company_create')
+
+        messages.success(self.request, "Your professional identity has been updated!")
+        return response
+
+
+class IdentityMediaView(LoginRequiredMixin, UpdateView):
+    """Handles updating Avatars and Cover Images."""
+    model = CustomUser
+    form_class = IdentityMediaForm
+    template_name = 'dashboard/shared/media_settings.html'
+    success_url = reverse_lazy('media_manager')
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        # FIX: Convert empty string "" to None (NULL) to prevent Postgres IntegrityError
+        if not user.email:
+            user.email = None
+        user.save()
+
+        messages.success(self.request, "Visual identity updated.")
+        return redirect(self.success_url)
+
+
+@login_required
+@require_POST
+def delete_media_asset(request, asset_type):
+    """Direct deletion endpoint for universal media resources (Avatar/Cover)."""
+    user = request.user
+    if asset_type == 'avatar' and user.avatar:
+        user.avatar.delete(save=False)
+        user.avatar = None
+    elif asset_type == 'cover' and user.cover_image:
+        user.cover_image.delete(save=False)
+        user.cover_image = None
+
+    # FIX: Convert empty string "" to None (NULL) to prevent Postgres IntegrityError
+    if not user.email:
+        user.email = None
+
+    user.save()
+    messages.success(request, "Image removed successfully.")
+    return redirect('media_manager')
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 4: PORTFOLIO "LEGO BLOCKS" CRUD                                    ║
+# ║ Human Context: Standard verifiable blocks (Experience, Skills, Projects).  ║
+# ║ Designed for fast, structured rendering on the final public profile.       ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+# --- HEADLINES ---
+class HeadlineListView(PortfolioSecurityMixin, ListView):
+    model = ProfileHeadline
+    template_name = 'dashboard/portfolio/headline_list.html'
+
+class HeadlineCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = ProfileHeadline
+    form_class = ProfileHeadlineForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_headlines')
+
+class HeadlineUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = ProfileHeadline
+    form_class = ProfileHeadlineForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_headlines')
+
+class HeadlineDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = ProfileHeadline
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_headlines')
+
+
+# --- SKILLS ---
+class SkillListView(PortfolioSecurityMixin, ListView):
+    model = Skill
+    template_name = 'dashboard/portfolio/skill_list.html'
+
+class SkillCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = Skill
+    form_class = SkillForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_skills')
+
+class SkillUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = Skill
+    form_class = SkillForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_skills')
+
+class SkillDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = Skill
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_skills')
+
+
+# --- CREDENTIALS ---
+class CredentialListView(PortfolioSecurityMixin, ListView):
+    model = Credential
+    template_name = 'dashboard/portfolio/credential_list.html'
+
+class CredentialCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = Credential
+    form_class = CredentialForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_credentials')
+
+class CredentialUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = Credential
+    form_class = CredentialForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_credentials')
+
+class CredentialDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = Credential
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_credentials')
+
+
+# --- EXPERIENCE ---
+class ExperienceListView(PortfolioSecurityMixin, ListView):
+    model = WorkExperience
+    template_name = 'dashboard/portfolio/experience_list.html'
+
+class ExperienceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = WorkExperience
+    form_class = WorkExperienceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_experiences')
+
+class ExperienceUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = WorkExperience
+    form_class = WorkExperienceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_experiences')
+
+class ExperienceDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = WorkExperience
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_experiences')
+
+# --- PROJECTS (WITH GALLERY HANDLING) ---
+class ProjectListView(PortfolioSecurityMixin, ListView):
+    model = PortfolioProject
+    template_name = 'dashboard/portfolio/project_list.html'
+
+class ProjectCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
+    model = PortfolioProject
+    form_class = PortfolioProjectForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_projects')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Get portfolio and attach to form
+            portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+            form.instance.profile = portfolio
+            self.object = form.save()
+            # Handle multiple image uploads for the gallery
+            for image in self.request.FILES.getlist('gallery_images'):
+                ProjectGallery.objects.create(project=self.object, image=image)
+        messages.success(self.request, "Project saved.")
+        return redirect(self.get_success_url())
+
+class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = PortfolioProject
+    form_class = PortfolioProjectForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_projects')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save()
+            # Handle adding new gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                ProjectGallery.objects.create(project=self.object, image=image)
+            # Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                ProjectGallery.objects.filter(id__in=delete_ids, project=self.object).delete()
+
+        messages.success(self.request, "Project updated.")
+        return redirect(self.get_success_url())
+
+class ProjectDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = PortfolioProject
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_projects')
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 5: CONTENT PUBLISHING ENGINE                                       ║
+# ║ Human Context: Handing the various forms of user expression (Logs, Essays, ║
+# ║ Vision Blocks) leveraging our unified ContentPost architecture.            ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+class ContentPostListView(PortfolioSecurityMixin, ListView):
+    model = ContentPost
+    template_name = 'dashboard/portfolio/content_list.html'
+
+class ContentPostCreateView(ContentPostSuccessUrlMixin, RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = ContentPost
+    form_class = ContentPostForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        requested_type = self.request.GET.get('type', 'ESSAY')
+        valid_types = [choice[0] for choice in ContentPost.PostType.choices]
+        if requested_type not in valid_types:
+            requested_type = 'ESSAY'
+        kwargs['post_type'] = requested_type
+        return kwargs
+
+class ContentPostUpdateView(ContentPostSuccessUrlMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = ContentPost
+    form_class = ContentPostForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if getattr(self, 'object', None):
+            kwargs['post_type'] = self.object.post_type
+        return kwargs
+
+class ContentPostDeleteView(ContentPostSuccessUrlMixin, PortfolioSecurityMixin, DeleteView):
+    model = ContentPost
+    template_name = 'dashboard/shared/confirm_delete.html'
+
+
+class GrowthLogListView(PortfolioSecurityMixin, ListView):
+    model = ContentPost
+    template_name = 'dashboard/portfolio/growth_log_list.html'
+    context_object_name = 'growth_logs'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(post_type='GROWTH_LOG')
+
+class EssayListView(PortfolioSecurityMixin, ListView):
+    model = ContentPost
+    template_name = 'dashboard/portfolio/essay_list.html'
+    context_object_name = 'essays'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(post_type='ESSAY')
+
+class VisionBlockListView(PortfolioSecurityMixin, ListView):
+    model = ContentPost
+    template_name = 'dashboard/portfolio/vision_block_list.html'
+    context_object_name = 'vision_blocks'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(post_type='VISION_BLOCK')
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 6: FUTURE NETWORKING (Intent & Opportunities)                      ║
+# ║ Human Context: Captures the user's career trajectory goals and ephemeral   ║
+# ║ needs (e.g. "Looking for a co-founder this weekend").                      ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+# --- JOB PREFERENCES ---
+class PreferenceListView(PortfolioSecurityMixin, ListView):
+    model = UnifiedJobPreference
+    template_name = 'dashboard/portfolio/preference_list.html'
+
+class PreferenceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = UnifiedJobPreference
+    form_class = JobPreferenceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_preferences')
+
+class PreferenceUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = UnifiedJobPreference
+    form_class = JobPreferenceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_preferences')
+
+class PreferenceDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = UnifiedJobPreference
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_preferences')
+
+
+# --- LIVE OPPORTUNITIES (The 10x Feature) ---
+class OpportunityListView(PortfolioSecurityMixin, ListView):
+    model = LiveOpportunity
+    template_name = 'dashboard/portfolio/opportunity_list.html'
+
+class OpportunityCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = LiveOpportunity
+    form_class = LiveOpportunityForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_opportunities')
+
+class OpportunityUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = LiveOpportunity
+    form_class = LiveOpportunityForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_opportunities')
+
+class OpportunityDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = LiveOpportunity
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_opportunities')
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 7: THE "RIGHT NOW" SOCIAL ECOSYSTEM                                ║
+# ║ Human Context: The living heartbeat of the platform. Handling the          ║
+# ║ creation of active status updates and the high-speed AJAX engagement API.  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+class RightNowListView(PortfolioSecurityMixin, ListView):
+    model = RightNowPost
+    template_name = 'dashboard/portfolio/right_now_list.html'
+    context_object_name = 'right_now_posts'
+
+class RightNowCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
+    model = RightNowPost
+    form_class = RightNowPostForm
+    template_name = 'dashboard/portfolio/right_now_form.html'
+    success_url = reverse_lazy('manage_right_now')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # 1. Get or create the user's portfolio and attach it
+            portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+            form.instance.profile = portfolio
+
+            # 2. Save the post (This triggers the metadata link scraping in the model)
+            self.object = form.save()
+
+            # 3. Handle multiple image uploads for the gallery
+            for image in self.request.FILES.getlist('gallery_images'):
+                RightNowMedia.objects.create(post=self.object, image=image)
+
+        messages.success(self.request, "Right Now update published successfully.")
+        return redirect(self.get_success_url())
+
+class RightNowUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = RightNowPost
+    form_class = RightNowPostForm
+    template_name = 'dashboard/portfolio/right_now_form.html'
+    success_url = reverse_lazy('manage_right_now')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # 1. Save the post (Triggers metadata refresh if the link changed)
+            self.object = form.save()
+
+            # 2. Handle adding new gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                RightNowMedia.objects.create(post=self.object, image=image)
+
+            # 3. Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                RightNowMedia.objects.filter(id__in=delete_ids, post=self.object).delete()
+
+        messages.success(self.request, "Right Now update modified.")
+        return redirect(self.get_success_url())
+
+class RightNowDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = RightNowPost
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_right_now')
+
+
+# --- PHASE 2: ENGAGEMENT API (Lightning Fast AJAX Endpoints) ---
+@login_required
+@require_POST
+def api_toggle_like(request, post_id):
+    """
+    Toggles a like on or off.
+    Returns the new count and boolean status.
+    """
+    post = get_object_or_404(RightNowPost, id=post_id)
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    # Try to get the like. If it exists, user is Unliking. If it doesn't, user is Liking.
+    like_qs = RightNowLike.objects.filter(post=post, profile=profile)
+
+    if like_qs.exists():
+        like_qs.delete()
+        is_liked = False
+    else:
+        RightNowLike.objects.create(post=post, profile=profile)
+        is_liked = True
+
+    # Refresh the post from the database to get the exact count updated by our Signals!
+    post.refresh_from_db()
+
+    return JsonResponse({
+        'status': 'success',
+        'is_liked': is_liked,
+        'likes_count': post.likes_count
+    })
+
+@login_required
+@require_POST
+def api_add_comment(request, post_id):
+    """
+    Accepts JSON payload with comment text and saves it.
+    Returns the fresh comment data to be injected into the UI instantly.
+    """
+    post = get_object_or_404(RightNowPost, id=post_id)
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    try:
+        data = json.loads(request.body)
+        body_text = data.get('body', '').strip()
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+
+    if not body_text:
+        return JsonResponse({'status': 'error', 'message': 'Comment cannot be empty'}, status=400)
+
+    # Create the comment
+    comment = RightNowComment.objects.create(
+        post=post,
+        author=profile,
+        body=body_text
+    )
+
+    post.refresh_from_db()  # Get the new comment count
+
+    # Return the newly created comment data so JS can build it on the screen
+    avatar_url = profile.user.avatar.url if profile.user.avatar else None
+
+    return JsonResponse({
+        'status': 'success',
+        'comments_count': post.comments_count,
+        'comment': {
+            'id': str(comment.id),
+            'author_name': profile.user.full_name or "Unknown",
+            'author_url': profile.user.get_absolute_url() if hasattr(profile.user, 'get_absolute_url') else '#',
+            'author_avatar': avatar_url,
+            'body': comment.body,
+            'time_ago': "Just now"
+        }
+    })
+
+@require_GET
+def api_get_comments(request, post_id):
+    """
+    Fetches all comments for a specific post when the user clicks the comment button.
+    """
+    post = get_object_or_404(RightNowPost, id=post_id)
+    comments = RightNowComment.objects.filter(post=post).select_related('author__user')
+
+    comments_data = []
+    for comment in comments:
+        avatar_url = comment.author.user.avatar.url if comment.author.user.avatar else None
+
+        comments_data.append({
+            'id': str(comment.id),
+            'author_name': comment.author.user.full_name or "Unknown",
+            'author_url': comment.author.user.get_absolute_url() if hasattr(comment.author.user, 'get_absolute_url') else '#',
+            'author_avatar': avatar_url,
+            'body': comment.body,
+            # Simple formatting for older comments
+            'time_ago': comment.created_at.strftime("%b %d, %Y")
+        })
+
+    return JsonResponse({
+        'status': 'success',
+        'comments': comments_data
+    })
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 8: PERSONAL NETWORK & SOCIALS                                      ║
+# ║ Human Context: Managing the user's external links and contact preferences. ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+class NetworkListView(LoginRequiredMixin, ListView):
+    """Displays both Social Links and Contact Methods for the user."""
+    template_name = 'dashboard/portfolio/network_list.html'
+    context_object_name = 'socials'
+
+    def get_queryset(self):
+        return UniversalSocialLink.objects.filter(user=self.request.user).order_by('order')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['contacts'] = UniversalContactMethod.objects.filter(user=self.request.user).order_by('-created_at')
+        return ctx
+
+# --- SOCIAL LINKS ---
+class SocialCreateView(LoginRequiredMixin, CreateView):
+    model = UniversalSocialLink
+    form_class = SocialLinkForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_network')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class SocialUpdateView(LoginRequiredMixin, UpdateView):
+    model = UniversalSocialLink
+    form_class = SocialLinkForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_network')
+
+    def get_queryset(self):
+        return UniversalSocialLink.objects.filter(user=self.request.user)
+
+class SocialDeleteView(LoginRequiredMixin, DeleteView):
+    model = UniversalSocialLink
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_network')
+
+    def get_queryset(self):
+        return UniversalSocialLink.objects.filter(user=self.request.user)
+
+# --- CONTACT METHODS ---
+class ContactCreateView(LoginRequiredMixin, CreateView):
+    model = UniversalContactMethod
+    form_class = ContactMethodForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_network')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class ContactUpdateView(LoginRequiredMixin, UpdateView):
+    model = UniversalContactMethod
+    form_class = ContactMethodForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('manage_network')
+
+    def get_queryset(self):
+        return UniversalContactMethod.objects.filter(user=self.request.user)
+
+class ContactDeleteView(LoginRequiredMixin, DeleteView):
+    model = UniversalContactMethod
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_network')
+
+    def get_queryset(self):
+        return UniversalContactMethod.objects.filter(user=self.request.user)
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 9: COMPANY SETUP & ADMINISTRATION                                  ║
+# ║ Human Context: Specialized flow for Founders to initialize their startup,  ║
+# ║ manage high-level settings, media assets, and their internal team.         ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+@login_required
+def company_create(request):
+    """Special onboarding page for users claiming the FOUNDER role."""
+    if request.method == "POST":
+        name = request.POST.get('name')
+        sector = request.POST.get('sector')
+        location = request.POST.get('location')
+        mission_stmt = request.POST.get('mission_stmt', '')
+
+        if name and sector:
+            # 1. Create the Business Entity
+            company = Company.objects.create(
+                name=name, sector=sector, location=location, mission_stmt=mission_stmt
+            )
+
+            # 2. Make the user the OWNER
+            CompanyMember.objects.create(
+                company=company, user=request.user, role='OWNER', job_title='Founder / CEO', is_active=True
+            )
+
+            # 3. Update User Role
+            if request.user.role != 'FOUNDER':
+                request.user.role = 'FOUNDER'
+                request.user.save(update_fields=['role'])
+
+            messages.success(request, f"Welcome to the Founder's club! {company.name} has been created.")
+
+            # 🚨 FIX: Redirect to the PRIVATE ADMIN DASHBOARD, not the public profile!
+            return redirect('company_admin_dashboard', slug=company.slug)
+
+        else:
+            messages.error(request, "Company Name and Sector are required.")
+
+    return render(request, 'profiles/company_create.html')
+
+
+class CompanyDashboardView(CompanyContextMixin, DetailView):
+    """Main administrative dashboard for managing a company."""
+    model = Company
+    template_name = 'dashboard/company/admin_dashboard.html'
+
+    def get_object(self):
+        return self.get_company()
+
+
+class CompanyEditView(LoginRequiredMixin, UpdateView):
+    """Class-based view for editing a company profile, perfectly matching urls.py."""
+    model = Company
+    form_class = CompanyProfileUpdateForm
+    template_name = 'dashboard/company/generic_form.html'
+
+    def get_object(self, queryset=None):
+        company = get_object_or_404(Company, slug=self.kwargs['slug'])
+        # Security Check: Ensure user is OWNER or ADMIN
+        if not CompanyMember.objects.filter(company=company, user=self.request.user, is_active=True, role__in=['OWNER', 'ADMIN']).exists():
+            raise PermissionDenied("You do not have administrative access to this company.")
+        return company
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['company'] = self.get_object()  # Pass company to template context
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Company profile updated successfully!")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('company_public_profile', kwargs={'slug': self.object.slug})
+
+
+@login_required
+@require_POST
+def company_quick_update(request, slug):
+    """AJAX endpoint for the Command Center on the Company Dashboard."""
+    try:
+        # Verify ownership
+        company = get_object_or_404(Company, slug=slug)
+        if not CompanyMember.objects.filter(company=company, user=request.user, role__in=['OWNER', 'ADMIN'], is_active=True).exists():
+            return JsonResponse({'status': 'error', 'message': 'Permission denied'}, status=403)
+
+        # Parse JSON
+        data = json.loads(request.body)
+        company.is_hiring = bool(data.get('is_hiring', False))
+        company.looking_for = data.get('looking_for', 'BUILDING')
+        company.save(update_fields=['is_hiring', 'looking_for'])
+
+        return JsonResponse({'status': 'success', 'message': 'Company updated'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+@login_required
+def company_media_manage(request, slug):
+    """AJAX compatible Company Media Manager."""
+    company = get_object_or_404(Company, slug=slug, members__user=request.user)
+
+    if request.method == 'POST':
+        if 'logo' in request.FILES:
+            company.logo = request.FILES['logo']
+            company.save()
+            return JsonResponse({'status': 'success', 'message': 'Logo updated.'})
+        elif 'cover_image' in request.FILES:
+            company.cover_image = request.FILES['cover_image']
+            company.save()
+            return JsonResponse({'status': 'success', 'message': 'Cover updated.'})
+        elif request.POST.get('action') == 'remove_logo':
+            company.logo.delete(save=True)
+            return JsonResponse({'status': 'success', 'message': 'Logo removed.'})
+        elif request.POST.get('action') == 'remove_cover':
+            company.cover_image.delete(save=True)
+            return JsonResponse({'status': 'success', 'message': 'Cover removed.'})
+        return JsonResponse({'status': 'error'}, status=400)
+
+    return render(request, 'dashboard/company/media_manage.html', {'company': company})
+
+
+@login_required
+def company_team_manage(request, slug):
+    """Handles adding new team members to the company."""
+    company = get_object_or_404(Company, slug=slug)
+
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role='OWNER').exists():
+        raise PermissionDenied("Only the Company Owner can manage the team.")
+
+    if request.method == 'POST':
+        form = AddCompanyMemberForm(request.POST)
+        if form.is_valid():
+            raw_id = form.cleaned_data['user_identifier'].strip().replace(" ", "")
+
+            # Intelligent search covering ID variations and phone number formats
+            search_variations = [raw_id]
+            if raw_id.startswith('0'):
+                search_variations.append(f"+251{raw_id[1:]}")
+            elif raw_id.startswith('+251'):
+                search_variations.append(f"0{raw_id[4:]}")
+
+            target_user = CustomUser.objects.filter(Q(corelink_id=raw_id) | Q(phone_number__in=search_variations)).first()
+
+            if target_user:
+                CompanyMember.objects.update_or_create(
+                    company=company, user=target_user,
+                    defaults={'role': form.cleaned_data['role'], 'job_title': form.cleaned_data['job_title'], 'is_active': True}
+                )
+                messages.success(request, f"Team member updated successfully.")
+            else:
+                messages.error(request, "User not found. Please verify the ID or Phone Number.")
+            return redirect('company_team_manage', slug=company.slug)
+
+    return render(request, 'dashboard/company/team_manage.html', {
+        'company': company,
+        'form': AddCompanyMemberForm(),
+        'team': company.members.filter(is_active=True).select_related('user').order_by('role')
+    })
+
+
+@login_required
+@require_POST
+def company_team_remove(request, slug, member_id):
+    """Revokes active access for a team member and sets them to ALUMNI."""
+    company = get_object_or_404(Company, slug=slug)
+
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role='OWNER').exists():
+        raise PermissionDenied("Only the Company Owner can revoke access.")
+
+    member = get_object_or_404(CompanyMember, id=member_id, company=company)
+
+    if member.user == request.user:
+        messages.error(request, "You cannot remove yourself.")
+    else:
+        member.is_active = False
+        member.role = 'ALUMNI'
+        member.save()
+        messages.success(request, "Revoked team member access successfully.")
+
+    return redirect('company_team_manage', slug=company.slug)
+
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║ CLUSTER 10: COMPANY CMS (Services, Milestones, News, Socials)              ║
+# ║ Human Context: Managing the public-facing content blocks of the company.   ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+# --- SERVICES ---
+class ServiceListView(CompanyContextMixin, ListView):
+    model = CompanyService
+    template_name = 'dashboard/company/service_list.html'
+    context_object_name = 'services'
+
+    def get_queryset(self):
+        return CompanyService.objects.filter(company=self.get_company()).order_by('order')
+
+class ServiceCreateView(CompanyContextMixin, CreateView):
+    model = CompanyService
+    form_class = CompanyServiceForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_services')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            form.instance.company = self.get_company()
+            self.object = form.save()
+            # Handle multiple gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                ServiceGalleryImage.objects.create(service=self.object, image=image)
+        messages.success(self.request, "Service added successfully!")
+        return redirect(self.get_success_url())
+
+class ServiceUpdateView(CompanyContextMixin, UpdateView):
+    model = CompanyService
+    form_class = CompanyServiceForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_services')
+
+    def get_queryset(self):
+        return CompanyService.objects.filter(company=self.get_company())
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save()
+            # Handle adding new gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                ServiceGalleryImage.objects.create(service=self.object, image=image)
+            # Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                ServiceGalleryImage.objects.filter(id__in=delete_ids, service=self.object).delete()
+        messages.success(self.request, "Service updated successfully!")
+        return redirect(self.get_success_url())
+
+class ServiceDeleteView(CompanyContextMixin, DeleteView):
+    model = CompanyService
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_services')
+
+    def get_queryset(self):
+        return CompanyService.objects.filter(company=self.get_company())
+
+
+# --- MILESTONES ---
+class MilestoneListView(CompanyContextMixin, ListView):
+    model = CompanyMilestone
+    template_name = 'dashboard/company/milestone_list.html'
+    context_object_name = 'milestones'
+
+    def get_queryset(self):
+        return CompanyMilestone.objects.filter(company=self.get_company()).order_by('-year')
+
+class MilestoneCreateView(CompanyContextMixin, CreateView):
+    model = CompanyMilestone
+    form_class = CompanyMilestoneForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_milestones')
+
+    def form_valid(self, form):
+        form.instance.company = self.get_company()
+        return super().form_valid(form)
+
+class MilestoneUpdateView(CompanyContextMixin, UpdateView):
+    model = CompanyMilestone
+    form_class = CompanyMilestoneForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_milestones')
+
+    def get_queryset(self):
+        return CompanyMilestone.objects.filter(company=self.get_company())
+
+class MilestoneDeleteView(CompanyContextMixin, DeleteView):
+    model = CompanyMilestone
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_milestones')
+
+    def get_queryset(self):
+        return CompanyMilestone.objects.filter(company=self.get_company())
+
+
+# --- NEWS ARTICLES ---
+class NewsListView(CompanyContextMixin, ListView):
+    model = CompanyNews
+    template_name = 'dashboard/company/news_list.html'
+    context_object_name = 'news_list'
+
+    def get_queryset(self):
+        return CompanyNews.objects.filter(company=self.get_company()).order_by('-published_date')
+
+class NewsCreateView(CompanyContextMixin, CreateView):
+    model = CompanyNews
+    form_class = CompanyNewsForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_news_list')
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            form.instance.company = self.get_company()
+            if not form.instance.slug:
+                form.instance.slug = f"{slugify(form.instance.title)}-{self.get_company().id.hex[:4]}"
+            self.object = form.save()
+            # Handle multiple gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                NewsGalleryImage.objects.create(news=self.object, image=image)
+        messages.success(self.request, "Article published successfully!")
+        return redirect(self.get_success_url())
+
+class NewsUpdateView(CompanyContextMixin, UpdateView):
+    model = CompanyNews
+    form_class = CompanyNewsForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_news_list')
+
+    def get_queryset(self):
+        return CompanyNews.objects.filter(company=self.get_company())
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save()
+            # Handle adding new gallery images
+            for image in self.request.FILES.getlist('gallery_images'):
+                NewsGalleryImage.objects.create(news=self.object, image=image)
+            # Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                NewsGalleryImage.objects.filter(id__in=delete_ids, news=self.object).delete()
+        messages.success(self.request, "Article updated successfully!")
+        return redirect(self.get_success_url())
+
+class NewsDeleteView(CompanyContextMixin, DeleteView):
+    model = CompanyNews
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('manage_news_list')
+
+    def get_queryset(self):
+        return CompanyNews.objects.filter(company=self.get_company())
+
+class NewsDetailView(DetailView):
+    """
+    Publicly accessible view for reading a specific Company News article.
+    """
+    model = CompanyNews
+    template_name = 'profiles/public_news_detail.html'
+    context_object_name = 'article'
+
+    def get_queryset(self):
+        # Ensure only published news articles can be viewed publicly
+        return CompanyNews.objects.filter(is_published=True)
+
+
+# --- COMPANY CONTACTS & SOCIALS ---
+class ManageCompanyNetworkView(CompanyContextMixin, ListView):
+    template_name = 'dashboard/company/network_list.html'
+    context_object_name = 'socials'
+
+    def get_queryset(self):
+        return CompanySocialLink.objects.filter(company=self.get_company()).order_by('order')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['contacts'] = CompanyContactMethod.objects.filter(company=self.get_company()).order_by('-created_at')
+        return ctx
+
+class CompanyContactCreateView(CompanyContextMixin, CreateView):
+    model = CompanyContactMethod
+    form_class = CompanyContactMethodForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_company_network')
+
+    def form_valid(self, form):
+        form.instance.company = self.get_company()
+        return super().form_valid(form)
+
+class CompanyContactUpdateView(CompanyContextMixin, UpdateView):
+    model = CompanyContactMethod
+    form_class = CompanyContactMethodForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_company_network')
+
+class CompanySocialCreateView(CompanyContextMixin, CreateView):
+    model = CompanySocialLink
+    form_class = CompanySocialLinkForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_company_network')
+
+    def form_valid(self, form):
+        form.instance.company = self.get_company()
+        return super().form_valid(form)
+
+class CompanySocialUpdateView(CompanyContextMixin, UpdateView):
+    model = CompanySocialLink
+    form_class = CompanySocialLinkForm
+    template_name = 'dashboard/company/generic_form.html'
+    success_url = reverse_lazy('manage_company_network')
+

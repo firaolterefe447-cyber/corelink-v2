@@ -1,0 +1,479 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!--
+    ==============================================
+    DESKTOP NAVIGATION (Professional & Clean)
+    ==============================================
+-->
+<div class="hidden md:flex fixed top-4 left-0 right-0 z-50 justify-center pointer-events-none px-4 pt-safe transition-all duration-300">
+
+    {% if not is_inspector %}
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] rounded-full transition-all duration-300 gap-1">
+
+        <!-- 1. Dashboard -->
+        <a href="{% url 'dashboard' %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Dashboard" %}
+        </a>
+
+        <!-- 2. My Workspace / Activities -->
+        <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Activities" %}
+        </a>
+
+        <!-- 3. The Pool (ACTIVE) -->
+        <div class="px-5 py-2 rounded-full text-[13px] font-semibold bg-[#0A66C2] text-white shadow-sm cursor-default flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4"></i> <span class="hidden lg:inline">{% trans "Network" %}</span>
+        </div>
+
+        <!-- 4. Jobs -->
+        <a href="{% url 'opportunities:feed' %}" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="briefcase" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Opportunities" %}
+        </a>
+
+        <!-- 5. Profile -->
+        <a href="{{ user.get_absolute_url }}" target="_blank" class="px-4 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2 group">
+            <i data-lucide="user-circle" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "My Profile" %} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+
+        <div class="w-px h-5 bg-[#E2E8F0] mx-1"></div>
+
+        <!-- Language Switcher -->
+        <div class="relative group pointer-events-auto">
+            <button class="p-2.5 px-3 rounded-full text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition-all flex items-center gap-1.5" title="{% trans 'Change Language' %}">
+                <span class="text-[12px] font-semibold uppercase tracking-wider hidden lg:block">{{ request.LANGUAGE_CODE|upper }}</span>
+            </button>
+            <div class="absolute top-full right-0 pt-4 w-56 opacity-0 pointer-events-none transform translate-y-2 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 z-[100]">
+                <form action="{% url 'set_language' %}" method="post" class="bg-white border border-[#E2E8F0] shadow-lg rounded-xl p-2 flex flex-col gap-1 relative">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" name="language" value="en" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'en' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "English" %} {% if request.LANGUAGE_CODE == 'en' %}<span class="text-[10px] font-bold text-[#94A3B8]">EN</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="am" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'am' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "አማርኛ" %} {% if request.LANGUAGE_CODE == 'am' %}<span class="text-[10px] font-bold text-[#94A3B8]">AM</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="om" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] transition-colors w-full text-left {% if request.LANGUAGE_CODE == 'om' %}font-medium text-[#0A66C2] bg-[#F0F6FF]{% else %}text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#0F172A]{% endif %}">
+                        {% trans "Afaan Oromoo" %} {% if request.LANGUAGE_CODE == 'om' %}<span class="text-[10px] font-bold text-[#94A3B8]">OM</span>{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-px h-5 bg-[#E2E8F0] mx-1"></div>
+
+        <button onclick="copyExactProfileLink('{{ user.get_absolute_url }}')" class="p-2.5 rounded-full text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition-all flex items-center gap-2" title="{% trans 'Share Profile' %}">
+            <span class="text-[13px] font-semibold px-1">{% trans "Share" %}</span>
+        </button>
+    </div>
+    {% else %}
+    <!-- Inspector Back Button -->
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white border border-[#E2E8F0] shadow-sm rounded-full transition-all duration-300 gap-1">
+        <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="px-5 py-2 rounded-full text-[13px] font-semibold text-[#64748B] hover:text-[#0A66C2] hover:bg-[#F0F6FF] transition-all flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Pool Browser" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!--
+    ==============================================
+    MOBILE TOP ACTIONS (High-End & Balanced)
+    ==============================================
+-->
+<div class="fixed top-4 left-0 right-0 z-50 flex justify-between items-center px-4 md:hidden pointer-events-none pt-safe gap-2">
+
+    <!-- LEFT SIDE: Sleek Language Toggle -->
+    <button onclick="toggleMobileLangDrawer()" class="pointer-events-auto px-4 py-2.5 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#334155] hover:bg-[#F8FAFC] rounded-full text-[13px] font-semibold flex items-center gap-2 transition-colors">
+        {{ request.LANGUAGE_CODE|upper }}
+    </button>
+
+    <!-- RIGHT SIDE: My Inbox & Actions -->
+    <div class="flex items-center gap-2 pointer-events-auto">
+        {% if is_inspector %}
+        <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="w-10 h-10 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#475569] hover:text-[#0A66C2] rounded-full flex items-center justify-center transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </a>
+        {% endif %}
+
+        {% if not is_inspector %}
+        <!-- Premium 'My Inbox' Button -->
+        <a href="{% url 'chat_hub' %}" class="relative px-5 py-2.5 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[13px] font-bold transition-all flex items-center gap-2 active:scale-95">
+            <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[20px] h-[20px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-white shadow-sm">
+                    {{ unread_msg_count }}
+                </span>
+            {% endif %}
+        </a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<!-- TYPOGRAPHY -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+
+        /* Ultra Modern Slate & White Palette */
+        --bg-color: #F8FAFC;
+        --surface: #FFFFFF;
+        --text-dark: #0F172A;
+        --text-muted: #64748B;
+        --primary: #0A66C2;
+        --border-hard: #E2E8F0;
+        --ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background: var(--bg-color);
+        color: var(--text-dark);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, h5, h6, .nav-heading {
+        font-family: var(--font-heading);
+        letter-spacing: -0.015em;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 6rem); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    /* Ultra Clean Grid Cards */
+    .structural-card {
+        background: var(--surface);
+        border: 1px solid var(--border-hard);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -2px rgba(0,0,0,0.02);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -8px rgba(0,0,0,0.06);
+        border-color: #CBD5E1;
+    }
+</style>
+
+<!-- MAIN CONTAINER -->
+<div class="relative z-10 max-w-[80rem] mx-auto pb-safe min-h-screen pt-24 md:pt-32">
+
+    <!--
+        ==============================================
+        MASTER DISCOVERY TOGGLE
+        ==============================================
+    -->
+    <div class="w-full flex flex-col items-center mb-6 md:mb-10 relative z-30 px-4 mt-2">
+        <div class="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-sm flex items-center w-full sm:w-max">
+            <!-- INDIVIDUALS (ACTIVE) -->
+            <div class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-bold tracking-wide flex items-center justify-center gap-2 bg-[#F0F6FF] text-[#0A66C2] cursor-default border border-transparent shadow-sm">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Individuals" %}
+            </div>
+
+            <!-- TEAMS (LINK) -->
+            <a href="{% url 'team_nexus' %}" class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-semibold tracking-wide transition-all flex items-center justify-center gap-2 text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC]">
+                <i data-lucide="boxes" class="w-4 h-4"></i> {% trans "Teams" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- FEED HEADER & DESKTOP INBOX -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 px-4 md:px-8">
+        <div class="max-w-2xl w-full">
+            <h1 class="text-[24px] md:text-[32px] font-extrabold text-[#0F172A] tracking-tight mb-2 leading-tight nav-heading">
+                {% trans "Community Posts" %}
+            </h1>
+            <p class="text-[14.5px] md:text-[15.5px] text-[#475569] font-medium leading-relaxed">
+                {% trans "Discover and connect with professionals, founders, and students in real-time based on what they are working on and exactly who they are looking to meet right now." %}
+            </p>
+        </div>
+
+        <a href="{% url 'chat_hub' %}" class="hidden md:flex relative items-center gap-2 px-6 py-3 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[14px] font-bold transition-all shrink-0 active:scale-95">
+            <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[22px] h-[22px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-[#0A66C2] shadow-sm">
+                    {{ unread_msg_count }}
+                </span>
+            {% endif %}
+        </a>
+    </div>
+
+    <!-- MAIN GRID (Masonry Layout) -->
+    <div class="px-4 md:px-8">
+        <div id="users-grid" class="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6">
+
+            {% for network_user in network_users %}
+
+                {% with profile=network_user.visionary_profile|default:network_user.founder_profile|default:network_user.expert_profile %}
+                <!-- ONLY DISPLAY USERS WHO HAVE EXPLICITLY FILLED OUT THEIR "RIGHT NOW" FIELD -->
+                {% if profile and profile.right_now %}
+
+                <!-- User Card -->
+                <div class="user-card structural-card break-inside-avoid inline-block w-full mb-5 md:mb-6 p-5 md:p-6 flex flex-col group relative"
+                     style="{% if user.role == 'VISIONARY' and network_user.role != 'VISIONARY' %}display: none; opacity: 0; transform: scale(0.98) translateY(4px);{% else %}display: flex; opacity: 1; transform: scale(1) translateY(0);{% endif %}"
+                     data-role="{{ network_user.role }}"
+                     data-time="{% if profile.last_signal_update %}{{ profile.last_signal_update|date:'U' }}{% else %}0{% endif %}">
+
+                    <!-- A. IDENTITY ROW -->
+                    <div class="flex items-start gap-4 mb-5 w-full">
+                        <!-- Avatar Circle -->
+                        <div class="shrink-0 h-[52px] w-[52px] rounded-full bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] flex items-center justify-center relative shadow-sm">
+                            {% if network_user.avatar %}
+                                <img src="{{ network_user.get_avatar_url }}" alt="{{ network_user.display_name }}" class="h-full w-full object-cover">
+                            {% else %}
+                                <span class="text-[22px] font-extrabold text-[#94A3B8]">
+                                    {{ network_user.display_name|slice:":1" }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Name & Roles -->
+                        <div class="flex-1 min-w-0 pt-0.5">
+                            <div class="flex items-center justify-between gap-2 w-full mb-1">
+                                <h3 class="font-bold text-[#0F172A] text-[17px] leading-tight truncate hover:text-[#0A66C2] transition-colors break-words w-full">
+                                    {{ network_user.display_name }}
+                                </h3>
+                                <!-- Top Right Role Badge -->
+                                <span class="px-2 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                                    {% if network_user.role == 'VISIONARY' %}{% trans "Student" %}
+                                    {% elif network_user.role == 'FOUNDER' %}{% trans "Founder" %}
+                                    {% elif network_user.role == 'EXPERT' %}{% trans "Professional" %}{% endif %}
+                                </span>
+                            </div>
+
+                            <!-- Title / Headline -->
+                            <div class="text-[13px] font-medium text-[#64748B] truncate flex items-center gap-1.5 w-full">
+                                {% if network_user.role == 'VISIONARY' %}
+                                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
+                                    <span class="truncate break-words">{% if profile.current_title %}{{ profile.current_title }}{% else %}{% trans "Exploring opportunities" %}{% endif %}</span>
+                                {% elif network_user.role == 'EXPERT' %}
+                                    <i data-lucide="briefcase" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
+                                    <span class="truncate break-words">
+                                        {% for headline in profile.headlines.all %}{% if headline.is_primary %}{{ headline.title }}{% endif %}{% endfor %}
+                                    </span>
+                                {% elif network_user.role == 'FOUNDER' %}
+                                    <i data-lucide="building-2" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
+                                    <span class="truncate break-words">{% if profile.sector %}{{ profile.sector }}{% else %}{% trans "Building the future" %}{% endif %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- B. THE CURRENT SIGNAL / NARRATIVE -->
+                    <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] mb-4 relative w-full group-hover:border-[#CBD5E1] transition-colors">
+                        <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#0A66C2] rounded-l-xl opacity-90"></div>
+                        <p class="text-[14.5px] text-[#0F172A] leading-relaxed whitespace-pre-line break-words pl-1.5 font-medium">
+                            {{ profile.right_now }}
+                        </p>
+                    </div>
+
+                    <!-- C. STRUCTURED METADATA (Looking For - No Icons, Fully Visible) -->
+                    <div class="mb-6 w-full">
+                        <div class="bg-blue-50/40 px-4 py-3 rounded-lg border border-blue-100/50">
+                            <span class="text-[12px] font-bold text-[#64748B] uppercase tracking-wider block mb-0.5">{% trans "Looking For" %}</span>
+                            <span class="text-[14.5px] font-semibold text-[#0F172A] leading-snug break-words">
+                                {{ profile.get_current_search_display|default:_("Opportunities & Networking") }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- D. FOOTER: TIMESTAMP & ACTIONS -->
+                    <div class="pt-4 border-t border-[#E2E8F0] flex items-center justify-between w-full mt-auto">
+                        <span class="signal-time text-[11.5px] font-bold text-[#94A3B8] uppercase tracking-wider" data-timestamp="{{ profile.last_signal_update|date:'c' }}"></span>
+
+                        <div class="flex items-center gap-2">
+                            <!-- See Profile Button -->
+                            <a href="{{ network_user.get_absolute_url }}" class="h-9 px-3.5 bg-white border border-[#E2E8F0] text-[#475569] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] rounded-lg text-[13px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+                                <i data-lucide="user" class="w-4 h-4 text-[#94A3B8]"></i> {% trans "Profile" %}
+                            </a>
+
+                            <!-- Message Button -->
+                            {% if request.user != network_user %}
+                            <a href="{% url 'chat_with' network_user.id %}" class="h-9 px-3.5 bg-[#0A66C2] border border-transparent text-white hover:bg-[#004182] rounded-lg text-[13px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-[#0A66C2]/20 active:scale-95">
+                                <i data-lucide="send" class="w-4 h-4"></i> {% trans "Message" %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+                {% endif %}
+                {% endwith %}
+            {% endfor %}
+
+            <!-- Empty State -->
+            <div id="filter-empty-state" class="hidden structural-card w-full py-16 flex-col items-center justify-center text-center col-span-full bg-white">
+                <div class="w-16 h-16 bg-[#F8FAFC] rounded-full flex items-center justify-center mb-4 text-[#94A3B8] border border-[#E2E8F0]">
+                    <i data-lucide="search-x" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-[18px] font-bold text-[#0F172A] mb-2 nav-heading">{% trans "No Active Posts" %}</h3>
+                <p class="text-[14.5px] text-[#64748B]">{% trans "Be the first to update your status and appear here." %}</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION
+     ============================================== -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-[#E2E8F0] flex justify-between items-center w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box;">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Dashboard" %}</span>
+    </a>
+
+    <!-- Role-Based Workspace Navigation (Mobile) -->
+    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="layers" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Activities" %}</span>
+    </a>
+
+    <a href="#" class="flex flex-col items-center justify-center w-1/5 h-full text-[#0A66C2] relative">
+        <div class="absolute top-0 w-full h-[3px] bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="users" class="w-6 h-6"></i>
+        <span class="text-[10px] font-bold mt-1">{% trans "Network" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="briefcase" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="{{ user.get_absolute_url }}" target="_blank" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
+        <i data-lucide="user-circle" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium mt-1">{% trans "My Profile" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- MOBILE LANGUAGE DRAWER -->
+<div id="mobile-lang-backdrop" onclick="toggleMobileLangDrawer()" class="md:hidden fixed inset-0 bg-black/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 ease-out backdrop-blur-sm"></div>
+
+<div id="mobile-lang-drawer" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[120] transform translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex flex-col max-h-[85vh] w-full">
+    <div class="w-full pt-4 pb-2 flex justify-center shrink-0 cursor-pointer" onclick="toggleMobileLangDrawer()">
+        <div class="w-12 h-1.5 bg-[#E2E8F0] rounded-full"></div>
+    </div>
+    <div class="px-6 pb-4 shrink-0 flex items-center justify-between border-b border-[#E2E8F0] w-full">
+        <h3 class="font-bold text-[18px] text-[#0F172A] flex items-center gap-2">
+            <i data-lucide="globe" class="w-5 h-5 text-[#0A66C2]"></i> {% trans "Select Language" %}
+        </h3>
+        <button onclick="toggleMobileLangDrawer()" class="w-8 h-8 flex items-center justify-center bg-[#F8FAFC] text-[#64748B] rounded-full active:scale-95 transition-transform border border-[#E2E8F0]">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    </div>
+    <form action="{% url 'set_language' %}" method="post" class="px-4 py-4 overflow-y-auto custom-scroll space-y-2 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'en' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'en' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "English" %}</span>
+        </button>
+        <button type="submit" name="language" value="am" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'am' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'am' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "አማርኛ" %}</span>
+        </button>
+        <button type="submit" name="language" value="om" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'om' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
+            <span class="{% if request.LANGUAGE_CODE == 'om' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "Afaan Oromoo" %}</span>
+        </button>
+    </form>
+    <div class="h-6"></div>
+</div>
+
+<!-- TOASTS -->
+<div id="share-toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-[#0F172A] text-white px-6 py-3 rounded-full shadow-xl transition-all duration-300 transform translate-y-20 opacity-0 z-[100] text-[13px] font-semibold flex items-center gap-2 pointer-events-none w-max max-w-[90vw]">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i> {% trans "Link Copied to Clipboard" %}
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    function toggleMobileLangDrawer() {
+        const bd = document.getElementById('mobile-lang-backdrop');
+        const dw = document.getElementById('mobile-lang-drawer');
+        if (dw.classList.contains('translate-y-full')) {
+            bd.classList.remove('opacity-0', 'pointer-events-none');
+            bd.classList.add('opacity-100', 'pointer-events-auto');
+            dw.classList.remove('translate-y-full');
+            document.body.style.overflow = 'hidden';
+        } else {
+            bd.classList.add('opacity-0', 'pointer-events-none');
+            bd.classList.remove('opacity-100', 'pointer-events-auto');
+            dw.classList.add('translate-y-full');
+            document.body.style.overflow = '';
+        }
+    }
+
+    let shareToastTimeout;
+    function copyExactProfileLink(djangoUrlPath) {
+        const fullUrl = window.location.origin + djangoUrlPath;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            const toast = document.getElementById('share-toast');
+            clearTimeout(shareToastTimeout);
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            if (navigator.vibrate) navigator.vibrate(10);
+            shareToastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        });
+    }
+
+    // Dynamic Timestamp Parser logic
+    function timeAgo(dateString) {
+        if (!dateString) return "{% trans 'Just now' %}";
+        const date = new Date(dateString);
+        if (isNaN(date)) return "{% trans 'Just now' %}";
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return "{% trans 'Just now' %}";
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return minutes + "{% trans 'm ago' %}";
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return hours + "{% trans 'h ago' %}";
+        return Math.floor(hours / 24) + "{% trans 'd ago' %}";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('users-grid');
+        const emptyState = document.getElementById('filter-empty-state');
+        const userCardsNodeList = document.querySelectorAll('.user-card');
+
+        let visibleCount = 0;
+        userCardsNodeList.forEach(card => {
+            if (card.style.display !== 'none') visibleCount++;
+        });
+
+        if (visibleCount === 0 && emptyState) {
+            emptyState.classList.remove('hidden');
+            emptyState.classList.add('flex', 'opacity-100');
+        }
+
+        // Sort by recency using updated time property
+        let sortedCards = Array.from(userCardsNodeList).sort((a, b) => {
+            const timeA = parseInt(a.getAttribute('data-time'), 10) || 0;
+            const timeB = parseInt(b.getAttribute('data-time'), 10) || 0;
+            return timeB - timeA;
+        });
+
+        sortedCards.forEach(card => grid.appendChild(card));
+        if(emptyState) { grid.appendChild(emptyState); }
+
+        document.querySelectorAll('.signal-time').forEach(el => {
+            const ts = el.getAttribute('data-timestamp');
+            if(ts) el.textContent = timeAgo(ts);
+        });
+    });
+</script>
+{% endblock %}

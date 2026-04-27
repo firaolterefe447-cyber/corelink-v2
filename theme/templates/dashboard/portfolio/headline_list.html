@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<div class="hidden md:flex fixed top-8 left-0 right-0 z-[60] justify-center pointer-events-none px-4 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full">
+        <a href="{% url 'dashboard' %}" class="px-8 py-3 rounded-full text-[14px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 hover:-translate-y-0.5 transition-all flex items-center gap-2.5">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>{% trans "Back to Dashboard" %}</span>
+        </a>
+    </div>
+</div>
+<div class="fixed top-5 left-4 z-50 flex items-center md:hidden pointer-events-none animate-fade-in-down pt-safe">
+    <a href="{% url 'dashboard' %}" class="pointer-events-auto px-5 py-3 bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] text-slate-700 rounded-full flex items-center gap-2.5 transition-all font-bold text-[13px]">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> <span>{% trans "Back" %}</span>
+    </a>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<style>
+    body { background-color: #F8FAFC; color: #0F172A; }
+    .premium-card { background: #FFFFFF; border: 1px solid rgba(226, 232, 240, 0.6); border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.04); }
+    .btn-add { display: inline-flex; align-items: center; gap: 0.5rem; background: #0A66C2; color: white; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 9999px; font-size: 0.9rem; transition: all 0.2s; }
+    .btn-add:hover { background: #0052a3; transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(10,102,194,0.4); }
+</style>
+
+<div class="relative z-10 pt-28 md:pt-40 pb-20 px-4 md:px-8 min-h-screen max-w-[50rem] mx-auto animate-fade-in-up">
+    <div class="premium-card overflow-hidden">
+        
+        <!-- Header -->
+        <div class="px-6 py-8 md:px-10 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">{% trans "Your Headlines" %}</h1>
+                <p class="text-[14px] text-slate-500 font-medium mt-1">Manage the professional titles displayed on your profile.</p>
+            </div>
+            <a href="{% url 'headline_create' %}" class="btn-add shrink-0 self-start md:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Headline" %}
+            </a>
+        </div>
+
+        <!-- List -->
+        <div class="divide-y divide-slate-100">
+            {% for headline in object_list %}
+                <div class="p-6 md:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-lg font-bold text-slate-800">{{ headline.title }}</h3>
+                            {% if headline.is_primary %}
+                                <span class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100 rounded-full">Primary</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="{% url 'headline_edit' headline.pk %}" class="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Edit">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </a>
+                        <a href="{% url 'headline_delete' headline.pk %}" class="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all" title="Delete">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Empty State -->
+                <div class="p-12 text-center flex flex-col items-center">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="type" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">No Headlines Yet</h3>
+                    <p class="text-sm text-slate-500 mb-6 max-w-sm">Add a professional title (e.g., "Senior Developer" or "CS Student") so people know who you are.</p>
+                    <a href="{% url 'headline_create' %}" class="btn-add"><i data-lucide="plus" class="w-4 h-4"></i> Add Your First Headline</a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });</script>
+{% endblock %}

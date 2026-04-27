@@ -1,0 +1,49 @@
+<div class="fixed bottom-4 left-4 right-4 h-20 bg-slate-900/95 backdrop-blur-xl text-white rounded-2xl flex justify-between items-center px-8 z-[6000] shadow-2xl border border-white/10 ring-1 ring-black/50 animate-fade-in-up">
+
+    <!-- LEFT: Context Info -->
+    <div class="flex items-center gap-4">
+        <div class="p-3 bg-red-500/20 rounded-xl border border-red-500/30 text-red-400 animate-pulse">
+            <i data-lucide="eye" class="h-6 w-6"></i>
+        </div>
+        <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-red-400">Admin Mode Active</p>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                {{ target_user.display_name }}
+                <span class="px-2 py-0.5 rounded bg-white/10 text-xs font-mono">{{ target_user.role }}</span>
+            </h3>
+        </div>
+    </div>
+
+    <!-- CENTER: Status Toggles (HTMX) -->
+    <div class="flex items-center gap-4">
+        <!-- Verification Toggle -->
+        <button hx-post="{% url 'ops_toggle_verify' target_user.id %}"
+                hx-swap="outerHTML"
+                class="flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all {% if target_user.is_verified %}bg-emerald-500/20 text-emerald-400 border border-emerald-500/50{% else %}bg-slate-800 text-slate-400 border border-slate-700{% endif %}">
+            <i data-lucide="badge-check" class="h-4 w-4"></i>
+            {% if target_user.is_verified %}Verified{% else %}Unverified{% endif %}
+        </button>
+
+        <!-- Active Toggle -->
+        <button hx-post="{% url 'ops_toggle_active' target_user.id %}"
+                hx-swap="outerHTML"
+                class="flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all {% if target_user.is_active %}bg-blue-500/20 text-blue-400 border border-blue-500/50{% else %}bg-red-500/20 text-red-400 border border-red-500/50{% endif %}">
+            <i data-lucide="power" class="h-4 w-4"></i>
+            {% if target_user.is_active %}Active{% else %}Banned{% endif %}
+        </button>
+    </div>
+
+    <!-- RIGHT: Database Actions -->
+    <div class="flex items-center gap-3 pl-8 border-l border-white/10">
+        <!-- Link to Django Admin form -->
+        <a href="/admin/accounts/customuser/{{ target_user.id }}/change/" target="_blank" class="px-6 py-3 bg-white text-slate-900 font-bold rounded-xl hover:scale-105 transition-transform flex items-center gap-2 text-sm">
+            <i data-lucide="database" class="h-4 w-4"></i> Edit Raw DB
+        </a>
+
+        <!-- Exit button returns to the correct pool -->
+        <!-- FIX: Added 'target_user.role|lower' argument -->
+        <a href="{% url 'ops_pool_browser' target_user.role|lower %}" class="px-4 py-3 bg-slate-800 text-slate-300 font-bold rounded-xl hover:bg-slate-700 transition-colors text-sm">
+            Exit
+        </a>
+    </div>
+</div>

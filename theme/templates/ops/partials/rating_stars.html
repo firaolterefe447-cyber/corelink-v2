@@ -1,0 +1,50 @@
+<div class="bg-slate-900 border border-slate-700 p-4 rounded-xl flex items-center justify-between shadow-lg relative overflow-hidden transition-all duration-200 ease-in-out htmx-indicator-parent">
+
+    <!-- 1. LABEL -->
+    <div class="flex flex-col relative z-0">
+        <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Admin Rating</span>
+        <span class="text-xs text-slate-400 font-bold">
+            {% if current_rating > 0 %}
+                Score: <span class="text-white">{{ current_rating }} / 5</span>
+            {% else %}
+                <span class="text-slate-500">Not Rated</span>
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 2. INTERACTIVE STARS -->
+    <div class="flex gap-1 relative z-10">
+        {% for i in "12345" %}
+            <button
+                type="button"
+                hx-post="{% url 'ops_update_rating' target_user.id forloop.counter %}"
+                hx-target="#admin-rating-box"
+                hx-swap="innerHTML"
+                class="group p-1 transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+                title="{% if forloop.counter == current_rating %}Click to Revoke{% else %}Rate {{ forloop.counter }}{% endif %}">
+
+                <i data-lucide="star"
+                   class="w-8 h-8 transition-colors duration-200
+                   {% if forloop.counter <= current_rating %}
+                        fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]
+                   {% else %}
+                        fill-slate-800 text-slate-700 group-hover:fill-slate-600 group-hover:text-slate-500
+                   {% endif %}">
+                </i>
+            </button>
+        {% endfor %}
+    </div>
+
+    <!-- 3. SAFE LOADING STATE (Background Pulse Only) -->
+    <!-- This style only activates when HTMX is busy, dimming the background slightly -->
+    <style>
+        .htmx-request .htmx-indicator-parent {
+            opacity: 0.7;
+            pointer-events: none; /* Prevents double clicking while loading */
+        }
+    </style>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>

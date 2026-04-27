@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block meta_tags %}
+<!-- SOCIAL PREVIEW -->
+<meta property="og:title" content="{{ team.name }} | CoreLink Ethiopia">
+<meta property="og:description" content="{{ team.mission|truncatechars:100 }}">
+<meta property="og:url" content="https://corelink.et{{ request.path }}">
+<meta property="og:type" content="website">
+{% endblock %}
+
+{% block navbar %}
+<!-- ==============================================
+     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
+    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
+        <!-- Logo -->
+        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+
+        <!-- Desktop Navigation Links (Exactly 5 Links) -->
+        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
+            </a>
+
+            <!-- ACTIVE: Discover (Teams live here) -->
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm" aria-current="page">
+                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
+            </a>
+
+            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
+            </a>
+
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
+            </a>
+
+            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
+                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            </a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+</div>
+
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
+            <span class="text-slate-900">Core</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+    </div>
+    <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+        <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+    </button>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --app-bg: #F8FAFC;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    .custom-scroll::-webkit-scrollbar { display: none; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* PREMIUM PC CANVAS LAYOUT */
+    .app-canvas { max-width: 1400px; margin: 0 auto; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; position: relative; z-index: 10; }
+    @media (min-width: 768px) { .app-canvas { padding: 9rem 2.5rem 6rem 2.5rem; max-width: 1100px; } }
+
+    /* Premium Bento Cards */
+    .bento-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 2rem; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+    .bento-card:hover { box-shadow: 0 16px 40px rgba(10, 102, 194, 0.08); border-color: #CBD5E1; }
+
+    /* Unified Buttons */
+    .btn-action { background: linear-gradient(135deg, #0A66C2, #3b82f6); color: white; font-weight: 800; padding: 0.85rem 1.5rem; border-radius: 1.25rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
+    .btn-action:active { transform: scale(0.96); }
+
+    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; }
+    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
+    .btn-secondary:active { transform: scale(0.96); }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .delay-100 { animation-delay: 100ms; }
+
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    .drawer-closed { transform: translateY(100%); }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+</style>
+
+<main class="app-canvas animate-up">
+
+    <!-- DESKTOP TOP ACTIONS (LOCAL BACK NAV) -->
+    <div class="flex items-center justify-between mb-6 md:mb-8 w-full">
+        <a href="{% url 'team_nexus' %}" class="btn-secondary px-4 py-2.5 shadow-sm text-[13.5px]">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Discover" %}
+        </a>
+        <div class="flex items-center gap-3">
+            <button onclick="copyExactProfileLink()" class="btn-secondary px-4 py-2.5 shadow-sm text-[13.5px]">
+                <i data-lucide="share-2" class="w-4 h-4"></i> <span class="hidden sm:inline">{% trans "Share Team" %}</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:gap-8">
+
+        <!-- ==============================================
+             1. TEAM HERO CARD
+             ============================================== -->
+        <div class="bento-card relative group">
+            <!-- Aesthetic Top Glow -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0A66C2] to-cyan-400 opacity-90"></div>
+
+            <div class="p-6 md:p-10 border-b border-slate-100">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                    <span class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        {{ team.get_team_type_display }}
+                    </span>
+
+                    {% if team.is_recruiting %}
+                        <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {% trans "Recruiting" %}
+                        </span>
+                    {% else %}
+                        <span class="bg-slate-50 text-slate-500 border border-slate-200 px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm">
+                            <i data-lucide="lock" class="w-3.5 h-3.5"></i> {% trans "Closed" %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 md:items-center">
+                    <!-- Icon/Logo -->
+                    <div class="w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] bg-gradient-to-br from-blue-50 to-indigo-50 text-[#0A66C2] flex items-center justify-center font-black text-[32px] border border-blue-100 shadow-sm shrink-0">
+                        {{ team.name|slice:":2"|upper }}
+                    </div>
+
+                    <div class="flex-1">
+                        <h1 class="text-[28px] md:text-[36px] font-black text-slate-900 leading-tight tracking-tight mb-4 nav-heading">
+                            {{ team.name }}
+                        </h1>
+                        <!-- Leader Badge -->
+                        <a href="{{ team.leader.get_absolute_url }}" class="inline-flex items-center gap-3 bg-white border border-slate-200 p-1.5 pr-4 rounded-xl hover:border-[#0A66C2]/30 hover:bg-slate-50 transition-all group/leader shadow-sm w-max">
+                            {% if team.leader.avatar %}
+                                <img src="{{ team.leader.get_avatar_url }}" class="h-8 w-8 rounded-lg object-cover bg-slate-100">
+                            {% else %}
+                                <div class="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-[12px] font-black text-slate-400">
+                                    {{ team.leader.display_name|default:"U"|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{% trans "Founded By" %}</span>
+                                <span class="text-[13px] font-bold text-slate-800 leading-tight group-hover/leader:text-[#0A66C2]">{{ team.leader.display_name|default:"Unknown User" }}</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 2. MISSION & ROLES
+                 ============================================== -->
+            <div class="p-6 md:p-10 space-y-10 bg-slate-50/30">
+                <section>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="target" class="w-5 h-5 text-[#0A66C2]"></i>
+                        <h3 class="text-[18px] font-black text-slate-900 nav-heading">{% trans "Mission & Vision" %}</h3>
+                    </div>
+                    <p class="text-[14.5px] text-slate-600 font-medium leading-relaxed whitespace-pre-line bg-white p-5 md:p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        {{ team.mission }}
+                    </p>
+                </section>
+
+                <section>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-[#0A66C2]"></i>
+                        <h3 class="text-[18px] font-black text-slate-900 nav-heading">{% trans "Roles Needed" %}</h3>
+                    </div>
+                    <p class="text-[14.5px] text-slate-600 font-medium leading-relaxed whitespace-pre-line bg-white p-5 md:p-6 rounded-2xl border border-slate-100 shadow-sm">
+                        {{ team.roles_needed }}
+                    </p>
+                </section>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             3. SQUAD / MEMBERS
+             ============================================== -->
+        <div class="bento-card p-6 md:p-10 animate-up delay-100">
+            <h3 class="text-[18px] font-black text-slate-900 nav-heading mb-6 flex items-center justify-between">
+                <span>{% trans "Team Roster" %}</span>
+                <span class="text-[13px] font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-lg">{{ team.memberships.count }} {% trans "Members" %}</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for membership in team.memberships.all %}
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-200 hover:border-[#0A66C2]/30 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        {% if membership.user.avatar %}
+                            <img src="{{ membership.user.get_avatar_url }}" class="h-12 w-12 rounded-[1rem] object-cover border border-slate-100 shrink-0">
+                        {% else %}
+                            <div class="h-12 w-12 rounded-[1rem] bg-slate-100 flex items-center justify-center font-black text-slate-400 shrink-0">
+                                {{ membership.user.display_name|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                        <div class="flex flex-col min-w-0">
+                            <h4 class="text-[14.5px] font-extrabold text-slate-900 truncate group-hover:text-[#0A66C2] transition-colors">
+                                {{ membership.user.display_name }}
+                            </h4>
+                            {% if membership.role == 'LEADER' %}
+                                <span class="text-[10px] text-[#0A66C2] font-black uppercase tracking-widest mt-0.5 flex items-center gap-1"><i data-lucide="crown" class="w-3 h-3"></i> {% trans "Leader" %}</span>
+                            {% else %}
+                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{% trans "Member" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{{ membership.user.get_absolute_url }}" class="btn-secondary !px-4 !py-2 !text-[12px] shrink-0 border-slate-200">
+                        {% trans "View" %}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ==============================================
+             4. ACTION AREA (STATE LOGIC)
+             ============================================== -->
+        <div class="bento-card overflow-hidden animate-up delay-100">
+
+            <!-- STATE 1: GUEST -->
+            {% if not request.user.is_authenticated %}
+                <div class="p-8 md:p-12 text-center bg-gradient-to-br from-slate-900 to-slate-800 text-white relative">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 text-white border border-white/20">
+                            <i data-lucide="users" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="font-black text-[22px] md:text-[28px] mb-3 nav-heading">{% trans "Join CoreLink to Collaborate" %}</h3>
+                        <p class="text-[14.5px] font-medium text-slate-300 mb-8 max-w-md mx-auto">
+                            {% trans "You need an account to apply for open roles, view deep profiles, and build the future with this team." %}
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <a href="{% url 'unified_onboarding' %}" class="btn-action !bg-white !text-slate-900 hover:!bg-slate-50 w-full sm:w-auto shadow-none">
+                                {% trans "Create Account" %}
+                            </a>
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn-secondary !bg-white/10 !text-white !border-white/20 hover:!bg-white/20 w-full sm:w-auto">
+                                {% trans "Log In" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- STATE 2: LEADER VIEW -->
+            {% elif request.user == team.leader %}
+                <div class="p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left bg-blue-50/50">
+                    <div>
+                        <h3 class="text-slate-900 font-black text-[20px] mb-2 nav-heading">{% trans "Manage Your Team" %}</h3>
+                        <p class="text-[14px] font-medium text-slate-500 max-w-md">{% trans "Review applications, update status, and manage settings from your dashboard." %}</p>
+                    </div>
+                    <a href="{% url 'manage_team' team.id %}" class="btn-action shrink-0 w-full md:w-auto">
+                        <i data-lucide="settings-2" class="w-4 h-4"></i> {% trans "Team Settings" %}
+                    </a>
+                </div>
+
+            <!-- STATE 3: MEMBER VIEW -->
+            {% elif is_member %}
+                <div class="p-8 md:p-10 text-center bg-emerald-50/50 border-t border-emerald-100">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-[1.5rem] flex items-center justify-center text-emerald-600 mx-auto mb-5 border border-emerald-200">
+                        <i data-lucide="check-circle" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-emerald-900 font-black text-[20px] mb-2 nav-heading">{% trans "You are on the roster" %}</h3>
+                    <p class="text-emerald-700 font-medium text-[14px] mb-6">{% trans "You are currently an active member of this team." %}</p>
+
+                    {% if team.telegram_link %}
+                        <a href="{{ team.telegram_link }}" target="_blank" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-emerald-600 hover:!from-emerald-600 hover:!to-emerald-700 shadow-emerald-600/20 w-full sm:w-auto">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i> {% trans "Join Team Chat" %}
+                        </a>
+                    {% else %}
+                        <span class="text-[13px] font-bold text-slate-500 bg-white border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm">
+                            {% trans "Group chat link pending leader setup." %}
+                        </span>
+                    {% endif %}
+                </div>
+
+            <!-- STATE 4: PENDING -->
+            {% elif has_pending_request %}
+                <div class="p-8 md:p-10 text-center bg-amber-50/50 border-t border-amber-100">
+                    <div class="w-16 h-16 bg-amber-100 rounded-[1.5rem] flex items-center justify-center text-amber-600 mx-auto mb-5 border border-amber-200">
+                        <i data-lucide="clock" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-amber-900 font-black text-[20px] mb-2 nav-heading">{% trans "Application Sent" %}</h3>
+                    <p class="text-amber-700 font-medium text-[14px]">{% trans "Your request is awaiting the team leader's approval." %}</p>
+                </div>
+
+            <!-- STATE 5: APPLY (RECRUITING) -->
+            {% elif team.is_recruiting %}
+                <div class="p-8 md:p-10 relative">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-[#0A66C2]"></div>
+                    <h3 class="text-slate-900 font-black text-[22px] mb-6 nav-heading tracking-tight">{% trans "Apply to Join" %}</h3>
+                    <form method="POST" class="space-y-5">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-[12px] font-black text-slate-700 uppercase tracking-widest mb-3">{% trans "Why are you the right fit?" %}</label>
+                            {{ form.narrative }}
+                            <script>
+                                const txt = document.querySelector('textarea');
+                                if(txt) {
+                                    txt.className = "w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-[15px] text-slate-900 font-medium focus:border-[#0A66C2] focus:ring-2 outline-none transition-all shadow-sm resize-none";
+                                    txt.rows = "4";
+                                    txt.setAttribute('placeholder', '{% trans "Describe your skills and what you want to contribute..." %}');
+                                }
+                            </script>
+                        </div>
+                        <button type="submit" class="btn-action w-full md:w-auto px-8 !py-3.5 !text-[14.5px]">
+                            {% trans "Submit Application" %} <i data-lucide="send" class="w-4 h-4 ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+
+            <!-- STATE 6: CLOSED -->
+            {% else %}
+                <div class="p-8 md:p-10 text-center bg-slate-50 border-t border-slate-100">
+                    <div class="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center mx-auto mb-5 text-slate-400 border border-slate-200 shadow-sm">
+                        <i data-lucide="lock" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-slate-900 font-black text-[20px] mb-2 nav-heading">{% trans "Team is Full" %}</h3>
+                    <p class="text-[14px] font-medium text-slate-500">{% trans "Recruitment has been closed by the team leader." %}</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</main>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION (Exactly 5 Links synced)
+     ============================================== -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Portfolio" %}</span>
+    </a>
+    <!-- ACTIVE STATE: Discover -->
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
+        <i data-lucide="compass" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
+    </a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white animate-pulse">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- ==============================================
+     UPGRADED PAGE NAVIGATION DRAWER (Synced Core Links)
+     ============================================== -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <!-- Global Actions synced exactly -->
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
+        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</a>
+        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
+        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+            </span>
+        </button>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Language Drawer (Synced) -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
+<!-- Clean Toast -->
+<div id="share-toast" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-400 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
+    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+    <span id="toast-msg">{% trans "Link Copied!" %}</span>
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    let shareTimeout;
+    function showToast(message) {
+        const toast = document.getElementById('share-toast'); const toastMsg = document.getElementById('toast-msg');
+        if (toastMsg && message) toastMsg.textContent = message;
+        clearTimeout(shareTimeout); toast.classList.remove('translate-y-10', 'opacity-0');
+        if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+        shareTimeout = setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); }, 3500);
+    }
+
+    function copyExactProfileLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showToast('{% trans "Link copied to clipboard!" %}');
+        });
+    }
+
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+        const navDw = document.getElementById('mobile-nav-drawer');
+
+        if (dw.classList.contains('drawer-closed')) {
+            if(navDw) {
+                navDw.style.transitionDuration = '0ms';
+                navDw.classList.replace('drawer-open', 'drawer-closed');
+                setTimeout(() => { navDw.style.transitionDuration = ''; }, 50);
+            }
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    // Hide bottom nav when typing on mobile
+    document.addEventListener("DOMContentLoaded", function() {
+        const bottomNav = document.querySelector('nav.md\\:hidden.fixed.bottom-0');
+        if (bottomNav) {
+            document.addEventListener('focusin', (e) => {
+                if (window.innerWidth < 768 &&['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'none';
+                }
+            });
+            document.addEventListener('focusout', (e) => {
+                if (window.innerWidth < 768 && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'flex';
+                }
+            });
+        }
+    });
+</script>
+{% endblock content %}

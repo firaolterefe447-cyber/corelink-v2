@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<style>
+    .role-radio {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
+
+    .role-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        background: #f8fafc;
+        padding: 0.9rem 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .role-card:hover {
+        border-color: #93c5fd;
+        background: #eff6ff;
+    }
+
+    .role-dot {
+        width: 1.1rem;
+        height: 1.1rem;
+        border-radius: 9999px;
+        border: 2px solid #cbd5e1;
+        margin-top: 0.1rem;
+        position: relative;
+        flex-shrink: 0;
+        transition: border-color 0.2s ease;
+    }
+
+    .role-dot::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border-radius: 9999px;
+        background: #2563eb;
+        transform: scale(0);
+        transition: transform 0.2s ease;
+    }
+
+    .role-radio:checked + .role-card {
+        border-color: #2563eb;
+        background: #eff6ff;
+        box-shadow: 0 8px 20px -12px rgba(37, 99, 235, 0.45);
+    }
+
+    .role-radio:checked + .role-card .role-dot {
+        border-color: #2563eb;
+    }
+
+    .role-radio:checked + .role-card .role-dot::after {
+        transform: scale(1);
+    }
+
+    .role-radio:focus-visible + .role-card {
+        outline: 2px solid #93c5fd;
+        outline-offset: 2px;
+    }
+</style>
+
+<div class="min-h-[100dvh] flex items-center justify-center bg-slate-50 px-4 py-10">
+    <div class="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
+        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-blue-700">{% trans "Google Setup" %}</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight text-slate-900">{% trans "Choose Your Role" %}</h1>
+        <p class="mt-2 text-sm font-semibold text-slate-500">{% trans "Select how you want to use CoreLink." %}</p>
+
+        {% if messages %}
+            <div class="mt-5 space-y-2">
+                {% for message in messages %}
+                    <div class="rounded-xl border px-4 py-3 text-sm font-bold {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-blue-200 bg-blue-50 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="mt-6 space-y-4">
+            {% csrf_token %}
+            <div class="space-y-3">
+                {% for choice in form.role %}
+                    <label class="block">
+                        <span class="sr-only">{{ choice.choice_label }}</span>
+                        <input
+                            type="radio"
+                            name="{{ form.role.name }}"
+                            value="{{ choice.data.value }}"
+                            class="role-radio"
+                            {% if choice.data.selected %}checked{% endif %}
+                            required
+                        >
+                        <span class="role-card">
+                            <span class="role-dot"></span>
+                            <span>
+                                <span class="block text-sm font-extrabold text-slate-800">{{ choice.choice_label }}</span>
+                                {% if choice.data.value == 'VISIONARY' %}
+                                    <span class="mt-1 block text-xs font-medium text-slate-500">Learn, grow, and connect with mentors and opportunities.</span>
+                                {% elif choice.data.value == 'EXPERT' %}
+                                    <span class="mt-1 block text-xs font-medium text-slate-500">Showcase your experience and collaborate on projects.</span>
+                                {% endif %}
+                            </span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-black uppercase tracking-[0.15em] text-white transition hover:bg-slate-800 active:scale-[0.99]">
+                {% trans "Continue" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

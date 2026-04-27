@@ -1,0 +1,557 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block meta_tags %}
+<title>My Inbox | CoreLink</title>
+{% endblock %}
+
+{% block navbar %}
+<!-- ==============================================
+     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
+    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
+        <!-- Logo -->
+        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+
+        <!-- Desktop Navigation Links (Exactly 5 Links) -->
+        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
+            </a>
+
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
+            </a>
+
+            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
+            </a>
+
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
+            </a>
+
+            <!-- ACTIVE: Inbox -->
+            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm relative" aria-current="page">
+                <i data-lucide="mail" class="w-4 h-4 fill-blue-100"></i> {% trans "Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-1 shrink-0 pl-6 border-l border-slate-200">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                <span>{% trans "Settings" %}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- MOBILE TOP BAR -->
+{% if not active_partner %}
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
+            <span class="text-slate-900">Core</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+        <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.16, 1, 0.3, 1);
+        --app-safe-top: env(safe-area-inset-top, 0px);
+        --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+        font-family: var(--font-body); background-color: #F8FAFC; color: #0F172A;
+        -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+    }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    @media (min-width: 768px) { body { overflow: hidden; } }
+
+    {% if active_partner %}
+    /* =========================================================================
+       ULTIMATE iOS SAFARI FIX: DO NOT TOUCH THIS LOGIC
+       ========================================================================= */
+    @media (max-width: 767px) {
+        html, body {
+            height: 100% !important; width: 100% !important; overflow: hidden !important;
+            position: relative !important; overscroll-behavior: none !important; touch-action: none !important; margin: 0; padding: 0;
+        }
+        #mobile-app-container { position: absolute !important; left: 0; right: 0; }
+        #chat-scroll-container { touch-action: pan-y !important; -webkit-overflow-scrolling: touch; }
+    }
+    {% endif %}
+
+    .custom-scroll::-webkit-scrollbar { width: 4px; display: none; }
+    @media (min-width: 768px) { .custom-scroll::-webkit-scrollbar { display: block; } }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.6); border-radius: 10px; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+    /* Input Glow */
+    .search-glow-wrap:focus-within { border-color: rgba(10, 102, 194, 0.4); box-shadow: 0 4px 20px -5px rgba(10, 102, 194, 0.15); }
+    textarea { font-size: 16px !important; }
+
+    /* Drawers */
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); pointer-events: auto; }
+    .drawer-closed { transform: translateY(100%); pointer-events: none; }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+
+    /* Message Animations */
+    @keyframes messagePop {
+        0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .msg-animate { animation: messagePop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+
+<!-- MAIN APP CONTAINER -->
+<div id="mobile-app-container" class="w-full transition-all duration-0 mx-auto
+    {% if active_partner %}
+        absolute inset-x-0 h-[100dvh] pt-0 pb-0 z-[120] md:z-auto md:relative md:inset-auto md:h-screen md:pt-[7.5rem] md:pb-8 md:px-6 lg:px-8 max-w-[1400px] flex flex-col
+    {% else %}
+        relative h-[100dvh] pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(75px+env(safe-area-inset-bottom))] md:h-screen md:pt-[7.5rem] md:pb-8 md:px-6 lg:px-8 max-w-[1400px] flex flex-col
+    {% endif %}">
+
+    <!-- Premium Glass Main Wrapper -->
+    <div class="w-full h-full bg-white md:bg-white/80 md:backdrop-blur-2xl md:border border-slate-200/80 md:rounded-[2rem] md:shadow-[0_10px_40px_-10px_rgba(15,23,42,0.06)] flex flex-col md:flex-row overflow-hidden relative">
+
+        <!-- LEFT COLUMN: SIDEBAR (Inbox List) -->
+        <div class="w-full md:w-[320px] lg:w-[380px] flex-col bg-white md:border-r border-slate-200/60 shrink-0 h-full z-10 {% if active_partner %}hidden md:flex{% else %}flex{% endif %}">
+            <div class="hidden md:flex p-6 border-b border-slate-100 items-center justify-between shrink-0 h-[84px]">
+                <h2 class="text-[20px] font-black text-slate-900 nav-heading tracking-tight">{% trans "Messages" %}</h2>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0A66C2] shadow-sm">
+                    <i data-lucide="inbox" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Chat List -->
+            <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-1 bg-slate-50/30 md:bg-transparent">
+                {% for chat in sidebar_chats %}
+                <a href="{% url 'chat_with' chat.user.id %}" class="flex items-center gap-4 p-3.5 rounded-[1.25rem] transition-all duration-300 group relative
+                    {% if chat.user == active_partner %}
+                        bg-[#0A66C2] shadow-[0_4px_15px_-3px_rgba(10,102,194,0.3)]
+                    {% else %}
+                        bg-white hover:bg-slate-50 border border-transparent hover:border-slate-200/60
+                    {% endif %}">
+                    <!-- Avatar -->
+                    <div class="relative shrink-0">
+                        <div class="h-12 w-12 rounded-[1rem] bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 {% if chat.user == active_partner %}border-blue-400{% endif %}">
+                            {% if chat.user.avatar and chat.user.avatar.name %}
+                                <img src="{{ chat.user.get_avatar_url }}" alt="{{ chat.user.display_name }}" class="h-full w-full object-cover">
+                            {% else %}
+                                <span class="font-black text-[18px] text-slate-400 w-full h-full flex items-center justify-center">{{ chat.user.display_name|default:chat.user.username|slice:":1"|default:"?" }}</span>
+                            {% endif %}
+                        </div>
+                        {% if chat.unread > 0 %}
+                            <div class="absolute -top-1 -right-1 h-5 min-w-[20px] px-1.5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-black text-white border-2 border-white shadow-sm animate-pulse">{{ chat.unread }}</div>
+                        {% endif %}
+                    </div>
+                    <!-- Texts -->
+                    <div class="flex-grow min-w-0 pr-1">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h4 class="text-[14.5px] font-bold truncate tracking-tight nav-heading {% if chat.user == active_partner %}text-white{% else %}text-slate-900{% endif %}">
+                                {{ chat.user.display_name }}
+                            </h4>
+                            <span class="text-[11px] font-bold shrink-0 ml-2 {% if chat.user == active_partner %}text-blue-200{% elif chat.unread > 0 %}text-rose-500{% else %}text-slate-400{% endif %}">
+                                {{ chat.last_message.timestamp|time:"H:i" }}
+                            </span>
+                        </div>
+                        <p class="text-[13px] truncate flex items-center gap-1.5 {% if chat.user == active_partner %}text-blue-100 font-medium{% elif chat.unread > 0 %}text-slate-900 font-bold{% else %}text-slate-500 font-medium{% endif %}">
+                            {% if chat.last_message.sender == request.user %}
+                                {% if chat.last_message.is_read %}
+                                    <i data-lucide="check-check" class="w-3.5 h-3.5 {% if chat.user == active_partner %}text-blue-300{% else %}text-[#0A66C2]{% endif %} shrink-0"></i>
+                                {% else %}
+                                    <i data-lucide="check" class="w-3.5 h-3.5 {% if chat.user == active_partner %}text-blue-300{% else %}text-slate-400{% endif %} shrink-0"></i>
+                                {% endif %}
+                            {% endif %}
+                            <span class="truncate">{{ chat.last_message.body }}</span>
+                        </p>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="text-center py-20 px-6 flex flex-col items-center">
+                    <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[1.5rem] flex items-center justify-center mb-4 text-slate-300 shadow-sm">
+                        <i data-lucide="message-square-dashed" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-[16px] font-black text-slate-900 mb-1 tracking-tight nav-heading">{% trans "Inbox Empty" %}</p>
+                    <p class="text-[13px] font-medium text-slate-500 max-w-[200px] mx-auto leading-relaxed">{% trans "Your network conversations will appear here." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: THE ACTIVE CHAT -->
+        <div class="w-full h-full flex flex-col bg-slate-50/30 relative flex-1 {% if not active_partner %} hidden md:flex {% endif %}">
+
+            {% if active_partner %}
+
+                <!-- CHAT HEADER -->
+                <div class="z-[50] min-h-[76px] md:min-h-[84px] shrink-0 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-4 md:px-8 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 md:pb-0 shadow-sm relative">
+                    <div class="flex items-center gap-3.5 min-w-0 flex-1 py-1 h-full">
+                        <a href="{% url 'chat_hub' %}" class="md:hidden w-10 h-10 -ml-1 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors shrink-0 active:scale-95">
+                            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                        </a>
+                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-[1rem] bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                            {% if active_partner.avatar and active_partner.avatar.name %}
+                                <img src="{{ active_partner.get_avatar_url }}" alt="{{ active_partner.display_name }}" class="h-full w-full object-cover">
+                            {% else %}
+                                <span class="font-black text-[18px] text-slate-400 uppercase w-full h-full flex items-center justify-center">{{ active_partner.display_name|default:active_partner.username|slice:":1"|default:"?" }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0 pr-2 flex items-center h-full">
+                            <h3 class="font-bold text-slate-900 text-[16px] md:text-[18px] leading-tight truncate tracking-tight">{{ active_partner.display_name }}</h3>
+                        </div>
+                    </div>
+
+                    <a href="{{ active_partner.get_absolute_url|default:'#' }}" target="_blank" class="shrink-0 px-4 py-2 bg-slate-900 text-white hover:bg-black rounded-[1rem] text-[12px] font-bold shadow-md shadow-slate-900/20 transition-all active:scale-95 flex items-center gap-1.5 border border-slate-800">
+                        <span class="hidden sm:inline">{% trans "View Profile" %}</span>
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <!-- MESSAGES AREA (Standard Django Template, No HTMX Polling) -->
+                <div id="chat-scroll-container" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 space-y-4 w-full relative bg-slate-50/30">
+                    <div id="chat-box" class="w-full">
+                        {% for msg in active_messages %}
+                            <div id="msg-{{ msg.id }}" class="group flex w-full mb-4 items-end msg-animate {% if msg.sender == request.user %}justify-end{% else %}justify-start{% endif %}">
+
+                                <!-- SENDER ACTIONS (Edit / Delete) -->
+                                {% if msg.sender == request.user %}
+                                <div class="flex items-center gap-1.5 mr-3 opacity-0 md:-translate-x-2 group-hover:opacity-100 md:group-hover:translate-x-0 transition-all duration-300 ease-out mb-1 focus-within:opacity-100 focus-within:translate-x-0">
+                                    <!-- Edit -->
+                                    {% if msg.body %}
+                                    <button type="button" onclick="startEdit('{{ msg.id }}', '{{ msg.body|escapejs }}')" class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-[#0A66C2] hover:bg-blue-50 hover:border-blue-200 transition-all active:scale-90" title="{% trans 'Edit' %}">
+                                        <i data-lucide="pencil" class="w-[14px] h-[14px]"></i>
+                                    </button>
+                                    {% endif %}
+
+                                    <!-- Delete (Standard Form to avoid HTMX completely) -->
+                                    <form action="{% url 'delete_message' msg.id %}" method="POST" onsubmit="return confirm('{% trans 'Delete this message for everyone?' %}');" class="m-0 p-0 inline-flex">
+                                        {% csrf_token %}
+                                        <button type="submit" class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all active:scale-90" title="{% trans 'Delete' %}">
+                                            <i data-lucide="trash-2" class="w-[14px] h-[14px]"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+
+                                <!-- THE MESSAGE BUBBLE -->
+                                <div class="relative max-w-[85%] md:max-w-[70%] text-[15px] leading-relaxed transition-all duration-300 group-hover:shadow-md
+                                    {% if msg.sender == request.user %} bg-gradient-to-br from-[#0A66C2] to-[#0055a6] text-white rounded-[1.4rem] rounded-br-[0.3rem] shadow-[0_4px_15px_-3px_rgba(10,102,194,0.25)] ml-auto
+                                    {% else %} bg-white border border-slate-200/80 text-slate-800 rounded-[1.4rem] rounded-bl-[0.3rem] shadow-[0_4px_15px_-3px_rgba(0,0,0,0.03)] mr-auto {% endif %}">
+
+                                    <div class="flex flex-col gap-1.5 p-3.5 sm:p-4">
+                                        {% if msg.attachment %}
+                                            {% if msg.is_image %}
+                                                <a href="{{ msg.attachment.url }}" target="_blank" class="block relative group/img overflow-hidden rounded-[1rem] shadow-sm mb-1 bg-black/5 {% if msg.sender == request.user %}border border-white/20{% else %}border border-slate-200/50{% endif %}">
+                                                    <img src="{{ msg.attachment.url }}" class="max-w-[240px] md:max-w-[280px] w-full max-h-[300px] object-cover transition-transform duration-500 group-hover/img:scale-105" alt="Attached Image" loading="lazy">
+                                                    <div class="absolute inset-0 bg-slate-900/0 group-hover/img:bg-slate-900/20 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover/img:backdrop-blur-[2px]">
+                                                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 transform scale-90 group-hover/img:scale-100"><i data-lucide="zoom-in" class="w-5 h-5 text-white"></i></div>
+                                                    </div>
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ msg.attachment.url }}" target="_blank" class="flex items-center gap-3 p-3 rounded-[1rem] transition-colors mb-1 shadow-sm max-w-[260px] md:max-w-[300px] {% if msg.sender == request.user %}bg-white/15 hover:bg-white/25 border border-white/20{% else %}bg-slate-50 hover:bg-slate-100 border border-slate-200/80{% endif %}">
+                                                    <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm bg-white {% if msg.sender == request.user %}text-[#0A66C2]{% else %}text-[#0A66C2] border border-slate-200{% endif %}">
+                                                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <div class="flex flex-col overflow-hidden min-w-0 pr-2 {% if msg.sender == request.user %}text-white{% else %}text-slate-900{% endif %}">
+                                                        <span class="text-[13.5px] font-bold truncate block w-full">{{ msg.filename|default:"Document attached" }}</span>
+                                                        <span class="text-[11px] font-semibold tracking-wide uppercase mt-0.5 {% if msg.sender == request.user %}text-blue-100{% else %}text-slate-400{% endif %}">{% trans "Tap to view" %}</span>
+                                                    </div>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if msg.body %}
+                                            <p class="text-[15px] leading-[1.6] break-words whitespace-pre-wrap {% if msg.sender == request.user %}text-white/95 font-medium{% else %}text-slate-700 font-medium{% endif %}">{{ msg.body }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="flex items-center justify-end gap-1.5 px-3.5 sm:px-4 pb-2.5 -mt-2 {% if msg.sender == request.user %}text-blue-200{% else %}text-slate-400{% endif %}">
+                                        <span class="text-[10.5px] font-bold tracking-wide">{{ msg.timestamp|time:"H:i" }}</span>
+                                        {% if msg.sender == request.user %}
+                                            {% if msg.is_read %}
+                                                <i data-lucide="check-check" class="w-3.5 h-3.5 text-white drop-shadow-sm" title="{% trans 'Read' %}"></i>
+                                            {% else %}
+                                                <i data-lucide="check" class="w-3.5 h-3.5 opacity-80" title="{% trans 'Sent' %}"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <!-- Empty State -->
+                            <div class="h-full flex flex-col items-center justify-center mt-12 md:mt-24 px-6 msg-animate">
+                                <div class="relative mb-6">
+                                    <div class="absolute inset-0 bg-[#0A66C2]/10 rounded-full blur-2xl animate-pulse"></div>
+                                    <div class="w-20 h-20 bg-white border border-slate-200 rounded-[1.8rem] flex items-center justify-center text-[#0A66C2] shadow-xl relative z-10">
+                                        <i data-lucide="send" class="w-8 h-8 ml-1"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-[20px] font-black text-slate-900 nav-heading tracking-tight mb-2 text-center">{% trans "Start the Conversation" %}</h3>
+                                <p class="text-[14px] font-medium text-slate-500 max-w-[260px] text-center leading-relaxed">{% trans "Send a message or share an attachment to begin networking." %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- INPUT AREA (Standard Django Form) -->
+                <div class="shrink-0 bg-white/95 backdrop-blur-xl border-t border-slate-200/60 pb-safe z-20 relative">
+                    <div class="p-3 md:p-5 w-full max-w-4xl mx-auto">
+                        <form
+                            method="POST"
+                            action="{% url 'chat_with' active_partner.id %}"
+                            enctype="multipart/form-data"
+                            class="search-glow-wrap relative bg-slate-50 border border-slate-200 rounded-[1.5rem] p-1.5 flex flex-col transition-all shadow-sm">
+                            {% csrf_token %}
+                            <input type="hidden" name="edit_message_id" id="edit-message-id" value="">
+
+                            <!-- EDIT / FILE PREVIEW -->
+                            <div id="edit-preview" class="hidden w-full px-4 py-2 bg-amber-50 rounded-t-xl flex items-center justify-between mb-1">
+                                <div class="flex items-center gap-2 text-amber-700"><i data-lucide="pencil" class="w-4 h-4"></i><span class="text-[12px] font-bold">Editing message</span></div>
+                                <button type="button" onclick="cancelEdit()" class="text-slate-400"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
+                            </div>
+
+                            <div id="file-preview" class="hidden w-full px-4 py-2 bg-blue-50 rounded-t-xl flex items-center justify-between mb-1">
+                                <div class="flex items-center gap-2 text-[#0A66C2]"><i data-lucide="file" class="w-4 h-4"></i><span id="file-name-display" class="text-[12px] font-bold truncate"></span></div>
+                                <button type="button" onclick="clearAttachment()" class="text-slate-400"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
+                            </div>
+
+                            <div class="flex items-end w-full relative">
+                                <input type="file" name="attachment" id="chat-file-input" class="hidden" onchange="handleFileSelect(this)">
+                                <button type="button" onclick="document.getElementById('chat-file-input').click()" class="shrink-0 w-10 h-10 rounded-full text-slate-400 hover:text-[#0A66C2] hover:bg-blue-100 flex items-center justify-center transition-colors mb-1 ml-1">
+                                    <i data-lucide="paperclip" class="w-5 h-5"></i>
+                                </button>
+                                <textarea
+                                    id="chat-message-input"
+                                    name="body"
+                                    rows="1"
+                                    placeholder="{% trans 'Type a message...' %}"
+                                    class="flex-1 bg-transparent text-slate-900 border-none px-3 py-3.5 min-h-[46px] max-h-[120px] text-[15px] font-medium focus:ring-0 resize-none outline-none placeholder-slate-400 custom-scroll transition-all m-0 block w-full"
+                                    oninput="resizeChatInput(this)"></textarea>
+                                <button type="submit" class="shrink-0 w-10 h-10 mb-1 bg-[#0A66C2] hover:bg-[#004b99] rounded-full text-white shadow-md shadow-blue-500/25 transition-all duration-300 active:scale-95 flex items-center justify-center group mr-1">
+                                    <i data-lucide="send" class="w-4 h-4 ml-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- Empty State Desktop -->
+                <div class="flex-1 flex flex-col items-center justify-center text-center p-8 bg-transparent">
+                    <div class="w-24 h-24 bg-white border border-slate-200 rounded-[2rem] flex items-center justify-center mb-6 text-[#0A66C2] shadow-sm">
+                        <i data-lucide="messages-square" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-[22px] font-black text-slate-900 tracking-tight mb-2">{% trans "Your Network Inbox" %}</h3>
+                    <p class="text-[14px] font-medium text-slate-500 max-w-sm leading-relaxed">
+                        {% trans "Select a conversation from the sidebar to continue building your professional relationships." %}
+                    </p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<!-- ==============================================
+     MODALS, DRAWERS & SCRIPTS
+     ============================================== -->
+{% if not is_inspector and not active_partner %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Portfolio" %}</span></a>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span></a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span></a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span></a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
+        <div class="relative"><i data-lucide="mail" class="w-6 h-6 stroke-[2.5] fill-blue-50"></i>{% if unread_msg_count > 0 %}<div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-rose-500 rounded-full border border-white"></div>{% endif %}</div>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- DRAWERS ARE UNCHANGED (Omitted slightly for brevity if needed, but keeping logic) -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_48px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[calc(2rem+env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Inbox" %}</a>
+        <div class="h-px bg-slate-100 my-2 mx-2"></div>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div> {% trans "Language" %}</div>
+            <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+        </button>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+    </div>
+</div>
+
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl shadow-[0_-24px_48px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[calc(2rem+env(safe-area-inset-bottom))] p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) {
+            document.getElementById('file-preview').classList.remove('hidden');
+            document.getElementById('file-name-display').textContent = input.files[0].name;
+            document.getElementById('chat-message-input').focus();
+        }
+    }
+
+    function clearAttachment() {
+        document.getElementById('chat-file-input').value = "";
+        document.getElementById('file-preview').classList.add('hidden');
+    }
+
+    function startEdit(msgId, msgBody) {
+        document.getElementById('edit-message-id').value = msgId;
+        const input = document.getElementById('chat-message-input');
+        input.value = msgBody;
+        document.getElementById('edit-preview').classList.remove('hidden');
+        input.focus();
+        resizeChatInput(input);
+    }
+
+    function cancelEdit() {
+        document.getElementById('edit-message-id').value = "";
+        document.getElementById('chat-message-input').value = "";
+        document.getElementById('edit-preview').classList.add('hidden');
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById('chat-scroll-container');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    function resizeChatInput(el) {
+        el.style.height = 'auto';
+        let newHeight = Math.min(el.scrollHeight, 120);
+        el.style.height = newHeight + 'px';
+        el.style.overflowY = el.scrollHeight > 120 ? 'auto' : 'hidden';
+    }
+
+    // Standard Drawer Logic
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(scrollToBottom, 50);
+
+        const chatInput = document.getElementById('chat-message-input');
+        const appContainer = document.getElementById('mobile-app-container');
+
+        if (window.visualViewport && appContainer && window.innerWidth < 768 && {{ active_partner|yesno:"true,false" }}) {
+            const viewportHandler = () => {
+                const vvHeight = window.visualViewport.height;
+                const vvOffset = window.visualViewport.offsetTop;
+                appContainer.style.height = vvHeight + 'px';
+                appContainer.style.top = vvOffset + 'px';
+                window.scrollTo(0, 0);
+                document.body.scrollTop = 0;
+                scrollToBottom();
+            };
+            window.visualViewport.addEventListener('resize', viewportHandler);
+            window.visualViewport.addEventListener('scroll', viewportHandler);
+            viewportHandler();
+        }
+
+        if (chatInput) {
+            resizeChatInput(chatInput);
+            chatInput.addEventListener('focus', () => {
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                    scrollToBottom();
+                }, 100);
+            });
+
+            // Standard HTML form Enter key submission
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    if (window.innerWidth >= 768) {
+                        e.preventDefault();
+                        if (this.value.trim() !== '' || document.getElementById('chat-file-input').value) {
+                            this.closest('form').submit(); // Standard form submission
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock content %}

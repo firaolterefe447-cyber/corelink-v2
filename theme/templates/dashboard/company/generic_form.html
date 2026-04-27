@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- Fixed Back Button (Moved to top-left so it never overlaps the title) -->
+<div class="fixed top-6 left-6 md:left-10 z-[60] flex pointer-events-none animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/90 backdrop-blur-xl border border-slate-200/60 shadow-lg rounded-full">
+        <a href="javascript:history.back()" class="px-5 py-2 rounded-full text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
+        </a>
+    </div>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<style>
+    body { background-color: #F8FAFC; }
+    .form-wrapper p { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .form-wrapper label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; }
+    .form-wrapper .helptext { font-size: 0.8rem; color: #94A3B8; margin-top: -0.25rem; margin-bottom: 0.5rem; }
+    .form-wrapper ul.errorlist { color: #ef4444; font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0; }
+
+    /* Safely target text inputs, NOT checkboxes or files */
+    .form-wrapper input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    .form-wrapper textarea,
+    .form-wrapper select {
+        width: 100%; background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 500; outline: none; transition: all 0.3s; color: #0F172A;
+    }
+    .form-wrapper input:focus, .form-wrapper textarea:focus { background-color: #FFFFFF; border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
+    /* Fix Checkbox Layout */
+    .form-wrapper input[type="checkbox"] { width: 1.25rem; height: 1.25rem; cursor: pointer; accent-color: #10B981; }
+    .form-wrapper p:has(input[type="checkbox"]) { flex-direction: row-reverse; justify-content: flex-end; align-items: center; border: 1.5px solid #E2E8F0; padding: 1rem 1.25rem; border-radius: 1rem; background: #F8FAFC; }
+    .form-wrapper p:has(input[type="checkbox"]) label { margin-bottom: 0; cursor: pointer; }
+</style>
+
+<div class="pt-28 pb-20 px-4 min-h-screen flex items-start justify-center">
+    <div class="w-full max-w-3xl bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden animate-fade-in-up">
+
+        <!-- Header -->
+        <div class="px-8 pt-8 pb-6 border-b border-slate-100 bg-emerald-50/30 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{% if object %}Update Record{% else %}Create New{% endif %}</h1>
+                <p class="text-slate-500 font-medium text-[14px] mt-1">{% trans "Fill out the details below." %}</p>
+            </div>
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100"><i data-lucide="edit" class="w-5 h-5"></i></div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="p-8">
+            {% csrf_token %}
+
+            <div class="form-wrapper">
+                {{ form.as_p }}
+            </div>
+
+            <!-- MAGIC GALLERY UPLOADER (For Services & News) -->
+            <div class="mt-8 border-t border-slate-100 pt-8">
+                <label class="text-[0.8rem] font-bold text-slate-500 uppercase tracking-widest mb-3 block">{% trans "Attach Media Gallery (Optional)" %}</label>
+
+                <!-- Existing Images (If Editing) -->
+                {% if object and object.gallery.all %}
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-4 mb-6">
+                    {% for img in object.gallery.all %}
+                    <div class="relative group aspect-square rounded-xl overflow-hidden border border-slate-200">
+                        <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+                        <label class="absolute inset-0 bg-rose-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer backdrop-blur-sm">
+                            <input type="checkbox" name="delete_images" value="{{ img.id }}" class="hidden">
+                            <i data-lucide="trash-2" class="w-6 h-6 mb-1"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Delete</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Drag & Drop Zone -->
+                <div class="w-full relative">
+                    <input type="file" name="gallery_images" id="gallery_input" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer" onchange="previewImages(this)">
+                    <div class="w-full border-2 border-dashed border-emerald-200 bg-emerald-50/50 rounded-2xl p-8 text-center flex flex-col items-center justify-center transition-colors hover:bg-emerald-50">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm mb-3">
+                            <i data-lucide="image-plus" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800">{% trans "Click or Drag Images Here" %}</h4>
+                        <p class="text-[13px] text-slate-500 mt-1">{% trans "Upload high-quality JPEGs or PNGs." %}</p>
+                    </div>
+                </div>
+
+                <!-- Preview Container -->
+                <div id="image_preview" class="grid grid-cols-3 sm:grid-cols-5 gap-3 mt-4 empty:hidden"></div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="pt-8 border-t border-slate-100 mt-8 flex justify-end gap-3">
+                <a href="javascript:history.back()" class="px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</a>
+                <button type="submit" class="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-600/20 active:scale-[0.98] flex items-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i> {% trans "Save Details" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => lucide.createIcons());
+
+    function previewImages(input) {
+        const preview = document.getElementById('image_preview');
+        preview.innerHTML = '';
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'aspect-square rounded-xl overflow-hidden border border-emerald-200 shadow-sm relative group animate-fade-in-up';
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">
+                                     <div class="absolute inset-0 bg-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>`;
+                    preview.appendChild(div);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+</script>
+{% endblock %}

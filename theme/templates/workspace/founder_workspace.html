@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+{% with target_company=company|default:user.company_memberships.first.company %}
+
+<!-- ==============================================
+     DESKTOP NAVIGATION (Premium Floating Pill)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full gap-1">
+
+        <!-- 1. Dashboard -->
+        <a href="{% url 'dashboard' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Dashboard" %}
+        </a>
+
+        <!-- 2. My Company (ACTIVE) -->
+        <a href="#" class="px-6 py-2.5 rounded-full text-[13px] font-bold bg-[#0A66C2] text-white shadow-md shadow-blue-600/20 hover:bg-[#004182] hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2" aria-current="page">
+            <i data-lucide="building-2" class="w-4 h-4"></i> <span class="hidden lg:inline">{% trans "My Company" %}</span>
+        </a>
+
+        <!-- 3. Network -->
+        <a href="{% url 'nexus_feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Network" %}
+        </a>
+
+        <!-- 4. Jobs -->
+        <a href="{% url 'opportunities:feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="briefcase" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Jobs" %}
+        </a>
+
+        <!-- 5. Public Site -->
+        {% if target_company.slug %}
+        <a href="{% url 'company_public_profile' target_company.slug %}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2 group">
+            <i data-lucide="globe" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Public" %}
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+        </a>
+        {% else %}
+        <span class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-400 cursor-not-allowed flex items-center gap-2">
+            <i data-lucide="globe" class="w-4 h-4 hidden lg:block opacity-50"></i> {% trans "Public" %}
+        </span>
+        {% endif %}
+
+        <div class="w-px h-5 bg-slate-200 mx-1"></div>
+
+        <!-- Language Switcher (Dropdown) -->
+        <div class="relative group pointer-events-auto">
+            <button class="p-2.5 px-3 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-1.5" title="{% trans 'Change Language' %}">
+                <span class="text-[12px] font-bold uppercase tracking-wider hidden lg:block">
+                    {% if LANGUAGE_CODE == 'am' %}Amharic{% elif LANGUAGE_CODE == 'om' %}Afaan Oromoo{% else %}English{% endif %}
+                </span>
+            </button>
+            <div class="absolute top-full right-0 pt-4 w-56 opacity-0 pointer-events-none transform translate-y-2 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 z-[100]">
+                <form action="{% url 'set_language' %}" method="post" class="bg-white border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.08)] rounded-2xl p-2 flex flex-col gap-1 relative">
+                    {% csrf_token %}
+                    <button type="submit" name="language" value="en" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'en' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                        {% trans "English" %} {% if LANGUAGE_CODE == 'en' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">EN</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="am" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'am' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                        {% trans "Amharic" %} {% if LANGUAGE_CODE == 'am' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">AM</span>{% endif %}
+                    </button>
+                    <button type="submit" name="language" value="om" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'om' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                        {% trans "Afaan Oromoo" %} {% if LANGUAGE_CODE == 'om' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">OM</span>{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-px h-5 bg-slate-200 mx-1"></div>
+
+        <!-- Desktop Logout Action -->
+        <a href="{% url 'logout' %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:text-red-600 hover:bg-red-50/80 transition-all flex items-center">
+            {% trans "Logout" %}
+        </a>
+    </div>
+</div>
+
+<!-- ==============================================
+     MOBILE TOP BAR (Clean Custom Dropdown & Logout)
+     ============================================== -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm h-14 flex items-center justify-between px-4 pt-safe">
+    <!-- Clean Custom Language Switcher -->
+    <form action="{% url 'set_language' %}" method="post" class="m-0 relative">
+        {% csrf_token %}
+        <select name="language" onchange="this.form.submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-[13px] font-bold rounded-lg pl-3 pr-8 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer shadow-sm">
+            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+            <option value="am" {% if LANGUAGE_CODE == 'am' %}selected{% endif %}>Amharic</option>
+            <option value="om" {% if LANGUAGE_CODE == 'om' %}selected{% endif %}>Afaan Oromoo</option>
+        </select>
+        <!-- Custom clean chevron icon -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+    </form>
+
+    <div class="flex items-center gap-3">
+        {% if target_company.slug %}
+        <button onclick="copyExactProfileLink('{% url 'company_public_profile' target_company.slug %}')" class="text-[13px] font-bold text-[#0A66C2] hover:text-[#004182]">
+            {% trans "Share" %}
+        </button>
+        {% endif %}
+        <!-- Clean Logout -->
+        <a href="{% url 'logout' %}" class="text-[13px] font-bold text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 px-4 py-1.5 rounded-lg transition-colors">
+            {% trans "Logout" %}
+        </a>
+    </div>
+</div>
+
+{% endwith %}
+{% endblock navbar %}
+
+{% block content %}
+{% with target_company=company|default:user.company_memberships.first.company %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- LOAD LUCIDE ICONS FOR DESKTOP NAVIGATION -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F8FAFC;
+        background-image: radial-gradient(at 50% 0%, #ffffff 0%, #F1F5F9 100%);
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, h4, h5, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.7s var(--ease-spring) forwards; will-change: transform, opacity; }
+
+    @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 80px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    .canvas-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: clamp(1.5rem, 4vw, 2.5rem);
+        box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.08), 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+    }
+
+    /* Standardized Buttons */
+    .btn-secondary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        border-radius: 9999px; font-size: 14px; font-weight: 700;
+        background-color: #FFFFFF; color: #475569;
+        border: 1px solid #E2E8F0; padding: 0.6rem 1.25rem;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        transition: all 0.3s var(--ease-smooth);
+    }
+    .btn-secondary:hover:not(:disabled) {
+        background-color: #F8FAFC; border-color: #CBD5E1; color: #0F172A; transform: translateY(-1px);
+    }
+    .btn-secondary:active:not(:disabled) { transform: scale(0.95); }
+</style>
+
+<main class="relative z-10 pt-20 md:pt-32 pb-safe px-3 sm:px-6 w-full min-h-[100dvh]">
+    <div class="max-w-[1000px] mx-auto animate-fade-in-up space-y-8 md:space-y-10">
+
+        <!-- ==============================================
+             RECOMMENDATION BANNER (Soft UI)
+             ============================================== -->
+        <section id="profile-setup-banner">
+            <div class="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-[1.5rem] p-6 flex flex-col sm:flex-row gap-5 items-start relative shadow-sm">
+                <div class="flex-1 pr-8">
+                    <h2 class="text-[16.5px] font-extrabold text-slate-900 mb-1 nav-heading">{% trans "Optimize Your Company Profile" %}</h2>
+                    <p class="text-[14px] text-slate-500 font-medium leading-relaxed">
+                        {% blocktrans %}Upload your logo and a high-resolution cover image that represents your brand. Complete your profile by adding services and a mission statement to build trust with your network.{% endblocktrans %}
+                    </p>
+                </div>
+                <button onclick="dismissBanner()" class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors font-bold text-sm">
+                    X
+                </button>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             COMPANY IDENTITY PROFILE (Canvas Card)
+             ============================================== -->
+        <section class="canvas-card overflow-hidden">
+
+            <!-- Cover Photo Area -->
+            <div class="relative h-48 sm:h-56 w-full bg-slate-100">
+                {% if target_company.cover_image %}
+                    <img src="{{ target_company.cover_image.url }}" class="w-full h-full object-cover">
+                {% else %}
+                    <!-- Subtle pattern for empty state -->
+                    <div class="w-full h-full opacity-10" style="background-image: radial-gradient(#0A66C2 1px, transparent 1px); background-size: 20px 20px;"></div>
+                {% endif %}
+                <a href="{% url 'company_media_manage' target_company.slug %}" class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-slate-700 px-4 py-2 rounded-xl text-[13px] font-bold border border-white/50 hover:bg-white transition-colors flex items-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 transform duration-300">
+                    <span class="hidden sm:inline">{% trans "Edit Cover" %}</span>
+                </a>
+            </div>
+
+            <div class="px-6 sm:px-10 pb-8 sm:pb-10">
+                <!-- Header Controls -->
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end -mt-16 mb-5 gap-4">
+                    <!-- Elegant Logo Box -->
+                    <div class="w-32 h-32 bg-white rounded-[1.5rem] p-1.5 shadow-md border border-slate-100 relative z-10 shrink-0">
+                        <a href="{% url 'company_media_manage' target_company.slug %}" class="w-full h-full rounded-[1.15rem] overflow-hidden bg-slate-50 border border-slate-100 flex flex-col items-center justify-center group hover:bg-blue-50/50 transition-colors">
+                            {% if target_company.logo %}
+                                <img src="{{ target_company.logo.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest group-hover:text-[#0A66C2] transition-colors">{% trans "Add Logo" %}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+
+                    <a href="{% url 'company_edit_profile' target_company.slug %}" class="btn-secondary w-full sm:w-auto self-start sm:self-end mb-1">
+                        {% trans "Workspace Settings" %}
+                    </a>
+                </div>
+
+                <!-- Text Info -->
+                <div class="mt-2">
+                    <h1 class="text-[clamp(1.5rem,4vw,2rem)] font-extrabold text-slate-900 mb-2 flex items-center gap-2 nav-heading tracking-tight leading-none">
+                        {{ target_company.name }}
+                        {% if target_company.is_active %}
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100" title="{% trans 'Verified Business' %}">
+                            {% trans "Verified" %}
+                        </span>
+                        {% endif %}
+                    </h1>
+
+                    <div class="flex flex-wrap items-center gap-4 text-[13.5px] text-slate-500 font-semibold mb-6">
+                        <span class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg border border-slate-100">
+                            {% if target_company.sector %}{{ target_company.sector }}{% else %}Industry not set{% endif %}
+                        </span>
+                        {% if target_company.location %}
+                        <span class="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-lg border border-slate-100">
+                            {{ target_company.location }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mission Statement (Soft styling) -->
+                    <div class="bg-slate-50/80 rounded-[1.25rem] p-6 border border-slate-200/60">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            {% trans "Mission Statement" %}
+                        </h3>
+                        <p class="text-[14.5px] text-slate-700 font-medium leading-relaxed whitespace-pre-line">
+                            {% if target_company.mission_stmt %}
+                                {{ target_company.mission_stmt }}
+                            {% else %}
+                                <span class="italic text-slate-400 font-normal">{% trans "No mission statement added yet." %}</span>
+                                <a href="{% url 'company_edit_profile' target_company.slug %}" class="text-[#0A66C2] hover:underline ml-1 font-semibold text-[13px]">{% trans "Add one now." %}</a>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Simple Stats -->
+                    <div class="flex items-center gap-8 mt-8 pt-6 border-t border-slate-100">
+                        <div class="flex flex-col">
+                            <span class="text-[24px] font-extrabold text-slate-900 leading-none mb-1">{{ target_company.services.count|default:"0" }}</span>
+                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">{% trans "Products" %}</span>
+                        </div>
+                        <div class="w-px h-8 bg-slate-200"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[24px] font-extrabold text-slate-900 leading-none mb-1">{{ target_company.news_articles.count|default:"0" }}</span>
+                            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">{% trans "Updates" %}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             MANAGEMENT MODULES (Floating Bento Cards)
+             ============================================== -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+
+            <!-- Products Module -->
+            <a href="{% url 'manage_services' %}" class="bg-white rounded-[1.5rem] p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-[0_20px_40px_-12px_rgba(10,102,194,0.15)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-400 flex flex-col h-full group relative">
+                <h3 class="font-extrabold text-slate-900 text-[18px] mb-2 nav-heading tracking-tight">{% trans "Products & Services" %}</h3>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed flex-1 mb-6">{% trans "Detail your core offerings, pricing, and specific capabilities to attract clients." %}</p>
+                <div class="flex items-center text-[13px] font-extrabold text-slate-400 group-hover:text-[#0A66C2] transition-colors mt-auto">
+                    {% trans "Manage entries" %}
+                </div>
+            </a>
+
+            <!-- News Module -->
+            <a href="{% url 'manage_news_list' %}" class="bg-white rounded-[1.5rem] p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-[0_20px_40px_-12px_rgba(10,102,194,0.15)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-400 flex flex-col h-full group relative">
+                <h3 class="font-extrabold text-slate-900 text-[18px] mb-2 nav-heading tracking-tight">{% trans "Company Updates" %}</h3>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed flex-1 mb-6">{% trans "Publish important news, press releases, or significant announcements." %}</p>
+                <div class="flex items-center text-[13px] font-extrabold text-slate-400 group-hover:text-[#0A66C2] transition-colors mt-auto">
+                    {% trans "Manage news" %}
+                </div>
+            </a>
+
+            <!-- History Module -->
+            <a href="{% url 'manage_milestones' %}" class="bg-white rounded-[1.5rem] p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-[0_20px_40px_-12px_rgba(10,102,194,0.15)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-400 flex flex-col h-full group relative">
+                <h3 class="font-extrabold text-slate-900 text-[18px] mb-2 nav-heading tracking-tight">{% trans "Milestones" %}</h3>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed flex-1 mb-6">{% trans "Document funding rounds, expansions, and key moments in your timeline." %}</p>
+                <div class="flex items-center text-[13px] font-extrabold text-slate-400 group-hover:text-[#0A66C2] transition-colors mt-auto">
+                    {% trans "Manage timeline" %}
+                </div>
+            </a>
+
+            <!-- Links Module -->
+            <a href="{% url 'manage_network' %}" class="bg-white rounded-[1.5rem] p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-[0_20px_40px_-12px_rgba(10,102,194,0.15)] hover:border-blue-200 hover:-translate-y-1 transition-all duration-400 flex flex-col h-full group relative">
+                <h3 class="font-extrabold text-slate-900 text-[18px] mb-2 nav-heading tracking-tight">{% trans "Links & Socials" %}</h3>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed flex-1 mb-6">{% trans "Centralize your website, social media channels, and external links." %}</p>
+                <div class="flex items-center text-[13px] font-extrabold text-slate-400 group-hover:text-[#0A66C2] transition-colors mt-auto">
+                    {% trans "Manage links" %}
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION (Exact reference style)
+     ============================================== -->
+{% if not is_inspector %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.02)] flex justify-between w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+
+    <!-- 1. Dashboard -->
+    <a href="{% url 'dashboard' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <svg class="w-6 h-6 mb-0.5 stroke-[2]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Dashboard" %}</span>
+    </a>
+
+    <!-- 2. My Company (ACTIVE) -->
+    <a href="#" class="flex-1 flex flex-col items-center justify-center py-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-full h-[2px] bg-[#0A66C2]"></div>
+        <svg class="w-6 h-6 mb-0.5 text-[#0A66C2] fill-blue-50 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        <span class="text-[10px] font-semibold tracking-tight text-center w-full truncate px-1">{% trans "My Company" %}</span>
+    </a>
+
+    <!-- 3. Network -->
+    <a href="{% url 'nexus_feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <svg class="w-6 h-6 mb-0.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Network" %}</span>
+    </a>
+
+    <!-- 4. Jobs -->
+    <a href="{% url 'opportunities:feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <svg class="w-6 h-6 mb-0.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Jobs" %}</span>
+    </a>
+
+    <!-- 5. Public -->
+    {% if target_company.slug %}
+    <a href="{% url 'company_public_profile' target_company.slug %}" target="_blank" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <svg class="w-6 h-6 mb-0.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Public" %}</span>
+    </a>
+    {% else %}
+    <span class="flex-1 flex flex-col items-center justify-center py-1 text-slate-300 cursor-not-allowed">
+        <svg class="w-6 h-6 mb-0.5 stroke-[2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Public" %}</span>
+    </span>
+    {% endif %}
+</nav>
+{% endif %}
+
+<!-- NOTIFICATION TOAST (Soft Styling) -->
+<div id="share-toast" class="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-[1rem] shadow-[0_12px_24px_rgba(0,0,0,0.2)] transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] opacity-0 transform translate-y-4 z-[120] text-[14px] font-bold flex items-center gap-3 pointer-events-none hidden w-max">
+    {% trans "Link Copied to Clipboard" %}
+</div>
+
+<script>
+    // Initialize Lucide Icons for Desktop NavBar
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    let shareToastTimeout;
+    function copyExactProfileLink(djangoUrlPath) {
+        const fullUrl = window.location.origin + djangoUrlPath;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            const toast = document.getElementById('share-toast');
+            clearTimeout(shareToastTimeout);
+
+            toast.classList.remove('hidden');
+
+            // Trigger reflow for animation
+            void toast.offsetWidth;
+
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            if (navigator.vibrate) navigator.vibrate(10);
+
+            shareToastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.classList.add('hidden'), 400);
+            }, 3000);
+        });
+    }
+
+    function dismissBanner() {
+        const banner = document.getElementById('profile-setup-banner');
+        if (banner) {
+            banner.style.animation = 'fadeOut 0.3s forwards';
+            setTimeout(() => banner.style.display = 'none', 300);
+        }
+    }
+</script>
+{% endwith %}
+{% endblock content %}

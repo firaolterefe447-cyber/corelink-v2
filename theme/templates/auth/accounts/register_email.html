@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Verify Email" %} | CoreLink{% endblock %}
+
+{% block navbar %}
+<!--
+    ==============================================
+    DESKTOP NAVIGATION (Minimal Focus Mode)
+    ==============================================
+-->
+<div class="hidden md:flex fixed top-8 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full">
+        <!-- Dashboard Button -->
+        <a href="{% url 'dashboard' %}" class="px-8 py-3 rounded-full text-[14px] font-bold bg-gradient-to-r from-[#0A66C2] to-[#0052a3] text-white shadow-md shadow-blue-600/20 hover:shadow-[0_12px_24px_-8px_rgba(10,102,194,0.5)] hover:-translate-y-0.5 transition-all flex items-center gap-2.5 active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-90"><path d="m15 18-6-6 6-6"/></svg>
+            <span>{% trans "Back to Dashboard" %}</span>
+        </a>
+    </div>
+</div>
+
+<!--
+    ==============================================
+    MOBILE TOP ACTIONS (Minimal Back Pill)
+    ==============================================
+-->
+<div class="fixed top-4 left-4 z-50 flex items-center md:hidden pointer-events-none animate-fade-in-down pt-safe">
+    <a href="{% url 'dashboard' %}" class="pointer-events-auto w-11 h-11 bg-white/90 backdrop-blur-xl border border-slate-200/80 shadow-md text-slate-700 hover:bg-white hover:text-[#0A66C2] rounded-[1rem] flex items-center justify-center transition-all active:scale-95 group" aria-label="{% trans 'Back to Dashboard' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-0.5 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F8FAFC;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(241, 245, 249, 1) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(226, 232, 240, 0.4) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
+    @media (min-width: 768px) { .pb-safe { padding-bottom: 4rem; } }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.8s var(--ease-magic) forwards; }
+    .animate-fade-in-down { animation: fadeInDown 0.6s var(--ease-magic) forwards; }
+
+    .premium-card {
+        background: #FFFFFF;
+    }
+
+    .premium-label {
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748B;
+        margin-bottom: 0.35rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .btn-primary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        border-radius: 9999px; font-weight: 700;
+        background-color: #0A66C2; color: #FFFFFF;
+        min-height: 56px; padding: 0.75rem 2.5rem; font-size: 16px;
+        transition: all 0.3s var(--ease-magic);
+        width: 100%;
+    }
+    .btn-primary:hover { background-color: #0052a3; transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(10, 102, 194, 0.3); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        border-radius: 9999px; font-weight: 700; background-color: #F8FAFC;
+        color: #475569; border: 1.5px solid #E2E8F0;
+        min-height: 56px; padding: 0.75rem 2.5rem; font-size: 16px;
+        transition: all 0.3s var(--ease-magic);
+        width: 100%;
+    }
+    .btn-secondary:hover { color: #0F172A; border-color: #CBD5E1; background-color: #F1F5F9; }
+    .btn-secondary:active { transform: scale(0.97); }
+</style>
+
+<div class="relative z-10 pt-20 md:pt-36 pb-safe px-0 md:px-8 min-h-screen max-w-[40rem] mx-auto animate-fade-in-up">
+    <!-- Card is edge-to-edge on mobile, beautifully boxed on PC -->
+    <div class="premium-card flex flex-col mb-0 md:mb-16 overflow-hidden relative border-y border-x-0 border-slate-200/60 md:border-x md:rounded-[2rem] md:shadow-[0_10px_40px_-10px_rgba(15,23,42,0.04)] sm:shadow-sm bg-white">
+
+        <!-- Humanistic Context Header -->
+        <div class="px-5 pt-8 md:px-14 lg:px-16 md:pt-14 pb-5 md:pb-6 border-b border-slate-100 text-center md:text-left">
+            {% if email_sent %}
+                <h1 class="text-[22px] md:text-3xl font-extrabold text-[#0A66C2] tracking-tight nav-heading">{% trans "Verify Your Email" %}</h1>
+                <p class="text-[14px] md:text-[15px] text-slate-500 font-medium mt-1.5 leading-relaxed">
+                    {% blocktrans with email=user.email %}A 6-digit verification code has been sent to <strong>{{ email }}</strong>. Please enter the code below to verify your email address.{% endblocktrans %}
+                </p>
+            {% else %}
+                <h1 class="text-[22px] md:text-3xl font-extrabold text-slate-900 tracking-tight nav-heading">{% trans "Add & Verify Email" %}</h1>
+                <p class="text-[14px] md:text-[15px] text-slate-500 font-medium mt-1.5 leading-relaxed">{% trans "To keep your account secure, please provide and verify your email address. Next time, you can login with your email address." %}</p>
+            {% endif %}
+        </div>
+
+        {% if not email_sent %}
+        <form class="p-5 md:p-14 lg:p-16 space-y-8 relative z-10" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="send_otp" value="1">
+
+            <div class="space-y-4">
+                <label class="premium-label">{% trans "Email Address" %}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-medium mt-2.5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        {{ form.email.errors.0 }}
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <button type="submit" class="btn-primary">
+                    {% trans "Send Verification Code" %}
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn-secondary sm:w-1/3">
+                    {% trans "Skip" %}
+                </a>
+            </div>
+
+            <div class="text-center pt-4 border-t border-slate-50">
+                <p class="text-xs text-slate-400 italic">
+                    {% trans "You can also verify this later from your profile settings." %}
+                </p>
+            </div>
+        </form>
+        {% else %}
+        <form class="p-5 md:p-14 lg:p-16 space-y-8 relative z-10" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="verify_otp" value="1">
+
+            <div class="space-y-4">
+                <label class="premium-label">{% trans "Verification Code" %}</label>
+                {{ otp_form.otp }}
+                {% if otp_form.otp.errors %}
+                    <p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-medium mt-2.5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        {{ otp_form.otp.errors.0 }}
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <button type="submit" class="btn-primary">
+                    {% trans "Verify Code" %}
+                </button>
+                <button type="submit" name="resend" value="1" class="btn-secondary sm:w-1/3" formnovalidate>
+                    {% trans "Resend" %}
+                </button>
+            </div>
+
+            <div class="text-center pt-4 border-t border-slate-50">
+                <a href="{% url 'register_email' %}" class="text-xs text-[#0A66C2] font-semibold hover:underline">
+                    {% trans "Change email address" %}
+                </a>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

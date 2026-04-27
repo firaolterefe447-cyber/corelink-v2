@@ -1,0 +1,134 @@
+{% load i18n %}
+
+<style>
+    /* Subtle pop-in animation for new messages */
+    @keyframes messagePop {
+        0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .msg-animate { animation: messagePop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+
+{% for msg in active_messages %}
+    <div id="msg-{{ msg.id }}" class="group flex w-full mb-4 items-end msg-animate {% if msg.sender == request.user %}justify-end{% else %}justify-start{% endif %}">
+
+        <!-- SENDER ACTIONS (Edit / Delete) - Hidden by default, slides in on hover -->
+        {% if msg.sender == request.user %}
+        <div class="flex items-center gap-1.5 mr-3 opacity-0 md:-translate-x-2 group-hover:opacity-100 md:group-hover:translate-x-0 transition-all duration-300 ease-out mb-1 focus-within:opacity-100 focus-within:translate-x-0">
+
+            <!-- Edit Button -->
+            {% if msg.body %}
+            <button
+                type="button"
+                onclick="startEdit('{{ msg.id }}', '{{ msg.body|escapejs }}')"
+                class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-[#0A66C2] hover:bg-blue-50 hover:border-blue-200 transition-all active:scale-90 tooltip-trigger"
+                title="{% trans 'Edit' %}">
+                <i data-lucide="pencil" class="w-[14px] h-[14px]"></i>
+            </button>
+            {% endif %}
+
+            <!-- Delete Button -->
+            <button
+                hx-post="{% url 'delete_message' msg.id %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-target="#msg-{{ msg.id }}"
+                hx-swap="delete"
+                hx-confirm="{% trans 'Delete this message for everyone?' %}"
+                class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all active:scale-90 tooltip-trigger"
+                title="{% trans 'Delete' %}">
+                <i data-lucide="trash-2" class="w-[14px] h-[14px]"></i>
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- THE MESSAGE BUBBLE -->
+        <div class="relative max-w-[85%] md:max-w-[70%] text-[15px] leading-relaxed transition-all duration-300 group-hover:shadow-md
+            {% if msg.sender == request.user %}
+                bg-gradient-to-br from-[#0A66C2] to-[#0055a6] text-white rounded-[1.4rem] rounded-br-[0.3rem] shadow-[0_4px_15px_-3px_rgba(10,102,194,0.25)] ml-auto
+            {% else %}
+                bg-white border border-slate-200/80 text-slate-800 rounded-[1.4rem] rounded-bl-[0.3rem] shadow-[0_4px_15px_-3px_rgba(0,0,0,0.03)] mr-auto
+            {% endif %}">
+
+            <!-- Content Container -->
+            <div class="flex flex-col gap-1.5 p-3.5 sm:p-4">
+
+                <!-- ATTACHMENT HANDLING -->
+                {% if msg.attachment %}
+                    {% if msg.is_image %}
+                        <!-- Image Attachment -->
+                        <a href="{{ msg.attachment.url }}" target="_blank" class="block relative group/img overflow-hidden rounded-[1rem] shadow-sm mb-1 bg-black/5 {% if msg.sender == request.user %}border border-white/20{% else %}border border-slate-200/50{% endif %}">
+                            <img src="{{ msg.attachment.url }}"
+                                 class="max-w-[240px] md:max-w-[280px] w-full max-h-[300px] object-cover transition-transform duration-500 group-hover/img:scale-105"
+                                 alt="Attached Image" loading="lazy">
+                            <div class="absolute inset-0 bg-slate-900/0 group-hover/img:bg-slate-900/20 transition-colors duration-300 flex items-center justify-center backdrop-blur-[0px] group-hover/img:backdrop-blur-[2px]">
+                                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 transform scale-90 group-hover/img:scale-100">
+                                    <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                                </div>
+                            </div>
+                        </a>
+                    {% else %}
+                        <!-- Document Attachment -->
+                        <a href="{{ msg.attachment.url }}" target="_blank" class="flex items-center gap-3 p-3 rounded-[1rem] transition-colors mb-1 shadow-sm max-w-[260px] md:max-w-[300px]
+                            {% if msg.sender == request.user %}
+                                bg-white/15 hover:bg-white/25 border border-white/20
+                            {% else %}
+                                bg-slate-50 hover:bg-slate-100 border border-slate-200/80
+                            {% endif %}">
+
+                            <div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm
+                                {% if msg.sender == request.user %}
+                                    bg-white text-[#0A66C2]
+                                {% else %}
+                                    bg-white text-[#0A66C2] border border-slate-200
+                                {% endif %}">
+                                <i data-lucide="file-text" class="w-5 h-5"></i>
+                            </div>
+
+                            <div class="flex flex-col overflow-hidden min-w-0 pr-2
+                                {% if msg.sender == request.user %}text-white{% else %}text-slate-900{% endif %}">
+                                <span class="text-[13.5px] font-bold truncate block w-full">{{ msg.filename|default:"Document attached" }}</span>
+                                <span class="text-[11px] font-semibold tracking-wide uppercase mt-0.5 {% if msg.sender == request.user %}text-blue-100{% else %}text-slate-400{% endif %}">{% trans "Tap to view" %}</span>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                <!-- TEXT BODY -->
+                {% if msg.body %}
+                    <p class="text-[15px] leading-[1.6] break-words whitespace-pre-wrap {% if msg.sender == request.user %}text-white/95 font-medium{% else %}text-slate-700 font-medium{% endif %}">{{ msg.body }}</p>
+                {% endif %}
+            </div>
+
+            <!-- TIMESTAMP & STATUS -->
+            <div class="flex items-center justify-end gap-1.5 px-3.5 sm:px-4 pb-2.5 -mt-2
+                {% if msg.sender == request.user %}text-blue-200{% else %}text-slate-400{% endif %}">
+
+                <span class="text-[10.5px] font-bold tracking-wide">{{ msg.timestamp|time:"H:i" }}</span>
+
+                <!-- Database Read/Unread Ticks (Only visible to the person who sent it) -->
+                {% if msg.sender == request.user %}
+                    {% if msg.is_read %}
+                        <i data-lucide="check-check" class="w-3.5 h-3.5 text-white drop-shadow-sm" title="{% trans 'Read' %}"></i>
+                    {% else %}
+                        <i data-lucide="check" class="w-3.5 h-3.5 opacity-80" title="{% trans 'Sent' %}"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+{% empty %}
+    <!-- PREMIUM EMPTY STATE -->
+    <div class="h-full flex flex-col items-center justify-center mt-12 md:mt-24 px-6 msg-animate">
+        <div class="relative mb-6">
+            <div class="absolute inset-0 bg-[#0A66C2]/10 rounded-full blur-2xl animate-pulse"></div>
+            <div class="w-20 h-20 bg-white border border-slate-200 rounded-[1.8rem] flex items-center justify-center text-[#0A66C2] shadow-xl relative z-10">
+                <i data-lucide="send" class="w-8 h-8 ml-1"></i>
+            </div>
+        </div>
+        <h3 class="text-[20px] font-black text-slate-900 nav-heading tracking-tight mb-2 text-center">{% trans "Start the Conversation" %}</h3>
+        <p class="text-[14px] font-medium text-slate-500 max-w-[260px] text-center leading-relaxed">
+            {% trans "Send a message or share an attachment to begin networking." %}
+        </p>
+    </div>
+{% endfor %}

@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!--
+    ==============================================
+    DESKTOP NAVIGATION (Premium Floating Pill)
+    ==============================================
+-->
+<div class="hidden md:flex fixed top-6 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full gap-1">
+
+        {% if not is_inspector %}
+            <!-- Dashboard is the ACTIVE tab since this is an extension of the Dashboard -->
+            <a href="{% url 'dashboard' %}" class="px-5 py-2.5 rounded-full text-[13px] font-bold bg-[#0A66C2] text-white shadow-md shadow-blue-600/20 hover:bg-[#004182] hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 hidden lg:block"></i> {% trans "Dashboard" %}
+            </a>
+            <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="px-6 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+                <i data-lucide="layers" class="w-4 h-4 hidden lg:block opacity-70"></i> <span class="hidden lg:inline">{% if user.role == 'FOUNDER' %}{% trans "My Company" %}{% else %}{% trans "My Teams" %}{% endif %}</span>
+            </a>
+            <a href="{% url 'nexus_feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Network" %}
+            </a>
+            <a href="{% url 'opportunities:feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+                <i data-lucide="briefcase" class="w-4 h-4 hidden lg:block opacity-70"></i> {% if user.role == 'FOUNDER' %}{% trans "Jobs" %}{% else %}{% trans "Opportunities" %}{% endif %}
+            </a>
+            <a href="{{ user.get_absolute_url }}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2 group">
+                <i data-lucide="user-circle" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "My Profile" %}
+            </a>
+        {% else %}
+            <!-- Inspector Nav -->
+            <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="px-5 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Pool Browser" %}
+            </a>
+            <div class="px-6 py-2.5 rounded-full text-[13px] font-bold bg-[#0A66C2] text-white shadow-md shadow-blue-600/20 flex items-center gap-2 cursor-default">
+                <i data-lucide="layers" class="w-4 h-4"></i> <span class="hidden lg:inline">{% trans "My Teams" %}</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- MOBILE TOP ACTIONS -->
+<div class="fixed top-4 left-0 right-0 z-50 flex justify-start px-4 md:hidden pointer-events-none pt-safe">
+    <a href="{% url 'dashboard' %}" class="pointer-events-auto w-10 h-10 bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-sm text-slate-700 hover:bg-slate-50 rounded-full flex items-center justify-center transition-colors active:scale-95" aria-label="Back to Dashboard">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F8FAFC;
+        background-image: radial-gradient(at 50% 0%, #ffffff 0%, #F1F5F9 100%);
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, h4, h5, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.7s var(--ease-spring) forwards; will-change: transform, opacity; }
+
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 80px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    /* Card Physics */
+    .message-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: clamp(1rem, 3vw, 1.5rem);
+        transition: all 0.3s var(--ease-smooth);
+        box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+    }
+    .message-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08);
+        border-color: #CBD5E1;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem;
+        border-radius: 9999px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .status-resolved { background: #ECFDF5; color: #059669; border: 1px solid #D1FAE5; }
+    .status-pending { background: #FFFBEB; color: #D97706; border: 1px solid #FEF3C7; }
+    .status-in-progress { background: #EFF6FF; color: #2563EB; border: 1px solid #DBEAFE; }
+</style>
+
+<main class="relative z-10 pt-20 md:pt-32 pb-safe px-3 sm:px-6 w-full min-h-[100dvh]">
+    <div class="max-w-[800px] mx-auto animate-fade-in-up">
+
+        <!-- HEADER SECTION -->
+        <div class="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <!-- Back to Dashboard (Desktop) -->
+                <a href="{% url 'dashboard' %}" class="hidden md:inline-flex items-center gap-2 text-[14px] font-bold text-slate-500 hover:text-[#0A66C2] mb-4 transition-colors group">
+                    <div class="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center group-hover:border-blue-200 group-hover:bg-blue-50 transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    </div>
+                    {% trans "Back to Dashboard" %}
+                </a>
+
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 shadow-sm">
+                        <i data-lucide="life-buoy" class="w-6 h-6 md:w-7 md:h-7 text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-[clamp(1.5rem,3vw,2.25rem)] font-extrabold text-slate-900 leading-tight nav-heading tracking-tight">
+                            {% trans "Support Messages" %}
+                        </h1>
+                        <p class="text-[14px] md:text-[15px] text-slate-500 font-medium mt-1 leading-relaxed max-w-lg">
+                            {% trans "Your previous conversations with the CoreLink team. We're always here to help you grow." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optional CTA if you have a "Create New Message" view -->
+            <!--
+            <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-[14px] font-extrabold bg-[#0F172A] text-white shadow-md hover:bg-[#1E293B] hover:-translate-y-0.5 transition-all w-full md:w-auto active:scale-95">
+                <i data-lucide="message-square-plus" class="w-4 h-4"></i> {% trans "New Message" %}
+            </a>
+            -->
+        </div>
+
+        <!-- MESSAGES LIST -->
+        <div class="space-y-4 md:space-y-5">
+
+            <!-- Replace 'messages' with your actual context variable for the list -->
+            {% for msg in admin_messages %}
+                <!-- LINK TO MESSAGE DETAIL PAGE -->
+                <!-- Replace 'msg.get_absolute_url' with your actual detail url -->
+                <a href="{{ msg.get_absolute_url|default:'#' }}" class="message-card block p-5 sm:p-6 group relative overflow-hidden">
+                    <!-- Decorative side accent -->
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-3 mb-2">
+                                <!-- STATUS BADGE LOGIC (Adjust conditions to match your model) -->
+                                {% if msg.status == 'resolved' or msg.status == 'closed' %}
+                                    <span class="status-badge status-resolved"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> {% trans "Resolved" %}</span>
+                                {% elif msg.status == 'in_progress' %}
+                                    <span class="status-badge status-in-progress"><i data-lucide="clock" class="w-3.5 h-3.5"></i> {% trans "In Progress" %}</span>
+                                {% else %}
+                                    <span class="status-badge status-pending"><i data-lucide="inbox" class="w-3.5 h-3.5"></i> {% trans "Pending" %}</span>
+                                {% endif %}
+
+                                <span class="text-[13px] text-slate-400 font-medium flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i> {{ msg.created_at|date:"M d, Y" }}
+                                </span>
+                            </div>
+
+                            <h3 class="text-[16px] sm:text-[18px] font-extrabold text-slate-900 mb-1.5 group-hover:text-[#0A66C2] transition-colors truncate">
+                                {{ msg.subject|default:"Support Request" }}
+                            </h3>
+                            <p class="text-[14.5px] text-slate-500 font-medium leading-relaxed line-clamp-2 pr-4">
+                                {{ msg.body|truncatechars:120|default:"No description provided." }}
+                            </p>
+                        </div>
+
+                        <!-- Right Chevron Indicator -->
+                        <div class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-[#0A66C2] transition-colors shrink-0">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                <!-- BEAUTIFUL EMPTY STATE -->
+                <div class="bg-white border border-slate-200/80 rounded-[1.5rem] p-10 md:p-16 text-center shadow-sm flex flex-col items-center">
+                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-5 border border-blue-100 shadow-sm">
+                        <i data-lucide="messages-square" class="w-10 h-10 text-[#0A66C2]"></i>
+                    </div>
+                    <h3 class="text-[19px] font-extrabold text-slate-900 nav-heading tracking-tight mb-2">{% trans "No support messages yet" %}</h3>
+                    <p class="text-[15px] text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                        {% trans "You haven't needed to reach out yet! If you ever face an issue, have a question, or need assistance, we're just a message away." %}
+                    </p>
+
+                    <!-- Optional: Button to contact support -->
+                    <!--
+                    <a href="#" class="mt-8 px-6 py-3 rounded-full text-[14px] font-bold bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-[#0A66C2] transition-all flex items-center gap-2">
+                        <i data-lucide="pen-line" class="w-4 h-4"></i> {% trans "Write to Support" %}
+                    </a>
+                    -->
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</main>
+
+<!-- ==============================================
+     NATIVE BOTTOM NAVIGATION (LINKEDIN STYLE)
+     ============================================== -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[80] bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.02)] flex justify-between w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+
+    <!-- DASHBOARD IS ACTIVE -->
+    <a href="{% url 'dashboard' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-full h-[3px] bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="layout-dashboard" class="w-6 h-6 mb-0.5 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[10px] font-semibold tracking-tight text-center w-full truncate px-1">{% trans "Dashboard" %}</span>
+    </a>
+
+    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="layers" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% if user.role == 'FOUNDER' %}{% trans "My Company" %}{% else %}{% trans "Workspace" %}{% endif %}</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="users" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Network" %}</span>
+    </a>
+
+    <a href="{% url 'opportunities:feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="briefcase" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% if user.role == 'FOUNDER' %}{% trans "Jobs" %}{% else %}{% trans "Opportunities" %}{% endif %}</span>
+    </a>
+
+    <a href="{{ user.get_absolute_url }}" target="_blank" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        {% if user.avatar %}<img src="{{ user.get_avatar_url }}" alt="Profile" class="w-6 h-6 mb-0.5 rounded-full object-cover border border-slate-200">{% else %}<i data-lucide="user-circle" class="w-6 h-6 mb-0.5 stroke-[2]"></i>{% endif %}
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Profile" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
+{% endblock %}

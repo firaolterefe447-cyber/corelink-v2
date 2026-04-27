@@ -1,0 +1,667 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- ==============================================
+     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
+    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
+        <!-- Logo -->
+        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+
+        <!-- Desktop Navigation Links (Exactly 5 Links) -->
+        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
+            </a>
+
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
+            </a>
+
+            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
+            </a>
+
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
+            </a>
+
+            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
+                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+
+            <!-- ACTIVE STATE: Settings -->
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50/80 text-[#0A66C2] border border-blue-100/50 shadow-sm transition-colors" aria-current="page">
+                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            </a>
+
+            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- ==============================================
+     MOBILE TOP BAR (Clean, Rigid, Optimized)
+     ============================================== -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-sm prevent-select">
+    <!-- Safe Area for Notches -->
+    <div class="w-full h-[env(safe-area-inset-top)] bg-white/95"></div>
+    <div class="flex items-center justify-between px-5 h-[60px]">
+        <div class="flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <div class="text-[22px] font-black tracking-tight flex items-center leading-none drop-shadow-sm">
+                <span class="text-slate-900">Core</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+            </div>
+        </div>
+        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center text-slate-700 transition-all active:scale-95">
+            <i data-lucide="menu" class="w-5 h-5 stroke-[2.5]"></i>
+        </button>
+    </div>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --app-bg: #F8FAFC;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+    @media (max-width: 767px) {
+        .custom-scroll::-webkit-scrollbar { display: none; }
+        .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+
+    /* PREMIUM PC CANVAS LAYOUT */
+    .app-canvas { max-width: 1400px; margin: 0 auto; padding: calc(6.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; position: relative; }
+    @media (min-width: 768px) { .app-canvas { padding: 9rem 4.5rem 6rem 4.5rem; max-width: 1200px; } }
+
+    .bento-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 2rem; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; position: relative; }
+    .bento-card:hover { box-shadow: 0 16px 40px rgba(10, 102, 194, 0.08); border-color: #CBD5E1; transform: translateY(-2px); }
+
+    .btn-action { background: linear-gradient(135deg, #0A66C2, #0052a3); color: white; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; min-height: 48px; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
+    .btn-action:active { transform: scale(0.96); }
+    .btn-action:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    /* UX Enhanced Inputs */
+    .premium-input { width: 100%; background-color: rgba(248, 250, 252, 0.8); backdrop-filter: blur(8px); border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 14.5px; font-weight: 700; color: #0F172A; outline: none; transition: all 0.3s; appearance: none; box-shadow: 0 1px 2px rgba(0,0,0,0.01); }
+    .premium-input::placeholder { color: #94A3B8; font-weight: 600; }
+    .premium-input:hover { border-color: #CBD5E1; }
+    .premium-input:focus { background-color: #FFFFFF; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
+    textarea.premium-input { resize: vertical; line-height: 1.6; min-height: 180px; }
+
+    .premium-label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .form-desc { font-size: 13px; font-weight: 600; color: #64748B; margin-bottom: 0.75rem; line-height: 1.5; }
+
+    /* Tab Switcher Smoothness */
+    .tab-content { display: none; opacity: 0; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .tab-content.active-tab { display: block; opacity: 1; }
+
+    /* Drag and Drop Active State */
+    .dragover { background-color: #EFF6FF !important; border-color: #0A66C2 !important; border-style: solid !important; transform: scale(1.02); }
+
+    /* Fix Drawer Overflow */
+    .drawer-closed { transform: translateY(calc(100% + 20px)); pointer-events: none; }
+    .drawer-open { transform: translateY(0); pointer-events: auto; box-shadow: 0 -24px 60px rgba(0,0,0,0.15); }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+</style>
+
+<main class="app-canvas animate-up">
+
+    <!-- TOP BACK NAVIGATION -->
+    <div class="mb-6 flex items-center justify-between">
+        <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2.5 text-[14px] font-bold text-slate-500 hover:text-[#0A66C2] transition-colors group">
+            <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 shadow-sm group-hover:bg-blue-50 group-hover:border-blue-100 transition-all">
+                <i data-lucide="arrow-left" class="w-4 h-4 text-slate-600 group-hover:text-[#0A66C2]"></i>
+            </div>
+            {% trans "Back to Dashboard" %}
+        </a>
+    </div>
+
+    <!-- GLOBAL MESSAGES -->
+    {% if messages %}
+        <div class="mb-8 space-y-3">
+            {% for message in messages %}
+                <div class="px-5 py-4 rounded-2xl text-[14px] font-bold flex items-center gap-3 shadow-sm border animate-up
+                    {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border-rose-200
+                    {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border-amber-200
+                    {% else %}bg-emerald-50 text-emerald-800 border-emerald-200{% endif %}">
+
+                    {% if message.tags == 'error' %}<i data-lucide="alert-circle" class="w-5 h-5 shrink-0 text-rose-600"></i>
+                    {% elif message.tags == 'warning' %}<i data-lucide="alert-triangle" class="w-5 h-5 shrink-0 text-amber-600"></i>
+                    {% else %}<i data-lucide="check-circle-2" class="w-5 h-5 shrink-0 text-emerald-600"></i>{% endif %}
+
+                    <span class="leading-relaxed">{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- ==============================================
+         LOCAL TOP NAVIGATION TABS (Segmented Control)
+         ============================================== -->
+    <div class="flex items-center w-full bg-slate-200/50 p-1.5 rounded-[1.25rem] mb-8 border border-slate-200">
+        <button type="button" onclick="switchTab('basic')" id="tab-btn-basic" class="flex-1 flex items-center justify-center py-3 rounded-xl bg-white shadow-sm border border-slate-200/50 text-[#0A66C2] transition-all">
+            <span id="tab-text-basic" class="text-[11px] sm:text-[13px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Basic Profile" %}</span>
+        </button>
+        <button type="button" onclick="switchTab('privacy')" id="tab-btn-privacy" class="flex-1 flex items-center justify-center py-3 rounded-xl text-slate-500 hover:text-slate-800 transition-all">
+            <span id="tab-text-privacy" class="text-[11px] sm:text-[13px] font-bold uppercase tracking-widest whitespace-nowrap">{% trans "Account & Privacy" %}</span>
+        </button>
+    </div>
+
+    <!-- ==============================================
+         TAB CONTENT 1: BASIC INFORMATION
+         ============================================== -->
+    <div id="tab-basic" class="tab-content active-tab">
+        <form method="post" enctype="multipart/form-data" id="profile-settings-form" onsubmit="handleSettingsSubmit(event)">
+            {% csrf_token %}
+
+            <div class="bento-card flex flex-col mb-8 relative group">
+                <!-- Ambient Glow -->
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-[#0A66C2]/10 to-purple-500/10 blur-[60px] rounded-full pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
+
+                <div class="p-6 sm:p-8 md:p-10 space-y-8 relative z-10">
+
+                    <!-- BIO SECTION (Visually hidden, keeps field intact for Django backend) -->
+                    {% if form.bio_narrative %}
+                    <div class="hidden">
+                        {{ form.bio_narrative }}
+                    </div>
+                    {% endif %}
+
+                    <!-- PERFECTLY BALANCED INPUT GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- INJECTED USER IDENTITY FIELDS -->
+                        {% if form.full_name %}
+                        <!-- Full Name spans 2 columns on PC for prominence -->
+                        <div id="wrapper_full_name" class="md:col-span-2">
+                            <label class="premium-label">{{ form.full_name.label }}</label>
+                            {{ form.full_name }}
+                            {% if form.full_name.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.full_name.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if form.email %}
+                        <div id="wrapper_email" class="md:col-span-1">
+                            <label class="premium-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.email.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if form.telegram_handle %}
+                        <div id="wrapper_telegram" class="md:col-span-1">
+                            <label class="premium-label">{% trans "Telegram Username" %}</label>
+                            {{ form.telegram_handle }}
+                            {% if form.telegram_handle.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.telegram_handle.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- PROFILE NATIVE FIELDS -->
+                        {% if form.field_of_interest %}
+                        <div id="wrapper_field_of_interest" class="md:col-span-2 mt-2">
+                            <label class="premium-label">{% trans "Industry / Field of Interest" %}</label>
+                            <p class="form-desc">{% trans "Please write your overarching industry fully with correct spelling (e.g., Artificial Intelligence, Software Engineering, E-Commerce)." %}</p>
+                            {{ form.field_of_interest }}
+                            {% if form.field_of_interest.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.field_of_interest.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- PURE TEXT INSTITUTION (Matches Onboarding) -->
+                        {% if form.institution_name %}
+                        <div id="wrapper_institution" class="md:col-span-2">
+                            <label class="premium-label">{% trans "Institution / Company" %}</label>
+                            <p class="form-desc">{% trans "Please write the full name of your primary organization or university with correct spelling (e.g., Safaricom, Addis Ababa University)." %}</p>
+                            {{ form.institution_name }}
+                            {% if form.institution_name.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.institution_name.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% elif form.institution %}
+                        <div id="wrapper_institution" class="md:col-span-2">
+                            <label class="premium-label">{% trans "Institution / Company" %}</label>
+                            <p class="form-desc">{% trans "Please write the full name of your primary organization or university with correct spelling (e.g., Safaricom, Addis Ababa University)." %}</p>
+                            {{ form.institution }}
+                            {% if form.institution.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.institution.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- PURE TEXT CITY / LOCATION (Matches Onboarding) -->
+                        {% if form.city_name %}
+                        <div id="wrapper_location" class="md:col-span-1">
+                            <label class="premium-label">{% trans "City" %}</label>
+                            <p class="form-desc">{% trans "Where are you currently based? Please write the full city name with correct spelling (e.g., Addis Ababa, Nairobi)." %}</p>
+                            {{ form.city_name }}
+                            {% if form.city_name.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.city_name.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% elif form.location %}
+                        <div id="wrapper_location" class="md:col-span-1">
+                            <label class="premium-label">{% trans "City" %}</label>
+                            <p class="form-desc">{% trans "Where are you currently based? Please write the full city name with correct spelling (e.g., Addis Ababa, Nairobi)." %}</p>
+                            {{ form.location }}
+                            {% if form.location.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.location.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if form.years_experience %}
+                        <div id="wrapper_years_experience" class="md:col-span-1">
+                            <label class="premium-label" id="label_years">{{ form.years_experience.label }}</label>
+                            <p class="form-desc" id="desc_years">{% trans "Years worked in your industry." %}</p>
+                            {{ form.years_experience }}
+                            {% if form.years_experience.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.years_experience.errors.0 }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- PREMIUM CV UPLOAD (With drag and drop UX) -->
+                    {% if form.cv_file %}
+                    <div class="pt-6 border-t border-slate-100">
+                        <label class="premium-label">{{ form.cv_file.label }}</label>
+                        <p class="form-desc mb-4">{% trans "Upload your most recent resume or portfolio. Must be a PDF file, max 5MB." %}</p>
+
+                        <div class="relative group/file w-full">
+                            <input type="file" name="cv_file" id="id_cv_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf">
+
+                            <div id="cv-dropzone" class="border-2 border-dashed border-slate-300 group-hover/file:border-[#0A66C2] group-hover/file:bg-blue-50/50 rounded-[1.5rem] p-8 flex flex-col items-center justify-center text-center transition-all duration-300 bg-slate-50/50">
+                                <div id="cv-icon-wrap" class="w-14 h-14 bg-white shadow-sm border border-slate-200 group-hover/file:bg-white group-hover/file:border-blue-200 group-hover/file:shadow-md rounded-2xl flex items-center justify-center text-slate-400 group-hover/file:text-[#0A66C2] mb-3 transition-all duration-300">
+                                    <i data-lucide="file-text" class="w-6 h-6 transition-transform group-hover/file:-translate-y-1"></i>
+                                </div>
+                                <span class="text-[15px] font-bold text-slate-800 group-hover/file:text-[#0A66C2] transition-colors">{% trans "Click to browse or drag PDF here" %}</span>
+                                <span class="text-[13px] text-slate-500 mt-2 font-medium" id="cv-filename">
+                                    {% if form.instance.cv_file %}
+                                        {% trans "Current file: " %} <span class="font-bold text-slate-800">{{ form.instance.cv_file.name|slice:"10:" }}</span>
+                                    {% else %}
+                                        {% trans "Maximum file size: 5MB" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                        {% if form.cv_file.errors %}<p class="text-rose-600 bg-rose-50 border border-rose-100 px-4 py-2.5 rounded-xl text-[13px] font-bold mt-2.5 flex items-center gap-2 relative z-10"><i data-lucide="alert-circle" class="w-4 h-4"></i> {{ form.cv_file.errors.0 }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="pt-6 border-t border-slate-100 flex justify-end">
+                        <button type="submit" id="save-settings-btn" class="btn-action w-full sm:w-auto md:min-w-[200px]">
+                            <i data-lucide="save" id="save-icon" class="w-4 h-4"></i>
+                            <span id="save-text">{% trans "Save Profile Information" %}</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div> <!-- END TAB 1 -->
+
+
+    <!-- ==============================================
+         TAB CONTENT 2: ACCOUNT & PRIVACY
+         ============================================== -->
+    <div id="tab-privacy" class="tab-content">
+        <div class="bento-card overflow-hidden group">
+            <div class="absolute top-0 left-0 w-64 h-64 bg-slate-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <div class="px-6 sm:px-8 py-5 border-b border-slate-100 bg-slate-50/50 relative z-10">
+                <h3 class="text-[1.2rem] font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                        <i data-lucide="shield" class="w-4 h-4 text-slate-600"></i>
+                    </div>
+                    {% trans "Security Options" %}
+                </h3>
+            </div>
+
+            <div class="p-6 sm:p-8 space-y-8 relative z-10">
+
+                <!-- A. Read-only Phone Number Identifier -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+                    <div class="flex-1 pr-4">
+                        <h4 class="text-[16px] font-extrabold text-slate-900 mb-1">{% trans "Primary Identifier" %}</h4>
+                        <p class="text-[13.5px] font-medium text-slate-500 leading-relaxed">
+                            {% trans "Your account is permanently secured and linked to this phone number." %}
+                        </p>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-100 border border-slate-200 rounded-xl flex items-center gap-3 w-full md:w-auto shrink-0 justify-center shadow-inner cursor-not-allowed">
+                        <i data-lucide="phone" class="w-4 h-4 text-slate-500"></i>
+                        <span class="font-black text-slate-700 tracking-wide">{{ request.user.phone_number }}</span>
+                    </div>
+                </div>
+
+                <!-- B. Change Password -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+                    <div class="flex-1 pr-4">
+                        <h4 class="text-[16px] font-extrabold text-slate-900 mb-1">{% trans "Password & Authentication" %}</h4>
+                        <p class="text-[13.5px] font-medium text-slate-500 leading-relaxed">
+                            {% trans "Update your password regularly to prevent unauthorized access to your account." %}
+                        </p>
+                    </div>
+                    <a href="{% url 'password_change' %}" class="w-full md:w-auto min-h-[48px] px-6 py-2 rounded-xl font-black text-[12px] uppercase tracking-widest bg-slate-800 text-white hover:bg-slate-900 shadow-md shadow-slate-900/20 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0">
+                        <i data-lucide="key" class="w-4 h-4"></i> {% trans "Change Password" %}
+                    </a>
+                </div>
+
+                <!-- C. Toggle Privacy -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+                    <div class="flex-1 pr-4">
+                        <h4 class="text-[16px] font-extrabold text-slate-900 mb-1">{% trans "Profile Visibility" %}</h4>
+                        <p class="text-[13.5px] font-medium text-slate-500 leading-relaxed">
+                            {% if request.user.is_public %}
+                                {% trans "Your profile is currently visible to the community. You can hide it if you no longer want to be discovered by others." %}
+                            {% else %}
+                                {% trans "Your profile is currently private and hidden. Turn it on to allow founders and experts to discover you." %}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <form action="{% url 'toggle_privacy' %}" method="post" class="shrink-0 w-full md:w-auto">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full md:w-auto min-h-[48px] px-6 py-2 rounded-xl font-black text-[12px] uppercase tracking-widest transition-all flex items-center justify-center gap-2
+                            {% if request.user.is_public %}
+                                bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 hover:-translate-y-0.5
+                            {% else %}
+                                bg-emerald-500 text-white hover:bg-emerald-600 shadow-md shadow-emerald-500/20 hover:-translate-y-0.5
+                            {% endif %}">
+                            {% if request.user.is_public %}
+                                <i data-lucide="eye-off" class="w-4 h-4"></i> {% trans "Hide Profile" %}
+                            {% else %}
+                                <i data-lucide="eye" class="w-4 h-4"></i> {% trans "Make Public" %}
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- D. Delete Account -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex-1 pr-4">
+                        <h4 class="text-[16px] font-extrabold text-rose-600 mb-1">{% trans "Danger Zone: Delete Account" %}</h4>
+                        <p class="text-[13.5px] font-medium text-slate-500 leading-relaxed">
+                            {% trans "Permanently remove your account, profile data, and connections from the platform. This action takes immediate effect and cannot be undone." %}
+                        </p>
+                    </div>
+                    <a href="{% url 'deactivate_account' %}" class="w-full md:w-auto min-h-[48px] px-6 py-2 rounded-xl font-black text-[12px] uppercase tracking-widest bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 hover:border-rose-300 transition-all flex items-center justify-center gap-2 shrink-0 hover:-translate-y-0.5 shadow-sm">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans "Delete Account" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> <!-- END TAB 2 -->
+
+</main>
+
+<!-- Clean Toast -->
+<div id="share-toast" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-400 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
+    <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
+    <span id="toast-msg">{% trans "Success!" %}</span>
+</div>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION (Portfolio ACTIVE)
+     ============================================== -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+
+    <!-- ACTIVE STATE: Portfolio -->
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
+        <i data-lucide="user" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Portfolio" %}</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
+    </a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white animate-pulse">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- ==============================================
+     UPGRADED PAGE NAVIGATION DRAWER
+     ============================================== -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] z-[120] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] overscroll-contain pb-[calc(2rem+env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 shrink-0"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
+        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</a>
+        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
+        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <!-- ACTIVE: Settings -->
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Settings" %}</button>
+
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+            </span>
+        </button>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Language Drawer -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] pb-[calc(2rem+env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden shrink-0"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6 shrink-0">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full flex-1 overflow-y-auto">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
+<script>
+    // Tab Switcher Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+
+        // Reset all buttons
+        document.querySelectorAll('button[id^="tab-btn-"]').forEach(btn => {
+            btn.classList.remove('bg-white', 'shadow-sm', 'border', 'border-slate-200/50', 'text-[#0A66C2]');
+            btn.classList.add('text-slate-500');
+        });
+        document.querySelectorAll('span[id^="tab-text-"]').forEach(span => {
+            span.classList.remove('font-black');
+            span.classList.add('font-bold');
+        });
+
+        // Activate selected
+        document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+        const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+        const activeText = document.getElementById(`tab-text-${tabId}`);
+
+        activeBtn.classList.remove('text-slate-500');
+        activeBtn.classList.add('bg-white', 'shadow-sm', 'border', 'border-slate-200/50', 'text-[#0A66C2]');
+        activeText.classList.remove('font-bold');
+        activeText.classList.add('font-black');
+    }
+
+    // UX Submit Button State
+    function handleSettingsSubmit(e) {
+        const btn = document.getElementById('save-settings-btn');
+        const icon = document.getElementById('save-icon');
+        const text = document.getElementById('save-text');
+        if (btn) {
+            btn.disabled = true;
+            icon.setAttribute('data-lucide', 'loader-2');
+            icon.classList.add('animate-spin');
+            text.textContent = '{% trans "Saving..." %}';
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    }
+
+    // Strict Drawer Logic
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+
+            // Allow CSS to catch up before toggling classes
+            setTimeout(() => {
+                bd.classList.replace('opacity-0', 'opacity-100');
+                bd.classList.remove('pointer-events-none');
+                dw.classList.replace('drawer-closed', 'drawer-open');
+                document.body.classList.add('body-lock');
+            }, 10);
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+
+        const isClosed = dw.classList.contains('drawer-closed');
+
+        closeAllDrawers();
+
+        if (isClosed) {
+            setTimeout(() => {
+                bd.classList.replace('opacity-0', 'opacity-100');
+                bd.classList.remove('pointer-events-none');
+                dw.classList.replace('drawer-closed', 'drawer-open');
+                document.body.classList.add('body-lock');
+            }, 10);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Apply Premium Input styling to form elements
+        const formFields = document.querySelectorAll('input:not([type="hidden"]):not([type="file"]), select, textarea');
+        formFields.forEach(field => field.classList.add('premium-input'));
+
+        // Custom CV Upload UI & Drag-Drop Logic
+        const cvInput = document.getElementById('id_cv_file');
+        const cvFilename = document.getElementById('cv-filename');
+        const cvIconWrap = document.getElementById('cv-icon-wrap');
+        const dropzone = document.getElementById('cv-dropzone');
+
+        if (cvInput && dropzone) {
+            // Highlight dropzone when file is dragged over
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+                dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+                dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+            });
+
+            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+            // Handle dropped files
+            dropzone.addEventListener('drop', function(e) {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+                if(files.length > 0) {
+                    cvInput.files = files; // Assign to input
+                    updateFileUI(files[0]);
+                }
+            });
+
+            // Handle manual selection
+            cvInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    updateFileUI(this.files[0]);
+                }
+            });
+
+            function updateFileUI(file) {
+                if (cvFilename && cvIconWrap) {
+                    cvFilename.innerHTML = `<span class="text-[#0A66C2] font-black tracking-wide">${file.name}</span>`;
+                    cvIconWrap.classList.add('bg-blue-50', 'text-[#0A66C2]', 'border-blue-200', 'shadow-md');
+                    cvIconWrap.classList.remove('bg-white', 'text-slate-400', 'border-slate-200');
+                    cvIconWrap.innerHTML = '<i data-lucide="check-circle-2" class="w-6 h-6"></i>';
+                    if(typeof lucide !== 'undefined') lucide.createIcons();
+                }
+            }
+        }
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>
+{% endblock content %}

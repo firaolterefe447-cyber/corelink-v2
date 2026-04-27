@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<!-- TYPOGRAPHY ALIGNED WITH HOMEPAGE -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    /* ==========================================================================
+       1. SYNCHRONIZED THEME VARIABLES & BASE
+       ========================================================================== */
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+
+        --color-surface: #FFFFFF;
+        --color-surface-alt: #F8FAFC;
+        --color-core-dark: #0F172A;
+
+        --brand-link-blue: #2563EB;
+        --accent-cyan: #06B6D4;
+
+        --shadow-elevation-1: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-elevation-2: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-surface-alt);
+        color: var(--color-core-dark);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    .font-heading { font-family: var(--font-heading); }
+
+    /* Homepage Cyber Grid */
+    .bg-grid-cyber {
+        background-size: 80px 80px;
+        background-image: linear-gradient(to right, rgba(37, 99, 235, 0.04) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+        -webkit-mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
+        mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
+        position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+
+    /* Magic Text Effect from Homepage */
+    .text-magic {
+        background: linear-gradient(to right, var(--brand-link-blue), var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* ==========================================================================
+       2. PREMIUM WORLD-CLASS FORM UI
+       ========================================================================== */
+    .premium-card {
+        background: var(--color-surface);
+        border: 1px solid #E2E8F0;
+        border-radius: 2rem;
+        box-shadow: var(--shadow-elevation-2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Modern Inputs */
+    .django-form input, .django-form select, .django-form textarea {
+        width: 100%;
+        background-color: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 1rem;
+        padding: 0.9rem 1.2rem;
+        font-family: var(--font-body);
+        font-weight: 500;
+        font-size: 0.95rem;
+        color: var(--color-core-dark);
+        transition: all 0.3s ease;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .django-form input::placeholder, .django-form textarea::placeholder {
+        color: #94A3B8;
+        font-weight: 400;
+    }
+
+    /* Hover & Focus States */
+    .django-form input:hover, .django-form textarea:hover { border-color: #CBD5E1; }
+    .django-form input:focus, .django-form textarea:focus {
+        background-color: #FFFFFF;
+        border-color: var(--brand-link-blue);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Form Labels */
+    .django-form label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 0.6rem;
+        display: block;
+        letter-spacing: 0.02em;
+    }
+
+    /* Standardized Hint Text (Highlighted to be visible) */
+    .field-hint {
+        font-size: 0.8rem;
+        color: var(--brand-link-blue); /* Made blue so users definitely read it */
+        margin-top: 0.5rem;
+        font-weight: 600;
+    }
+
+    .field-error {
+        color: #EF4444;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    /* Smooth Fade-in */
+    @keyframes smoothAppear {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-smooth-appear { animation: smoothAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+
+<!-- FULL PAGE REGISTRATION LOADER (Hidden by Default) -->
+<div id="full-page-loader" class="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-xl flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-500">
+    <!-- Clean, abstract glowing spinner -->
+    <div class="relative w-24 h-24 mb-8">
+        <div class="absolute inset-0 rounded-full border-[4px] border-slate-100"></div>
+        <div class="absolute inset-0 rounded-full border-[4px] border-transparent border-t-[var(--brand-link-blue)] border-r-[var(--accent-cyan)] animate-spin"></div>
+        <div class="absolute inset-0 m-auto w-4 h-4 rounded-full bg-[var(--brand-link-blue)] animate-pulse"></div>
+    </div>
+    <h2 class="font-heading text-4xl font-black text-slate-900 tracking-tight mb-3">{% trans "Registering..." %}</h2>
+    <p class="text-slate-500 font-medium text-lg">{% trans "Securing your place in the network." %}</p>
+</div>
+
+<!-- Background Effects -->
+<div class="bg-grid-cyber"></div>
+<div class="fixed top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[var(--brand-link-blue)]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[var(--accent-cyan)]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+<div class="min-h-[100dvh] flex flex-col items-center pt-16 md:pt-20 pb-24 px-5 w-full max-w-[700px] mx-auto relative z-10 anim-smooth-appear">
+
+    <!-- GLOBAL HOME BUTTON -->
+    <a href="/" class="self-start mb-8 flex items-center gap-2 text-slate-500 hover:text-[var(--brand-link-blue)] font-bold text-[13px] uppercase tracking-widest transition-colors">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        {% trans "Return Home" %}
+    </a>
+
+    <div class="w-full">
+        <!-- Homepage-Aligned Header -->
+        <div class="text-center mb-10">
+            <h1 class="font-heading text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-3">
+                {% trans "Claim your" %} <span class="text-magic">Identity</span>
+            </h1>
+            <p class="text-slate-500 text-base md:text-lg font-medium">
+                {% trans "Join verified Ethiopian professionals building the future." %}
+            </p>
+        </div>
+
+        <!-- FORM CARD -->
+        <main class="premium-card p-8 sm:p-12 django-form">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]"></div>
+
+            <form method="POST" id="onboarding-form" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl text-sm border border-red-100 mb-6">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- CORE INFO -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-7">
+                    <div class="field-group">
+                        <label>{% trans "First Name" %}</label>
+                        {{ form.first_name }}
+                        <div class="field-error">{{ form.first_name.errors }}</div>
+                    </div>
+                    <div class="field-group">
+                        <label>{% trans "Last Name" %}</label>
+                        {{ form.last_name }}
+                        <div class="field-error">{{ form.last_name.errors }}</div>
+                    </div>
+                    <!-- 🟢 EMAIL FIELD WITH NEW HELP TEXT -->
+                    <div class="field-group sm:col-span-2">
+                        <label>{% trans "Email Address" %}</label>
+                        {{ form.email }}
+                        {% if form.email.help_text %}
+                            <div class="field-hint flex items-start gap-2 mt-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-[var(--brand-link-blue)]">
+                                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>{{ form.email.help_text }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="field-error">{{ form.email.errors }}</div>
+                    </div>
+                    <div class="field-group sm:col-span-2">
+                        <label>{% trans "Phone Number" %}</label>
+                        {{ form.phone_number }}
+                        <div class="field-error">{{ form.phone_number.errors }}</div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 my-8">
+
+                <!-- PROFESSIONAL & LOCATION INFO -->
+                <div class="space-y-7">
+                    <div class="field-group w-full">
+                        <label>{% trans "Professional / Academic Identity" %}</label>
+                        {{ form.current_role }}
+                        <div class="field-hint">{{ form.current_role.help_text }}</div>
+                        <div class="field-error">{{ form.current_role.errors }}</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-7">
+                        <!-- PURE TEXT CITY -->
+                        <div class="field-group">
+                            <label>{% trans "City" %}</label>
+                            {{ form.city_name }}
+                            <div class="field-hint">{{ form.city_name.help_text }}</div>
+                            <div class="field-error">{{ form.city_name.errors }}</div>
+                        </div>
+
+                        <!-- PURE TEXT INSTITUTION -->
+                        <div class="field-group">
+                            <label>{% trans "Institution / Company" %}</label>
+                            {{ form.institution_name }}
+                            <div class="field-hint">{{ form.institution_name.help_text }}</div>
+                            <div class="field-error">{{ form.institution_name.errors }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 🟢 NEW BIO / NARRATIVE FIELD (Full Width Textarea) -->
+                    <div class="field-group w-full pt-2">
+                        <label>{% trans "About Me / Your Goals" %}</label>
+                        {{ form.bio_narrative }}
+                        <div class="field-hint">{{ form.bio_narrative.help_text }}</div>
+                        <div class="field-error">{{ form.bio_narrative.errors }}</div>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 my-8">
+
+                <!-- SECURITY: PIN CREATION -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="field-group">
+                        <label>{% trans "Create 4-Digit PIN" %}</label>
+                        {{ form.password }}
+                        <div class="field-error">{{ form.password.errors }}</div>
+                    </div>
+                    <div class="field-group">
+                        <label>{% trans "Confirm PIN" %}</label>
+                        {{ form.confirm_password }}
+                        <div class="field-error">{{ form.confirm_password.errors }}</div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT ACTION -->
+                <div class="pt-6">
+                    <button type="submit" id="submit-btn" class="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[var(--brand-link-blue)] text-white font-black text-[15px] uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] transition-all hover:bg-[var(--accent-cyan)] hover:shadow-[0_10px_30px_-5px_rgba(6,182,212,0.6)] focus:outline-none focus:ring-4 focus:ring-blue-200 hover:-translate-y-1">
+                        <span>{% trans "START YOUR JOURNEY" %}</span>
+                    </button>
+
+                    <p class="text-center text-slate-400 font-medium text-xs mt-5">
+                        {% trans "By registering, you agree to our Terms of Service and Privacy Policy." %}
+                    </p>
+                </div>
+            </form>
+        </main>
+
+        <!-- ALREADY HAVE AN ACCOUNT (LOGIN CTA) -->
+        <div class="mt-10 text-center pb-4">
+            <p class="text-slate-500 font-medium text-[1rem]">
+                {% trans "Already have an account?" %}
+                <a href="{% url 'login' %}" class="text-[var(--brand-link-blue)] font-bold hover:text-[var(--accent-cyan)] transition-colors ml-1 border-b-2 border-transparent hover:border-[var(--accent-cyan)] pb-0.5">
+                    {% trans "Log in here" %}
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- JAVASCRIPT: TRIGGER FULL-PAGE LOADER -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('onboarding-form');
+        const loader = document.getElementById('full-page-loader');
+
+        form.addEventListener('submit', function(event) {
+            // Check HTML5 Form Validity First
+            if (form.checkValidity()) {
+                // Remove hidden class to display loader in DOM
+                loader.classList.remove('hidden');
+
+                // Force browser reflow to ensure CSS transition works smoothly
+                void loader.offsetWidth;
+
+                // Fade in the loader
+                loader.classList.remove('opacity-0');
+                loader.classList.add('opacity-100');
+
+                // Lock the page scroll while registering
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+</script>
+{% endblock %}

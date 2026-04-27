@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<!-- DESKTOP NAVIGATION (Premium Floating Pill - Clean) -->
+<div class="hidden md:flex fixed top-6 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
+    <div class="pointer-events-auto flex items-center p-1.5 pl-2 pr-2 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full gap-1">
+        <a href="{% url 'dashboard' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Dashboard" %}
+        </a>
+        <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold bg-[#0A66C2] text-white shadow-md shadow-blue-600/20 hover:bg-[#004182] hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2" aria-current="page">
+            <i data-lucide="layers" class="w-4 h-4"></i> <span class="hidden lg:inline">{% trans "My Teams" %}</span>
+        </a>
+        <a href="{% url 'nexus_feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Network" %}
+        </a>
+        <a href="{% url 'opportunities:feed' %}" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="briefcase" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "Opportunities" %}
+        </a>
+        <a href="{{ user.get_absolute_url }}" target="_blank" class="px-5 py-2.5 rounded-full text-[13px] font-semibold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50/80 transition-all flex items-center gap-2">
+            <i data-lucide="user-circle" class="w-4 h-4 hidden lg:block opacity-70"></i> {% trans "My Profile" %}
+        </a>
+    </div>
+</div>
+
+<!-- MOBILE TOP ACTIONS -->
+<div class="fixed top-4 left-0 right-0 z-50 flex justify-start px-4 md:hidden pointer-events-none gap-2 animate-fade-in-down pt-safe">
+    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}#preferences" class="pointer-events-auto w-10 h-10 bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-sm text-slate-700 hover:bg-slate-50 rounded-full flex items-center justify-center transition-colors active:scale-95">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </a>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    body {
+        font-family: var(--font-body);
+        background-color: #F8FAFC;
+        background-image: radial-gradient(at 50% 0%, #ffffff 0%, #F1F5F9 100%);
+        color: #0F172A;
+        -webkit-tap-highlight-color: transparent;
+    }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.8s var(--ease-spring) forwards; }
+    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 8rem); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+
+    .structural-card {
+        background: #FFFFFF;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: clamp(1.5rem, 4vw, 2rem);
+        box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.08), 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+    }
+
+    /* MASSIVE INPUT & TEXTAREA DESIGN (Amber Theme) */
+    .magic-input {
+        width: 100%;
+        background-color: #F8FAFC;
+        border: 2px solid #E2E8F0;
+        border-radius: 1.25rem;
+        padding: 1.25rem 1.75rem;
+        font-size: 16px; /* Prevents iOS auto-zoom */
+        font-weight: 500;
+        color: #0F172A;
+        outline: none;
+        transition: all 0.4s var(--ease-spring);
+        appearance: none;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) inset;
+    }
+    @media (min-width: 768px) { .magic-input { font-size: 1.05rem; } }
+
+    .magic-input:focus {
+        background-color: #FFFFFF;
+        border-color: #D97706; /* Amber 600 */
+        box-shadow: 0 8px 24px -8px rgba(217, 119, 6, 0.25), 0 0 0 4px rgba(217, 119, 6, 0.15);
+        transform: translateY(-2px);
+    }
+    .magic-input::placeholder { color: #94A3B8; font-weight: 400; }
+
+    .magic-input-icon-left { padding-left: 3.5rem !important; }
+    .magic-input-icon-right { padding-right: 3.5rem !important; }
+
+    /* Massively expanded text areas */
+    textarea.magic-input {
+        min-height: 280px;
+        resize: vertical;
+        line-height: 1.8;
+        padding: 1.5rem 1.75rem;
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem;
+        border-radius: 9999px; font-weight: 700; padding: 1.125rem 2.5rem; font-size: 1.05rem;
+        background-color: #D97706; color: #FFFFFF; /* Amber 600 */
+        box-shadow: 0 8px 20px -4px rgba(217, 119, 6, 0.4);
+        transition: all 0.4s var(--ease-spring); border: 1px solid transparent; width: 100%;
+    }
+    @media (min-width: 640px) { .btn-primary { width: auto; } }
+    .btn-primary:hover { background-color: #B45309; transform: translateY(-3px); box-shadow: 0 12px 24px -6px rgba(217, 119, 6, 0.5); }
+    .btn-primary:active { transform: scale(0.96); }
+
+    .btn-secondary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem;
+        border-radius: 9999px; font-weight: 700; padding: 1.125rem 2.5rem; font-size: 1.05rem;
+        background-color: #F8FAFC; color: #475569; border: 2px solid #E2E8F0;
+        transition: all 0.4s var(--ease-spring); width: 100%;
+    }
+    @media (min-width: 640px) { .btn-secondary { width: auto; } }
+    .btn-secondary:hover { background-color: #F1F5F9; color: #0F172A; border-color: #CBD5E1; transform: translateY(-2px); }
+    .btn-secondary:active { transform: scale(0.96); }
+</style>
+
+<main class="relative z-10 pt-20 md:pt-32 pb-safe px-3 sm:px-6 w-full min-h-[100dvh]">
+    <div class="max-w-4xl mx-auto animate-fade-in-up">
+        <div class="structural-card w-full flex flex-col overflow-hidden relative">
+
+            <!-- POP-UP HEADER (Amber Theme) -->
+            <div class="p-6 sm:p-8 md:p-12 border-b border-slate-100 flex items-start justify-between bg-slate-50/50">
+                <div class="flex items-center gap-4 md:gap-6">
+                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-[1.25rem] md:rounded-[1.5rem] bg-amber-50 flex items-center justify-center border border-amber-100 shrink-0 shadow-sm">
+                        <i data-lucide="crosshair" class="w-6 h-6 md:w-7 md:h-7 text-amber-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-[clamp(1.5rem,4vw,2rem)] font-extrabold text-slate-900 leading-tight nav-heading tracking-tight">
+                            {% if form.instance.pk %}{% trans "Update Your Preferences" %}{% else %}{% trans "What are you looking for?" %}{% endif %}
+                        </h2>
+                        <p class="text-[14px] md:text-[15.5px] text-slate-500 font-medium mt-1.5 leading-relaxed max-w-lg">
+                            {% trans "List your career goals so we can connect you with valid opportunities, internships, and partners that fit your exact needs." %}
+                        </p>
+                    </div>
+                </div>
+
+                <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}#preferences" class="hidden sm:flex w-12 h-12 items-center justify-center rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0 bg-white border border-slate-200 shadow-sm hover:shadow-md" aria-label="{% trans 'Close and return to workspace' %}">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </a>
+            </div>
+
+            <!-- FORM BODY -->
+            <div class="p-5 sm:p-8 md:p-12 bg-white">
+                <form method="post" class="space-y-12 md:space-y-16">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="p-6 mb-8 bg-rose-50 border border-rose-200 rounded-2xl text-rose-600 text-[14px] font-medium shadow-sm">
+                        <div class="flex items-center gap-2 mb-3 font-extrabold uppercase tracking-wider text-[12px]">
+                            <i data-lucide="alert-circle" class="w-5 h-5"></i> {% trans "Please fix the following errors:" %}
+                        </div>
+                        <ul class="list-disc list-inside space-y-1.5 ml-1">
+                            {% for field in form %}{% for error in field.errors %}<li><strong>{{ field.label }}</strong>: {{ error }}</li>{% endfor %}{% endfor %}
+                            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- SECTION 1: THE ROLE -->
+                    <section>
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6 md:mb-8">
+                            <span class="w-7 h-7 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center text-[12px] font-extrabold shadow-sm shrink-0">1</span>
+                            <h3 class="text-[15px] font-extrabold text-slate-900 uppercase tracking-widest nav-heading">{% trans "The Role & Setup" %}</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+                            <div>
+                                <label class="text-[16px] font-extrabold text-slate-900 mb-1.5 block">{% trans "What is the job title?" %}</label>
+                                <p class="text-[14px] text-slate-500 font-medium mb-4 leading-relaxed pr-4">{% trans "Name the specific position or role you want next." %}</p>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-transform duration-300 group-focus-within:scale-110">
+                                        <i data-lucide="briefcase" class="h-5 w-5 text-slate-400 group-focus-within:text-amber-500 transition-colors"></i>
+                                    </div>
+                                    {{ form.target_role_title }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[16px] font-extrabold text-slate-900 mb-1.5 block">{% trans "What type of work is it?" %}</label>
+                                <p class="text-[14px] text-slate-500 font-medium mb-4 leading-relaxed pr-4">{% trans "Select if you want full-time, part-time, or freelance." %}</p>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none z-10 transition-transform duration-300 group-focus-within:scale-110">
+                                        <i data-lucide="clock" class="h-5 w-5 text-slate-400 group-focus-within:text-amber-500 transition-colors"></i>
+                                    </div>
+                                    {{ form.seeking }}
+                                    <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none bg-transparent">
+                                        <i data-lucide="chevron-down" class="h-5 w-5 text-slate-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 2: LOCATION -->
+                    <section>
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6 md:mb-8">
+                            <span class="w-7 h-7 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center text-[12px] font-extrabold shadow-sm shrink-0">2</span>
+                            <h3 class="text-[15px] font-extrabold text-slate-900 uppercase tracking-widest nav-heading">{% trans "Where do you want to work?" %}</h3>
+                        </div>
+
+                        <div class="max-w-2xl">
+                            <label class="text-[16px] font-extrabold text-slate-900 mb-1.5 block">{% trans "Location Preferences" %}</label>
+                            <p class="text-[14px] text-slate-500 font-medium mb-4 leading-relaxed">{% trans "Mention the city, country, or simply say 'Remote anywhere' if you prefer working from home." %}</p>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-transform duration-300 group-focus-within:scale-110">
+                                    <i data-lucide="map-pin" class="h-5 w-5 text-slate-400 group-focus-within:text-amber-500 transition-colors"></i>
+                                </div>
+                                {{ form.preferred_location }}
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 3: THE DETAILS -->
+                    <section>
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6 md:mb-8">
+                            <span class="w-7 h-7 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center text-[12px] font-extrabold shadow-sm shrink-0">3</span>
+                            <h3 class="text-[15px] font-extrabold text-slate-900 uppercase tracking-widest nav-heading">{% trans "The Details & Value" %}</h3>
+                        </div>
+
+                        <div class="space-y-12">
+                            <div>
+                                <label class="text-[17px] font-extrabold text-slate-900 mb-2 block">{% trans "What is your ideal work environment?" %}</label>
+                                <p class="text-[14.5px] text-slate-500 font-medium mb-5 leading-relaxed max-w-3xl">{% trans "Describe the industries you love, the size of the company you prefer (e.g., fast-paced startup vs. stable enterprise), and the kind of culture you thrive in." %}</p>
+                                <div class="relative group">
+                                    {{ form.ideal_company_desc }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[17px] font-extrabold text-slate-900 mb-2 block">{% trans "Why should they hire you?" %}</label>
+                                <p class="text-[14.5px] text-slate-500 font-medium mb-5 leading-relaxed max-w-3xl">{% trans "This is your value proposition. Explain exactly what you bring to the table. Mention your top skills, past achievements, or your unique professional approach." %}</p>
+                                <div class="relative group">
+                                    {{ form.value_proposition }}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- System Context Note -->
+                    <div class="p-5 sm:p-6 bg-amber-50/60 border border-amber-100 rounded-[1.25rem] flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mt-10 shadow-sm">
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 border border-amber-100 shadow-sm">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-amber-500"></i>
+                        </div>
+                        <p class="text-[14px] font-medium text-slate-700 leading-relaxed m-0">
+                            <span class="font-extrabold text-slate-900 block sm:inline mb-1 sm:mb-0">{% trans "What happens next?" %}</span> {% trans "Once submitted, our admin team validates your preferences. When approved, companies and partners searching the pool can match with you instantly." %}
+                        </p>
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 pt-8 md:pt-10 border-t border-slate-100">
+                        <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}#preferences" class="btn-secondary">
+                            {% trans "Cancel Setup" %}
+                        </a>
+                        <button type="submit" class="btn-primary">
+                            <i data-lucide="save" class="w-5 h-5"></i> {% trans "Save Preferences" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+{% if not is_inspector %}
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.02)] flex justify-between w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+    <a href="{% url 'dashboard' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="layout-dashboard" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Dashboard" %}</span>
+    </a>
+    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="flex-1 flex flex-col items-center justify-center py-1 text-[#0A66C2]">
+        <i data-lucide="layers" class="w-6 h-6 mb-0.5 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[10px] font-semibold tracking-tight text-center w-full truncate px-1">{% trans "Workspace" %}</span>
+    </a>
+    <a href="{% url 'nexus_feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="users" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Network" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="briefcase" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="{{ user.get_absolute_url }}" target="_blank" rel="noopener noreferrer" class="flex-1 flex flex-col items-center justify-center py-1 text-slate-500 hover:text-slate-900 transition-colors">
+        <i data-lucide="user-circle" class="w-6 h-6 mb-0.5 stroke-[2]"></i>
+        <span class="text-[10px] font-medium tracking-tight text-center w-full truncate px-1">{% trans "Profile" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formFields = document.querySelectorAll('input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]), select, textarea');
+        formFields.forEach(field => {
+            field.classList.add('magic-input');
+            const parent = field.parentElement;
+            if (parent && parent.classList.contains('relative')) {
+                const leftIcon = parent.querySelector('.left-0');
+                const rightIcon = parent.querySelector('.right-0');
+                if (leftIcon) field.classList.add('magic-input-icon-left');
+                if (rightIcon) field.classList.add('magic-input-icon-right');
+            }
+
+            // Apply custom placeholder styling to motivate detailed responses
+            if(field.tagName.toLowerCase() === 'textarea') {
+                if(field.name === 'ideal_company_desc') {
+                    field.placeholder = "{% trans 'e.g. I am looking for a fast-paced, early-stage AI startup where I can take on a lot of ownership, or an established SaaS company with a strong engineering culture...' %}";
+                } else if(field.name === 'value_proposition') {
+                    field.placeholder = "{% trans 'e.g. I bring 4 years of solid React and Node.js experience. I am highly autonomous, love solving complex backend architecture problems, and have previously led a team of 3 developers...' %}";
+                }
+            } else if (field.tagName.toLowerCase() === 'input') {
+                if(field.name === 'target_role_title') {
+                    field.placeholder = "{% trans 'e.g. Senior Product Designer' %}";
+                } else if(field.name === 'preferred_location') {
+                    field.placeholder = "{% trans 'e.g. London, Hybrid or Fully Remote' %}";
+                }
+            }
+        });
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+    });
+</script>
+{% endblock content %}

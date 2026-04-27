@@ -1,0 +1,45 @@
+from django.urls import path
+from . import views
+
+app_name = 'opportunities'
+
+urlpatterns =[
+    # ==========================================
+    # 1. PUBLIC DISCOVERY (The Feed & Search)
+    # ==========================================
+    path('', views.OpportunityFeedView.as_view(), name='feed'),
+path('post-job/', views.PublicOpportunityCreateView.as_view(), name='public_post'),
+    # 🚀 FIX: Map UUID first for old unmigrated jobs, then Slug for new jobs
+    path('job/<uuid:pk>/', views.OpportunityDetailView.as_view(), name='detail_pk'),
+    path('job/<slug:slug>/', views.OpportunityDetailView.as_view(), name='detail'),
+
+    # ==========================================
+    # 2. ACTIONS (Apply / Scout)
+    # ==========================================
+    path('job/<uuid:pk>/apply/', views.link_profile_action, name='apply_pk'),
+    path('job/<slug:slug>/apply/', views.link_profile_action, name='apply'),
+
+    path('job/<uuid:pk>/visit/', views.track_external_application, name='visit_external_pk'),
+    path('job/<slug:slug>/visit/', views.track_external_application, name='visit_external'),
+
+    # ==========================================
+    # 3. CREATOR WORKSPACE (Manage Posts)
+    # ==========================================
+    path('workspace/', views.WorkspaceOpportunityListView.as_view(), name='workspace_list'),
+    path('workspace/create/', views.OpportunityCreateView.as_view(), name='create'),
+
+    path('workspace/job/<uuid:pk>/edit/', views.OpportunityUpdateView.as_view(), name='update_pk'),
+    path('workspace/job/<slug:slug>/edit/', views.OpportunityUpdateView.as_view(), name='update'),
+
+    path('workspace/job/<uuid:pk>/delete/', views.OpportunityDeleteView.as_view(), name='delete_pk'),
+    path('workspace/job/<slug:slug>/delete/', views.OpportunityDeleteView.as_view(), name='delete'),
+
+    # ==========================================
+    # 4. RECRUITER PIPELINE (Manage Applicants)
+    # ==========================================
+    path('workspace/job/<uuid:pk>/pipeline/', views.ApplicantBoardView.as_view(), name='applicant_board_pk'),
+    path('workspace/job/<slug:slug>/pipeline/', views.ApplicantBoardView.as_view(), name='applicant_board'),
+
+    path('workspace/application/<uuid:application_id>/inspect/', views.inspect_applicant_profile, name='inspect_profile'),
+    path('workspace/application/<uuid:application_id>/update/', views.update_application_status, name='update_status'),
+]

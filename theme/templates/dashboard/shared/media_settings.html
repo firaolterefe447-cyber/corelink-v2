@@ -1,0 +1,563 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block meta_tags %}
+<title>{% trans "Update Profile Media" %} | CoreLink</title>
+{% endblock %}
+
+{% block navbar %}
+<!-- ==============================================
+     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     ============================================== -->
+<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
+    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
+        <!-- Logo -->
+        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+        </div>
+
+        <!-- Desktop Navigation Links (Exactly 5 Links) -->
+        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
+            </a>
+
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
+            </a>
+
+            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
+            </a>
+
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
+                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
+            </a>
+
+            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
+                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50/80 text-[#0A66C2] border border-blue-100/50 shadow-sm transition-colors" aria-current="page">
+                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            </a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+</div>
+
+<!-- MOBILE TOP BAR (Cleaned up specific to this page) -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-4 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center gap-3 pb-0.5">
+        <a href="{% url 'profile_settings' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </a>
+        <span class="font-black text-[17px] text-slate-900 nav-heading tracking-tight">{% trans "Profile Media" %}</span>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+        <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+    </button>
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<!-- External Libraries for Cropping -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.16, 1, 0.3, 1);
+        --app-bg: #F8FAFC;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+        font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A;
+        -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+    }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    /* PREMIUM PC CANVAS LAYOUT - INCREASED PADDING & DECREASED MAX-WIDTH FOR CLEAN UI */
+    .app-canvas {
+        max-width: 1400px; margin: 0 auto;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1rem calc(6.5rem + env(safe-area-inset-bottom)) 1rem;
+    }
+    @media (min-width: 768px) { .app-canvas { padding: 9rem 4.5rem 6rem 4.5rem; max-width: 1200px; } }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s var(--ease-magic) forwards; }
+
+    .premium-card {
+        background: #ffffff; border: 1px solid #E2E8F0; border-radius: 1.8rem;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02); transition: all 0.4s var(--ease-magic); overflow: hidden;
+    }
+    @media (min-width: 768px) { .premium-card { border-radius: 2.5rem; } }
+
+    /* Cropper UI Overrides */
+    .cropper-view-box { outline: 3px solid #0A66C2 !important; box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.8) !important; border-radius: 8px; }
+    .cropper-line { background-color: transparent !important; }
+    .cropper-point { background-color: #FFFFFF !important; border: 2px solid #0A66C2 !important; width: 14px !important; height: 14px !important; opacity: 1 !important; border-radius: 50% !important; }
+    .cropper-center { display: block !important; width: 8px !important; height: 8px !important; background-color: #0A66C2 !important; border-radius: 50% !important; border: 2px solid #FFF; opacity: 1 !important; }
+
+    .drawer-closed { transform: translateY(100%); }
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 60px rgba(0,0,0,0.15); }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+</style>
+
+<main class="app-canvas animate-fade-in-up">
+
+    <!-- DESKTOP BACK BUTTON -->
+    <div class="hidden md:flex w-full mb-6">
+        <a href="{% url 'profile_settings' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-slate-50 transition-all active:scale-95 group w-max">
+            <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+            {% trans "Back to Settings" %}
+        </a>
+    </div>
+
+    <!-- COMPACT MISSING AVATAR WARNING BANNER -->
+    {% if not user.avatar %}
+    <div class="mb-5 md:mb-8 w-full">
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-[#0A66C2]/10 rounded-full blur-2xl"></div>
+
+            <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border border-blue-200 flex items-center justify-center shrink-0 relative z-10 shadow-sm">
+                <i data-lucide="camera" class="w-6 h-6 text-[#0A66C2]"></i>
+                <div class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></div>
+            </div>
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[15px] md:text-[18px] font-extrabold text-slate-900 tracking-tight leading-tight">{% trans "Professional Image Required" %}</h3>
+                <p class="text-[12.5px] md:text-[14px] text-slate-600 leading-snug mt-1 font-medium line-clamp-2 md:line-clamp-none">
+                    {% trans "Upload a clear photo so partners can recognize you." %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="premium-card p-5 md:p-10 w-full mb-8">
+        {% csrf_token %}
+        <!-- Hidden Inputs for actual file processing -->
+        <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden" onchange="openCropper(this, 'avatar')">
+        <input type="file" name="cover_image" id="id_cover" accept="image/*" class="hidden" onchange="openCropper(this, 'cover')">
+
+        <!-- MODERN ASYMMETRIC GRID FOR PC -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 relative z-10 items-stretch">
+
+            <!-- ======================= -->
+            <!-- PROFILE AVATAR SECTION -->
+            <!-- ======================= -->
+            <div class="lg:col-span-5 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 transition-all duration-300 hover:bg-white hover:shadow-[0_10px_30px_-10px_rgba(10,102,194,0.1)] hover:border-blue-100 h-full">
+
+                <!-- CLICKABLE IMAGE PREVIEW (1:1 SQUARE/CIRCLE ASPECT RATIO) -->
+                <!-- Mobile: 140x140px | PC: 240x240px -->
+                <label for="id_avatar" class="relative mb-5 w-[140px] h-[140px] md:w-60 md:h-60 z-10 mx-auto cursor-pointer block group/preview shrink-0">
+                    <div class="w-full h-full bg-white rounded-full md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-md group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
+
+                        <!-- Internal Canvas -->
+                        <div class="w-full h-full rounded-full md:rounded-[1.5rem] overflow-hidden relative {% if not user.avatar %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-100{% endif %}">
+                            {% if user.avatar %}
+                                <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover" alt="{% trans 'Profile Picture' %}">
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
+                                    <i data-lucide="user" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
+                                    <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Hover Overlay -->
+                            <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
+                                <i data-lucide="camera" class="w-8 h-8 mb-1"></i>
+                                <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Affordance Icon -->
+                    <div class="absolute bottom-0 right-0 md:-bottom-2 md:-right-2 bg-white text-[#0A66C2] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
+                        <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
+                    </div>
+                </label>
+
+                <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2">{% trans "Profile Picture" %}</h2>
+                <p class="text-[13px] md:text-[14px] text-slate-500 mb-5 md:mb-8 max-w-[260px] leading-relaxed font-medium">
+                    {% trans "Please upload a clean professional image for your profile." %}
+                </p>
+
+                <!-- Avatar Actions -->
+                <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
+                    <label for="id_avatar" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-[#0A66C2] text-white py-3.5 px-6 shadow-md hover:bg-[#004182] hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
+                        <i data-lucide="camera" class="w-4.5 h-4.5"></i>
+                        <span class="uppercase tracking-wide">{% trans "UPLOAD NEW PHOTO" %}</span>
+                    </label>
+
+                    {% if user.avatar %}
+                    <button type="submit" formaction="{% url 'media_delete' 'avatar' %}" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE PHOTO" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ======================= -->
+            <!-- BACKGROUND BANNER SECTION -->
+            <!-- ======================= -->
+            <div class="lg:col-span-7 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 transition-all duration-300 hover:bg-white hover:shadow-[0_10px_30px_-10px_rgba(15,23,42,0.1)] hover:border-slate-200 h-full">
+
+                <!-- CLICKABLE IMAGE PREVIEW -->
+                <label for="id_cover" class="relative mb-5 w-full max-w-[340px] md:max-w-full h-[120px] md:h-[240px] z-10 mx-auto flex items-center cursor-pointer block group/preview shrink-0">
+                    <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-md group-hover/preview:-translate-y-1 group-hover/preview:border-slate-400">
+
+                        <!-- Internal Canvas -->
+                        <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not user.cover_image %}bg-slate-50 border-[2px] border-dashed border-slate-300{% else %}bg-slate-100{% endif %}">
+                            {% if user.cover_image %}
+                                <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover" alt="{% trans 'Cover Banner' %}">
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                                    <i data-lucide="image" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
+                                    <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Hover Overlay -->
+                            <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
+                                <i data-lucide="image" class="w-8 h-8 mb-1"></i>
+                                <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Affordance Icon -->
+                    <div class="absolute -bottom-2 -right-2 bg-white text-slate-700 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-slate-800 group-hover/preview:text-white transition-colors">
+                        <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
+                    </div>
+                </label>
+
+                <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2">{% trans "Background Banner" %}</h2>
+                <p class="text-[13px] md:text-[14px] text-slate-500 mb-5 md:mb-8 max-w-[280px] md:max-w-md mx-auto leading-relaxed font-medium">
+                    {% trans "Upload a wide background banner that represents your professional space and personal branding." %}
+                </p>
+
+                <!-- Banner Actions -->
+                <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
+                    <label for="id_cover" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-slate-800 text-white py-3.5 px-6 shadow-md hover:bg-slate-900 hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
+                        <i data-lucide="image" class="w-4.5 h-4.5"></i>
+                        <span class="uppercase tracking-wide">{% trans "UPLOAD NEW BANNER" %}</span>
+                    </label>
+
+                    {% if user.cover_image %}
+                    <button type="submit" formaction="{% url 'media_delete' 'cover' %}" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE BANNER" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </form>
+</main>
+
+
+<!-- ==============================================
+     MODALS & DRAWERS (UNTOUCHED LOGIC - EXACT MATCH UI)
+     ============================================== -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
+        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</a>
+        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
+        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Settings" %}</button>
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+            </span>
+        </button>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Language Drawer (UNTOUCHED) -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
+<!-- ==============================================
+     SMOOTH PROFESSIONAL CROPPER MODAL (UNTOUCHED)
+     ============================================== -->
+<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
+
+    <div class="relative w-full max-w-3xl h-full max-h-[750px] bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-slate-200 z-10 transform scale-95 transition-transform duration-300 overflow-hidden" id="cropper-content">
+        <div class="flex justify-between items-center px-4 py-4 md:px-6 md:py-5 border-b border-slate-100 bg-white shrink-0">
+            <div>
+                <h3 class="text-[17px] md:text-[20px] font-extrabold text-slate-900 tracking-tight nav-heading" id="cropper-title">{% trans "Adjust Image" %}</h3>
+                <p class="text-[12px] md:text-[14px] font-medium text-slate-500 mt-0.5">{% trans "Drag to reposition or pinch to zoom" %}</p>
+            </div>
+            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-11 h-11 flex items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-slate-500 hover:text-slate-900 border border-slate-200 active:scale-95">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 w-full bg-slate-900/5 relative overflow-hidden min-h-0 flex items-center justify-center">
+            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-500">
+            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10">
+                <i data-lucide="loader-2" class="w-8 h-8 text-[#0A66C2] animate-spin mb-3"></i>
+                <span class="text-[14px] font-semibold text-slate-600">{% trans "Preparing editor..." %}</span>
+            </div>
+        </div>
+
+        <div class="bg-white border-t border-slate-100 p-4 md:p-6 shrink-0 z-20">
+            <div class="max-w-md mx-auto space-y-4">
+                <div class="flex justify-center gap-3">
+                    <button type="button" onclick="cropper.zoom(0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
+                    <button type="button" onclick="cropper.zoom(-0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
+                    <button type="button" onclick="cropper.rotate(90)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+                </div>
+                <div class="grid grid-cols-2 gap-3 md:gap-4">
+                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 py-3.5 md:py-4 transition-all active:scale-95 text-[14px] md:text-[15px]">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-3.5 md:py-4 shadow-md transition-all active:scale-95 text-[14px] md:text-[15px]">
+                        <i data-lucide="check" class="w-4.5 h-4.5"></i> {% trans "Save" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS (UNTOUCHED) -->
+<script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* --- DRAWER LOGIC --- */
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.remove('opacity-0', 'pointer-events-none');
+            bd.classList.add('opacity-100');
+            dw.classList.remove('drawer-closed');
+            dw.classList.add('drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+        const navDw = document.getElementById('mobile-nav-drawer');
+
+        if (dw.classList.contains('drawer-closed')) {
+            if(navDw) {
+                navDw.style.transitionDuration = '0ms';
+                navDw.classList.replace('drawer-open', 'drawer-closed');
+                setTimeout(() => { navDw.style.transitionDuration = ''; }, 50);
+            }
+            closeAllDrawers();
+            bd.classList.remove('opacity-0', 'pointer-events-none');
+            bd.classList.add('opacity-100');
+            dw.classList.remove('drawer-closed');
+            dw.classList.add('drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    /* --- CROPPER LOGIC --- */
+    let cropper = null;
+    let currentMode = 'avatar';
+    let currentInput = null;
+
+    function openCropper(input, mode) {
+        currentMode = mode;
+        currentInput = input;
+        if (!input.files || !input.files.length) return;
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const cropperModal = document.getElementById('cropper-modal');
+            const cropperContent = document.getElementById('cropper-content');
+            const cropperImg = document.getElementById('cropper-image');
+            const cropperTitle = document.getElementById('cropper-title');
+            const loader = document.getElementById('cropper-loader');
+
+            cropperTitle.innerText = mode === 'avatar' ? "{% trans 'Adjust Profile Picture' %}" : "{% trans 'Adjust Background Banner' %}";
+
+            cropperModal.classList.remove('hidden');
+            cropperModal.classList.add('flex');
+            void cropperModal.offsetWidth;
+            cropperModal.classList.remove('opacity-0');
+            cropperContent.classList.remove('scale-95');
+            cropperContent.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+
+            cropperImg.src = e.target.result;
+            cropperImg.classList.remove('opacity-100');
+            loader.classList.remove('hidden');
+
+            if (cropper) { cropper.destroy(); cropper = null; }
+
+            setTimeout(() => {
+                // Set Avatar strictly to 1:1 aspect ratio (Square/Circle), Cover stays at 3:1
+                const ratio = mode === 'avatar' ? 1 : 3;
+                cropper = new Cropper(cropperImg, {
+                    aspectRatio: ratio,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.95,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    background: true,
+                    ready: function () {
+                        loader.classList.add('hidden');
+                        cropperImg.classList.add('opacity-100');
+                    }
+                });
+            }, 150);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function closeProCropper() {
+        const cropperModal = document.getElementById('cropper-modal');
+        const cropperContent = document.getElementById('cropper-content');
+
+        cropperModal.classList.add('opacity-0');
+        cropperContent.classList.remove('scale-100');
+        cropperContent.classList.add('scale-95');
+
+        setTimeout(() => {
+            cropperModal.classList.add('hidden');
+            cropperModal.classList.remove('flex');
+            document.body.style.overflow = '';
+            if (currentInput) currentInput.value = '';
+            if (cropper) { cropper.destroy(); cropper = null; }
+            currentInput = null;
+        }, 300);
+    }
+
+    window.addEventListener('resize', () => {
+        if (cropper) {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => { cropper.resize(); }, 100);
+        }
+    });
+
+    document.getElementById('save-crop-btn').addEventListener('click', function() {
+        if (!cropper) return;
+        const btn = this;
+        const originalContent = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
+        lucide.createIcons();
+
+        // Size outputs - 1:1 Square for Avatar, 3:1 wide for Cover
+        const cropOptions = {
+            width: currentMode === 'avatar' ? 800 : 1200,
+            height: currentMode === 'avatar' ? 800 : 400,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
+        };
+
+        cropper.getCroppedCanvas(cropOptions).toBlob((blob) => {
+            if (!blob) {
+                alert('{% trans "Error processing image. Please try another image." %}');
+                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent; return;
+            }
+
+            const file = new File([blob], currentMode + '.jpg', { type: 'image/jpeg' });
+            const formData = new FormData();
+            formData.append(currentInput.name, file);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+            }).then(response => {
+                if (response.ok) { window.location.reload(); }
+                else {
+                    alert('{% trans "Upload failed. Please try again." %}');
+                    btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+                }
+            }).catch(err => {
+                console.error(err);
+                alert('{% trans "An unexpected network error occurred." %}');
+                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+            });
+        }, 'image/jpeg', 0.9);
+    });
+</script>
+{% endblock %}
