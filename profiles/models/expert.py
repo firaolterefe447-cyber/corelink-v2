@@ -1,6 +1,5 @@
 import uuid
 from typing import Any, List
-
 from django.conf import settings
 from django.core.validators import (
     FileExtensionValidator,

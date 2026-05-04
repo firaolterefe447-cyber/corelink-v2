@@ -2,78 +2,92 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<meta property="og:title" content="CoreLink - Discover">
+<meta property="og:title" content="Corelink - Discover">
 <meta property="og:description" content="Discover and connect with top Ethiopian talent and visionaries.">
 {% endblock %}
 
 {% block navbar %}
 {% if request.user.is_authenticated %}
+
 <!-- ==============================================
-     TOP GLOBAL NAVBAR (PC - Floating Glass) - AUTHENTICATED
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
      ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
-        <!-- Logo -->
-        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <!-- Top Section: Logo & Links -->
+        <div class="flex-1">
+            <!-- Typographic Logo -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    My profile
+                </a>
+
+                <!-- ACTIVE: Discover -->
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
         </div>
 
-        <!-- Desktop Navigation Links (Exactly 5 Links) -->
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
-            </a>
-
-            <!-- ACTIVE: Discover (Blue Theme) -->
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm" aria-current="page">
-                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
-            </a>
-
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
-            </a>
-
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
-            </a>
-
-            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
-                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
-                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                    </span>
-                {% endif %}
-            </a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-1 shrink-0 pl-6 border-l border-slate-200">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
                 <span>{% trans "Settings" %}</span>
             </a>
-            <a href="{% url 'logout' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>{% trans "Logout" %}</span>
             </a>
         </div>
-    </nav>
-</div>
+
+    </div>
+</aside>
 
 <!-- MOBILE TOP BAR - AUTHENTICATED -->
 <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
-            <span class="text-slate-900">Core</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
-        </div>
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
         <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
@@ -84,15 +98,13 @@
 <!-- ==============================================
      MINIMAL TOP BAR - UNAUTHENTICATED
      ============================================== -->
-<div class="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-4 md:px-8 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[24px] md:text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
-            <span class="text-slate-900">Core</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
-        </div>
+<div class="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-4 md:px-8 lg:px-12 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-black text-[24px] md:text-[26px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] md:text-[26px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
 
-    <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:opacity-90 text-white font-black text-[13px] md:text-[15px] px-5 py-2 md:px-6 md:py-2.5 rounded-full shadow-md transition-all active:scale-95 flex items-center gap-2">
+    <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:opacity-90 text-white font-black text-[13px] md:text-[15px] px-5 py-2 md:px-7 md:py-2.5 rounded-full shadow-md transition-all active:scale-95 flex items-center gap-2">
         <span>{% trans "Join Hub" %}</span>
         <i data-lucide="arrow-right" class="w-4 h-4 hidden md:block"></i>
     </a>
@@ -100,6 +112,7 @@
 
 {% endif %}
 {% endblock navbar %}
+
 
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,16 +126,35 @@
         --app-bg: #F8FAFC;
     }
     * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    body {
+        font-family: var(--font-body);
+        background-color: var(--app-bg);
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
     h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
     .custom-scroll::-webkit-scrollbar { display: none; }
     .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-    /* PREMIUM PC CANVAS LAYOUT */
-    .app-canvas { max-width: 1400px; margin: 0 auto; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; position: relative; z-index: 10; }
-    @media (min-width: 768px) { .app-canvas { padding: 9rem 2.5rem 6rem 2.5rem; max-width: 1280px; } }
+    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
+        .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
+    }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; padding-top: 4rem; padding-bottom: 8rem; }
+        .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
+    }
 
     /* Clean Solid Bento Cards & Cascade Animation */
     .bento-card {
@@ -135,7 +167,7 @@
         opacity: 0;
         animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
     .bento-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08); border-color: #CBD5E1; }
 
     /* Staggering the grid card load times */
@@ -156,217 +188,220 @@
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-up { animation: fadeInUp 0.5s ease-out forwards; }
 
-    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
-    .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
-<main class="app-canvas animate-up">
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} animate-up">
 
-    {% if request.user.is_authenticated %}
-    <!-- ==============================================
-         TOP NAVIGATION TABS (Only for authenticated users)
-         ============================================== -->
-    <div class="flex items-center justify-start md:justify-center gap-6 md:gap-12 border-b border-slate-200/80 mb-8 md:mb-12 overflow-x-auto custom-scroll w-full pl-2 pr-6 md:pr-0 relative z-10">
-        <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]">
-            <span class="text-[12.5px] md:text-[14px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Discover People" %}</span>
-        </a>
+    <!-- Centered inner container ensures layout stays perfectly balanced -->
+    <div class="max-w-[1100px] mx-auto w-full relative z-10">
 
-        <a href="{% url 'team_nexus' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-transparent text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all group shrink-0 top-[2px]">
-            <span class="text-[12.5px] md:text-[14px] font-bold uppercase tracking-widest whitespace-nowrap">{% trans "Discover Teams" %}</span>
-        </a>
-    </div>
-    {% endif %}
+        {% if request.user.is_authenticated %}
+        <!-- ==============================================
+             TOP NAVIGATION TABS (Only for authenticated users)
+             ============================================== -->
+        <div class="flex items-center justify-start md:justify-center gap-6 md:gap-12 border-b border-slate-200/80 mb-8 md:mb-14 overflow-x-auto custom-scroll w-full pl-2 pr-6 md:pr-0 relative z-10">
+            <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]">
+                <span class="text-[13px] md:text-[14.5px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Discover People" %}</span>
+            </a>
 
-    <!-- ==============================================
-         1. HERO: INSPIRATIONAL & CRISP
-         ============================================== -->
-    <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-8 mb-10 md:mb-14 relative z-10">
-
-        <!-- Circled Pill with Elite Avatars -->
-        <div class="inline-flex items-center p-1.5 pr-5 bg-white border border-slate-200 rounded-full shadow-sm mb-6 transition-transform hover:scale-105 cursor-default">
-            <div class="flex -space-x-3 mr-3">
-                {% for person in people %}
-                    {% if person.portfolio.admin_rating > 2 %}
-                        <div class="elite-avatar relative z-10 hover:z-20">
-                            {% if person.avatar %}
-                                <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-9 h-9 rounded-full object-cover border-[2.5px] border-white shadow-sm bg-slate-100" loading="lazy">
-                            {% else %}
-                                <div class="w-9 h-9 rounded-full border-[2.5px] border-white bg-slate-800 flex items-center justify-center text-white font-bold text-[12px] shadow-sm">
-                                    {{ person.full_name|default:"U"|slice:":1" }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <span class="text-[13px] font-black text-slate-800 tracking-tight uppercase">{% trans "Meet the community" %}</span>
-        </div>
-
-        <h1 class="text-[clamp(1.8rem,4.5vw,3.2rem)] md:text-[3.5rem] font-black text-slate-900 tracking-tighter leading-tight md:leading-none mb-4 nav-heading max-w-4xl mx-auto drop-shadow-sm">
-            {% trans "Connect with Verified Ethiopian Talent, All at One Table." %}
-        </h1>
-        <p class="text-slate-500 text-[15.5px] md:text-[17px] font-medium max-w-2xl mx-auto leading-relaxed px-2 md:mt-4">
-            {% trans "Find elite students, industry professionals, and innovative visionaries on a unified platform. Search by skills or profession and start building your network today." %}
-        </p>
-
-        <!-- LARGE CALL TO ACTION FOR GUESTS -->
-        {% if not request.user.is_authenticated %}
-        <div class="mt-8 flex justify-center w-full relative z-20">
-            <a href="{% url 'unified_onboarding' %}" class="bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[15px] md:text-[18px] px-8 py-4 rounded-full shadow-[0_8px_20px_rgba(10,102,194,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-2">
-                {% trans "Join Ethiopian Talent Hub" %} <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <a href="{% url 'team_nexus' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-transparent text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all group shrink-0 top-[2px]">
+                <span class="text-[13px] md:text-[14.5px] font-bold uppercase tracking-widest whitespace-nowrap">{% trans "Discover Teams & Groups" %}</span>
             </a>
         </div>
         {% endif %}
-    </div>
 
-    <!-- ==============================================
-         2. CRISP SEARCH BAR
-         ============================================== -->
-    <div class="mb-12 md:mb-16 w-full flex justify-center relative z-20 px-2">
-        <form method="GET" class="w-full max-w-3xl relative">
-            <!-- Subtle backdrop glow -->
-            <div class="absolute -inset-1 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-[1.8rem] blur-lg opacity-40"></div>
+        <!-- ==============================================
+             1. HERO: INSPIRATIONAL & CRISP
+             ============================================== -->
+        <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-6 mb-12 md:mb-16 relative z-10">
 
-            <div class="relative flex items-center w-full p-2 bg-white/80 backdrop-blur-md border border-slate-300 rounded-[1.5rem] shadow-sm focus-within:border-[#0A66C2] focus-within:ring-4 focus-within:ring-[#0A66C2]/10 transition-all">
-                <i data-lucide="search" class="w-6 h-6 text-[#0A66C2] shrink-0 ml-4"></i>
-
-                <label for="search-input" class="sr-only">{% trans 'Search by skill, profession, or location...' %}</label>
-                <input id="search-input" type="text" name="q" value="{{ search_query }}"
-                    class="magic-input flex-grow h-14 md:h-16 px-4 text-[15px] md:text-[17px] text-slate-900 font-bold placeholder:text-slate-400"
-                    placeholder="{% trans 'Search by skill, profession, or location...' %}"
-                    autocomplete="off">
-
-                <!-- Clear Search Button -->
-                {% if search_query %}
-                    <a href="{% url 'nexus_feed' %}" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors mr-1" aria-label="{% trans 'Clear search' %}">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </a>
-                {% endif %}
-
-                <button type="submit" class="bg-gradient-to-r from-[#0A66C2] to-[#0052a3] hover:from-[#0052a3] hover:to-[#0A66C2] text-white font-black h-12 md:h-16 px-6 md:px-10 rounded-xl md:rounded-[1.25rem] transition-all shadow-md active:scale-95 shrink-0 flex items-center justify-center">
-                    <span class="text-[14px] md:text-[16px] uppercase tracking-widest">{% trans "Search" %}</span>
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- ==============================================
-         3. FLUID PROFILE CARDS (Grid)
-         ============================================== -->
-    <div class="flex justify-between items-end mb-6 md:mb-8 px-1 border-b border-slate-200/80 pb-3 relative z-10">
-        <h2 class="text-[1.5rem] md:text-[1.8rem] font-black text-slate-900 nav-heading tracking-tight">{% trans "Network Results" %}</h2>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-10">
-        {% for person in people %}
-            <div class="bento-card flex flex-col group relative">
-
-                <!-- Dynamic Cover Image -->
-                <div class="h-28 md:h-32 w-full bg-slate-100 relative overflow-hidden">
-                    {% if person.cover_image %}
-                        <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover" loading="lazy">
-                        <div class="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                    {% else %}
-                        <div class="w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-indigo-50 to-purple-100 relative">
-                            <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff40_1px,transparent_1px),linear-gradient(to_bottom,#ffffff40_1px,transparent_1px)] bg-[size:16px_16px]"></div>
-                        </div>
-                    {% endif %}
+            <!-- Circled Pill with Elite Avatars -->
+            <div class="inline-flex items-center p-1.5 pr-6 bg-white border border-slate-200 rounded-full shadow-sm mb-8 md:mb-10 transition-transform hover:scale-105 cursor-default">
+                <div class="flex -space-x-3 mr-4">
+                    {% for person in people %}
+                        {% if person.portfolio.admin_rating > 2 %}
+                            <div class="elite-avatar relative z-10 hover:z-20">
+                                {% if person.avatar %}
+                                    <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-[2.5px] border-white shadow-sm bg-slate-100" loading="lazy">
+                                {% else %}
+                                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-full border-[2.5px] border-white bg-slate-800 flex items-center justify-center text-white font-bold text-[12px] md:text-[13px] shadow-sm">
+                                        {{ person.full_name|default:"U"|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
+                <span class="text-[12.5px] md:text-[14px] font-black text-slate-800 tracking-wider uppercase">{% trans "Meet the community" %}</span>
+            </div>
 
-                <div class="px-6 md:px-8 pb-6 md:pb-8 flex-1 flex flex-col relative z-10 bg-white">
+            <h1 class="text-[clamp(2rem,5vw,3.8rem)] font-black text-slate-900 tracking-tighter leading-[1.1] md:leading-[1.05] mb-5 nav-heading max-w-4xl mx-auto drop-shadow-sm">
+                {% trans "Connect with Verified Ethiopian Talent, All at One Table." %}
+            </h1>
+            <p class="text-slate-500 text-[15.5px] md:text-[18px] font-medium max-w-2xl mx-auto leading-relaxed px-2 md:mt-2">
+                {% trans "Find elite students, industry professionals, and innovative visionaries on a unified platform. Search by skills or profession and start building your network today." %}
+            </p>
 
-                    <!-- Avatar bridging the cover -->
-                    <div class="-mt-12 md:-mt-14 mb-4 flex justify-between items-end">
-                        {% if person.avatar %}
-                            <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-[5.5rem] h-[5.5rem] md:w-[6.5rem] md:h-[6.5rem] rounded-[1.25rem] md:rounded-[1.5rem] object-cover bg-slate-50 border-[4px] md:border-[5px] border-white shadow-sm ring-1 ring-slate-900/5 group-hover:ring-[#0A66C2]/20 group-hover:-translate-y-1 transition-all duration-300" loading="lazy">
+            <!-- LARGE CALL TO ACTION FOR GUESTS -->
+            {% if not request.user.is_authenticated %}
+            <div class="mt-10 flex justify-center w-full relative z-20">
+                <a href="{% url 'unified_onboarding' %}" class="bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[16px] md:text-[19px] px-8 py-4 md:px-10 md:py-4 rounded-full shadow-[0_10px_25px_rgba(10,102,194,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-3">
+                    {% trans "Join Ethiopian Talent Hub" %} <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ==============================================
+             2. CRISP SEARCH BAR
+             ============================================== -->
+        <div class="mb-14 md:mb-20 w-full flex justify-center relative z-20 px-2">
+            <form method="GET" class="w-full max-w-3xl relative">
+                <!-- Subtle backdrop glow -->
+                <div class="absolute -inset-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-[2rem] blur-xl opacity-50"></div>
+
+                <div class="relative flex items-center w-full p-2.5 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-[2rem] shadow-sm focus-within:border-[#0A66C2] focus-within:ring-4 focus-within:ring-[#0A66C2]/15 transition-all">
+                    <i data-lucide="search" class="w-6 h-6 text-[#0A66C2] shrink-0 ml-5"></i>
+
+                    <label for="search-input" class="sr-only">{% trans 'Search by skill, profession, or location...' %}</label>
+                    <input id="search-input" type="text" name="q" value="{{ search_query }}"
+                        class="magic-input flex-grow h-14 md:h-16 px-5 text-[15px] md:text-[17px] text-slate-900 font-bold placeholder:text-slate-400"
+                        placeholder="{% trans 'Search by skill, profession, or location...' %}"
+                        autocomplete="off">
+
+                    <!-- Clear Search Button -->
+                    {% if search_query %}
+                        <a href="{% url 'nexus_feed' %}" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors mr-2" aria-label="{% trans 'Clear search' %}">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </a>
+                    {% endif %}
+
+                    <button type="submit" class="bg-gradient-to-r from-[#0A66C2] to-[#0052a3] hover:from-[#0052a3] hover:to-[#0A66C2] text-white font-black h-12 md:h-14 px-6 md:px-10 rounded-2xl md:rounded-[1.5rem] transition-all shadow-md active:scale-95 shrink-0 flex items-center justify-center">
+                        <span class="text-[14px] md:text-[16px] uppercase tracking-widest">{% trans "Search" %}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ==============================================
+             3. FLUID PROFILE CARDS (2 Columns on PC)
+             ============================================== -->
+        <div class="flex justify-between items-end mb-8 md:mb-10 px-2 border-b border-slate-200/60 pb-4 relative z-10">
+            <h2 class="text-[1.6rem] md:text-[2rem] font-black text-slate-900 nav-heading tracking-tight">{% trans "Network Results" %}</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 relative z-10">
+            {% for person in people %}
+                <div class="bento-card flex flex-col group relative">
+
+                    <!-- Dynamic Cover Image -->
+                    <div class="h-32 md:h-36 w-full bg-slate-100 relative overflow-hidden">
+                        {% if person.cover_image %}
+                            <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500"></div>
                         {% else %}
-                            <div class="w-[5.5rem] h-[5.5rem] md:w-[6.5rem] md:h-[6.5rem] rounded-[1.25rem] md:rounded-[1.5rem] bg-slate-100 border-[4px] md:border-[5px] border-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center font-black text-slate-400 text-3xl group-hover:ring-[#0A66C2]/20 group-hover:-translate-y-1 transition-all duration-300">
-                                {{ person.full_name|default:"U"|slice:":1" }}
+                            <div class="w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-indigo-50 to-purple-100 relative">
+                                <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff40_1px,transparent_1px),linear-gradient(to_bottom,#ffffff40_1px,transparent_1px)] bg-[size:20px_20px]"></div>
                             </div>
                         {% endif %}
                     </div>
 
-                    <!-- Texts -->
-                    <div class="mb-4">
-                        <h3 class="font-black text-[19px] md:text-[21px] text-slate-900 truncate tracking-tight group-hover:text-[#0A66C2] transition-colors nav-heading">{{ person.full_name|default:"Unknown User" }}</h3>
-                        <p class="text-[13.5px] md:text-[14px] text-[#0A66C2] font-bold truncate mt-0.5">
-                            {% if person.portfolio.headlines.first %}
-                                {{ person.portfolio.headlines.first.title }}
+                    <div class="px-6 md:px-8 pb-6 md:pb-8 flex-1 flex flex-col relative z-10 bg-white">
+
+                        <!-- AVATAR: Perfectly Circular -->
+                        <div class="-mt-14 md:-mt-16 mb-5 flex justify-between items-end">
+                            {% if person.avatar %}
+                                <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-[6.5rem] h-[6.5rem] md:w-[7.5rem] md:h-[7.5rem] rounded-full object-cover bg-white border-[5px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 group-hover:ring-[#0A66C2]/30 group-hover:-translate-y-1 transition-all duration-300" loading="lazy">
                             {% else %}
-                                {{ person.portfolio.field_of_interest|default:"Professional" }}
-                            {% endif %}
-                        </p>
-                        <div class="text-[12px] text-slate-500 font-bold mt-2 flex items-center gap-3">
-                            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> {{ person.portfolio.location|default:"Addis Ababa" }}</span>
-                            {% if person.portfolio.years_experience %}
-                            <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                            <span class="flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i> {{ person.portfolio.years_experience }} {% trans "Yrs" %}</span>
+                                <div class="w-[6.5rem] h-[6.5rem] md:w-[7.5rem] md:h-[7.5rem] rounded-full bg-slate-100 border-[5px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center font-black text-slate-400 text-4xl group-hover:ring-[#0A66C2]/30 group-hover:-translate-y-1 transition-all duration-300">
+                                    {{ person.full_name|default:"U"|slice:":1" }}
+                                </div>
                             {% endif %}
                         </div>
-                    </div>
 
-                    <!-- Skills Row -->
-                    {% if person.portfolio.skills.all %}
-                        <div class="flex flex-wrap gap-1.5 mb-5">
-                            {% for skill in person.portfolio.skills.all|slice:":3" %}
-                                <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-[10px] md:text-[11px] font-black text-slate-600 uppercase tracking-wider hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-default">
-                                    {{ skill.name }}
-                                </span>
-                            {% endfor %}
-                            {% if person.portfolio.skills.all.count > 3 %}
-                                <span class="px-2 py-1 text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider cursor-help" title="{% trans 'View profile to see more skills' %}">
-                                    +{{ person.portfolio.skills.all.count|add:"-3" }}
-                                </span>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-
-                    <!-- Bio / Mission Text (With Hover Readability) -->
-                    <div class="mb-6 md:mb-8 flex-grow">
-                        <div class="bg-slate-50 rounded-xl p-4 md:p-5 border border-slate-100 relative group-hover:bg-blue-50/40 group-hover:border-blue-100/50 transition-colors h-full"
-                             title="{{ person.portfolio.current_mission|default:person.portfolio.bio_narrative|default:'Building the future and expanding professional connections.' }}">
-                            <i data-lucide="quote" class="absolute -top-2.5 -left-2.5 w-6 h-6 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100 shadow-sm group-hover:text-blue-300 transition-colors"></i>
-                            <p class="text-[13px] md:text-[14px] text-slate-600 font-medium leading-relaxed line-clamp-3 relative z-10 pt-1">
-                                "{{ person.portfolio.current_mission|default:person.portfolio.bio_narrative|default:'Building the future and expanding professional connections.' }}"
+                        <!-- Texts -->
+                        <div class="mb-5">
+                            <h3 class="font-black text-[20px] md:text-[23px] text-slate-900 truncate tracking-tight group-hover:text-[#0A66C2] transition-colors nav-heading">{{ person.full_name|default:"Unknown User" }}</h3>
+                            <p class="text-[14px] md:text-[15px] text-[#0A66C2] font-bold truncate mt-1">
+                                {% if person.portfolio.headlines.first %}
+                                    {{ person.portfolio.headlines.first.title }}
+                                {% else %}
+                                    {{ person.portfolio.field_of_interest|default:"Professional" }}
+                                {% endif %}
                             </p>
+                            <div class="text-[13px] text-slate-500 font-bold mt-2.5 flex items-center gap-3">
+                                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> {{ person.portfolio.location|default:"Addis Ababa" }}</span>
+                                {% if person.portfolio.years_experience %}
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                <span class="flex items-center gap-1.5"><i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i> {{ person.portfolio.years_experience }} {% trans "Yrs" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Skills Row -->
+                        {% if person.portfolio.skills.all %}
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                {% for skill in person.portfolio.skills.all|slice:":4" %}
+                                    <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] md:text-[12px] font-black text-slate-600 uppercase tracking-wider hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-default">
+                                        {{ skill.name }}
+                                    </span>
+                                {% endfor %}
+                                {% if person.portfolio.skills.all.count > 4 %}
+                                    <span class="px-2 py-1.5 text-[11px] md:text-[12px] font-black text-slate-400 uppercase tracking-wider cursor-help flex items-center" title="{% trans 'View profile to see more skills' %}">
+                                        +{{ person.portfolio.skills.all.count|add:"-4" }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Bio / Mission Text -->
+                        <div class="mb-8 flex-grow">
+                            <div class="bg-slate-50 rounded-[1.25rem] p-5 md:p-6 border border-slate-100 relative group-hover:bg-blue-50/50 group-hover:border-blue-100/60 transition-colors h-full"
+                                 title="{{ person.portfolio.current_mission|default:person.portfolio.bio_narrative|default:'Building the future and expanding professional connections.' }}">
+                                <i data-lucide="quote" class="absolute -top-3 -left-3 w-7 h-7 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100 shadow-sm group-hover:text-blue-300 transition-colors"></i>
+                                <p class="text-[14px] md:text-[15px] text-slate-600 font-medium leading-relaxed line-clamp-3 relative z-10 pt-1">
+                                    "{{ person.portfolio.current_mission|default:person.portfolio.bio_narrative|default:'Building the future and expanding professional connections.' }}"
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- HIGH CONTRAST DUAL ACTION BUTTONS -->
+                        <div class="flex items-center gap-3 md:gap-4 mt-auto pt-2">
+                            <!-- View Portfolio Button (Premium Dark Slate) -->
+                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-black text-[13px] md:text-[14px] py-3 md:py-3.5 rounded-[1.25rem] shadow-[0_4px_15px_rgba(15,23,42,0.15)] hover:shadow-[0_8px_25px_rgba(15,23,42,0.25)] transition-all flex items-center justify-center gap-2 active:scale-95 group/btn tracking-wide border border-slate-800">
+                                <i data-lucide="layout-grid" class="w-4 h-4 md:w-5 md:h-5 group-hover/btn:scale-110 transition-transform"></i> <span class="whitespace-nowrap">{% trans "View Portfolio" %}</span>
+                            </a>
+
+                            <!-- Message Button (Clean Solid Blue) -->
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'chat_with' person.id %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[13px] md:text-[14px] py-3 md:py-3.5 rounded-[1.25rem] shadow-[0_4px_15px_rgba(10,102,194,0.15)] hover:shadow-[0_8px_25px_rgba(10,102,194,0.25)] transition-all flex items-center justify-center gap-2 active:scale-95 tracking-wide">
+                                    <i data-lucide="message-circle" class="w-4 h-4 md:w-5 md:h-5"></i> <span>{% trans "Message" %}</span>
+                                </a>
+                            {% else %}
+                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[13px] md:text-[14px] py-3 md:py-3.5 rounded-[1.25rem] shadow-[0_4px_15px_rgba(10,102,194,0.15)] hover:shadow-[0_8px_25px_rgba(10,102,194,0.25)] transition-all flex items-center justify-center gap-2 active:scale-95 tracking-wide">
+                                    <i data-lucide="message-circle" class="w-4 h-4 md:w-5 md:h-5"></i> <span>{% trans "Message" %}</span>
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
+                </div>
 
-                    <!-- HIGH CONTRAST DUAL ACTION BUTTONS -->
-                    <div class="flex items-center gap-3 mt-auto pt-2">
-                        <!-- View Portfolio Button (Premium Dark Slate) -->
-                        <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-black text-[12px] md:text-[13px] py-2.5 md:py-3 rounded-[1rem] shadow-[0_4px_10px_rgba(15,23,42,0.15)] hover:shadow-[0_8px_20px_rgba(15,23,42,0.25)] transition-all flex items-center justify-center gap-1.5 active:scale-95 group/btn tracking-wide border border-slate-800">
-                            <i data-lucide="layout-grid" class="w-4 h-4 md:w-4.5 md:h-4.5 group-hover/btn:scale-110 transition-transform"></i> <span class="whitespace-nowrap">{% trans "View Portfolio" %}</span>
-                        </a>
-
-                        <!-- Message Button (Clean Solid Blue) -->
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'chat_with' person.id %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[12px] md:text-[13px] py-2.5 md:py-3 rounded-[1rem] shadow-[0_4px_10px_rgba(10,102,194,0.15)] hover:shadow-[0_8px_20px_rgba(10,102,194,0.25)] transition-all flex items-center justify-center gap-1.5 active:scale-95 tracking-wide">
-                                <i data-lucide="message-circle" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> <span>{% trans "Message" %}</span>
-                            </a>
-                        {% else %}
-                            <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-black text-[12px] md:text-[13px] py-2.5 md:py-3 rounded-[1rem] shadow-[0_4px_10px_rgba(10,102,194,0.15)] hover:shadow-[0_8px_20px_rgba(10,102,194,0.25)] transition-all flex items-center justify-center gap-1.5 active:scale-95 tracking-wide">
-                                <i data-lucide="message-circle" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> <span>{% trans "Message" %}</span>
-                            </button>
-                        {% endif %}
+            {% empty %}
+                <!-- Enhanced Empty State -->
+                <div class="col-span-full py-32 text-center bento-card border-dashed border-2 border-slate-300 bg-white/50 backdrop-blur-md animate-up">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-blue-100 shadow-[0_8px_30px_rgba(10,102,194,0.08)]">
+                        <i data-lucide="search-x" class="w-12 h-12 text-[#0A66C2]"></i>
                     </div>
+                    <h3 class="text-slate-900 font-black text-[26px] mb-4 nav-heading tracking-tight">{% trans "No profiles found" %}</h3>
+                    <p class="text-slate-500 font-medium text-[16px] max-w-md mx-auto leading-relaxed">{% trans "We couldn't find anyone matching your exact search. Try using broader keywords like 'Developer' or 'Design'." %}</p>
+                    <a href="{% url 'nexus_feed' %}" class="mt-8 inline-flex items-center gap-2 px-8 py-4 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-[#0A66C2] hover:shadow-sm transition-all active:scale-95">
+                        <i data-lucide="refresh-cw" class="w-5 h-5"></i> {% trans "Clear Filters" %}
+                    </a>
                 </div>
-            </div>
+            {% endfor %}
+        </div>
 
-        {% empty %}
-            <!-- Enhanced Empty State -->
-            <div class="col-span-full py-24 text-center bento-card border-dashed border-2 border-slate-300 bg-white/50 backdrop-blur-sm animate-up">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 border border-blue-100 shadow-[0_8px_20px_rgba(10,102,194,0.08)]">
-                    <i data-lucide="search-x" class="w-10 h-10 text-[#0A66C2]"></i>
-                </div>
-                <h3 class="text-slate-900 font-black text-[22px] mb-3 nav-heading tracking-tight">{% trans "No profiles found" %}</h3>
-                <p class="text-slate-500 font-medium max-w-sm mx-auto leading-relaxed">{% trans "We couldn't find anyone matching your exact search. Try using broader keywords like 'Developer' or 'Design'." %}</p>
-                <a href="{% url 'nexus_feed' %}" class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-[#0A66C2] hover:shadow-md transition-all active:scale-95">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Clear Filters" %}
-                </a>
-            </div>
-        {% endfor %}
     </div>
 
 </main>
@@ -380,7 +415,7 @@
 
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Portfolio" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My profile</span>
     </a>
 
     <!-- ACTIVE STATE: Discover -->
@@ -422,37 +457,37 @@
 {% if request.user.is_authenticated %}
 <!-- Mobile Nav Drawer -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 opacity-0 pointer-events-none translate-y-full">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
-        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</a>
-        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
-        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
-        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</a>
+        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</a>
+        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
+        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
     </div>
 </div>
 
-<!-- Language Drawer -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+<!-- Language Modal / Drawer (Centered on PC, Drawer on Mobile) -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="fixed bottom-0 left-0 right-0 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:w-[400px] bg-white rounded-t-[2.5rem] md:rounded-[2rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] md:shadow-2xl z-[210] transition-all duration-300 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] md:pb-6 p-6 opacity-0 pointer-events-none translate-y-full md:translate-y-[20px] md:-translate-x-1/2 md:scale-95">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[20px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <button type="submit" name="language" value="en" aria-label="Select English" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
-            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
         </button>
         <button type="submit" name="language" value="am" aria-label="Select Amharic" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
-            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
         </button>
     </form>
 </div>
@@ -460,19 +495,19 @@
 
 <!-- ELEGANT LOGIN GATE MODAL -->
 <div id="login-gate-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title" class="hidden fixed inset-0 z-[300] flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md transition-opacity duration-300">
-    <div class="bento-card bg-white max-w-sm w-full p-8 text-center transform scale-100 transition-transform shadow-2xl">
-        <div class="w-16 h-16 bg-blue-50 rounded-[1.2rem] flex items-center justify-center mx-auto mb-5 border border-blue-100 shadow-sm">
-            <i data-lucide="lock" class="w-8 h-8 text-[#0A66C2]"></i>
+    <div class="bento-card bg-white max-w-md w-full p-10 text-center transform scale-100 transition-transform shadow-2xl">
+        <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100 shadow-sm">
+            <i data-lucide="lock" class="w-10 h-10 text-[#0A66C2]"></i>
         </div>
-        <h3 id="login-modal-title" class="text-[20px] font-black text-slate-900 mb-2 tracking-tight nav-heading">{% trans "Unlock Network" %}</h3>
-        <p class="text-slate-500 text-[14.5px] font-medium mb-8 leading-relaxed">
-            {% trans "Join CoreLink to message and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.
+        <h3 id="login-modal-title" class="text-[24px] font-black text-slate-900 mb-3 tracking-tight nav-heading">{% trans "Unlock Network" %}</h3>
+        <p class="text-slate-500 text-[16px] font-medium mb-10 leading-relaxed">
+            {% trans "Join Corelink to message and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.
         </p>
-        <div class="space-y-3">
-            <a href="{% url 'unified_onboarding' %}" class="flex items-center justify-center w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-[14px] py-3.5 rounded-xl shadow-md transition-all active:scale-95 tracking-wide">{% trans "Create Free Account" %}</a>
-            <a href="{% url 'login' %}?next={{ request.path }}" class="flex items-center justify-center w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[14px] py-3.5 rounded-xl shadow-sm transition-all active:scale-95">{% trans "Log In" %}</a>
+        <div class="space-y-4">
+            <a href="{% url 'unified_onboarding' %}" class="flex items-center justify-center w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-[15px] py-4 rounded-xl shadow-md transition-all active:scale-95 tracking-wide">{% trans "Create Free Account" %}</a>
+            <a href="{% url 'login' %}?next={{ request.path }}" class="flex items-center justify-center w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-[15px] py-4 rounded-xl shadow-sm transition-all active:scale-95">{% trans "Log In" %}</a>
         </div>
-        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" aria-label="Close" class="mt-6 text-[13px] font-bold text-slate-400 hover:text-slate-600 transition-colors">{% trans "Cancel" %}</button>
+        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" aria-label="Close" class="mt-8 text-[14px] font-bold text-slate-400 hover:text-slate-600 transition-colors">{% trans "Cancel" %}</button>
     </div>
 </div>
 
@@ -502,44 +537,67 @@
         document.getElementById('login-gate-modal').classList.remove('hidden');
     }
 
-    // Reset all drawers securely
+    // Modal / Drawer reset logic
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
-        const navBd = document.getElementById('mobile-nav-backdrop');
         const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
+        const bds = document.querySelectorAll('[id$="-backdrop"]');
 
-        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
-
+        if(navDw) {
+            navDw.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            navDw.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        }
+        if(langDw) {
+            // Remove active classes
+            langDw.classList.remove('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
+            // Add hidden classes (md:-translate-x-1/2 stays permanently)
+            langDw.classList.add('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
+        }
+        bds.forEach(bd => {
+            if(bd) {
+                bd.classList.remove('opacity-100', 'pointer-events-auto');
+                bd.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
         document.body.classList.remove('body-lock');
     }
 
     function toggleMobileNavDrawer() {
-        const dw = document.getElementById('mobile-nav-drawer');
-        const bd = document.getElementById('mobile-nav-backdrop');
-        if (dw && dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+
+        if (navDw.classList.contains('opacity-0')) {
+            closeAllDrawers(); // Safety close
+            navBd.classList.remove('opacity-0', 'pointer-events-none');
+            navBd.classList.add('opacity-100', 'pointer-events-auto');
+
+            navDw.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+            navDw.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+
             document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+        } else {
+            closeAllDrawers();
+        }
     }
 
     function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
-        if (dw && dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if (langDw.classList.contains('opacity-0')) {
+            closeAllDrawers(); // Safety close
+            langBd.classList.remove('opacity-0', 'pointer-events-none');
+            langBd.classList.add('opacity-100', 'pointer-events-auto');
+
+            // Remove hidden classes
+            langDw.classList.remove('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
+            // Add active classes
+            langDw.classList.add('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
+
             document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+        } else {
+            closeAllDrawers();
+        }
     }
 
     // Hide bottom nav when typing on mobile so it doesn't block the screen

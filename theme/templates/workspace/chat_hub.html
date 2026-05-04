@@ -7,70 +7,85 @@
 
 {% block navbar %}
 <!-- ==============================================
-     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
      ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
-        <!-- Logo -->
-        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
-            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <div class="flex-1">
+            <!-- Typographic Logo (Clean, Lowercase, No Dot) -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    My profile
+                </a>
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <!-- ACTIVE: Inbox -->
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group relative" aria-current="page">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-[#0A66C2]"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
         </div>
 
-        <!-- Desktop Navigation Links (Exactly 5 Links) -->
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
-            </a>
-
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
-            </a>
-
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
-            </a>
-
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
-            </a>
-
-            <!-- ACTIVE: Inbox -->
-            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm relative" aria-current="page">
-                <i data-lucide="mail" class="w-4 h-4 fill-blue-100"></i> {% trans "Inbox" %}
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
-                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                    </span>
-                {% endif %}
-            </a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-1 shrink-0 pl-6 border-l border-slate-200">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
                 <span>{% trans "Settings" %}</span>
             </a>
-            <a href="{% url 'logout' %}" class="flex items-center gap-2 px-3 py-2 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>{% trans "Logout" %}</span>
             </a>
         </div>
-    </nav>
-</div>
 
-<!-- MOBILE TOP BAR -->
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR (Hidden on active chat mobile to save space) -->
 {% if not active_partner %}
 <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
-            <span class="text-slate-900">Core</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
-        </div>
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
     <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
@@ -83,22 +98,32 @@
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.16, 1, 0.3, 1);
+        --app-bg: #F4F7FA;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
         --app-safe-top: env(safe-area-inset-top, 0px);
         --app-safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     * { -webkit-tap-highlight-color: transparent; }
+
     body {
-        font-family: var(--font-body); background-color: #F8FAFC; color: #0F172A;
-        -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+        font-family: var(--font-body);
+        background-color: var(--app-bg);
+        background-image:
+            radial-gradient(circle at 15% 50%, rgba(219, 234, 254, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overscroll-behavior-y: none;
     }
-    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
     @media (min-width: 768px) { body { overflow: hidden; } }
@@ -142,15 +167,15 @@
 </style>
 
 <!-- MAIN APP CONTAINER -->
-<div id="mobile-app-container" class="w-full transition-all duration-0 mx-auto
+<div id="mobile-app-container" class="w-full transition-all duration-0 mx-auto max-w-full
     {% if active_partner %}
-        absolute inset-x-0 h-[100dvh] pt-0 pb-0 z-[120] md:z-auto md:relative md:inset-auto md:h-screen md:pt-[7.5rem] md:pb-8 md:px-6 lg:px-8 max-w-[1400px] flex flex-col
+        absolute inset-x-0 h-[100dvh] pt-0 pb-0 z-[120] md:z-auto md:relative md:inset-auto md:h-[100dvh] md:py-6 md:pr-6 md:pl-[calc(260px+1.5rem)] lg:pl-[calc(280px+1.5rem)] xl:pl-[calc(280px+2rem)] xl:pr-8 xl:py-8 flex flex-col
     {% else %}
-        relative h-[100dvh] pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(75px+env(safe-area-inset-bottom))] md:h-screen md:pt-[7.5rem] md:pb-8 md:px-6 lg:px-8 max-w-[1400px] flex flex-col
+        relative h-[100dvh] pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(70px+env(safe-area-inset-bottom))] md:h-[100dvh] md:py-6 md:pr-6 md:pl-[calc(260px+1.5rem)] lg:pl-[calc(280px+1.5rem)] xl:pl-[calc(280px+2rem)] xl:pr-8 xl:py-8 flex flex-col
     {% endif %}">
 
     <!-- Premium Glass Main Wrapper -->
-    <div class="w-full h-full bg-white md:bg-white/80 md:backdrop-blur-2xl md:border border-slate-200/80 md:rounded-[2rem] md:shadow-[0_10px_40px_-10px_rgba(15,23,42,0.06)] flex flex-col md:flex-row overflow-hidden relative">
+    <div class="w-full h-full bg-white md:bg-white/90 md:backdrop-blur-2xl md:border border-slate-200/80 md:rounded-[2rem] md:shadow-[0_10px_30px_-10px_rgba(15,23,42,0.05)] flex flex-col md:flex-row overflow-hidden relative">
 
         <!-- LEFT COLUMN: SIDEBAR (Inbox List) -->
         <div class="w-full md:w-[320px] lg:w-[380px] flex-col bg-white md:border-r border-slate-200/60 shrink-0 h-full z-10 {% if active_partner %}hidden md:flex{% else %}flex{% endif %}">
@@ -246,7 +271,7 @@
                     </a>
                 </div>
 
-                <!-- MESSAGES AREA (Standard Django Template, No HTMX Polling) -->
+                <!-- MESSAGES AREA -->
                 <div id="chat-scroll-container" class="flex-1 overflow-y-auto custom-scroll p-4 md:p-8 space-y-4 w-full relative bg-slate-50/30">
                     <div id="chat-box" class="w-full">
                         {% for msg in active_messages %}
@@ -262,7 +287,7 @@
                                     </button>
                                     {% endif %}
 
-                                    <!-- Delete (Standard Form to avoid HTMX completely) -->
+                                    <!-- Delete -->
                                     <form action="{% url 'delete_message' msg.id %}" method="POST" onsubmit="return confirm('{% trans 'Delete this message for everyone?' %}');" class="m-0 p-0 inline-flex">
                                         {% csrf_token %}
                                         <button type="submit" class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all active:scale-90" title="{% trans 'Delete' %}">
@@ -332,7 +357,7 @@
                     </div>
                 </div>
 
-                <!-- INPUT AREA (Standard Django Form) -->
+                <!-- INPUT AREA -->
                 <div class="shrink-0 bg-white/95 backdrop-blur-xl border-t border-slate-200/60 pb-safe z-20 relative">
                     <div class="p-3 md:p-5 w-full max-w-4xl mx-auto">
                         <form
@@ -395,46 +420,73 @@
      MODALS, DRAWERS & SCRIPTS
      ============================================== -->
 {% if not is_inspector and not active_partner %}
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Portfolio" %}</span></a>
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span></a>
-    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span></a>
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all"><i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i><span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span></a>
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
-        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
-        <div class="relative"><i data-lucide="mail" class="w-6 h-6 stroke-[2.5] fill-blue-50"></i>{% if unread_msg_count > 0 %}<div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-rose-500 rounded-full border border-white"></div>{% endif %}</div>
-        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[70px] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-800 transition-colors">
+        <i data-lucide="user" class="w-[22px] h-[22px] mb-1 stroke-[2.2]"></i>
+        <span class="text-[10px] font-semibold">My profile</span>
+    </a>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-800 transition-colors">
+        <i data-lucide="compass" class="w-[22px] h-[22px] mb-1 stroke-[2.2]"></i>
+        <span class="text-[10px] font-semibold">{% trans "Discover" %}</span>
+    </a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-800 transition-colors">
+        <i data-lucide="zap" class="w-[22px] h-[22px] mb-1 stroke-[2.2]"></i>
+        <span class="text-[10px] font-semibold">{% trans "Updates" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full text-slate-400 hover:text-slate-800 transition-colors">
+        <i data-lucide="briefcase" class="w-[22px] h-[22px] mb-1 stroke-[2.2]"></i>
+        <span class="text-[10px] font-semibold">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full text-[#0A66C2] relative">
+        <div class="absolute top-0 w-8 h-1 bg-[#0A66C2] rounded-b-full"></div>
+        <div class="relative">
+            <i data-lucide="mail" class="w-[22px] h-[22px] mb-1 fill-blue-50 stroke-[2]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-[14px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border border-white animate-pulse shadow-sm">
+                    {{ unread_msg_count }}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[10px] font-bold">{% trans "Messages" %}</span>
     </a>
 </nav>
 {% endif %}
 
-<!-- DRAWERS ARE UNCHANGED (Omitted slightly for brevity if needed, but keeping logic) -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_48px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[calc(2rem+env(safe-area-inset-bottom))] prevent-select p-6">
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
-        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Inbox" %}</a>
-        <div class="h-px bg-slate-100 my-2 mx-2"></div>
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center justify-between">
-            <div class="flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div> {% trans "Language" %}</div>
-            <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</button>
+        <button onclick="window.location.href='/workspace/messages/'" class="w-full min-h-[44px] text-left px-4 py-3 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Inbox" %}</button>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-blue-500"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+            </span>
         </button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        <a href="{% url 'logout' %}" class="w-full min-h-[44px] text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Log Out" %}</a>
     </div>
 </div>
 
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl shadow-[0_-24px_48px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[calc(2rem+env(safe-area-inset-bottom))] p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
     <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
     </form>
 </div>
@@ -484,7 +536,6 @@
         el.style.overflowY = el.scrollHeight > 120 ? 'auto' : 'hidden';
     }
 
-    // Standard Drawer Logic
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const navBd = document.getElementById('mobile-nav-backdrop');
@@ -501,6 +552,18 @@
     function toggleMobileNavDrawer() {
         const dw = document.getElementById('mobile-nav-drawer');
         const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
         if (dw.classList.contains('drawer-closed')) {
             closeAllDrawers();
             bd.classList.replace('opacity-0', 'opacity-100');

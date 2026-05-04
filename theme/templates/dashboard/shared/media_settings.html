@@ -7,70 +7,87 @@
 
 {% block navbar %}
 <!-- ==============================================
-     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
      ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
-        <!-- Logo -->
-        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
-            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <div class="flex-1">
+            <!-- Typographic Logo (Clean, Lowercase, No Dot) -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    My profile
+                </a>
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
         </div>
 
-        <!-- Desktop Navigation Links (Exactly 5 Links) -->
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
-            </a>
-
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
-            </a>
-
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
-            </a>
-
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
-            </a>
-
-            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
-                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
-                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                    </span>
-                {% endif %}
-            </a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50/80 text-[#0A66C2] border border-blue-100/50 shadow-sm transition-colors" aria-current="page">
-                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-900 bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-slate-700"></i>
+                <span>{% trans "Settings" %}</span>
             </a>
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>{% trans "Logout" %}</span>
             </a>
-            {% endif %}
         </div>
-    </nav>
-</div>
 
-<!-- MOBILE TOP BAR (Cleaned up specific to this page) -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-4 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR (Sub-page layout with back button) -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center gap-3 pb-0.5">
         <a href="{% url 'profile_settings' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </a>
-        <span class="font-black text-[17px] text-slate-900 nav-heading tracking-tight">{% trans "Profile Media" %}</span>
+        <span class="font-black text-[18px] text-slate-900 tracking-tight">{% trans "Profile Media" %}</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+    <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
         <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
@@ -84,36 +101,62 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.16, 1, 0.3, 1);
-        --app-bg: #F8FAFC;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --app-bg: #F4F7FA;
     }
     * { -webkit-tap-highlight-color: transparent; }
+
     body {
-        font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A;
-        -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+        font-family: var(--font-body);
+        background-color: var(--app-bg);
+        background-image:
+            radial-gradient(circle at 15% 50%, rgba(219, 234, 254, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overscroll-behavior-y: none;
     }
-    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    /* PREMIUM PC CANVAS LAYOUT - INCREASED PADDING & DECREASED MAX-WIDTH FOR CLEAN UI */
+    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
     .app-canvas {
-        max-width: 1400px; margin: 0 auto;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1rem calc(6.5rem + env(safe-area-inset-bottom)) 1rem;
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    @media (min-width: 768px) { .app-canvas { padding: 9rem 4.5rem 6rem 4.5rem; max-width: 1200px; } }
+
+    @media (min-width: 768px) {
+        .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
+    }
+    @media (min-width: 1024px) {
+        .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
+    }
+    @media (min-width: 1280px) {
+        .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1600px; margin: 0 auto; }
+    }
 
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-in-up { animation: fadeInUp 0.6s var(--ease-magic) forwards; }
 
     .premium-card {
-        background: #ffffff; border: 1px solid #E2E8F0; border-radius: 1.8rem;
-        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02); transition: all 0.4s var(--ease-magic); overflow: hidden;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.8rem;
+        box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+        transition: all 0.4s var(--ease-magic);
+        overflow: hidden;
     }
     @media (min-width: 768px) { .premium-card { border-radius: 2.5rem; } }
 
@@ -140,7 +183,7 @@
 
     <!-- COMPACT MISSING AVATAR WARNING BANNER -->
     {% if not user.avatar %}
-    <div class="mb-5 md:mb-8 w-full">
+    <div class="mb-5 md:mb-8 w-full max-w-5xl mx-auto">
         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
             <div class="absolute -right-10 -top-10 w-32 h-32 bg-[#0A66C2]/10 rounded-full blur-2xl"></div>
 
@@ -158,7 +201,7 @@
     </div>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data" class="premium-card p-5 md:p-10 w-full mb-8">
+    <form method="post" enctype="multipart/form-data" class="premium-card p-5 md:p-10 w-full mb-8 max-w-5xl mx-auto">
         {% csrf_token %}
         <!-- Hidden Inputs for actual file processing -->
         <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden" onchange="openCropper(this, 'avatar')">
@@ -282,23 +325,23 @@
 
 
 <!-- ==============================================
-     MODALS & DRAWERS (UNTOUCHED LOGIC - EXACT MATCH UI)
+     MODALS & DRAWERS
      ============================================== -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
 <div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</a>
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</a>
         <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</a>
         <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
         <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
-        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div> {% trans "Inbox" %}</a>
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
         <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Settings" %}</button>
         <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-blue-500"></i></div>
             <span class="flex-1 flex justify-between items-center">
                 {% trans "Language" %}
                 <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
@@ -310,7 +353,7 @@
     </div>
 </div>
 
-<!-- Language Drawer (UNTOUCHED) -->
+<!-- Language Drawer -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
 <div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
@@ -318,11 +361,11 @@
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
@@ -374,7 +417,7 @@
     </div>
 </div>
 
-<!-- SCRIPTS (UNTOUCHED) -->
+<!-- SCRIPTS -->
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 

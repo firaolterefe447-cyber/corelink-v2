@@ -2,345 +2,376 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<meta property="og:title" content="CoreLink - Discover Teams">
-<meta property="og:description" content="Discover and connect with Teams building the future of Ethiopia.">
+<meta property="og:title" content="Corelink - Discover Teams & groups">
+<meta property="og:description" content="Discover and connect with Teams & groups building the future of Ethiopia.">
 {% endblock %}
 
 {% block navbar %}
+{% if request.user.is_authenticated %}
+
 <!-- ==============================================
-     TOP GLOBAL NAVBAR (PC - Floating Glass)
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
      ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
-        <!-- Logo -->
-        <div class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6 cursor-pointer" onclick="window.location.href='{% url 'dashboard' %}'">
-            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <!-- Top Section: Logo & Links -->
+        <div class="flex-1">
+            <!-- Typographic Logo (Clean, No Dot, Lowercase) -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    My profile
+                </a>
+
+                <!-- ACTIVE: Discover -->
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
         </div>
 
-        <!-- Desktop Navigation Links (Exactly 5 Links) -->
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Portfolio" %}
-            </a>
-
-            <!-- ACTIVE: Discover -->
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm" aria-current="page">
-                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
-            </a>
-
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
-            </a>
-
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="briefcase" class="w-4 h-4"></i> {% trans "Opportunities" %}
-            </a>
-
-            <a href="/workspace/messages/" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all relative">
-                <i data-lucide="mail" class="w-4 h-4"></i> {% trans "Inbox" %}
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute top-1 right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border border-white animate-pulse shadow-sm">
-                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                    </span>
-                {% endif %}
-            </a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span>{% trans "Settings" %}</span>
             </a>
-            <a href="{% url 'logout' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Logout" %}
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>{% trans "Logout" %}</span>
             </a>
         </div>
-    </nav>
-</div>
 
-<!-- MOBILE TOP BAR (CLEANED UP) -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[28px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm uppercase">
-            <span class="text-slate-900">Core</span>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
-        </div>
     </div>
-    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+</aside>
+
+<!-- MOBILE TOP BAR - AUTHENTICATED -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
         <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
 </div>
+
+{% else %}
+
+<!-- ==============================================
+     MINIMAL TOP BAR - UNAUTHENTICATED
+     ============================================== -->
+<div class="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-4 md:px-8 lg:px-12 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-black text-[24px] md:text-[26px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] md:text-[26px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
+    </div>
+
+    <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:opacity-90 text-white font-black text-[13px] md:text-[15px] px-5 py-2 md:px-7 md:py-2.5 rounded-full shadow-md transition-all active:scale-95 flex items-center gap-2">
+        <span>{% trans "Join Hub" %}</span>
+        <i data-lucide="arrow-right" class="w-4 h-4 hidden md:block"></i>
+    </a>
+</div>
+
+{% endif %}
 {% endblock navbar %}
+
 
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
+<!-- ENGAGING MODERN BACKGROUND (Global) -->
+<div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#F8FAFC]">
+    <div class="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-blue-400/15 blur-[120px] mix-blend-multiply animate-pulse" style="animation-duration: 8s;"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[55vw] h-[55vw] rounded-full bg-indigo-400/10 blur-[140px] mix-blend-multiply animate-pulse" style="animation-duration: 10s;"></div>
+    <div class="absolute inset-0 mask-image:linear-gradient(to_bottom,white,transparent)" style="background-image: radial-gradient(rgba(15, 23, 42, 0.04) 1.5px, transparent 1.5px); background-size: 24px 24px; -webkit-mask-image: linear-gradient(to bottom, white 40%, transparent 100%);"></div>
+</div>
+
 <style>
-    /* ==============================================
-       NATIVE APP / DESKTOP OPTIMIZED CSS VARIABLES
-       ============================================== */
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.16, 1, 0.3, 1);
-        --app-bg: #F8FAFC;
     }
     * { -webkit-tap-highlight-color: transparent; }
     body {
         font-family: var(--font-body);
-        background-color: var(--app-bg);
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
-        overscroll-behavior-y: none;
+        overflow-x: hidden;
+        background: transparent;
     }
-    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    .custom-scroll::-webkit-scrollbar { display: none; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* FIXED APP CANVAS MARGIN FOR NEW SIDEBAR (FLOATING GLASS OPTIMIZED) */
-    .app-canvas { max-width: 1400px; margin: 0 auto; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; position: relative; z-index: 10; }
-    @media (min-width: 768px) { .app-canvas { padding: 9rem 4.5rem 6rem 4.5rem; max-width: 1350px; } }
-
-    /* Animations */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes aurora {
-        0%, 100% { border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%; transform: translate(0, 0) scale(1) rotate(0deg); }
-        33% { border-radius: 31% 29% 27% 33% / 28% 25% 35% 37%; transform: translate(30px, -50px) scale(1.1) rotate(45deg); }
-        66% { border-radius: 25% 35% 30% 30% / 28% 25% 35% 37%; transform: translate(-20px, 20px) scale(0.9) rotate(-45deg); }
+    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
 
-    .animate-aurora-1 { animation: aurora 15s ease-in-out infinite; }
-    .animate-aurora-2 { animation: aurora 18s ease-in-out infinite reverse; }
-    .animate-fade-in-up { animation: fadeInUp 0.7s var(--ease-magic) forwards; }
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
+        .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
+    }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; padding-top: 4rem; padding-bottom: 8rem; }
+        .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
+    }
 
-    /* Glassmorphism / Premium Cards */
-    .premium-card {
-        background: #ffffff;
-        border: 1px solid #E2E8F0;
+    /* Clean Solid Bento Cards & Cascade Animation */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
         border-radius: 1.5rem;
-        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
-        transition: all 0.4s var(--ease-magic);
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         overflow: hidden;
+        opacity: 0;
+        animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @media (hover: hover) {
-        .premium-card:hover {
-            border-color: rgba(10, 102, 194, 0.3);
-            box-shadow: 0 15px 30px -10px rgba(10, 102, 194, 0.08);
-            transform: translateY(-4px);
-        }
-    }
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
+    .bento-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08); border-color: #CBD5E1; background: #ffffff; }
 
-    /* Buttons */
-    .btn-soft-blue {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 1rem; font-weight: 800;
-        background-color: #eff6ff; color: #0A66C2; border: 1px solid rgba(191, 219, 254, 0.5);
-        min-height: 44px; padding: 0.5rem clamp(1rem, 2vw, 1.5rem); font-size: 13px;
-        transition: all 0.3s var(--ease-magic); touch-action: manipulation;
-    }
-    @media (hover: hover) { .btn-soft-blue:hover { background-color: #0A66C2; color: #FFFFFF; transform: translateY(-2px); } }
-    .btn-soft-blue:active { transform: scale(0.96); }
+    /* Staggering the grid card load times */
+    .bento-card:nth-child(1) { animation-delay: 0.05s; }
+    .bento-card:nth-child(2) { animation-delay: 0.10s; }
+    .bento-card:nth-child(3) { animation-delay: 0.15s; }
+    .bento-card:nth-child(4) { animation-delay: 0.20s; }
+    .bento-card:nth-child(5) { animation-delay: 0.25s; }
+    .bento-card:nth-child(6) { animation-delay: 0.30s; }
 
-    /* Drawers */
-    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
-    .drawer-closed { transform: translateY(100%); }
+    .magic-input { width: 100%; background-color: transparent; border: none; outline: none; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.6s ease-out forwards; }
+
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
-
-    /* Horizontal Filter Scroll Hide */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<main class="app-canvas animate-fade-in-up">
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} animate-up">
 
-    <!-- ==============================================
-         TOP NAVIGATION
-         ============================================== -->
-    <div class="flex items-center justify-start md:justify-center gap-6 md:gap-8 border-b border-slate-200/80 mb-8 overflow-x-auto custom-scroll w-full pl-2 pr-6 md:pr-2 relative z-10">
-        <!-- INACTIVE TAB: Discover People -->
-        <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-transparent text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all group shrink-0 top-[2px]">
-            <span class="text-[12.5px] md:text-[14px] font-bold uppercase tracking-widest whitespace-nowrap">{% trans "Discover People" %}</span>
-        </a>
+    <div class="max-w-[1100px] mx-auto w-full relative z-10">
 
-        <!-- ACTIVE TAB: Discover Teams -->
-        <a href="{% url 'team_nexus' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]" aria-current="page">
-            <span class="text-[12.5px] md:text-[14px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Discover Teams" %}</span>
-        </a>
-    </div>
+        <!-- ==============================================
+             TOP NAVIGATION TABS
+             ============================================== -->
+        <div class="flex items-center justify-start md:justify-center gap-6 md:gap-12 border-b border-slate-200/80 mb-8 md:mb-14 overflow-x-auto custom-scroll w-full pl-2 pr-6 md:pr-0 relative z-10">
+            <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-transparent text-slate-400 hover:text-slate-800 hover:border-slate-300 transition-all group shrink-0 top-[2px]">
+                <span class="text-[13px] md:text-[14.5px] font-bold uppercase tracking-widest whitespace-nowrap">{% trans "Discover People" %}</span>
+            </a>
 
-    <!-- ==============================================
-         1. ELITE TEAMS BANNER (Aurora Edition)
-         ============================================== -->
-    <div class="relative w-full rounded-[2rem] bg-slate-900 overflow-hidden mb-8 shadow-2xl border border-slate-800 group">
-        <!-- Aurora Background Magic -->
-        <div class="absolute inset-0 opacity-40 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:24px_24px] mix-blend-overlay"></div>
-        <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[120%] bg-[#0A66C2] blur-[80px] opacity-60 animate-aurora-1 mix-blend-screen transition-transform duration-1000 group-hover:scale-110"></div>
-        <div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[120%] bg-emerald-500 blur-[80px] opacity-50 animate-aurora-2 mix-blend-screen transition-transform duration-1000 group-hover:scale-110"></div>
-
-        <div class="relative z-10 px-6 py-10 md:px-12 md:py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-            <!-- Text Content -->
-            <div class="text-center md:text-left">
-                <h1 class="text-[28px] md:text-[38px] font-extrabold text-white tracking-tight nav-heading leading-tight mb-3">
-                    Discover <br class="hidden md:block">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Elite Teams.</span>
-                </h1>
-                <p class="text-slate-300 text-[14px] md:text-[16px] font-medium max-w-md mb-6 leading-relaxed">
-                    Join forces with the most ambitious startups, projects, and hackathons building the future of Ethiopia.
-                </p>
-                <a href="{% url 'submit_team' %}" class="inline-flex items-center justify-center px-8 py-3.5 bg-white text-slate-900 rounded-xl font-extrabold text-[14px] shadow-[0_8px_25px_rgba(255,255,255,0.2)] hover:-translate-y-1 active:scale-95 transition-all gap-2">
-                    <i data-lucide="plus" class="w-4.5 h-4.5"></i> {% trans "Create a Team" %}
-                </a>
-            </div>
-
-            <!-- Graphic Right Side -->
-            <div class="hidden md:flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
-                <i data-lucide="layers" class="w-32 h-32 text-white/50"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==============================================
-         2. FLUID CATEGORY FILTERS
-         ============================================== -->
-    <div class="w-full flex justify-start md:justify-center mb-8 relative z-20">
-        <div class="w-full overflow-x-auto no-scrollbar flex justify-start md:justify-center items-center pb-2">
-            <div class="inline-flex items-center p-1.5 bg-white border border-slate-200 shadow-sm rounded-[1.25rem] w-max gap-1">
-
-                <!-- Filter Buttons -->
-                <button class="filter-btn shrink-0 px-6 py-2.5 rounded-xl text-[13px] font-extrabold transition-all bg-[#0A66C2] text-white shadow-md shadow-blue-500/25" data-filter="ALL">
-                    {% trans "All Teams" %}
-                </button>
-                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="STARTUP">
-                    {% trans "Startup" %}
-                </button>
-                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="BUSINESS">
-                    {% trans "Business" %}
-                </button>
-                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="PROJECT">
-                    {% trans "Project" %}
-                </button>
-                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="HACKATHON">
-                    {% trans "Hackathon" %}
-                </button>
-                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="LEARNING">
-                    {% trans "Learning" %}
-                </button>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- ==============================================
-         3. TEAMS GRID
-         ============================================== -->
-    <div class="flex justify-between items-end mb-6 px-1 border-b border-slate-200/80 pb-3 relative z-10">
-        <h2 class="text-[1.5rem] font-black text-slate-900 nav-heading tracking-tight">{% trans "Active Teams" %}</h2>
-        <p class="text-[13px] text-slate-500 font-bold hidden sm:block">{{ teams|length }} {% trans "Teams Operating" %}</p>
-    </div>
-
-    {% if teams %}
-        <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 transition-all duration-500 relative z-10">
-            {% for team in teams %}
-
-            <div class="team-card premium-card p-6 flex flex-col relative group"
-                 data-team-type="{{ team.team_type }}"
-                 data-time="{% if team.updated_at %}{{ team.updated_at|date:'U' }}{% elif team.created_at %}{{ team.created_at|date:'U' }}{% else %}0{% endif %}">
-
-                <!-- Aesthetic Top Glow -->
-                <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#0A66C2]/10 via-[#0A66C2]/40 to-[#0A66C2]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                <!-- Header: Team Icon & Status -->
-                <div class="flex justify-between items-start mb-5 gap-3 mt-1">
-                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 text-[#0A66C2] flex items-center justify-center font-black text-[22px] border border-blue-100 shadow-sm shrink-0">
-                        {{ team.name|slice:":2"|upper }}
-                    </div>
-
-                    <div class="flex flex-col items-end gap-1.5 pt-1">
-                        {% if team.is_recruiting %}
-                            <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {% trans "Recruiting" %}
-                            </span>
-                        {% else %}
-                            <span class="bg-slate-50 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                                <i data-lucide="lock" class="w-3 h-3"></i> {% trans "Closed" %}
-                            </span>
-                        {% endif %}
-                        <span class="team-badge text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-                            {{ team.get_team_type_display }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Title & Mission -->
-                <h3 class="font-black text-slate-900 text-[18px] leading-tight mb-4 group-hover:text-[#0A66C2] transition-colors nav-heading tracking-tight line-clamp-2">
-                    {{ team.name }}
-                </h3>
-
-                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 relative group-hover:bg-blue-50/50 transition-colors mb-6 flex-grow">
-                    <i data-lucide="quote" class="absolute -top-2.5 -left-2.5 w-6 h-6 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100"></i>
-                    <p class="text-[13px] font-medium text-slate-600 leading-relaxed line-clamp-3 relative z-10 pt-1">
-                        "{{ team.mission }}"
-                    </p>
-                </div>
-
-                <!-- Footer: Leader & Action -->
-                <div class="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto gap-3">
-
-                    <a href="{{ team.leader.get_absolute_url|default:'#' }}" class="flex items-center gap-2.5 hover:bg-slate-50 p-1 -ml-1 rounded-lg transition-colors min-w-0">
-                        {% if team.leader.avatar %}
-                            <img src="{{ team.leader.get_avatar_url }}" class="h-9 w-9 rounded-full object-cover border border-slate-200 shrink-0 bg-white shadow-sm">
-                        {% else %}
-                            <div class="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0 text-[12px] font-black text-slate-400 shadow-sm">
-                                {{ team.leader.full_name|default:"U"|slice:":1"|upper }}
-                            </div>
-                        {% endif %}
-                        <div class="flex flex-col min-w-0">
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{% trans "Leader" %}</span>
-                            <span class="text-[12.5px] font-bold text-slate-800 truncate">{{ team.leader.full_name|default:"Unknown User" }}</span>
-                        </div>
-                    </a>
-
-                    <a href="{% url 'team_detail' team.slug %}" class="btn-soft-blue px-5 text-[12.5px] shrink-0 bg-[#0A66C2] text-white hover:bg-[#0052a3] shadow-md transition-all active:scale-95 border-none">
-                        {% trans "View Team" %}
-                    </a>
-                </div>
-            </div>
-
-            {% endfor %}
-        </div>
-    {% else %}
-        <!-- Universal Empty Database State -->
-        <div class="premium-card w-full flex flex-col items-center justify-center text-center p-12 md:p-20 border-dashed border-2 relative z-10 bg-white/50 backdrop-blur-sm">
-            <div class="w-16 h-16 bg-blue-50 border border-blue-100 rounded-[1.5rem] flex items-center justify-center mb-5 text-[#0A66C2] shadow-sm">
-                <i data-lucide="layers" class="w-8 h-8"></i>
-            </div>
-            <h3 class="text-[20px] font-black text-slate-900 mb-2 nav-heading tracking-tight">{% trans "No active teams right now" %}</h3>
-            <p class="text-[14px] font-medium text-slate-500 mb-6 max-w-sm mx-auto leading-relaxed">
-                {% trans "Be the first to launch one, gather a squad of elite talent, and start building." %}
-            </p>
-            <a href="{% url 'submit_team' %}" class="btn-soft-blue bg-[#0A66C2] text-white hover:text-white px-6 shadow-md transition-all active:scale-95">
-                <i data-lucide="plus" class="w-4 h-4 text-white"></i> {% trans "Create a Team" %}
+            <a href="{% url 'team_nexus' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]" aria-current="page">
+                <span class="text-[13px] md:text-[14.5px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "Discover Teams & groups" %}</span>
             </a>
         </div>
-    {% endif %}
 
-    <!-- Filter Empty State (Hidden by default) -->
-    <div id="filter-empty-state" class="hidden premium-card flex-col items-center justify-center text-center w-full p-12 md:p-20 transition-opacity duration-400 opacity-0 mt-4 border-dashed border-2 relative z-10 bg-white/50 backdrop-blur-sm">
-        <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-[1.5rem] flex items-center justify-center mb-5 text-slate-400 shadow-sm">
-            <i data-lucide="search-x" class="w-8 h-8"></i>
+        <!-- ==============================================
+             1. CLEAN TEXT HERO & SEARCH BAR
+             ============================================== -->
+        <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-6 mb-10 relative z-10">
+            <h1 class="text-[clamp(2rem,5vw,3.8rem)] font-black tracking-tighter leading-[1.1] md:leading-[1.05] mb-4 nav-heading max-w-4xl mx-auto drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-700">
+                {% trans "Discover Elite Teams." %}
+            </h1>
+            <p class="text-slate-500 text-[15px] md:text-[17px] font-medium max-w-2xl mx-auto leading-relaxed px-2">
+                {% trans "Join forces with the most ambitious startups, projects, and hackathons building the future of Ethiopia." %}
+            </p>
         </div>
-        <h3 class="text-[18px] font-black text-slate-900 mb-2 nav-heading tracking-tight">{% trans "No teams found" %}</h3>
-        <p class="text-[14px] font-medium text-slate-500 mb-6 max-w-sm mx-auto">{% trans "Try selecting a different category or create your own team." %}</p>
-        <button onclick="document.querySelector('.filter-btn[data-filter=\'ALL\']').click()" class="btn-soft-blue px-6 transition-all active:scale-95">
-            {% trans "Clear Filters" %}
-        </button>
-    </div>
 
+        <!-- Unified Search & Action Bar -->
+        <div class="mb-10 w-full flex flex-col md:flex-row items-center justify-center gap-4 relative z-20 px-2">
+            <!-- Search Input -->
+            <div class="relative flex items-center w-full md:max-w-xl p-2.5 bg-white/90 backdrop-blur-xl border border-slate-200 rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] focus-within:border-[#0A66C2] focus-within:ring-4 focus-within:ring-[#0A66C2]/15 transition-all">
+                <i data-lucide="search" class="w-6 h-6 text-[#0A66C2] shrink-0 ml-5"></i>
+                <input id="teamSearchInput" type="text"
+                    class="magic-input flex-grow h-12 md:h-14 px-4 text-[15px] md:text-[16px] text-slate-900 font-bold placeholder:text-slate-400"
+                    placeholder="{% trans 'Search teams, missions...' %}"
+                    autocomplete="off">
+            </div>
+
+            <!-- Create Team Action (Desktop Primary, Mobile Secondary) -->
+            <a href="{% url 'submit_team' %}" class="hidden md:flex bg-slate-900 hover:bg-slate-800 text-white font-black text-[15px] h-14 md:h-[4.25rem] px-8 rounded-[2rem] shadow-md transition-all active:scale-95 items-center justify-center gap-2 shrink-0">
+                <i data-lucide="plus" class="w-5 h-5"></i> {% trans "Create Team" %}
+            </a>
+        </div>
+
+        <!-- ==============================================
+             2. FLUID CATEGORY FILTERS
+             ============================================== -->
+        <div class="w-full flex justify-start md:justify-center mb-10 relative z-20 overflow-x-auto custom-scroll pb-2 px-2">
+            <div class="inline-flex items-center p-1.5 bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm rounded-[1.5rem] w-max gap-1">
+                <button class="filter-btn shrink-0 px-6 py-2.5 rounded-xl text-[13px] md:text-[14px] font-black transition-all bg-[#0A66C2] text-white shadow-md shadow-blue-500/25" data-filter="ALL">
+                    {% trans "All Teams" %}
+                </button>
+                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="STARTUP">
+                    {% trans "Startup" %}
+                </button>
+                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="BUSINESS">
+                    {% trans "Business" %}
+                </button>
+                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="PROJECT">
+                    {% trans "Project" %}
+                </button>
+                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="HACKATHON">
+                    {% trans "Hackathon" %}
+                </button>
+                <button class="filter-btn shrink-0 px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-bold transition-all bg-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900" data-filter="LEARNING">
+                    {% trans "Learning" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             3. TEAMS GRID (Bento Aesthetic)
+             ============================================== -->
+        <div class="flex justify-between items-end mb-8 px-2 border-b border-slate-200/60 pb-4 relative z-10">
+            <h2 class="text-[1.6rem] md:text-[2rem] font-black text-slate-900 nav-heading tracking-tight">{% trans "Active Teams" %}</h2>
+            <p class="text-[13px] md:text-[14.5px] text-slate-500 font-bold hidden sm:block">{{ teams|length }} {% trans "Teams Operating" %}</p>
+        </div>
+
+        {% if teams %}
+            <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 relative z-10">
+                {% for team in teams %}
+
+                <div class="bento-card team-card p-6 md:p-8 flex flex-col group"
+                     data-team-type="{{ team.team_type }}"
+                     data-time="{% if team.updated_at %}{{ team.updated_at|date:'U' }}{% elif team.created_at %}{{ team.created_at|date:'U' }}{% else %}0{% endif %}">
+
+                    <!-- Header: Team Icon & Status -->
+                    <div class="flex justify-between items-start mb-6 gap-3">
+                        <div class="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-blue-50 to-indigo-50 text-[#0A66C2] flex items-center justify-center font-black text-[24px] border border-blue-100 shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                            {{ team.name|slice:":2"|upper }}
+                        </div>
+
+                        <div class="flex flex-col items-end gap-2 pt-1">
+                            {% if team.is_recruiting %}
+                                <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1 rounded-lg text-[10px] md:text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {% trans "Recruiting" %}
+                                </span>
+                            {% else %}
+                                <span class="bg-slate-50 text-slate-500 border border-slate-200 px-3 py-1 rounded-lg text-[10px] md:text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> {% trans "Closed" %}
+                                </span>
+                            {% endif %}
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
+                                {{ team.get_team_type_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Title & Mission -->
+                    <h3 class="team-name font-black text-slate-900 text-[20px] md:text-[22px] leading-tight mb-4 group-hover:text-[#0A66C2] transition-colors nav-heading tracking-tight line-clamp-2">
+                        {{ team.name }}
+                    </h3>
+
+                    <div class="bg-slate-50/80 rounded-[1.25rem] p-5 border border-slate-100/80 relative group-hover:bg-blue-50/50 transition-colors mb-6 flex-grow">
+                        <i data-lucide="quote" class="absolute -top-3 -left-3 w-7 h-7 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100 shadow-sm"></i>
+                        <p class="team-mission text-[14px] md:text-[15px] font-medium text-slate-600 leading-relaxed line-clamp-3 relative z-10 pt-1">
+                            "{{ team.mission }}"
+                        </p>
+                    </div>
+
+                    <!-- Footer: Leader & Action -->
+                    <div class="pt-4 flex items-center justify-between mt-auto gap-3">
+
+                        <a href="{{ team.leader.get_absolute_url|default:'#' }}" class="flex items-center gap-3 hover:bg-slate-50 p-1.5 -ml-1.5 rounded-xl transition-colors min-w-0">
+                            {% if team.leader.avatar %}
+                                <img src="{{ team.leader.get_avatar_url }}" class="h-10 w-10 md:h-11 md:w-11 rounded-full object-cover border border-slate-200 shrink-0 bg-white shadow-sm group-hover:border-blue-200 transition-colors">
+                            {% else %}
+                                <div class="h-10 w-10 md:h-11 md:w-11 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0 text-[13px] font-black text-slate-400 shadow-sm group-hover:border-blue-200 transition-colors">
+                                    {{ team.leader.full_name|default:"U"|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{% trans "Leader" %}</span>
+                                <span class="text-[13px] md:text-[14px] font-bold text-slate-900 truncate">{{ team.leader.full_name|default:"Unknown User" }}</span>
+                            </div>
+                        </a>
+
+                        <a href="{% url 'team_detail' team.slug %}" class="shrink-0 bg-[#0A66C2] hover:bg-[#0052a3] text-white px-5 py-2.5 rounded-xl text-[13px] md:text-[14px] font-black shadow-[0_4px_15px_rgba(10,102,194,0.15)] transition-all active:scale-95 flex items-center gap-1.5">
+                            {% trans "View" %} <i data-lucide="arrow-right" class="w-4 h-4 hidden sm:block"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Universal Empty Database State -->
+            <div class="bento-card w-full flex flex-col items-center justify-center text-center py-24 md:py-32 border-dashed border-2 relative z-10 bg-white/40 backdrop-blur-md">
+                <div class="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full flex items-center justify-center mb-6 border border-blue-100 shadow-sm">
+                    <i data-lucide="layers" class="w-10 h-10 md:w-12 md:h-12 text-[#0A66C2]"></i>
+                </div>
+                <h3 class="text-[22px] md:text-[26px] font-black text-slate-900 mb-3 nav-heading tracking-tight">{% trans "No active teams right now" %}</h3>
+                <p class="text-[15px] md:text-[16px] font-medium text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
+                    {% trans "Be the first to launch one, gather a squad of elite talent, and start building." %}
+                </p>
+                <a href="{% url 'submit_team' %}" class="bg-[#0A66C2] hover:bg-[#0052a3] text-white font-black text-[15px] px-8 py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i> {% trans "Create a Team" %}
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Filter/Search Empty State (Hidden by default) -->
+        <div id="filter-empty-state" class="hidden bento-card flex-col items-center justify-center text-center w-full py-24 md:py-32 transition-opacity duration-300 opacity-0 mt-4 border-dashed border-2 relative z-10 bg-white/40 backdrop-blur-md">
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-6 text-slate-400 shadow-sm">
+                <i data-lucide="search-x" class="w-10 h-10 md:w-12 md:h-12"></i>
+            </div>
+            <h3 class="text-[22px] md:text-[26px] font-black text-slate-900 mb-3 nav-heading tracking-tight">{% trans "No teams found" %}</h3>
+            <p class="text-[15px] md:text-[16px] font-medium text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">{% trans "Try adjusting your search terms or selecting a different category." %}</p>
+            <button onclick="document.querySelector('.filter-btn[data-filter=\'ALL\']').click(); document.getElementById('teamSearchInput').value='';" class="bg-white border border-slate-200 text-slate-700 hover:text-[#0A66C2] hover:border-[#0A66C2] font-black text-[15px] px-8 py-4 rounded-2xl shadow-sm transition-all active:scale-95 flex items-center gap-2">
+                <i data-lucide="refresh-cw" class="w-5 h-5"></i> {% trans "Clear Search" %}
+            </button>
+        </div>
+
+    </div>
 </main>
 
 
@@ -349,16 +380,16 @@
      ============================================== -->
 
 <!-- MOBILE FAB: CREATE TEAM -->
-<a href="{% url 'submit_team' %}" class="md:hidden fixed bottom-[calc(90px+env(safe-area-inset-bottom,0px))] right-4 z-[80] h-[56px] w-[56px] bg-gradient-to-tr from-slate-900 to-slate-800 text-white rounded-[1.2rem] shadow-[0_8px_20px_rgba(15,23,42,0.4)] flex items-center justify-center active:scale-90 transition-transform border border-slate-700">
-    <i data-lucide="plus" class="w-6 h-6 drop-shadow-md"></i>
+<a href="{% url 'submit_team' %}" class="md:hidden fixed bottom-[calc(90px+env(safe-area-inset-bottom,0px))] right-4 z-[80] h-[56px] w-[56px] bg-[#0A66C2] text-white rounded-full shadow-[0_8px_25px_rgba(10,102,194,0.4)] flex items-center justify-center active:scale-90 transition-transform">
+    <i data-lucide="plus" class="w-6 h-6"></i>
 </a>
 
-{% if not is_inspector %}
+{% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
 
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Portfolio" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap">My profile</span>
     </a>
 
     <!-- ACTIVE STATE: Discover -->
@@ -398,106 +429,117 @@
      MODALS & DRAWERS (FIXED Z-INDEX & STRUCTURE)
      ============================================== -->
 
-<!-- Mobile Nav Drawer (Exactly 5 Main Links) -->
+{% if request.user.is_authenticated %}
+<!-- Mobile Nav Drawer -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 opacity-0 pointer-events-none translate-y-full">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio" %}</button>
-        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</button>
-        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</button>
-        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</button>
-        <button onclick="window.location.href='/workspace/messages/'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div> {% trans "Inbox" %}</button>
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</button>
+        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</button>
+        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</button>
+        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</button>
+        <button onclick="window.location.href='/workspace/messages/'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div> {% trans "Inbox" %}</button>
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
         <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
             <span class="flex-1 flex justify-between items-center">
                 {% trans "Language" %}
                 <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
             </span>
         </button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
     </div>
 </div>
 
-<!-- Language Drawer -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="md:hidden fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[210] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+<!-- Language Modal / Drawer -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="fixed bottom-0 left-0 right-0 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:w-[400px] bg-white rounded-t-[2.5rem] md:rounded-[2rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] md:shadow-2xl z-[210] transition-all duration-300 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] md:pb-6 p-6 opacity-0 pointer-events-none translate-y-full md:translate-y-[20px] md:-translate-x-1/2 md:scale-95">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[20px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <button type="submit" name="language" value="en" aria-label="Select English" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
-            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
         </button>
         <button type="submit" name="language" value="am" aria-label="Select Amharic" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
-            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
         </button>
     </form>
 </div>
+{% endif %}
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
-    let shareTimeout;
-    function showToast(message) {
-        const toast = document.getElementById('share-toast');
-        const toastMsg = document.getElementById('toast-msg');
-        if (toastMsg && message) toastMsg.textContent = message;
-        clearTimeout(shareTimeout); toast.classList.remove('translate-y-10', 'opacity-0');
-        if (navigator.vibrate) {
-            try { navigator.vibrate([20, 30, 20]); } catch (e) {}
-        }
-        shareTimeout = setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); }, 3000);
-    }
-
-    // Reset all drawers securely
+    // Modal / Drawer reset logic
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
-        const navBd = document.getElementById('mobile-nav-backdrop');
         const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
+        const bds = document.querySelectorAll('[id$="-backdrop"]');
 
-        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
-
+        if(navDw) {
+            navDw.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            navDw.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        }
+        if(langDw) {
+            langDw.classList.remove('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
+            langDw.classList.add('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
+        }
+        bds.forEach(bd => {
+            if(bd) {
+                bd.classList.remove('opacity-100', 'pointer-events-auto');
+                bd.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
         document.body.classList.remove('body-lock');
     }
 
     function toggleMobileNavDrawer() {
-        const dw = document.getElementById('mobile-nav-drawer');
-        const bd = document.getElementById('mobile-nav-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+
+        if (navDw && navDw.classList.contains('opacity-0')) {
+            closeAllDrawers(); // Safety close
+            navBd.classList.remove('opacity-0', 'pointer-events-none');
+            navBd.classList.add('opacity-100', 'pointer-events-auto');
+
+            navDw.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+            navDw.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+
             document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+        } else {
+            closeAllDrawers();
+        }
     }
 
     function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if (langDw && langDw.classList.contains('opacity-0')) {
+            closeAllDrawers(); // Safety close
+            if(langBd){
+                langBd.classList.remove('opacity-0', 'pointer-events-none');
+                langBd.classList.add('opacity-100', 'pointer-events-auto');
+            }
+
+            langDw.classList.remove('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
+            langDw.classList.add('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
+
             document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+        } else {
+            closeAllDrawers();
+        }
     }
 
-    // Hide bottom nav when typing on mobile so it doesn't block the screen
+    // Hide bottom nav when typing on mobile
     document.addEventListener("DOMContentLoaded", function() {
         const bottomNav = document.getElementById('mobile-bottom-nav');
         if (bottomNav) {
@@ -514,12 +556,12 @@
         }
     });
 
-    // --- TEAM FILTERING LOGIC ---
+    // --- COMBINED TEAM SEARCH & FILTERING LOGIC ---
     document.addEventListener('DOMContentLoaded', () => {
-        // Enforce Sorting Order Strictly by Updated Time (Newest First)
         const teamsGrid = document.getElementById('teams-grid');
         const teamCardsNodeList = document.querySelectorAll('.team-card');
 
+        // Sorting by newest
         if (teamsGrid && teamCardsNodeList.length > 0) {
             let sortedCards = Array.from(teamCardsNodeList).sort((a, b) => {
                 const timeA = parseInt(a.getAttribute('data-time'), 10) || 0;
@@ -532,14 +574,63 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const teamCards = document.querySelectorAll('.team-card');
         const emptyState = document.getElementById('filter-empty-state');
+        const teamSearchInput = document.getElementById('teamSearchInput');
 
-        // Clean Modern State Classes
+        let currentFilter = 'ALL';
+
         const activeClasses = ['bg-[#0A66C2]', 'text-white', 'shadow-md', 'shadow-blue-500/25'];
         const inactiveClasses = ['bg-transparent', 'text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900'];
 
+        function filterTeams() {
+            const searchTerm = teamSearchInput ? teamSearchInput.value.toLowerCase().trim() : '';
+            let visibleCount = 0;
+
+            teamCards.forEach(card => {
+                const cardType = card.getAttribute('data-team-type');
+                const cardName = card.querySelector('.team-name').innerText.toLowerCase();
+                const cardMission = card.querySelector('.team-mission').innerText.toLowerCase();
+
+                const matchesFilter = (currentFilter === 'ALL' || cardType === currentFilter);
+                const matchesSearch = searchTerm === '' || cardName.includes(searchTerm) || cardMission.includes(searchTerm);
+
+                if (matchesFilter && matchesSearch) {
+                    card.style.display = 'flex';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1) translateY(0)';
+                    }, 20);
+                    visibleCount++;
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95) translateY(15px)';
+                    setTimeout(() => {
+                        if (card.style.opacity === '0') card.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            setTimeout(() => {
+                if (visibleCount === 0 && teamCards.length > 0) {
+                    if(teamsGrid) teamsGrid.classList.add('hidden');
+                    if(emptyState) {
+                        emptyState.classList.remove('hidden');
+                        emptyState.classList.add('flex');
+                        setTimeout(() => { emptyState.classList.add('opacity-100'); emptyState.classList.remove('opacity-0'); }, 50);
+                    }
+                } else {
+                    if(teamsGrid) teamsGrid.classList.remove('hidden');
+                    if(emptyState) {
+                        emptyState.classList.remove('opacity-100');
+                        emptyState.classList.add('opacity-0');
+                        setTimeout(() => { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }, 300);
+                    }
+                }
+            }, 300);
+        }
+
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                const filter = btn.getAttribute('data-filter');
+                currentFilter = btn.getAttribute('data-filter');
 
                 filterBtns.forEach(b => {
                     b.classList.remove(...activeClasses);
@@ -550,41 +641,13 @@
                 btn.classList.add(...activeClasses);
                 btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-                let visibleCount = 0;
-
-                teamCards.forEach(card => {
-                    const cardType = card.getAttribute('data-team-type');
-                    if (filter === 'ALL' || cardType === filter) {
-                        card.style.display = 'flex';
-                        setTimeout(() => {
-                            card.style.opacity = '1';
-                            card.style.transform = 'scale(1) translateY(0)';
-                        }, 50);
-                        visibleCount++;
-                    } else {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95) translateY(15px)';
-                        setTimeout(() => {
-                            if (card.style.opacity === '0') card.style.display = 'none';
-                        }, 400);
-                    }
-                });
-
-                setTimeout(() => {
-                    if (visibleCount === 0 && teamCards.length > 0) {
-                        if(teamsGrid) teamsGrid.classList.add('hidden');
-                        emptyState.classList.remove('hidden');
-                        emptyState.classList.add('flex');
-                        setTimeout(() => { emptyState.classList.add('opacity-100'); emptyState.classList.remove('opacity-0'); }, 50);
-                    } else {
-                        if(teamsGrid) teamsGrid.classList.remove('hidden');
-                        emptyState.classList.remove('opacity-100');
-                        emptyState.classList.add('opacity-0');
-                        setTimeout(() => { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }, 400);
-                    }
-                }, 400);
+                filterTeams();
             });
         });
+
+        if (teamSearchInput) {
+            teamSearchInput.addEventListener('input', filterTeams);
+        }
     });
 </script>
 {% endblock content %}
