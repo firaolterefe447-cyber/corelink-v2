@@ -1,47 +1,6 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
-<!--
-    DEVELOPER NOTE:
-    I have fully upgraded your Portfolio/Dashboard file below with the new Sidebar Navigation,
-    the lowercase typographic logo (no dot), and the premium PC padding structure!
-
-    Since you also requested fixes for the "Updates" (right_now_feed) page in your prompt
-    (removing the "Network Pulse" sidebar, the category filters, and updating the search bar
-    text to "See what the community is doing right now..."), you can simply copy-paste this
-    snippet into your `right_now_feed.html` file to replace its top section:
-
-    ========================================================================================
-    <div class="mb-8 z-20 flex flex-col">
-        <div class="flex items-start justify-between">
-            <div>
-                <h1 class="text-[28px] md:text-[32px] font-black text-slate-900 nav-heading tracking-tight leading-none">
-                    {% trans "Updates" %}
-                </h1>
-                <p class="text-[14.5px] md:text-[15px] font-medium text-slate-500 mt-2 max-w-lg leading-relaxed">
-                    {% trans "See what the community is doing right now. Give feedback, ask questions." %}
-                </p>
-            </div>
-        </div>
-
-        <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
-            <form method="GET" class="w-full sm:flex-1 relative group">
-                <div class="flex items-center w-full bg-white border border-slate-200 rounded-full px-4 py-2 shadow-sm transition-all focus-within:border-[#0A66C2] focus-within:ring-2 focus-within:ring-[#0A66C2]/15">
-                    <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-[#0A66C2] transition-colors"></i>
-                    <input type="text" name="q" value="{{ search_query }}"
-                        class="w-full bg-transparent border-none outline-none h-10 px-3 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:ring-0"
-                        placeholder="{% trans 'Search...' %}">
-                </div>
-            </form>
-            <a href="{% url 'right_now_create' %}" class="shrink-0 flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#0052a3] text-white text-[14px] font-bold h-14 sm:h-[48px] px-6 rounded-full shadow-md transition-all active:scale-95">
-                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Post Update" %}
-            </a>
-        </div>
-    </div>
-    ========================================================================================
-    (And delete the <div class="hidden xl:block w-[340px]..."> for the Network Pulse completely).
--->
-
 {% block navbar %}
 <!-- ==============================================
      LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
@@ -61,7 +20,6 @@
 
             <!-- Desktop Navigation Links -->
             <nav class="flex flex-col gap-2">
-                <!-- ACTIVE: Portfolio -->
                 <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
                     <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     My profile
@@ -98,7 +56,6 @@
             </nav>
         </div>
 
-        <!-- Actions Bottom -->
         <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
             <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
                 <i data-lucide="globe" class="w-5 h-5"></i>
@@ -130,11 +87,7 @@
 </div>
 {% endblock navbar %}
 
-
 {% block content %}
-<!-- ==============================================
-     PREMIUM UI/UX BODY
-     ============================================== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -180,7 +133,6 @@
 
     @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; } }
 
-    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
     .app-canvas {
         width: 100%;
         position: relative;
@@ -212,7 +164,6 @@
     @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
     .bento-card:hover { box-shadow: 0 20px 40px -15px rgba(10, 102, 194, 0.1); border-color: rgba(203, 213, 225, 1); transform: translateY(-3px); }
 
-    /* Insight Banner */
     .insight-banner {
         background: linear-gradient(to right, rgba(239, 246, 255, 0.6), rgba(248, 250, 252, 0.4));
         border: 1px solid rgba(219, 234, 254, 0.8);
@@ -222,19 +173,67 @@
     }
     .insight-banner p { font-size: 13px; font-weight: 500; color: #475569; line-height: 1.5; margin:0; }
 
-    /* Buttons */
-    .btn-add-ghost { min-height: 40px; padding: 0.5rem 1rem; background: transparent; color: #0A66C2; font-size: 13px; font-weight: 800; border: 2px dashed rgba(191, 219, 254, 0.8); border-radius: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); white-space: nowrap; }
-    .btn-add-ghost:hover { background: #EFF6FF; border-style: solid; border-color: #BFDBFE; transform: translateY(-2px); }
+    /* SUPER-CHARGED BUTTONS (Guaranteed Clickable on Mobile & PC) */
+    .btn-add-ghost, .btn-manage, .btn-action, .btn-secondary {
+        position: relative;
+        z-index: 50; /* Forces buttons above all overlays */
+        pointer-events: auto !important;
+        touch-action: manipulation;
+        cursor: pointer;
+        min-height: 48px; /* Perfect mobile tap height */
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic);
+        white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+        .btn-add-ghost, .btn-manage, .btn-action, .btn-secondary { min-height: 44px; }
+    }
+
+    .btn-add-ghost {
+        padding: 0.5rem 0.75rem;
+        background: #EFF6FF;
+        color: #0A66C2;
+        font-size: 13.5px;
+        font-weight: 800;
+        border: 1px solid #BFDBFE;
+        box-shadow: 0 2px 10px rgba(10, 102, 194, 0.05);
+    }
+    .btn-add-ghost:hover {
+        background: #0A66C2;
+        color: #ffffff;
+        border-color: #0A66C2;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(10, 102, 194, 0.2);
+    }
     .btn-add-ghost:active { transform: scale(0.96); }
 
-    .btn-manage { min-height: 40px; padding: 0.5rem 1rem; background: #F1F5F9; color: #475569; font-size: 13px; font-weight: 800; border-radius: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); }
-    .btn-manage:hover { background: #E2E8F0; color: #0F172A; transform: translateY(-2px); }
+    .btn-manage {
+        padding: 0.5rem 0.75rem;
+        background: #ffffff;
+        color: #475569;
+        font-size: 13.5px;
+        font-weight: 800;
+        border: 1px solid #CBD5E1;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+    .btn-manage:hover {
+        background: #F8FAFC;
+        color: #0F172A;
+        border-color: #94A3B8;
+        transform: translateY(-2px);
+    }
+    .btn-manage:active { transform: scale(0.96); }
 
-    .btn-action { background: linear-gradient(135deg, #0A66C2, #0052a3); color: white; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); }
+    .btn-action { background: linear-gradient(135deg, #0A66C2, #0052a3); color: white; font-weight: 800; padding: 0.75rem 1.5rem; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); }
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
     .btn-action:active { transform: scale(0.96); }
 
-    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; }
+    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; }
     .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
     .btn-secondary:active { transform: scale(0.96); }
 
@@ -268,25 +267,26 @@
 
             <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 overflow-hidden border-b border-slate-200/50 bg-slate-900">
                 {% if user.cover_image %}
-                    <!-- User image: Correctly centered and un-zoomed -->
+                    <!-- User image -->
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center">
                 {% else %}
-                    <!-- Fallback: Keep abstract animated gradient -->
+                    <!-- Fallback -->
                     <div class="w-full h-full bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden bg-pan">
                         <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
                         <div class="absolute top-0 right-0 w-64 h-64 bg-[#0A66C2]/20 blur-[60px] rounded-full mix-blend-overlay"></div>
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 blur-[60px] rounded-full mix-blend-overlay"></div>
                     </div>
                 {% endif %}
-                <a href="{% url 'media_manager' %}" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-[#0A66C2] hover:scale-110 transition-all shadow-lg prevent-select"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></a>
+                <a href="{% url 'media_manager' %}" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-[#0A66C2] hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></a>
             </div>
 
             <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col">
                 <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
-                    <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[1.5rem] md:rounded-[2.5rem] aspect-square border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer" onclick="window.location.href='{% url 'media_manager' %}'">
+                    <!-- CLEAN CIRCLE AVATAR -->
+                    <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-full aspect-square border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer" onclick="window.location.href='{% url 'media_manager' %}'">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center z-20">
                                 <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-md"></i>
                             </div>
                         {% else %}
@@ -318,33 +318,33 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2 relative z-50">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
-                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none min-h-[44px] md:min-h-[50px] md:text-[14px]">
-                                    <i data-lucide="building" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> {% trans "Manage Company" %}
+                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none">
+                                    <i data-lucide="building" class="w-4 h-4"></i> {% trans "Manage Company" %}
                                 </a>
                             {% else %}
-                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none min-h-[44px] md:min-h-[50px] md:text-[14px]">
-                                    <i data-lucide="plus-circle" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> {% trans "Add Company" %}
+                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> {% trans "Add Company" %}
                                 </a>
                             {% endif %}
                         {% endif %}
 
-                        <a href="{% if portfolio.slug %}{% url 'public_profile' portfolio.slug %}{% else %}#{% endif %}" target="_blank" class="btn-action flex-1 sm:flex-none min-h-[44px] md:min-h-[50px] md:text-[14px] {% if not portfolio.slug %}opacity-50 cursor-not-allowed{% endif %}">
-                            <i data-lucide="external-link" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> {% trans "View Public Portfolio" %}
+                        <a href="{% if portfolio.slug %}{% url 'public_profile' portfolio.slug %}{% else %}#{% endif %}" target="_blank" class="btn-action flex-1 sm:flex-none {% if not portfolio.slug %}opacity-50 cursor-not-allowed{% endif %}">
+                            <i data-lucide="external-link" class="w-4 h-4"></i> {% trans "Public Profile" %}
                         </a>
-                        <a href="{% url 'profile_settings' %}" class="btn-secondary flex-1 sm:flex-none min-h-[44px] md:min-h-[50px] md:text-[14px] md:px-6 md:rounded-2xl">
-                            <i data-lucide="settings" class="w-4 h-4 md:w-4.5 md:h-4.5"></i> {% trans "Edit Basics" %}
+                        <a href="{% url 'profile_settings' %}" class="btn-secondary flex-1 sm:flex-none">
+                            <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Edit Basics" %}
                         </a>
                     </div>
                 </div>
 
                 <!-- Professional Narrative (Bio) -->
                 <div id="hero-bio" class="p-6 sm:p-8 md:p-10 bg-[#F8FAFC] rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative overflow-hidden w-full">
-                    <div class="relative z-10 flex flex-col h-full max-w-5xl">
+                    <div class="relative z-20 flex flex-col h-full max-w-5xl pointer-events-auto">
                         <div class="flex items-center justify-end mb-2 md:mb-4">
-                            <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors flex items-center gap-1.5 min-h-[44px] border border-transparent hover:border-blue-100">
+                            <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors flex items-center gap-1.5 min-h-[44px] border border-transparent hover:border-blue-100 z-50 relative pointer-events-auto">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5 md:w-4 md:h-4"></i> {% if portfolio.bio_narrative %}{% trans "Edit Story" %}{% else %}{% trans "Write Story" %}{% endif %}
                             </button>
                         </div>
@@ -354,17 +354,17 @@
                         </div>
 
                         {% if not portfolio.bio_narrative %}
-                            <button onclick="openBioEditor()" class="w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3 group/empty">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                                <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Click here to write your professional summary" %}</h4>
+                            <button onclick="openBioEditor()" class="w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 group/empty z-50 relative pointer-events-auto">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                                <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Click here to write your professional summary" %}</h4>
                             </button>
                         {% else %}
                             <div class="relative flex-1" id="bio-container">
-                                <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 95px;">
+                                <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-500 ease-in-out pointer-events-none" style="max-height: 95px;">
                                     <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-700 font-medium leading-[1.9] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
                                     <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-14 md:h-20 bg-gradient-to-t from-[#F8FAFC] to-transparent transition-opacity duration-300"></div>
                                 </div>
-                                <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 md:mt-5 text-[#0A66C2] font-black text-[13px] md:text-[14px] hover:text-blue-800 flex items-center gap-1.5 min-h-[44px] transition-colors"><span id="bio-btn-text">{% trans "Read More" %}</span> <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i></button>
+                                <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 md:mt-5 text-[#0A66C2] font-black text-[13px] md:text-[14px] hover:text-blue-800 flex items-center gap-1.5 min-h-[44px] transition-colors z-50 relative pointer-events-auto"><span id="bio-btn-text">{% trans "Read More" %}</span> <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i></button>
                             </div>
                         {% endif %}
                     </div>
@@ -390,9 +390,9 @@
         <!-- MISSION & STRENGTH GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-8 lg:mb-12 items-stretch" id="section-goal">
             <!-- Premium Goal Card -->
-            <div class="lg:col-span-8 bento-card p-6 sm:p-8 md:p-10 flex flex-col relative h-full">
+            <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col relative h-full">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 blur-[50px] rounded-full pointer-events-none"></div>
-                <div class="relative z-10 flex flex-col h-full">
+                <div class="relative z-10 flex flex-col h-full pointer-events-auto">
                     <div class="mb-4 md:mb-5 flex justify-between items-start">
                         <div>
                             <h3 class="text-[1.4rem] md:text-[1.8rem] font-black text-slate-900 tracking-tight leading-tight inline-block">{% trans "What are you looking for?" %}</h3>
@@ -407,7 +407,7 @@
                         <p>{% trans "Select your current objective below to help the system match your portfolio with relevant opportunities." %}</p>
                     </div>
 
-                    <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-4">
+                    <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-4 relative z-50">
                         {% csrf_token %}
                         <div style="display:none;">
                             <input type="hidden" name="full_name" value="{{ user.full_name|default:user.phone_number|escape }}">
@@ -441,7 +441,7 @@
             </div>
 
             <!-- Trust Score -->
-            <div class="lg:col-span-4 bento-card p-6 sm:p-8 md:p-10 flex flex-col justify-center text-center h-full group cursor-default">
+            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center h-full group cursor-default">
                 <div class="w-16 h-16 mx-auto bg-transparent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <i data-lucide="shield-check" class="w-12 h-12 text-[#0A66C2] drop-shadow-sm"></i>
                 </div>
@@ -461,21 +461,19 @@
         <!-- MODULAR BENTO CARDS -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8 mb-6 lg:mb-12">
 
-            <!-- 0. Headlines -->
-            <div id="section-headlines" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-2">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{% trans "Headlines" %}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'headline_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Headline" %}</a>
+            <!-- 0. Headlines (Narrow Card) -->
+            <div id="section-headlines" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-2 pointer-events-auto">
+                <div class="flex flex-col gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Headlines" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full relative z-50">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'headline_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Add your current professional titles (e.g., 'Software Engineer', 'Medical Student') to define your expertise." %}</p>
+                    <p>{% trans "Add your current professional titles (e.g., 'Software Engineer') to define your expertise." %}</p>
                 </div>
-                <div class="flex-1 relative z-10">
+                <div class="flex-1 relative z-10 pointer-events-auto">
                     {% if headlines %}
                         <div class="space-y-3">
                             {% for hl in headlines|slice:":3" %}
@@ -490,29 +488,27 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'headline_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Add your primary title" %}</h4>
+                        <a href="{% url 'headline_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add your title" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 1. Skills -->
-            <div id="section-skills" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-2">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_skills' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'skill_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Skill" %}</a>
+            <!-- 1. Skills (Narrow Card) -->
+            <div id="section-skills" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-2 pointer-events-auto">
+                <div class="flex flex-col gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full relative z-50">
+                        <a href="{% url 'manage_skills' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'skill_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "List your technical tools, soft skills, and industry methodologies. Adding comprehensive skills strengthens your profile." %}</p>
+                    <p>{% trans "List technical tools and methodologies. Comprehensive skills strengthen your profile." %}</p>
                 </div>
-                <div class="flex-1 relative z-10">
+                <div class="flex-1 relative z-10 pointer-events-auto">
                     {% if skills %}
                         <div class="flex flex-wrap gap-2.5 md:gap-3">
                             {% for skill in skills|slice:":10" %}
@@ -522,29 +518,27 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'skill_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "List your core strengths" %}</h4>
+                        <a href="{% url 'skill_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "List your strengths" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 2. Credentials -->
-            <div id="section-education" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-2">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{{ role_text.edu_title|default:"Credentials" }}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_credentials' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'credential_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Credential" %}</a>
+            <!-- 2. Credentials (Narrow Card) -->
+            <div id="section-education" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-2 pointer-events-auto">
+                <div class="flex flex-col gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.edu_title|default:"Credentials" }}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full relative z-50">
+                        <a href="{% url 'manage_credentials' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'credential_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Add your educational background, including university degrees, professional licenses, and completed certificates." %}</p>
+                    <p>{% trans "Add educational background, degrees, licenses, and completed certificates." %}</p>
                 </div>
-                <div class="flex-1 space-y-3 relative z-10">
+                <div class="flex-1 space-y-3 relative z-10 pointer-events-auto">
                     {% if credentials %}
                         {% for cred in credentials|slice:":3" %}
                         <div class="p-3.5 md:p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-md flex flex-col gap-1 hover:border-cyan-200 transition-all cursor-default">
@@ -553,33 +547,31 @@
                         </div>
                         {% endfor %}
                     {% else %}
-                        <a href="{% url 'credential_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Add your education" %}</h4>
+                        <a href="{% url 'credential_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add education" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 3. Projects Grid -->
-            <div id="section-projects" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-3">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_projects' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'project_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Project" %}</a>
+            <!-- 3. Projects Grid (Medium Card) -->
+            <div id="section-projects" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3 pointer-events-auto">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50">
+                        <a href="{% url 'manage_projects' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'project_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Upload examples of your past work, such as case studies, research papers, business plans, or creative projects." %}</p>
+                    <p>{% trans "Upload examples of past work, case studies, business plans, or creative projects." %}</p>
                 </div>
-                <div class="flex-1 relative z-10">
+                <div class="flex-1 relative z-10 pointer-events-auto">
                     {% if projects %}
                         <div class="grid grid-cols-2 gap-4">
                             {% for project in projects|slice:":2" %}
-                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative group/img block border border-slate-200 hover:border-blue-400 transition-colors shadow-sm">
+                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative group/img block border border-slate-200 hover:border-blue-400 transition-colors shadow-sm z-50">
                                 {% if project.gallery.first %}
                                     <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105">
                                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -594,29 +586,27 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'project_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3 mt-4">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Showcase your past work" %}</h4>
+                        <a href="{% url 'project_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 mt-4 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Showcase past work" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 4. Experience -->
-            <div id="section-experience" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-3">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{{ role_text.exp_title|default:"Experience" }}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_experiences' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'experience_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Experience" %}</a>
+            <!-- 4. Experience (Medium Card) -->
+            <div id="section-experience" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3 pointer-events-auto">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.exp_title|default:"Experience" }}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50">
+                        <a href="{% url 'manage_experiences' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'experience_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Add your detailed career and volunteer history to provide a complete timeline of your experience." %}</p>
+                    <p>{% trans "Add detailed career and volunteer history to provide a complete experience timeline." %}</p>
                 </div>
-                <div class="flex-1 relative z-10 mt-2">
+                <div class="flex-1 relative z-10 mt-2 pointer-events-auto">
                     {% if experiences %}
                         <div class="relative pl-5 md:pl-6 space-y-6 before:absolute before:inset-y-1 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200">
                             {% for exp in experiences|slice:":3" %}
@@ -628,30 +618,28 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'experience_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3 mt-4">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Add your first work experience" %}</h4>
+                        <a href="{% url 'experience_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 mt-4 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add work experience" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 5. My Goal & Vision -->
-            <div id="section-vision" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-6 bg-white overflow-hidden border-slate-200">
+            <!-- 5. My Goal & Vision (Full-Width Card) -->
+            <div id="section-vision" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-6 bg-white overflow-hidden border-slate-200 pointer-events-auto">
                 <div class="absolute top-4 right-8 text-[120px] md:text-[160px] font-serif-pc leading-none text-slate-50 select-none pointer-events-none">"</div>
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{% trans "My Goal & Vision" %}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Vision" %}</a>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-50">
+                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner relative z-10">
-                    <p>{% trans "State your primary professional goals and long-term vision to help others understand what you are building towards." %}</p>
+                    <p>{% trans "State primary professional goals and long-term vision to show what you are building." %}</p>
                 </div>
-                <div class="flex-1 relative z-10 mt-4">
+                <div class="flex-1 relative z-10 mt-4 pointer-events-auto">
                     {% if vision_blocks %}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {% for vision in vision_blocks|slice:":2" %}
@@ -663,29 +651,27 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Define your primary goal or vision statement" %}</h4>
+                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Define your primary goal" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 6. Industry Thoughts -->
-            <div id="section-thoughts" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-3">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{% trans "Industry Thoughts" %}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_essays' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Thought" %}</a>
+            <!-- 6. Industry Thoughts (Medium Card) -->
+            <div id="section-thoughts" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3 pointer-events-auto">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Industry Thoughts" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50">
+                        <a href="{% url 'manage_essays' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner relative z-10">
-                    <p>{% trans "Publish short essays or insights about your industry to demonstrate your knowledge and complete your profile." %}</p>
+                    <p>{% trans "Publish short essays or insights about your industry to demonstrate knowledge." %}</p>
                 </div>
-                <div class="flex-1 relative z-10 mt-4">
+                <div class="flex-1 relative z-10 mt-4 pointer-events-auto">
                     {% if essays %}
                         <div class="space-y-4">
                             {% for essay in essays|slice:":3" %}
@@ -704,29 +690,27 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Write your first industry insight" %}</h4>
+                        <a href="{% url 'content_create' %}?type=ESSAY" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Write your first industry insight" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 7. Daily Progress -->
-            <div id="section-progress" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col relative lg:col-span-3">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{% trans "Daily Progress" %}</h3>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add New Log" %}</a>
+            <!-- 7. Daily Progress (Medium Card) -->
+            <div id="section-progress" class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3 pointer-events-auto">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Daily Progress" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50">
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner relative z-10">
-                    <p>{% trans "Log your daily progress, minor updates, or learning milestones consistently to keep your profile active." %}</p>
+                    <p>{% trans "Log daily progress, minor updates, or milestones to keep your profile active." %}</p>
                 </div>
-                <div class="flex-1 relative z-10 mt-4">
+                <div class="flex-1 relative z-10 mt-4 pointer-events-auto">
                     {% if growth_logs %}
                         <div class="relative pl-5 md:pl-6 space-y-6 before:absolute before:inset-y-2 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200">
                             {% for log in growth_logs|slice:":4" %}
@@ -742,30 +726,28 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Log your first daily win" %}</h4>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Log your first daily win" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 8. Contact & Links Card -->
-            <div id="section-contact" class="bento-card p-6 sm:p-8 md:p-10 flex flex-col group relative lg:col-span-6">
-                <div class="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-10">
-                    <div class="flex-1 min-w-[150px]">
-                        <h3 class="text-[1.35rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight">{% trans "Contact & Network" %}</h3>
-                    </div>
-                    <div class="flex items-center gap-2 flex-wrap mt-2 sm:mt-0">
-                        <a href="{% url 'manage_network' %}" class="btn-manage"><i data-lucide="settings-2" class="w-4 h-4"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'social_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Social" %}</a>
-                        <a href="{% url 'contact_create' %}" class="btn-add-ghost"><i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Contact" %}</a>
+            <!-- 8. Contact & Links (Full-Width Card) -->
+            <div id="section-contact" class="bento-card p-6 md:p-8 flex flex-col group relative lg:col-span-6 pointer-events-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 relative z-30 w-full">
+                    <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contact & Network" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-50">
+                        <a href="{% url 'manage_network' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
+                        <a href="{% url 'social_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Social" %}</span></a>
+                        <a href="{% url 'contact_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Contact" %}</span></a>
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Add your email address, phone number, and links to your professional social accounts so people can easily reach you." %}</p>
+                    <p>{% trans "Add your email, phone number, and social links so people can reach you." %}</p>
                 </div>
-                <div class="flex-1 relative z-10 mt-2">
+                <div class="flex-1 relative z-10 mt-2 pointer-events-auto">
                     {% if user.contact_methods.all or user.social_links.all %}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
                             {% for contact in user.contact_methods.all|slice:":4" %}
@@ -779,7 +761,7 @@
                             {% endfor %}
 
                             {% for social in user.social_links.all|slice:":6" %}
-                            <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3.5 p-4 bg-white shadow-sm border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-md transition-all group/social">
+                            <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3.5 p-4 bg-white shadow-sm border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-md transition-all group/social z-50 relative">
                                 <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600 border border-slate-100 shrink-0 transition-colors"><i data-lucide="{{ social.icon_slug|default:'link' }}" class="w-4.5 h-4.5"></i></div>
                                 <div class="overflow-hidden">
                                     <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ social.platform_name }}</span>
@@ -790,9 +772,9 @@
                         </div>
                     {% else %}
                         <div class="flex gap-4 mt-4">
-                            <a href="{% url 'contact_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 transition-all p-5 flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                                <h4 class="font-bold text-slate-600 text-[14px]">{% trans "Open doors by adding your contact info" %}</h4>
+                            <a href="{% url 'contact_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-transparent hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-blue-500 group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                                <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Open doors by adding contact info" %}</h4>
                             </a>
                         </div>
                     {% endif %}
@@ -807,7 +789,7 @@
      EXACTLY 5 MOBILE BOTTOM NAVIGATION ITEMS
      ============================================== -->
 {% if not is_inspector %}
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[70px] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[70px] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pointer-events-auto">
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full text-[#0A66C2] relative">
         <div class="absolute top-0 w-8 h-1 bg-[#0A66C2] rounded-b-full"></div>
         <i data-lucide="user" class="w-[22px] h-[22px] mb-1 fill-blue-50 stroke-[2]"></i>
@@ -871,7 +853,7 @@
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
 <div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
         <button onclick="scrollToSection('profile-hero')" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Portfolio Overview" %}</button>
         <button onclick="scrollToSection('section-goal')" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="target" class="w-4 h-4 text-emerald-500"></i></div> {% trans "My Objective" %}</button>
         <button onclick="scrollToSection('section-headlines')" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 text-violet-500"></i></div> {% trans "Professional Headlines" %}</button>
@@ -900,7 +882,7 @@
 
 <!-- Language Drawer -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 pointer-events-auto">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
     <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
@@ -923,7 +905,6 @@
     <span id="toast-msg">{% trans "Success!" %}</span>
 </div>
 
-<!-- Full JavaScript Restored & Upgraded -->
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
@@ -991,7 +972,6 @@
         setTimeout(() => {
             const el = document.getElementById(id);
             if (el) {
-                // Offset of -120px to account for V1's h-14 (56px) Top Bar + V2's Sticky Nav height
                 const y = el.getBoundingClientRect().top + window.scrollY - 120;
                 window.scrollTo({top: y, behavior: 'smooth'});
             }
