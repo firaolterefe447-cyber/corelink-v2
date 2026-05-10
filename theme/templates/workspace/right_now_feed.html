@@ -237,10 +237,10 @@
                 {% for post in posts %}
                     <article class="post-card p-5 sm:p-6 lg:p-7 relative">
 
-                        <!-- 1. HEADER (Identity) -->
+                        <!-- 1. HEADER (Identity - LinkedIn Professional Style) -->
                         <div class="flex items-start justify-between mb-5 relative z-10">
                             <div class="flex items-start gap-4">
-                                <!-- Clean Professional Avatar (LinkedIn Style) -->
+                                <!-- Clean Avatar Ring -->
                                 <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="relative block group shrink-0 mt-0.5">
                                     <div class="w-12 h-12 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white ring-1 ring-slate-200 shadow-sm">
                                         {% if post.profile.user.avatar %}
@@ -253,27 +253,27 @@
                                     </div>
                                 </a>
 
-                                <!-- Name & Headline -->
+                                <!-- Name & Professional Headline (NO TRUNCATION) -->
                                 <div class="flex flex-col min-w-0 pr-4 mt-0.5">
                                     <div class="flex items-center gap-1.5">
-                                        <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="text-[16px] md:text-[17px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight truncate">
+                                        <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="text-[16px] md:text-[17px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight">
                                             {{ post.profile.user.full_name|default:"Unknown User" }}
                                         </a>
                                         {% if post.profile.user.is_pinned_in_right_now %}
                                             <i data-lucide="check-circle-2" class="w-4 h-4 text-[#0A66C2]" fill="#EFF6FF" title="{% trans 'Active Profile' %}"></i>
                                         {% endif %}
                                     </div>
-                                    <span class="text-[13px] md:text-[14px] text-slate-500 font-medium mt-0.5 line-clamp-1 leading-[1.4] max-w-[95%]">
+                                    <!-- Professional Headline - Displayed in full -->
+                                    <span class="text-[13px] md:text-[14px] text-slate-500 font-medium mt-0.5 leading-[1.4] block">
                                         {{ post.profile.headlines.first.title|default:post.profile.field_of_interest|default:"Professional" }}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 2. CONTENT NARRATIVE -->
+                        <!-- 2. CONTENT NARRATIVE (Full Display) -->
                         <div class="pl-0 sm:pl-[4rem] relative z-10">
 
-                            <!-- Title (Full length) -->
                             {% if post.title and post.title != 'Current Focus Update' %}
                                 <a href="{% url 'right_now_detail' post.id %}">
                                     <h3 class="text-[18px] md:text-[20px] font-black text-slate-900 mb-2 leading-snug tracking-tight hover:text-[#0A66C2] transition-colors">{{ post.title }}</h3>
@@ -305,13 +305,10 @@
                                     <div class="media-grid overflow-hidden rounded-[1.25rem] border border-slate-100 shadow-sm bg-slate-50 flex flex-col">
 
                                         {% if count == 1 %}
-                                            <!-- 1 Image -->
                                             <div class="relative w-full max-h-[450px] sm:max-h-[500px] flex justify-center bg-slate-100 overflow-hidden">
                                                 <img src="{{ post.gallery.first.image.url }}" alt="Post image" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
                                             </div>
-
                                         {% elif count == 2 %}
-                                            <!-- 2 Images (Split horizontally) -->
                                             <div class="grid grid-cols-2 gap-0.5 h-[280px] sm:h-[350px]">
                                                 {% for media in post.gallery.all|slice:":2" %}
                                                     <div class="relative overflow-hidden w-full h-full">
@@ -319,9 +316,7 @@
                                                     </div>
                                                 {% endfor %}
                                             </div>
-
                                         {% elif count == 3 %}
-                                            <!-- 3 Images (1 Large Left, 2 Small Right) -->
                                             <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
                                                 <div class="relative overflow-hidden w-full h-full">
                                                     <img src="{{ post.gallery.all.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
@@ -335,14 +330,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         {% elif count >= 4 %}
-                                            <!-- 4+ Images (2x2 Grid) -->
                                             <div class="grid grid-cols-2 grid-rows-2 gap-0.5 h-[300px] sm:h-[400px]">
                                                 {% for media in post.gallery.all|slice:":4" %}
                                                     <div class="relative overflow-hidden w-full h-full group/item">
                                                         <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-105 cursor-zoom-in">
-
                                                         {% if forloop.last and count > 4 %}
                                                             <a href="{% url 'right_now_detail' post.id %}" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center cursor-pointer hover:bg-slate-900/70 transition-colors z-10">
                                                                 <div class="w-12 h-12 rounded-full border-2 border-white/80 flex items-center justify-center mb-1 shadow-lg">
@@ -355,17 +347,14 @@
                                                 {% endfor %}
                                             </div>
                                         {% endif %}
-
                                     </div>
                                     {% endwith %}
                                 </div>
                             {% endif %}
 
-                            <!-- 5. SOCIAL ACTIONS (Feedback & Connect) -->
+                            <!-- 5. SOCIAL ACTIONS -->
                             <div class="flex items-center justify-between pt-4 border-t border-slate-100 w-full overflow-hidden gap-2">
-                                <!-- Left: Feedback -->
                                 <div class="flex items-center gap-2 sm:gap-3 -ml-1 sm:-ml-2 shrink-0">
-                                    <!-- FEEDBACK BUTTON -->
                                     <button
                                         onclick="{% if request.user.is_authenticated %}toggleCommentSection('{{ post.id }}'){% else %}openLoginModal('{{ post.profile.user.full_name|escapejs }}'){% endif %}"
                                         class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl transition-colors group text-slate-500 hover:bg-slate-50 hover:text-slate-900 whitespace-nowrap">
@@ -375,7 +364,6 @@
                                     </button>
                                 </div>
 
-                                <!-- Right: Connect Button -->
                                 {% if request.user.is_authenticated and request.user != post.profile.user %}
                                     <a href="{% url 'chat_with' post.profile.user.id %}" class="flex items-center gap-1.5 text-[12.5px] sm:text-[13.5px] font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 px-4 sm:px-5 py-2 rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 shrink-0">
                                         <i data-lucide="send" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> {% trans "Message" %}
@@ -387,199 +375,107 @@
                                 {% endif %}
                             </div>
 
-                            <!-- 6. THE FEEDBACK / COMMENTS SECTION -->
+                            <!-- 6. COMMENTS SECTION -->
                             <div class="comments-wrapper mt-4 bg-slate-50/80 rounded-[1.5rem]" id="comments-wrapper-{{ post.id }}">
                                 <div class="comments-inner border border-slate-100 rounded-[1.5rem] shadow-inner">
-
-                                    <!-- Comments List Container -->
                                     <div id="comments-list-{{ post.id }}" class="p-4 sm:p-5 space-y-4 max-h-[350px] overflow-y-auto custom-scroll">
                                         <div class="text-center text-[13px] font-bold text-slate-400 py-4 flex flex-col items-center gap-2" id="comments-loading-{{ post.id }}">
                                             <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> {% trans "Loading feedback..." %}
                                         </div>
                                     </div>
-
-                                    <!-- Add Feedback Input -->
                                     <div class="p-4 bg-white border-t border-slate-100 rounded-b-[1.5rem] flex gap-3 items-end">
-                                        <textarea
-                                            id="comment-input-{{ post.id }}"
-                                            rows="1"
-                                            placeholder="{% trans 'Provide feedback...' %}"
-                                            class="w-full bg-slate-50 border border-slate-200 text-[14px] font-medium rounded-xl px-4 py-3 focus:ring-4 focus:ring-[#0A66C2]/10 focus:border-[#0A66C2] outline-none resize-none transition-all placeholder:text-slate-400 shadow-inner"
-                                            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-
-                                        <button
-                                            onclick="submitComment('{{ post.id }}')"
-                                            class="bg-slate-900 hover:bg-black text-white p-3 rounded-xl shrink-0 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5">
-                                            <i data-lucide="send" class="w-5 h-5"></i>
-                                        </button>
+                                        <textarea id="comment-input-{{ post.id }}" rows="1" placeholder="{% trans 'Provide feedback...' %}" class="w-full bg-slate-50 border border-slate-200 text-[14px] font-medium rounded-xl px-4 py-3 focus:ring-4 focus:ring-[#0A66C2]/10 focus:border-[#0A66C2] outline-none resize-none transition-all placeholder:text-slate-400 shadow-inner" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                                        <button onclick="submitComment('{{ post.id }}')" class="bg-slate-900 hover:bg-black text-white p-3 rounded-xl shrink-0 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"><i data-lucide="send" class="w-5 h-5"></i></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </article>
-
                 {% empty %}
-                    <!-- Premium Empty State -->
                     <div class="p-12 flex flex-col items-center justify-center text-center bg-white border border-dashed border-slate-200 rounded-[2rem] shadow-sm">
                         <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
                             <i data-lucide="rss" class="w-10 h-10 text-slate-300"></i>
                         </div>
                         <h3 class="text-[20px] font-black text-slate-900 mb-2">{% trans "No updates found" %}</h3>
-                        <p class="text-[14.5px] text-slate-500 max-w-md mb-8 font-medium leading-relaxed">
-                            {% trans "There are currently no network signals matching your criteria. Try adjusting your search or clearing filters." %}
-                        </p>
-                        <a href="{% url 'right_now_feed' %}" class="text-[13.5px] font-bold text-slate-900 bg-white border border-slate-200 shadow-sm px-6 py-2.5 rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all">
-                            {% trans "Clear All Filters" %}
-                        </a>
+                        <p class="text-[14.5px] text-slate-500 max-w-md mb-8 font-medium leading-relaxed">{% trans "There are currently no network signals matching your criteria." %}</p>
+                        <a href="{% url 'right_now_feed' %}" class="text-[13.5px] font-bold text-slate-900 bg-white border border-slate-200 shadow-sm px-6 py-2.5 rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all">{% trans "Clear All Filters" %}</a>
                     </div>
                 {% endfor %}
 
-                <!-- Pagination -->
                 {% if posts.has_other_pages %}
                 <div class="flex justify-center pt-6 pb-10">
                     <div class="flex gap-2">
-                        {% if posts.has_previous %}
-                            <a href="?q={{ search_query }}&page={{ posts.previous_page_number }}" class="px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[13.5px] font-bold text-slate-600 hover:bg-slate-50 transition-all">{% trans "Previous" %}</a>
-                        {% endif %}
-                        {% if posts.has_next %}
-                            <a href="?q={{ search_query }}&page={{ posts.next_page_number }}" class="px-5 py-2.5 bg-slate-900 border border-slate-900 shadow-sm rounded-xl text-[13.5px] font-bold text-white hover:bg-black transition-all">{% trans "Next" %}</a>
-                        {% endif %}
+                        {% if posts.has_previous %}<a href="?q={{ search_query }}&page={{ posts.previous_page_number }}" class="px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[13.5px] font-bold text-slate-600 hover:bg-slate-50 transition-all">{% trans "Previous" %}</a>{% endif %}
+                        {% if posts.has_next %}<a href="?q={{ search_query }}&page={{ posts.next_page_number }}" class="px-5 py-2.5 bg-slate-900 border border-slate-900 shadow-sm rounded-xl text-[13.5px] font-bold text-white hover:bg-black transition-all">{% trans "Next" %}</a>{% endif %}
                     </div>
                 </div>
                 {% endif %}
-
             </div>
         </div>
 
-        <!-- ==============================================
-             RIGHT SIDEBAR: PC STICKY PANEL
-             ============================================== -->
+        <!-- RIGHT SIDEBAR -->
         <div class="hidden lg:block w-[300px] xl:w-[320px] shrink-0 sticky top-[calc(6rem+env(safe-area-inset-top))]">
             <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
                 <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
                     <i data-lucide="sparkles" class="w-6 h-6 text-[#0A66C2]"></i>
                 </div>
                 <h3 class="text-[18px] font-black text-slate-900 mb-2 leading-snug tracking-tight">{% trans "What are you working on?" %}</h3>
-                <p class="text-[14px] text-slate-500 font-medium leading-relaxed mb-6">
-                    {% trans "Post what you are working on with the CoreLink community. Get valuable feedback, find collaborators, and build your network." %}
-                </p>
-                <a href="{% url 'right_now_create' %}" class="flex items-center justify-center gap-2 w-full bg-[#0A66C2] hover:bg-indigo-600 text-white text-[14px] font-bold px-5 py-3 rounded-xl shadow-[0_4px_15px_rgba(10,102,194,0.2)] hover:shadow-[0_6px_20px_rgba(10,102,194,0.3)] hover:-translate-y-0.5 transition-all">
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed mb-6">{% trans "Post what you are working on with the CoreLink community." %}</p>
+                <a href="{% url 'right_now_create' %}" class="flex items-center justify-center gap-2 w-full bg-[#0A66C2] hover:bg-indigo-600 text-white text-[14px] font-bold px-5 py-3 rounded-xl shadow-[0_4px_15px_rgba(10,102,194,0.2)] transition-all">
                     <i data-lucide="plus" class="w-4 h-4"></i> <span>{% trans "Post Update" %}</span>
                 </a>
             </div>
         </div>
-
     </div>
 </main>
 
-<!-- ==============================================
-     MOBILE BOTTOM NAVIGATION (5 Exact Links)
-     ============================================== -->
+<!-- MOBILE BOTTOM NAVIGATION -->
 {% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
         <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My profile</span>
+        <span class="text-[11px] font-bold whitespace-nowrap">My profile</span>
     </a>
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
         <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
     </a>
-
-    <!-- ACTIVE: Updates -->
     <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
         <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
         <i data-lucide="zap" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
-        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
+        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Updates" %}</span>
     </a>
-
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
         <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
     </a>
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all relative">
         <div class="relative">
             <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
-            {% if unread_msg_count > 0 %}
-                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white animate-pulse">
-                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                </span>
-            {% endif %}
+            {% if unread_msg_count > 0 %}<span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white animate-pulse">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>{% endif %}
         </div>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
     </a>
 </nav>
 {% endif %}
 
-<!-- ==============================================
-     MODALS & SCRIPTS
-     ============================================== -->
-<div id="login-gate-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+<!-- LOGIN GATE MODAL -->
+<div id="login-gate-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white rounded-[2rem] max-w-sm w-full p-8 text-center shadow-2xl">
         <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-blue-100">
             <i data-lucide="lock" class="w-8 h-8 text-[#0A66C2]"></i>
         </div>
         <h3 class="text-[22px] font-black text-slate-900 mb-2 nav-heading">{% trans "Unlock Network" %}</h3>
-        <p class="text-slate-500 text-[14.5px] font-medium leading-relaxed mb-8">
-            {% trans "Join CoreLink to interact and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.
-        </p>
+        <p class="text-slate-500 text-[14.5px] font-medium leading-relaxed mb-8">{% trans "Join CoreLink to interact and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.</p>
         <div class="space-y-3 flex flex-col">
-            <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 text-white text-[14.5px] font-black uppercase tracking-wider py-3.5 rounded-xl hover:shadow-[0_8px_20px_rgba(10,102,194,0.3)] hover:-translate-y-0.5 transition-all">{% trans "Create Free Account" %}</a>
+            <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 text-white text-[14.5px] font-black uppercase py-3.5 rounded-xl transition-all">{% trans "Create Free Account" %}</a>
             <a href="{% url 'login' %}?next={{ request.path }}" class="bg-white border border-slate-200 text-slate-700 text-[14.5px] font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors">{% trans "Log In" %}</a>
         </div>
-        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" class="mt-6 text-[13px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest">{% trans "Cancel" %}</button>
+        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" class="mt-6 text-[13px] font-bold text-slate-400 uppercase tracking-widest">{% trans "Cancel" %}</button>
     </div>
 </div>
 
-<!-- Drawer Modals (Hidden) -->
-{% if request.user.is_authenticated %}
-<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,env(safe-area-inset-bottom))] p-6 opacity-0 pointer-events-none translate-y-full">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <div class="space-y-2 w-full overflow-y-auto custom-scroll">
-        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</button>
-        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</button>
-        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Updates" %}</button>
-        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</button>
-        <button onclick="window.location.href='/workspace/messages/'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div> {% trans "Inbox" %}</button>
-
-        <div class="h-px bg-slate-100 my-3 mx-2"></div>
-
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
-            <span class="flex-1 flex justify-between items-center">
-                {% trans "Language" %}
-                <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
-            </span>
-        </button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
-    </div>
-</div>
-
-<!-- Language Modal / Drawer -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" aria-label="Language Selection" class="fixed bottom-0 left-0 right-0 md:top-1/2 md:left-1/2 md:bottom-auto md:right-auto md:w-[400px] bg-white rounded-t-[2.5rem] md:rounded-[2rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] md:shadow-2xl z-[210] transition-all duration-300 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] md:pb-6 p-6 opacity-0 pointer-events-none translate-y-full md:translate-y-[20px] md:-translate-x-1/2 md:scale-95">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[20px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
-    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" aria-label="Select English" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
-            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
-        </button>
-        <button type="submit" name="language" value="am" aria-label="Select Amharic" class="w-full p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[16px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
-            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-6 h-6"></i>{% endif %}
-        </button>
-    </form>
-</div>
-{% endif %}
-
-<!-- ==============================================
-     JAVASCRIPT LOGIC (AJAX & UI MAGIC)
-     ============================================== -->
+<!-- JAVASCRIPT -->
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
@@ -588,181 +484,79 @@
         document.getElementById('login-gate-modal').classList.remove('hidden');
     }
 
-    // Modal / Drawer reset logic
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const langDw = document.getElementById('mobile-lang-drawer');
         const bds = document.querySelectorAll('[id$="-backdrop"]');
-
-        if(navDw) {
-            navDw.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
-            navDw.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
-        }
-        if(langDw) {
-            langDw.classList.remove('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
-            langDw.classList.add('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
-        }
-        bds.forEach(bd => {
-            if(bd) {
-                bd.classList.remove('opacity-100', 'pointer-events-auto');
-                bd.classList.add('opacity-0', 'pointer-events-none');
-            }
-        });
+        if(navDw) navDw.classList.replace('translate-y-0', 'translate-y-full');
+        if(langDw) langDw.classList.replace('translate-y-0', 'translate-y-full');
+        bds.forEach(bd => bd.classList.replace('opacity-100', 'opacity-0'));
         document.body.classList.remove('body-lock');
     }
 
     function toggleMobileNavDrawer() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const navBd = document.getElementById('mobile-nav-backdrop');
-
-        if (navDw && navDw.classList.contains('opacity-0')) {
-            closeAllDrawers(); // Safety close
-            navBd.classList.remove('opacity-0', 'pointer-events-none');
-            navBd.classList.add('opacity-100', 'pointer-events-auto');
-
-            navDw.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
-            navDw.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
-
-            document.body.classList.add('body-lock');
-        } else {
-            closeAllDrawers();
-        }
+        navBd.classList.remove('opacity-0', 'pointer-events-none');
+        navBd.classList.add('opacity-100', 'pointer-events-auto');
+        navDw.classList.remove('translate-y-full', 'opacity-0');
+        navDw.classList.add('translate-y-0', 'opacity-100');
+        document.body.classList.add('body-lock');
     }
-
-    function toggleMobileLangDrawer() {
-        const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
-
-        if (langDw && langDw.classList.contains('opacity-0')) {
-            closeAllDrawers(); // Safety close
-            if(langBd){
-                langBd.classList.remove('opacity-0', 'pointer-events-none');
-                langBd.classList.add('opacity-100', 'pointer-events-auto');
-            }
-
-            langDw.classList.remove('translate-y-full', 'md:translate-y-[20px]', 'md:scale-95', 'opacity-0', 'pointer-events-none');
-            langDw.classList.add('translate-y-0', 'md:-translate-y-1/2', 'md:scale-100', 'opacity-100', 'pointer-events-auto');
-
-            document.body.classList.add('body-lock');
-        } else {
-            closeAllDrawers();
-        }
-    }
-
-    // Hide bottom nav when typing on mobile
-    document.addEventListener("DOMContentLoaded", function() {
-        const bottomNav = document.getElementById('mobile-bottom-nav');
-        if (bottomNav) {
-            document.addEventListener('focusin', (e) => {
-                if (window.innerWidth < 768 &&['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-                    bottomNav.style.display = 'none';
-                }
-            });
-            document.addEventListener('focusout', (e) => {
-                if (window.innerWidth < 768 &&['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-                    bottomNav.style.display = 'flex';
-                }
-            });
-        }
-    });
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // 1. TOGGLE & LOAD COMMENTS / FEEDBACK
     async function toggleCommentSection(postId) {
         const wrapper = document.getElementById(`comments-wrapper-${postId}`);
         const listContainer = document.getElementById(`comments-list-${postId}`);
         const loadingSpinner = document.getElementById(`comments-loading-${postId}`);
-
-        if (wrapper.classList.contains('open')) {
-            wrapper.classList.remove('open');
-            return;
-        }
-
+        if (wrapper.classList.contains('open')) { wrapper.classList.remove('open'); return; }
         wrapper.classList.add('open');
         if (listContainer.dataset.loaded === "true") return;
-
         try {
             const response = await fetch(`/api/right-now/${postId}/comments/`);
             const data = await response.json();
-
             if (data.status === 'success') {
                 loadingSpinner.style.display = 'none';
                 listContainer.dataset.loaded = "true";
-
                 if (data.comments.length === 0) {
                     listContainer.innerHTML = `<div class="text-[13px] font-bold text-slate-400 text-center py-4" id="no-comments-${postId}">{% trans "Be the first to provide feedback!" %}</div>`;
                 } else {
-                    data.comments.forEach(comment => {
-                        listContainer.insertAdjacentHTML('beforeend', buildCommentHTML(comment));
-                    });
+                    data.comments.forEach(comment => listContainer.insertAdjacentHTML('beforeend', buildCommentHTML(comment)));
                     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
                 }
             }
-        } catch (error) {
-            loadingSpinner.innerHTML = "Error loading feedback.";
-        }
+        } catch (error) { loadingSpinner.innerHTML = "Error loading feedback."; }
     }
 
-    // 2. SUBMIT NEW FEEDBACK
     async function submitComment(postId) {
         const inputEl = document.getElementById(`comment-input-${postId}`);
         const bodyText = inputEl.value.trim();
         if (!bodyText) return;
-
         inputEl.disabled = true;
-
         try {
             const response = await fetch(`/api/right-now/${postId}/add-comment/`, {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ body: bodyText })
             });
             const data = await response.json();
-
             if (data.status === 'success') {
                 document.getElementById(`comment-count-${postId}`).innerText = data.comments_count;
                 const noCommentsMsg = document.getElementById(`no-comments-${postId}`);
                 if (noCommentsMsg) noCommentsMsg.remove();
-
                 const listContainer = document.getElementById(`comments-list-${postId}`);
                 listContainer.insertAdjacentHTML('beforeend', buildCommentHTML(data.comment));
-
                 inputEl.value = '';
                 inputEl.style.height = '';
                 listContainer.scrollTop = listContainer.scrollHeight;
             }
-        } catch (error) {
-            alert("Failed to post feedback. Try again.");
-        } finally {
-            inputEl.disabled = false;
-            inputEl.focus();
-        }
+        } catch (error) { alert("Failed to post feedback."); } finally { inputEl.disabled = false; inputEl.focus(); }
     }
 
-    // Helper: HTML Template for Feedback
     function buildCommentHTML(comment) {
-        const avatarHTML = comment.author_avatar
-            ? `<img src="${comment.author_avatar}" class="w-full h-full object-cover">`
-            : `<div class="w-full h-full flex items-center justify-center font-bold text-[14px] text-slate-500 bg-slate-100">${comment.author_name.charAt(0)}</div>`;
-
-        return `
-            <div class="flex gap-3 animate-fade-down">
-                <a href="${comment.author_url}" class="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-slate-50 border border-slate-200 mt-1 shadow-sm">
-                    ${avatarHTML}
-                </a>
-                <div class="flex-1 bg-white border border-slate-100 p-3.5 rounded-2xl rounded-tl-sm shadow-sm">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <a href="${comment.author_url}" class="text-[13.5px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors">${comment.author_name}</a>
-                        <span class="text-[11px] text-slate-400 font-bold">${comment.time_ago}</span>
-                    </div>
-                    <p class="text-[13.5px] font-medium text-slate-600 leading-relaxed break-words">${comment.body}</p>
-                </div>
-            </div>
-        `;
+        const avatarHTML = comment.author_avatar ? `<img src="${comment.author_avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center font-bold text-slate-500 bg-slate-100">${comment.author_name.charAt(0)}</div>`;
+        return `<div class="flex gap-3 animate-fade-down"><a href="${comment.author_url}" class="w-8 h-8 rounded-full shrink-0 overflow-hidden border border-slate-200 mt-1 shadow-sm">${avatarHTML}</a><div class="flex-1 bg-white border border-slate-100 p-3.5 rounded-2xl rounded-tl-sm shadow-sm"><div class="flex items-center justify-between mb-1.5"><a href="${comment.author_url}" class="text-[13.5px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors">${comment.author_name}</a><span class="text-[11px] text-slate-400 font-bold">${comment.time_ago}</span></div><p class="text-[13.5px] font-medium text-slate-600 leading-relaxed break-words">${comment.body}</p></div></div>`;
     }
 </script>
 
