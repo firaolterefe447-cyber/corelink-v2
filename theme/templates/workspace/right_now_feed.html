@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -235,18 +237,12 @@
                 {% for post in posts %}
                     <article class="post-card p-5 sm:p-6 lg:p-7 relative">
 
-                        <!-- 1. HEADER (Identity & Timestamp) -->
+                        <!-- 1. HEADER (Identity) -->
                         <div class="flex items-start justify-between mb-5 relative z-10">
                             <div class="flex items-start gap-4">
-                                <!-- Premium Avatar Ring -->
+                                <!-- Clean Professional Avatar (LinkedIn Style) -->
                                 <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="relative block group shrink-0 mt-0.5">
-                                    <div class="absolute -inset-0.5 rounded-full bg-gradient-to-tr
-                                        {% if post.collaboration_status == 'OPEN' %} from-emerald-400 to-teal-500
-                                        {% elif post.collaboration_status == 'CLOSED' %} from-rose-400 to-orange-400
-                                        {% else %} from-[#0A66C2] to-cyan-400 {% endif %}
-                                        opacity-70 group-hover:opacity-100 transition-opacity blur-[1px]"></div>
-
-                                    <div class="w-12 h-12 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white shadow-sm">
+                                    <div class="w-12 h-12 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white ring-1 ring-slate-200 shadow-sm">
                                         {% if post.profile.user.avatar %}
                                             <img src="{{ post.profile.user.avatar.url }}" class="w-full h-full object-cover">
                                         {% else %}
@@ -272,17 +268,12 @@
                                     </span>
                                 </div>
                             </div>
-
-                            <!-- Timestamp -->
-                            <span class="text-[12px] text-slate-400 font-bold whitespace-nowrap shrink-0 flex items-center gap-1 bg-slate-50 px-2.5 py-1 rounded-md">
-                                <i data-lucide="clock" class="w-3 h-3"></i> {{ post.created_at|timesince|truncatechars:15 }}
-                            </span>
                         </div>
 
                         <!-- 2. CONTENT NARRATIVE -->
                         <div class="pl-0 sm:pl-[4rem] relative z-10">
 
-                            <!-- Smart Title Check -->
+                            <!-- Title (Full length) -->
                             {% if post.title and post.title != 'Current Focus Update' %}
                                 <a href="{% url 'right_now_detail' post.id %}">
                                     <h3 class="text-[18px] md:text-[20px] font-black text-slate-900 mb-2 leading-snug tracking-tight hover:text-[#0A66C2] transition-colors">{{ post.title }}</h3>
@@ -291,17 +282,10 @@
 
                             {% if post.body_narrative %}
                                 <div class="mb-5">
-                                    <!-- Using Tailwind's line-clamp to restrict to 4 lines visually -->
-                                    <p class="text-[15px] md:text-[15.5px] text-slate-700 leading-[1.8] font-medium whitespace-pre-line break-words line-clamp-4">
-                                        {{ post.body_narrative|truncatechars:400 }}
+                                    <!-- Full Narrative - No Truncation -->
+                                    <p class="text-[15px] md:text-[15.5px] text-slate-700 leading-[1.8] font-medium whitespace-pre-line break-words">
+                                        {{ post.body_narrative }}
                                     </p>
-
-                                    <!-- Only show Read More if the text is long -->
-                                    {% if post.body_narrative|length > 300 %}
-                                        <a href="{% url 'right_now_detail' post.id %}" class="inline-flex items-center gap-1 mt-2 text-[13.5px] font-black text-[#0A66C2] hover:text-indigo-600 transition-colors group/link">
-                                            Read full update <i data-lucide="chevron-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
-                                        </a>
-                                    {% endif %}
                                 </div>
                             {% endif %}
 
