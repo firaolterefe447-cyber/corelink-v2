@@ -21,7 +21,7 @@
 
         <!-- Top Section: Logo & Links -->
         <div class="flex-1">
-            <!-- Typographic Logo (Clean, Lowercase, No Dot) -->
+            <!-- Typographic Logo -->
             <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
                 <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
                 <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
@@ -176,6 +176,22 @@
     }
     .post-card:hover { border-color: #E2E8F0; box-shadow: 0 15px 30px rgba(10, 102, 194, 0.05); transform: translateY(-3px); }
 
+    /* Perspective Scrim: Fades out long text */
+    .narrative-container {
+        position: relative;
+        max-height: 220px; /* Limit height for feed */
+        overflow: hidden;
+    }
+    .narrative-scrim {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(to bottom, transparent, #ffffff);
+        pointer-events: none;
+    }
+
     /* Comment Section Slide Animation */
     .comments-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
     .comments-wrapper.open { grid-template-rows: 1fr; }
@@ -237,12 +253,12 @@
                 {% for post in posts %}
                     <article class="post-card p-5 sm:p-6 lg:p-7 relative">
 
-                        <!-- 1. HEADER (Identity - LinkedIn Professional Style) -->
+                        <!-- 1. HEADER (Identity - LinkedIn Clean Style, TIME REMOVED) -->
                         <div class="flex items-start justify-between mb-5 relative z-10">
                             <div class="flex items-start gap-4">
-                                <!-- Clean Avatar Ring -->
+                                <!-- Premium Clean Avatar -->
                                 <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="relative block group shrink-0 mt-0.5">
-                                    <div class="w-12 h-12 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white ring-1 ring-slate-200 shadow-sm">
+                                    <div class="w-12 h-12 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white ring-1 ring-slate-200 shadow-sm transition-shadow group-hover:shadow-md">
                                         {% if post.profile.user.avatar %}
                                             <img src="{{ post.profile.user.avatar.url }}" class="w-full h-full object-cover">
                                         {% else %}
@@ -253,7 +269,7 @@
                                     </div>
                                 </a>
 
-                                <!-- Name & Professional Headline (NO TRUNCATION) -->
+                                <!-- Name & Headline (DISPLAYED FULLY) -->
                                 <div class="flex flex-col min-w-0 pr-4 mt-0.5">
                                     <div class="flex items-center gap-1.5">
                                         <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="text-[16px] md:text-[17px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight">
@@ -263,7 +279,6 @@
                                             <i data-lucide="check-circle-2" class="w-4 h-4 text-[#0A66C2]" fill="#EFF6FF" title="{% trans 'Active Profile' %}"></i>
                                         {% endif %}
                                     </div>
-                                    <!-- Professional Headline - Displayed in full -->
                                     <span class="text-[13px] md:text-[14px] text-slate-500 font-medium mt-0.5 leading-[1.4] block">
                                         {{ post.profile.headlines.first.title|default:post.profile.field_of_interest|default:"Professional" }}
                                     </span>
@@ -271,7 +286,7 @@
                             </div>
                         </div>
 
-                        <!-- 2. CONTENT NARRATIVE (Full Display) -->
+                        <!-- 2. CONTENT NARRATIVE -->
                         <div class="pl-0 sm:pl-[4rem] relative z-10">
 
                             {% if post.title and post.title != 'Current Focus Update' %}
@@ -281,11 +296,23 @@
                             {% endif %}
 
                             {% if post.body_narrative %}
-                                <div class="mb-5">
-                                    <!-- Full Narrative - No Truncation -->
-                                    <p class="text-[15px] md:text-[15.5px] text-slate-700 leading-[1.8] font-medium whitespace-pre-line break-words">
-                                        {{ post.body_narrative }}
-                                    </p>
+                                <div class="mb-4">
+                                    <div class="{% if post.body_narrative|length > 350 %}narrative-container{% endif %}">
+                                        <p class="text-[15px] md:text-[15.5px] text-slate-700 leading-[1.8] font-medium whitespace-pre-line break-words">
+                                            {{ post.body_narrative }}
+                                        </p>
+                                        {% if post.body_narrative|length > 350 %}
+                                            <div class="narrative-scrim"></div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if post.body_narrative|length > 350 %}
+                                        <a href="{% url 'right_now_detail' post.id %}" class="inline-flex items-center gap-2 mt-3 text-[13.5px] font-black text-[#0A66C2] bg-blue-50 px-4 py-2 rounded-xl hover:bg-[#0A66C2] hover:text-white transition-all group/btn shadow-sm">
+                                            <i data-lucide="layout-list" class="w-4 h-4"></i>
+                                            {% trans "View Full Update" %}
+                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform"></i>
+                                        </a>
+                                    {% endif %}
                                 </div>
                             {% endif %}
 
@@ -316,7 +343,7 @@
                                                     </div>
                                                 {% endfor %}
                                             </div>
-                                        {% elif count == 3 %}
+                                        {% elif count >= 3 %}
                                             <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
                                                 <div class="relative overflow-hidden w-full h-full">
                                                     <img src="{{ post.gallery.all.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
@@ -330,29 +357,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% elif count >= 4 %}
-                                            <div class="grid grid-cols-2 grid-rows-2 gap-0.5 h-[300px] sm:h-[400px]">
-                                                {% for media in post.gallery.all|slice:":4" %}
-                                                    <div class="relative overflow-hidden w-full h-full group/item">
-                                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-105 cursor-zoom-in">
-                                                        {% if forloop.last and count > 4 %}
-                                                            <a href="{% url 'right_now_detail' post.id %}" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex flex-col items-center justify-center cursor-pointer hover:bg-slate-900/70 transition-colors z-10">
-                                                                <div class="w-12 h-12 rounded-full border-2 border-white/80 flex items-center justify-center mb-1 shadow-lg">
-                                                                    <span class="text-white font-black text-xl tracking-tight">+{{ count|add:"-3" }}</span>
-                                                                </div>
-                                                                <span class="text-white/90 text-[11px] font-bold uppercase tracking-wider">See All</span>
-                                                            </a>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
                                         {% endif %}
                                     </div>
                                     {% endwith %}
                                 </div>
                             {% endif %}
 
-                            <!-- 5. SOCIAL ACTIONS -->
+                            <!-- 5. SOCIAL ACTIONS (Feedback & Connect) -->
                             <div class="flex items-center justify-between pt-4 border-t border-slate-100 w-full overflow-hidden gap-2">
                                 <div class="flex items-center gap-2 sm:gap-3 -ml-1 sm:-ml-2 shrink-0">
                                     <button
@@ -375,7 +386,7 @@
                                 {% endif %}
                             </div>
 
-                            <!-- 6. COMMENTS SECTION -->
+                            <!-- 6. THE FEEDBACK SECTION -->
                             <div class="comments-wrapper mt-4 bg-slate-50/80 rounded-[1.5rem]" id="comments-wrapper-{{ post.id }}">
                                 <div class="comments-inner border border-slate-100 rounded-[1.5rem] shadow-inner">
                                     <div id="comments-list-{{ post.id }}" class="p-4 sm:p-5 space-y-4 max-h-[350px] overflow-y-auto custom-scroll">
@@ -391,6 +402,7 @@
                             </div>
                         </div>
                     </article>
+
                 {% empty %}
                     <div class="p-12 flex flex-col items-center justify-center text-center bg-white border border-dashed border-slate-200 rounded-[2rem] shadow-sm">
                         <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-5 border border-slate-100 shadow-inner">
@@ -413,14 +425,14 @@
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR -->
+        <!-- RIGHT SIDEBAR: PC -->
         <div class="hidden lg:block w-[300px] xl:w-[320px] shrink-0 sticky top-[calc(6rem+env(safe-area-inset-top))]">
             <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
                 <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
                     <i data-lucide="sparkles" class="w-6 h-6 text-[#0A66C2]"></i>
                 </div>
                 <h3 class="text-[18px] font-black text-slate-900 mb-2 leading-snug tracking-tight">{% trans "What are you working on?" %}</h3>
-                <p class="text-[14px] text-slate-500 font-medium leading-relaxed mb-6">{% trans "Post what you are working on with the CoreLink community." %}</p>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed mb-6">{% trans "Post what you are working on with the community. Get feedback and build your network." %}</p>
                 <a href="{% url 'right_now_create' %}" class="flex items-center justify-center gap-2 w-full bg-[#0A66C2] hover:bg-indigo-600 text-white text-[14px] font-bold px-5 py-3 rounded-xl shadow-[0_4px_15px_rgba(10,102,194,0.2)] transition-all">
                     <i data-lucide="plus" class="w-4 h-4"></i> <span>{% trans "Post Update" %}</span>
                 </a>
@@ -431,7 +443,7 @@
 
 <!-- MOBILE BOTTOM NAVIGATION -->
 {% if not is_inspector and request.user.is_authenticated %}
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] px-1">
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
         <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap">My profile</span>
@@ -475,7 +487,7 @@
     </div>
 </div>
 
-<!-- JAVASCRIPT -->
+<!-- JAVASCRIPT LOGIC -->
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
