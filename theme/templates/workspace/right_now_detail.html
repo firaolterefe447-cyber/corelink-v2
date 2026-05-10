@@ -2,7 +2,6 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<!-- Dynamic SEO Meta Tags for easy sharing -->
 <meta property="og:title" content="{{ post.title|default:post.profile.user.full_name|add:' - CoreLink Update' }}">
 <meta property="og:description" content="{{ post.body_narrative|truncatechars:160 }}">
 {% if post.gallery.first %}
@@ -15,32 +14,73 @@
 {% endblock %}
 
 {% block navbar %}
-<!-- ==============================================
-     TOP GLOBAL NAVBAR (PC - Floating Glass)
-     ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/80 backdrop-blur-2xl border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] hover:bg-white">
-        <a href="{% url 'right_now_feed' %}" class="font-black text-xl tracking-[-0.05em] flex items-center gap-1 shrink-0 pr-6">
-            <span class="text-slate-900">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-indigo-600">Link</span>
-        </a>
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-[#0A66C2] transition-all"><i data-lucide="user" class="w-4 h-4"></i> My profile</a>
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 text-[#0A66C2] transition-all border border-blue-100/50 shadow-sm"><i data-lucide="zap" class="w-4 h-4 fill-blue-100"></i> {% trans "Updates" %}</a>
-        </div>
-        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 transition-colors"><i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}</a>
-        </div>
-    </nav>
-</div>
+{% if request.user.is_authenticated %}
 
 <!-- ==============================================
-     MOBILE TOP BAR (App-like Clean Header)
+     LEFT SIDEBAR NAVIGATION (PC)
      ============================================== -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-100 flex items-center px-2 h-[max(4rem,calc(4rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
-    <a href="{% url 'right_now_feed' %}" class="flex items-center gap-1.5 text-slate-700 font-bold text-[15px] px-3 py-2 rounded-full hover:bg-slate-50 active:bg-slate-100 transition-colors">
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+        <div class="flex-1">
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
+            </div>
+
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    My profile
+                </a>
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Discover" %}
+                </a>
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "Updates" %}
+                </a>
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                </a>
+            </nav>
+        </div>
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span>{% trans "Settings" %}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+    <a href="{% url 'right_now_feed' %}" class="flex items-center gap-1.5 text-slate-700 font-bold text-[15px] px-3 py-2 rounded-full hover:bg-slate-50 transition-colors">
         <i data-lucide="arrow-left" class="w-5 h-5"></i> Back
     </a>
+    <button onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center text-slate-700">
+        <i data-lucide="menu" class="w-6 h-6 stroke-[2.5]"></i>
+    </button>
 </div>
+
+{% endif %}
 {% endblock navbar %}
 
 {% block content %}
@@ -50,328 +90,165 @@
     :root { --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif; --bg-color: #F8FAFC; }
     body { font-family: var(--font-body); background-color: var(--bg-color); color: #0F172A; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, h4, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
-    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-    .heart-liked i { fill: #E11D48 !important; stroke: #E11D48 !important; animation: heartPulse 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .heart-liked { color: #E11D48 !important; }
+    .app-canvas { padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem 6.5rem 1.25rem; }
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(260px + 2rem); padding-top: 3rem; }
+    }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(280px + 2rem); }
+    }
     @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-down { animation: fadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 </style>
 
-<main class="max-w-[760px] mx-auto px-0 sm:px-6 pt-[calc(4.5rem+env(safe-area-inset-top))] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:pt-[8.5rem] animate-fade-down">
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} max-w-[1200px] mx-auto animate-fade-down">
 
-    <!-- Breadcrumb / Back Navigation (Hidden on mobile since top bar has back button) -->
-    <a href="{% url 'right_now_feed' %}" class="hidden md:inline-flex items-center gap-2 text-[13.5px] font-bold text-slate-500 hover:text-slate-900 transition-colors mb-6 group">
+    <a href="{% url 'right_now_feed' %}" class="hidden md:inline-flex items-center gap-2 text-[13.5px] font-bold text-slate-500 hover:text-slate-900 transition-colors mb-8 group">
         <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
         </div>
-        {% trans "Back to Network Feed" %}
+        {% trans "Back to Feed" %}
     </a>
 
-    <!-- THE DETAIL CARD -->
-    <article class="bg-white sm:border border-slate-200 sm:rounded-[2rem] shadow-[0_4px_20px_rgba(15,23,42,0.03)] overflow-hidden">
-
-        <div class="p-5 sm:p-8">
-            <!-- 1. HEADER (Identity & Timestamp) -->
-            <div class="flex items-start justify-between mb-6">
-                <div class="flex items-center gap-4">
-                    <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="relative block group shrink-0">
-                        <!-- Dynamic Status Ring -->
-                        <div class="absolute -inset-0.5 rounded-full bg-gradient-to-tr
-                            {% if post.collaboration_status == 'OPEN' %} from-emerald-400 to-teal-500
-                            {% elif post.collaboration_status == 'CLOSED' %} from-rose-400 to-orange-400
-                            {% else %} from-[#0A66C2] to-cyan-400 {% endif %}
-                            opacity-70 group-hover:opacity-100 transition-opacity blur-[1px]"></div>
-
-                        <div class="w-14 h-14 rounded-full bg-slate-100 overflow-hidden relative z-10 border-[2px] border-white shadow-sm">
-                            {% if post.profile.user.avatar %}
-                                <img src="{{ post.profile.user.avatar.url }}" class="w-full h-full object-cover">
-                            {% else %}
-                                <div class="w-full h-full flex items-center justify-center font-bold text-[20px] text-slate-500 bg-slate-200">
-                                    {{ post.profile.user.full_name|default:"U"|slice:":1"|upper }}
-                                </div>
-                            {% endif %}
+    <div class="max-w-[760px]">
+        <!-- THE DETAIL CARD -->
+        <article class="bg-white border border-slate-200 rounded-[2rem] shadow-[0_4px_20px_rgba(15,23,42,0.02)] overflow-hidden">
+            <div class="p-6 sm:p-10">
+                <!-- 1. HEADER (Identity - Date/Time Removed) -->
+                <div class="flex items-start justify-between mb-8">
+                    <div class="flex items-center gap-4">
+                        <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" class="relative block shrink-0">
+                            <div class="w-14 h-14 rounded-full bg-white overflow-hidden relative z-10 border-[2px] border-white ring-1 ring-slate-200 shadow-sm">
+                                {% if post.profile.user.avatar %}
+                                    <img src="{{ post.profile.user.avatar.url }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center font-bold text-[20px] text-slate-500 bg-slate-100">
+                                        {{ post.profile.user.full_name|slice:":1"|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1.5">
+                                <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" class="text-[18px] font-black text-slate-900 leading-tight">
+                                    {{ post.profile.user.full_name|default:"Unknown User" }}
+                                </a>
+                                {% if post.profile.user.is_pinned_in_right_now %}
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#0A66C2]"></i>
+                                {% endif %}
+                            </div>
+                            <span class="text-[14.5px] text-slate-500 font-medium mt-0.5 leading-relaxed">
+                                {{ post.profile.headlines.first.title|default:post.profile.field_of_interest|default:"Professional" }}
+                            </span>
                         </div>
-                    </a>
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-1.5">
-                            <a href="{{ post.profile.user.get_absolute_url|default:'#' }}" target="_blank" class="text-[17px] sm:text-[18px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight">
-                                {{ post.profile.user.full_name|default:"Unknown User" }}
-                            </a>
-                            {% if post.profile.user.is_pinned_in_right_now %}
-                                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#0A66C2]" fill="#EFF6FF" title="{% trans 'Active Profile' %}"></i>
-                            {% endif %}
-                        </div>
-                        <span class="text-[14px] text-slate-500 font-medium mt-0.5">
-                            {{ post.profile.headlines.first.title|default:post.profile.field_of_interest|default:"Professional" }}
-                        </span>
-                        <span class="text-[12.5px] text-slate-400 font-bold mt-1 flex items-center gap-1.5">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> {{ post.created_at|date:"F j, Y" }} · {{ post.created_at|time:"g:i A" }}
-                        </span>
                     </div>
                 </div>
 
-                <!-- Connect Action (If not viewing own post) -->
-                {% if request.user.is_authenticated and request.user != post.profile.user %}
-                    <a href="{% url 'chat_with' post.profile.user.id %}" class="hidden sm:flex items-center gap-2 text-[13px] font-bold text-[#0A66C2] bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">
-                        <i data-lucide="send" class="w-4 h-4"></i> {% trans "Message" %}
-                    </a>
+                <!-- 2. INTENT PILL -->
+                {% if post.get_current_search_display %}
+                    <div class="mb-6 flex">
+                        <span class="inline-flex items-center text-[11px] font-black text-[#0A66C2] bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-lg tracking-widest uppercase">
+                            {{ post.get_current_search_display }}
+                        </span>
+                    </div>
                 {% endif %}
-            </div>
 
-            <!-- 2. INTENT PILL -->
-            {% if post.get_current_search_display %}
-                <div class="mb-6 flex">
-                    <span class="inline-flex items-center text-[11.5px] font-black text-[#0A66C2] bg-blue-50/50 border border-blue-100 px-3.5 py-1.5 rounded-lg tracking-widest uppercase">
-                        {{ post.get_current_search_display }}
-                    </span>
-                </div>
-            {% endif %}
+                <!-- 3. NARRATIVE CONTENT -->
+                {% if post.title and post.title != 'Current Focus Update' %}
+                    <h1 class="text-[24px] sm:text-[28px] font-black text-slate-900 mb-5 leading-tight tracking-tight">{{ post.title }}</h1>
+                {% endif %}
 
-            <!-- 3. DEEP NARRATIVE CONTENT -->
-            {% if post.title and post.title != 'Current Focus Update' %}
-                <h1 class="text-[22px] sm:text-[26px] font-black text-slate-900 mb-4 nav-heading leading-tight">{{ post.title }}</h1>
-            {% endif %}
-
-            {% if post.body_narrative %}
-                <div class="text-[16px] sm:text-[17px] text-slate-800 leading-[1.8] font-medium whitespace-pre-line break-words mb-8 custom-markdown">
+                <div class="text-[16px] sm:text-[17px] text-slate-800 leading-[1.8] font-medium whitespace-pre-line break-words mb-8">
                     {{ post.body_narrative }}
                 </div>
-            {% endif %}
 
-            <!-- 4. EXTERNAL LINK PREVIEW CARD -->
-            {% if post.external_link %}
-                <a href="{{ post.external_link }}" target="_blank" rel="noopener noreferrer" class="block mb-8 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all group">
-                    {% if post.link_image_url %}
-                        <div class="w-full h-48 sm:h-64 bg-slate-100 overflow-hidden border-b border-slate-100">
-                            <img src="{{ post.link_image_url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
-                        </div>
-                    {% endif %}
-                    <div class="p-4 sm:p-5 bg-slate-50 group-hover:bg-white transition-colors relative">
-                        <div class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-100 absolute top-[-16px] right-5 flex items-center justify-center text-slate-400 group-hover:text-[#0A66C2] transition-colors">
-                            <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </div>
-                        <h4 class="font-black text-slate-900 text-[15.5px] line-clamp-1 mb-1 pr-10">{{ post.link_title|default:post.external_link }}</h4>
-                        {% if post.link_description %}<p class="text-[13.5px] text-slate-500 line-clamp-2 leading-relaxed">{{ post.link_description }}</p>{% endif %}
-                        <span class="text-[11.5px] font-black text-slate-400 mt-3 block uppercase tracking-widest flex items-center gap-1.5">
-                            <i data-lucide="link" class="w-3.5 h-3.5"></i> {{ post.link_domain|default:"External Link" }}
-                        </span>
+                <!-- 4. MEDIA GALLERY -->
+                {% if post.gallery.all %}
+                    <div class="space-y-4 mb-8">
+                        {% for media in post.gallery.all %}
+                            <div class="w-full rounded-[1.5rem] overflow-hidden border border-slate-200 shadow-sm">
+                                <img src="{{ media.image.url }}" class="w-full h-auto object-cover block">
+                            </div>
+                        {% endfor %}
                     </div>
-                </a>
-            {% endif %}
+                {% endif %}
 
-            <!-- 5. FULL MEDIA GALLERY (Stacked for reading) -->
-            {% if post.gallery.all %}
-                <div class="space-y-4 mb-8">
-                    {% for media in post.gallery.all %}
-                        <div class="w-full rounded-[1.25rem] overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
-                            <img src="{{ media.image.url }}" class="w-full h-auto object-cover block">
-                        </div>
-                    {% endfor %}
+                <!-- Metrics Bar (Views/Likes Removed) -->
+                <div class="flex items-center gap-3 pt-6 border-t border-slate-100 text-slate-400 font-bold text-[13.5px]">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span id="feedback-count-display">{{ post.comments_count }} {% trans "Feedback" %}</span>
                 </div>
-            {% endif %}
-
-            <!-- Metrics Bar (Views Maintained) -->
-            <div class="flex items-center gap-5 pt-5 border-t border-slate-100 text-slate-500 font-bold text-[13.5px]">
-                <span class="flex items-center gap-1.5"><i data-lucide="eye" class="w-4 h-4"></i> {{ post.views_count }} Views</span>
-                <span>·</span>
-                <span id="comment-count-display">{{ post.comments_count }} Comments</span>
             </div>
 
-        </div>
+            <!-- 5. ACTION BAR (Like Removed) -->
+            <div class="bg-slate-50 border-t border-slate-200 px-6 sm:px-10 py-4 flex items-center justify-end">
+                <button onclick="copyToClipboard('{{ request.build_absolute_uri }}', this)" class="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span class="text-[13px] font-bold btn-text">Share Link</span>
+                </button>
+            </div>
+        </article>
 
-        <!-- 6. ACTION BAR (Like & Share) -->
-        <div class="bg-slate-50 border-t border-slate-200 px-5 sm:px-8 py-3.5 flex items-center justify-between">
-            <button
-                onclick="{% if request.user.is_authenticated %}toggleLike('{{ post.id }}', this){% else %}document.getElementById('login-gate-modal').classList.remove('hidden'){% endif %}"
-                class="flex items-center gap-2.5 px-4 py-2 rounded-xl transition-colors group {% if is_liked_by_user %}heart-liked{% else %}text-slate-600 hover:bg-slate-200/50{% endif %}">
-                <i data-lucide="heart" class="w-5 h-5 transition-colors group-hover:text-rose-500"></i>
-                <span class="text-[14px] font-black">{% trans "Like" %}</span>
-                <span id="like-count-{{ post.id }}" class="bg-slate-200/70 px-2 py-0.5 rounded text-[12px] font-black transition-colors">{{ post.likes_count|default:"0" }}</span>
-            </button>
+        <!-- 6. FEEDBACK SECTION -->
+        <div class="mt-10">
+            <h3 class="text-[20px] font-black text-slate-900 mb-6 tracking-tight">{% trans "Feedback" %}</h3>
 
-            <!-- Share Button -->
-            <button onclick="copyToClipboard('{{ request.build_absolute_uri }}', this)" class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200/50 transition-colors">
-                <i data-lucide="share-2" class="w-4 h-4"></i>
-                <span class="text-[13px] font-bold btn-text">Copy Link</span>
-            </button>
-        </div>
-    </article>
-
-    <!-- 7. COMMENTS SECTION (Always visible) -->
-    <div class="mt-8 px-4 sm:px-0">
-        <h3 class="text-[18px] font-black text-slate-900 mb-6 nav-heading">Discussion</h3>
-
-        <!-- Comment Input Box -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm mb-8 relative">
-            {% if request.user.is_authenticated %}
-                <div class="flex gap-3 sm:gap-4 items-start">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
+                <div class="flex gap-4 items-start">
                     <div class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden shrink-0 border border-slate-200 mt-1">
-                        {% if request.user.avatar %}
-                            <img src="{{ request.user.avatar.url }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full flex items-center justify-center font-bold text-slate-500">{{ request.user.full_name|slice:":1"|upper }}</div>
-                        {% endif %}
+                        {% if request.user.avatar %}<img src="{{ request.user.avatar.url }}" class="w-full h-full object-cover">
+                        {% else %}<div class="w-full h-full flex items-center justify-center font-bold text-slate-400 bg-slate-50">{{ request.user.full_name|slice:":1" }}</div>{% endif %}
                     </div>
-                    <div class="flex-1 w-full">
-                        <textarea
-                            id="detail-comment-input"
-                            rows="2"
-                            placeholder="Add your insights to the conversation..."
-                            class="w-full bg-slate-50 border border-slate-200 text-[14.5px] font-medium rounded-xl px-4 py-3 focus:ring-4 focus:ring-[#0A66C2]/10 focus:border-[#0A66C2] outline-none resize-none transition-all placeholder:text-slate-400"
-                            oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-                        <div class="flex justify-end mt-2">
-                            <button onclick="submitDetailComment('{{ post.id }}')" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold text-[13.5px] transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex items-center gap-2">
-                                <i data-lucide="send" class="w-4 h-4"></i> Post Reply
+                    <div class="flex-1">
+                        <textarea id="detail-feedback-input" rows="2" placeholder="{% trans 'Provide feedback...' %}" class="w-full bg-slate-50 border border-slate-200 text-[15px] font-medium rounded-xl px-4 py-3 focus:border-[#0A66C2] outline-none resize-none transition-all" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                        <div class="flex justify-end mt-3">
+                            <button onclick="submitDetailFeedback('{{ post.id }}')" class="bg-slate-900 hover:bg-black text-white px-7 py-2.5 rounded-xl font-bold text-[13.5px] transition-all shadow-sm">
+                                {% trans "Post Feedback" %}
                             </button>
                         </div>
                     </div>
                 </div>
-            {% else %}
-                <!-- Locked State -->
-                <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] rounded-2xl flex items-center justify-center z-10">
-                    <button onclick="document.getElementById('login-gate-modal').classList.remove('hidden')" class="bg-slate-900 text-white font-bold text-[13.5px] px-6 py-2.5 rounded-xl shadow-lg hover:bg-black transition-colors">
-                        Log in to comment
-                    </button>
-                </div>
-                <div class="flex gap-4 opacity-30 pointer-events-none">
-                    <div class="w-10 h-10 rounded-full bg-slate-200 shrink-0"></div>
-                    <div class="flex-1 h-20 bg-slate-100 rounded-xl"></div>
-                </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Rendered Comments List -->
-        <div id="comments-list-container" class="space-y-5">
-            {% for comment in comments %}
-                <div class="flex gap-3 sm:gap-4 animate-fade-down">
-                    <a href="{{ comment.author.user.get_absolute_url|default:'#' }}" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 overflow-hidden bg-slate-100 border border-slate-200 mt-1 shadow-sm">
-                        {% if comment.author.user.avatar %}
-                            <img src="{{ comment.author.user.avatar.url }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full flex items-center justify-center font-bold text-[15px] text-slate-500 bg-slate-200">{{ comment.author.user.full_name|slice:":1"|upper }}</div>
-                        {% endif %}
-                    </a>
-                    <div class="flex-1">
-                        <div class="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl rounded-tl-sm shadow-sm hover:border-slate-300 transition-colors">
-                            <div class="flex items-center justify-between mb-2">
-                                <a href="{{ comment.author.user.get_absolute_url|default:'#' }}" class="text-[14.5px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight">
-                                    {{ comment.author.user.full_name }}
-                                </a>
-                                <span class="text-[11.5px] text-slate-400 font-bold whitespace-nowrap ml-2">{{ comment.created_at|timesince }} ago</span>
+            <div id="feedback-list-container" class="space-y-5">
+                {% for comment in comments %}
+                    <div class="flex gap-4 animate-fade-down">
+                        <div class="w-10 h-10 rounded-full shrink-0 overflow-hidden bg-slate-50 border border-slate-200 mt-1">
+                            {% if comment.author.user.avatar %}<img src="{{ comment.author.user.avatar.url }}" class="w-full h-full object-cover">
+                            {% else %}<div class="w-full h-full flex items-center justify-center font-bold text-slate-400">{{ comment.author.user.full_name|slice:":1" }}</div>{% endif %}
+                        </div>
+                        <div class="flex-1 bg-white border border-slate-200 p-5 rounded-2xl rounded-tl-sm shadow-sm">
+                            <div class="flex items-center mb-2">
+                                <span class="text-[14.5px] font-black text-slate-900">{{ comment.author.user.full_name }}</span>
                             </div>
-                            <p class="text-[14.5px] font-medium text-slate-700 leading-[1.7] break-words">{{ comment.body }}</p>
+                            <p class="text-[14.5px] font-medium text-slate-600 leading-relaxed">{{ comment.body }}</p>
                         </div>
                     </div>
-                </div>
-            {% empty %}
-                <div id="no-comments-msg" class="text-center py-10 bg-white border border-dashed border-slate-200 rounded-2xl">
-                    <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="message-square" class="w-5 h-5 text-slate-400"></i>
-                    </div>
-                    <p class="text-[14px] font-bold text-slate-500">Be the first to share your thoughts!</p>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
-
     </div>
 </main>
-
-<!-- Login Gate Modal (Reused from Feed) -->
-<div id="login-gate-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
-    <div class="bg-white rounded-[2rem] max-w-sm w-full p-8 text-center shadow-2xl">
-        <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-blue-100">
-            <i data-lucide="lock" class="w-8 h-8 text-[#0A66C2]"></i>
-        </div>
-        <h3 class="text-[22px] font-black text-slate-900 mb-2 nav-heading">{% trans "Unlock Network" %}</h3>
-        <p class="text-slate-500 text-[14.5px] font-medium leading-relaxed mb-8">
-            {% trans "Join CoreLink to interact and collaborate with professionals." %}
-        </p>
-        <div class="space-y-3 flex flex-col">
-            <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 text-white text-[14.5px] font-black uppercase tracking-wider py-3.5 rounded-xl hover:shadow-[0_8px_20px_rgba(10,102,194,0.3)] hover:-translate-y-0.5 transition-all">{% trans "Create Free Account" %}</a>
-            <a href="{% url 'login' %}?next={{ request.path }}" class="bg-white border border-slate-200 text-slate-700 text-[14.5px] font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors">{% trans "Log In" %}</a>
-        </div>
-        <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" class="mt-6 text-[13px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest">{% trans "Cancel" %}</button>
-    </div>
-</div>
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Copy to clipboard for easy sharing
     function copyToClipboard(text, btnElement) {
         navigator.clipboard.writeText(text).then(() => {
             const span = btnElement.querySelector('.btn-text');
-            const icon = btnElement.querySelector('i');
-            
-            const originalText = span.innerText;
-            const originalIcon = icon.getAttribute('data-lucide');
-            
             span.innerText = "Copied!";
-            span.classList.add('text-emerald-600');
-            icon.setAttribute('data-lucide', 'check');
-            icon.classList.add('text-emerald-600');
-            lucide.createIcons();
-
-            setTimeout(() => {
-                span.innerText = originalText;
-                span.classList.remove('text-emerald-600');
-                icon.setAttribute('data-lucide', originalIcon);
-                icon.classList.remove('text-emerald-600');
-                lucide.createIcons();
-            }, 2000);
+            setTimeout(() => span.innerText = "Share Link", 2000);
         });
     }
 
-    // Like Functionality (Optimistic UI)
-    async function toggleLike(postId, btnElement) {
-        const countSpan = document.getElementById(`like-count-${postId}`);
-        let currentCount = parseInt(countSpan.innerText);
-        const isCurrentlyLiked = btnElement.classList.contains('heart-liked');
-
-        // Optimistic UI Update
-        if (isCurrentlyLiked) {
-            btnElement.classList.remove('heart-liked');
-            countSpan.innerText = currentCount - 1;
-        } else {
-            btnElement.classList.add('heart-liked');
-            countSpan.innerText = currentCount + 1;
-        }
-
-        try {
-            const response = await fetch(`/api/right-now/${postId}/toggle-like/`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' }
-            });
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                countSpan.innerText = data.likes_count;
-                if (data.is_liked) btnElement.classList.add('heart-liked');
-                else btnElement.classList.remove('heart-liked');
-            }
-        } catch (error) {
-            // Revert on error
-            if (isCurrentlyLiked) { btnElement.classList.add('heart-liked'); countSpan.innerText = currentCount; }
-            else { btnElement.classList.remove('heart-liked'); countSpan.innerText = currentCount; }
-        }
-    }
-
-    // Submit New Comment (AJAX)
-    async function submitDetailComment(postId) {
-        const inputEl = document.getElementById('detail-comment-input');
+    async function submitDetailFeedback(postId) {
+        const inputEl = document.getElementById('detail-feedback-input');
         const bodyText = inputEl.value.trim();
         if (!bodyText) return;
-
         inputEl.disabled = true;
-        const submitBtn = inputEl.nextElementSibling.querySelector('button');
-        const originalBtnHTML = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Posting...';
-        lucide.createIcons();
-
         try {
             const response = await fetch(`/api/right-now/${postId}/add-comment/`, {
                 method: 'POST',
@@ -379,51 +256,19 @@
                 body: JSON.stringify({ body: bodyText })
             });
             const data = await response.json();
-
             if (data.status === 'success') {
-                document.getElementById('comment-count-display').innerText = `${data.comments_count} Comments`;
-                
-                const noCommentsMsg = document.getElementById('no-comments-msg');
-                if (noCommentsMsg) noCommentsMsg.remove();
-
-                const listContainer = document.getElementById('comments-list-container');
-                listContainer.insertAdjacentHTML('afterbegin', buildCommentHTML(data.comment));
-                lucide.createIcons();
-
+                document.getElementById('feedback-count-display').innerText = `${data.comments_count} Feedback`;
+                const list = document.getElementById('feedback-list-container');
+                list.insertAdjacentHTML('afterbegin', buildFeedbackHTML(data.comment));
                 inputEl.value = '';
                 inputEl.style.height = '';
             }
-        } catch (error) {
-            alert("Failed to post comment. Try again.");
-        } finally {
-            inputEl.disabled = false;
-            submitBtn.innerHTML = originalBtnHTML;
-            lucide.createIcons();
-            inputEl.focus();
-        }
+        } catch (e) { alert("Error posting feedback."); } finally { inputEl.disabled = false; }
     }
 
-    function buildCommentHTML(comment) {
-        const avatarHTML = comment.author_avatar
-            ? `<img src="${comment.author_avatar}" class="w-full h-full object-cover">`
-            : `<div class="w-full h-full flex items-center justify-center font-bold text-[15px] text-slate-500 bg-slate-200">${comment.author_name.charAt(0).toUpperCase()}</div>`;
-
-        return `
-            <div class="flex gap-3 sm:gap-4 animate-fade-down">
-                <a href="${comment.author_url}" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 overflow-hidden bg-slate-100 border border-slate-200 mt-1 shadow-sm">
-                    ${avatarHTML}
-                </a>
-                <div class="flex-1">
-                    <div class="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl rounded-tl-sm shadow-sm hover:border-slate-300 transition-colors">
-                        <div class="flex items-center justify-between mb-2">
-                            <a href="${comment.author_url}" class="text-[14.5px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors leading-tight">${comment.author_name}</a>
-                            <span class="text-[11.5px] text-slate-400 font-bold whitespace-nowrap ml-2">Just now</span>
-                        </div>
-                        <p class="text-[14.5px] font-medium text-slate-700 leading-[1.7] break-words">${comment.body}</p>
-                    </div>
-                </div>
-            </div>
-        `;
+    function buildFeedbackHTML(c) {
+        const avatar = c.author_avatar ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center font-bold text-slate-400 bg-slate-50">${c.author_name.charAt(0)}</div>`;
+        return `<div class="flex gap-4 animate-fade-down"><div class="w-10 h-10 rounded-full shrink-0 overflow-hidden border border-slate-200 mt-1">${avatar}</div><div class="flex-1 bg-white border border-slate-200 p-5 rounded-2xl rounded-tl-sm shadow-sm"><div class="flex items-center mb-2"><span class="text-[14.5px] font-black text-slate-900">${c.author_name}</span></div><p class="text-[14.5px] font-medium text-slate-600 leading-relaxed">${c.body}</p></div></div>`;
     }
 </script>
 {% endblock content %}
