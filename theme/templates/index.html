@@ -260,12 +260,25 @@
         border-color: var(--brand-link-blue);
     }
 
-    /* NEW: FACE CLOUD CSS FOR HERO SECTION */
+    /* NEW: FACE CLOUD CSS FOR HERO SECTION - STABILITY FIX ADDED */
     .face-cloud-wrapper {
         width: 100%;
-        mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-        -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        position: relative;
+        /* Logic: On mobile, limit height so 40+ avatars don't push text out of screen */
+        max-height: 180px;
+        overflow: hidden;
+        mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     }
+    @media (min-width: 1024px) {
+        .face-cloud-wrapper {
+            max-height: none;
+            overflow: visible;
+            mask-image: none;
+            -webkit-mask-image: none;
+        }
+    }
+
     .face-cloud-container {
         display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 650px;
     }
@@ -409,9 +422,9 @@
 </nav>
 
 <!-- ==========================================================================
-     III. CINEMATIC HERO (Optimized Mobile Logic)
+     III. CINEMATIC HERO (Updated for Mobile Content Stability)
      ========================================================================== -->
-<header class="relative w-full h-[100dvh] min-h-[700px] bg-[var(--color-void)] overflow-hidden flex flex-col justify-center lg:justify-end selection:bg-[var(--brand-link-blue)] selection:text-white pt-16 md:pt-24 pb-[4rem] md:pb-[6rem]">
+<header class="relative w-full min-h-screen bg-[var(--color-void)] overflow-hidden flex flex-col justify-center lg:justify-end selection:bg-[var(--brand-link-blue)] selection:text-white pt-24 md:pt-32 pb-12 md:pb-24">
 
     <div class="bg-noise"></div>
 
