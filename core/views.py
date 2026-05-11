@@ -52,22 +52,32 @@ from django.db.models import Value, FloatField, Case, When, F
 from django.shortcuts import render
 # Make sure you import CustomUser if it's not already in the file
 
+from django.db.models import F, Value, Case, When, FloatField
+from django.db.models.functions import Cast, Coalesce
+from django.shortcuts import render
+
+
 def index_view(request):
     """
     Fetches curated users for the landing page.
-    Splits the Hero Avatar cluster and the Talent Network cards.
+    Fallback: Shows 8 newest if none are selected by admin.
     """
-    # 1. Base Query: Only active, public, non-admin users
+    # Base Query: Active, Public, Non-Admin
     base_users = CustomUser.objects.filter(
         is_active=True, is_public=True, is_nexus_visible=True
     ).exclude(role='ADMIN')
 
-    # 2. Hero Avatars List (Optimized: no need to fetch portfolios here)
-    # Puts admin-selected users first, falls back to newest users to fill the 8 spots
-    hero_avatars = base_users.order_by('-is_hero_avatar_selected', '-created_at')[:8]
+    # 1. Hero Avatars Logic
+    selected_avatars = base_users.filter(is_hero_avatar_selected=True)
 
-    # 3. Talent Network Profile Cards (Requires portfolios & companies)
-    # Puts admin-selected users first, falls back to highest total_quality to fill the 7 spots
+    if selected_avatars.exists():
+        # If admin selected specific people, show them (can be any number)
+        hero_avatars = selected_avatars.only('avatar', 'full_name', 'id').order_by('-created_at')
+    else:
+        # Fallback: If nothing selected, show the 8 newest professionals
+        hero_avatars = base_users.only('avatar', 'full_name', 'id').order_by('-created_at')[:8]
+
+    # 2. Talent Network Profile Cards
     network_profiles = base_users.select_related(
         'portfolio'
     ).prefetch_related(

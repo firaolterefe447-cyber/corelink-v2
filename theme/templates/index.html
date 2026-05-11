@@ -259,6 +259,32 @@
         box-shadow: var(--shadow-elevation-2);
         border-color: var(--brand-link-blue);
     }
+
+    /* NEW: FACE CLOUD CSS FOR HERO SECTION */
+    .face-cloud-wrapper {
+        width: 100%;
+        mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+    .face-cloud-container {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 650px;
+    }
+    @media (min-width: 1024px) { .face-cloud-container { justify-content: flex-start; gap: 12px; } }
+
+    .cloud-avatar-item {
+        width: 34px; height: 34px; border-radius: 50%; overflow: hidden; background: #1e293b;
+        border: 2px solid rgba(255,255,255,0.1); transition: all 0.5s var(--ease-spring);
+        opacity: 0; animation: cloudPop 0.8s var(--ease-spring) forwards;
+    }
+    @media (min-width: 768px) { .cloud-avatar-item { width: 50px; height: 50px; } }
+    .cloud-avatar-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%); transition: 0.4s; }
+    .cloud-avatar-item:hover { transform: scale(1.3) translateY(-5px); border-color: var(--accent-cyan); z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .cloud-avatar-item:hover img { filter: grayscale(0%); }
+
+    @keyframes cloudPop {
+        from { opacity: 0; transform: scale(0.5) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
 </style>
 
 <!-- ==========================================================================
@@ -383,93 +409,89 @@
 </nav>
 
 <!-- ==========================================================================
-     III. CINEMATIC HERO (Deep Space Particle Field Optimized PC View)
+     III. CINEMATIC HERO (Optimized Mobile Logic)
      ========================================================================== -->
-<header class="relative w-full h-[100dvh] min-h-[700px] bg-[var(--color-void)] overflow-hidden flex flex-col justify-end selection:bg-[var(--brand-link-blue)] selection:text-white pt-24 pb-[4rem] md:pb-[6rem]">
+<header class="relative w-full h-[100dvh] min-h-[700px] bg-[var(--color-void)] overflow-hidden flex flex-col justify-center lg:justify-end selection:bg-[var(--brand-link-blue)] selection:text-white pt-16 md:pt-24 pb-[4rem] md:pb-[6rem]">
 
-    <!-- CSS Noise Overlay -->
     <div class="bg-noise"></div>
 
-    <!-- Background Image & Atmospheric Gradients -->
     <div class="absolute inset-0 z-0">
         <img id="hero-img" src="{% static 'img/hero_image_v2.jpg' %}" alt="Innovation" aria-hidden="true" class="w-full h-full object-cover bg-zoom opacity-[0.20]" style="filter: contrast(1.3) saturate(1.1);">
-
-        <!-- Deep radial glows for extreme 3D depth -->
         <div class="absolute top-[-20%] left-[-10%] w-[1200px] h-[1200px] bg-[var(--accent-violet)]/10 rounded-full blur-[180px] mix-blend-screen pointer-events-none"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[1000px] h-[1000px] bg-[var(--brand-link-blue)]/15 rounded-full blur-[180px] mix-blend-screen pointer-events-none"></div>
-
-        <!-- Gradient to blend into the next section -->
         <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-void)] via-[var(--color-void)]/80 to-transparent"></div>
     </div>
 
-    <!-- Hero Content -->
     <div class="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center lg:items-end">
 
             <!-- Left Side: Colossal Typography -->
-            <div class="lg:col-span-7 pt-10 md:pt-0">
+            <div class="lg:col-span-7 pt-4 md:pt-0 text-left">
                 <div class="reveal-mask pb-1 md:pb-0">
-                    <h1 class="font-heading reveal-text text-white font-black tracking-[-0.04em] leading-[0.9] text-[clamp(2.5rem,7.5vw,8rem)]" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">{% trans "CORELINK" %}</h1>
+                    <h1 class="font-heading reveal-text text-white font-black tracking-[-0.04em] leading-[0.9] text-[clamp(2.5rem,8.5vw,8rem)]" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">{% trans "CORELINK" %}</h1>
                 </div>
                 <div class="reveal-mask">
-                    <h1 class="font-heading reveal-text delay-100 text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] font-black tracking-[-0.04em] leading-[0.9] text-[clamp(2.5rem,7.5vw,8rem)]" style="filter: drop-shadow(0 10px 20px rgba(37,99,235,0.3));">{% trans "ETHIOPIA" %}</h1>
+                    <h1 class="font-heading reveal-text delay-100 text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] font-black tracking-[-0.04em] leading-[0.9] text-[clamp(2.5rem,8.5vw,8rem)]" style="filter: drop-shadow(0 10px 20px rgba(37,99,235,0.3));">{% trans "ETHIOPIA" %}</h1>
+                </div>
+
+                <!-- Description moved here for better mobile flow -->
+                <div class="reveal-mask mt-6 lg:hidden">
+                    <p class="reveal-text delay-200 text-[1.1rem] text-slate-300 font-medium leading-[1.6] max-w-[500px]">
+                        {% blocktrans %}The definitive hub for <span class="text-white font-bold">Innovation and Talent</span>. Uniting talent with boundless opportunity.{% endblocktrans %}
+                    </p>
                 </div>
             </div>
 
-            <!-- Right Side: Narrative & Actions -->
+            <!-- Right Side: Action Cluster -->
             <div class="lg:col-span-5 flex flex-col items-start xl:pl-6 w-full">
-                <div class="reveal-mask mb-10 w-full">
-                    <p class="reveal-text delay-200 text-[1.1rem] md:text-[1.35rem] text-slate-300 font-medium leading-[1.6] text-balance max-w-[500px]">
+
+                <div class="reveal-mask mb-10 w-full hidden lg:block">
+                    <p class="reveal-text delay-200 text-[1.35rem] text-slate-300 font-medium leading-[1.6] text-balance max-w-[500px]">
                         {% blocktrans %}The definitive hub for <span class="text-white font-bold">Innovation and Talent</span>. Uniting talent with boundless opportunity.{% endblocktrans %}
                     </p>
                 </div>
 
-                <!-- ADDED !overflow-visible to prevent clipping the avatar text -->
                 <div class="reveal-mask w-full !overflow-visible">
                     <div class="reveal-text delay-300 flex flex-col gap-8 w-full">
 
-                        <!-- REDESIGNED MAGIC CTA BUTTON -->
+                        <!-- THE MAGIC CTA BUTTON -->
                         <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-4 bg-white/5 border border-white/10 hover:border-white/20 backdrop-blur-md rounded-full transition-all duration-500 active:scale-95 shadow-[0_0_30px_rgba(37,99,235,0.15)] hover:shadow-[0_0_50px_rgba(217,70,239,0.3)] w-fit">
-                            <!-- Inner Glow -->
                             <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-fuchsia)] opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-500"></div>
-
-                            <!-- The Magic Text -->
                             <span class="relative text-[14px] md:text-[16px] font-black tracking-[0.25em] uppercase text-magic drop-shadow-lg">
                                 {% trans "START YOUR JOURNEY" %}
                             </span>
                         </a>
 
-                        <!-- FIXED AVATAR CLUSTER (w-max ensures full text visibility, -ml shifts it perfectly left) -->
+                        <!-- THE MASSIVE FACE CLOUD CLUSTER -->
                         {% if hero_avatars %}
-                        <div class="flex flex-col xl:flex-row items-start xl:items-center gap-4 sm:gap-5 bg-[#0A0D14]/80 backdrop-blur-md border border-white/10 rounded-[2rem] p-3 pr-4 sm:pr-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-max hover:border-white/20 transition-colors duration-500 relative z-20 overflow-visible mt-2 -ml-1 md:-ml-2 lg:-ml-6 xl:-ml-8">
-                            <!-- Avatars Container -->
-                            <div class="flex -space-x-3 sm:-space-x-4 pl-1 shrink-0">
-                                {% for person in hero_avatars %}
-                                    <div class="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 border-[2px] border-[#0A0D14] rounded-full bg-slate-800 overflow-hidden shadow-lg relative z-[{{ forloop.revcounter }}] transition-transform hover:-translate-y-1 hover:scale-110 duration-300">
-                                        {% if person.avatar %}
-                                            <img src="{{ person.get_avatar_url }}" alt="User" class="w-full h-full object-cover">
-                                        {% else %}
-                                            <div class="w-full h-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold">{{ person.full_name|slice:":1" }}</div>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                                <!-- Plus Icon for 'More Users' -->
-                                <div class="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 border-[2px] border-[#0A0D14] rounded-full bg-slate-800 flex items-center justify-center text-[var(--accent-cyan)] shadow-lg relative z-0 transition-transform hover:-translate-y-1 hover:scale-110 duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="sm:w-5 sm:h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        <div class="flex flex-col gap-4 mt-2">
+                            <div class="face-cloud-wrapper">
+                                <div class="face-cloud-container">
+                                    {% for person in hero_avatars %}
+                                        <div class="cloud-avatar-item" style="animation-delay: {{ forloop.counter0|add:5 }}0ms">
+                                            {% if person.avatar %}
+                                                <img src="{{ person.get_avatar_url }}" alt="Verified User" loading="lazy">
+                                            {% else %}
+                                                <div class="w-full h-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-[10px] font-bold">{{ person.full_name|slice:":1" }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    <a href="{% url 'unified_onboarding' %}" class="cloud-avatar-item flex items-center justify-center bg-[var(--brand-link-blue)] border-none hover:scale-125 transition-transform" style="animation-delay: 500ms; opacity: 1;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                                    </a>
                                 </div>
                             </div>
 
-                            <!-- Text & Stars -->
-                            <div class="flex flex-col justify-center shrink-0 mt-1 xl:mt-0 pl-1 sm:pl-0">
+                            <div class="flex flex-col items-start gap-1 pl-1">
                                 <div class="flex items-center gap-1 text-[var(--accent-amber)] mb-1">
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                                 </div>
-                                <span class="text-[13px] md:text-[14px] font-bold text-white tracking-wide whitespace-nowrap">
-                                    {% trans "Join talent pool" %}
+                                <span class="text-[12px] md:text-[13px] font-black text-slate-400 tracking-[0.15em] uppercase whitespace-nowrap">
+                                    {% trans "VERIFIED ETHIOPIAN PROFESSIONALS" %}
                                 </span>
                             </div>
                         </div>
@@ -483,16 +505,13 @@
 </header>
 
 <!-- ==========================================================================
-     IV. MAIN CONTENT (Pure Light Canvas, High Contrast)
+     IV. MAIN CONTENT
      ========================================================================== -->
 <main class="relative z-20 pb-32 -mt-12 md:-mt-16 rounded-t-[3rem] md:rounded-t-[5rem] bg-[var(--color-surface)] shadow-[0_-40px_80px_rgba(0,0,0,0.9)] overflow-hidden" id="main-content">
 
-    <!-- Cyber Grid Background -->
     <div class="absolute inset-0 bg-grid-cyber pointer-events-none rounded-t-[5rem]"></div>
 
-    <!-- ==========================================================================
-         A. PLATFORM CAPABILITIES
-         ========================================================================== -->
+    <!-- PLATFORM CAPABILITIES -->
     <section id="platform" class="pt-32 pb-20 relative z-10 max-w-[1400px] mx-auto px-6 md:px-12">
         <div class="text-center mb-24 scroll-fade-up">
             <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
@@ -504,38 +523,27 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 scroll-stagger scroll-fade-up">
-            <!-- Card 1 -->
             <div class="feature-card card-1 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
                 <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-
                 <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--brand-link-blue)]">{% trans "Deep Portfolios" %}</h3>
                 <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Build an immersive, interactive portfolio that goes far beyond a standard PDF resume to build a real professional identity that represents your real professional stage" %}</p>
             </div>
-
-            <!-- Card 2 -->
             <div class="feature-card card-2 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
                 <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-
                 <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--accent-cyan)]">{% trans "Seamless Connections" %}</h3>
                 <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Connect with the right people for projects and professional growth, and get discovered by companies and initiatives looking for your talent, or find co-founders to build the next big thing together" %}</p>
             </div>
-
-            <!-- Card 3 -->
             <div class="feature-card card-3 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
                 <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-
                 <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--accent-violet)]">{% trans "Verified Trust" %}</h3>
                 <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Earn verification badges through a deep dive into your proof-of-work and further verification, instantly signaling your high value to recruiters and collaborators" %}</p>
             </div>
         </div>
     </section>
 
-    <!-- ==========================================================================
-         B. THE TALENT NETWORK
-         ========================================================================== -->
+    <!-- TALENT NETWORK -->
     {% if network_profiles %}
     <section id="network" class="pt-16 pb-24 relative z-10 selection:bg-[var(--brand-link-blue)] selection:text-white max-w-[1600px] mx-auto px-6 md:px-12 border-b border-slate-100">
-
         <div class="text-center mb-20 scroll-fade-up">
             <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
                 {% blocktrans %}Discover the <span class="text-magic">Network</span>{% endblocktrans %}
@@ -544,291 +552,111 @@
                 {% trans "Explore some of the professionals and talent building their professional future on CoreLink" %}
             </p>
         </div>
-
-        <!-- 5-COLUMN GRID: 4 Profiles + 1 Join Card creates a perfect seamless row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 relative z-10">
             {% trans "A verified member of the CoreLink professional network. Click to view full credentials and project history." as default_bio %}
-
             {% for person in network_profiles|slice:":4" %}
                 {% with profile=person.portfolio %}
                 <div class="talent-card-wrapper h-full">
                     <div class="talent-card group h-full justify-between bg-white min-h-[460px]">
                         <div>
                             <div class="talent-cover">
-                                {% if person.cover_image %}
-                                    <img src="{{ person.cover_image.url }}" alt="Cover">
-                                {% else %}
-                                    <div class="w-full h-full bg-[#F1F5F9]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 20px 20px;"></div>
-                                {% endif %}
+                                {% if person.cover_image %}<img src="{{ person.cover_image.url }}" alt="Cover">
+                                {% else %}<div class="w-full h-full bg-[#F1F5F9]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 20px 20px;"></div>{% endif %}
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                             </div>
                             <div class="px-6 xl:px-8 flex flex-col relative z-10">
                                 <div class="talent-avatar w-[80px] h-[80px] xl:w-[90px] xl:h-[90px] mt-[-40px] xl:mt-[-45px]">
-                                    {% if person.avatar %}
-                                        <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy" class="w-full h-full object-cover">
-                                    {% else %}
-                                        <span class="w-full h-full flex items-center justify-center text-3xl font-black text-white bg-magic">{{ person.full_name|slice:":1" }}</span>
-                                    {% endif %}
+                                    {% if person.avatar %}<img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy" class="w-full h-full object-cover">
+                                    {% else %}<span class="w-full h-full flex items-center justify-center text-3xl font-black text-white bg-magic">{{ person.full_name|slice:":1" }}</span>{% endif %}
                                 </div>
                                 <div class="mt-4 mb-4">
                                     <h3 class="font-heading text-[20px] xl:text-[22px] font-extrabold text-slate-900 tracking-tight group-hover:text-[var(--brand-link-blue)] transition-colors line-clamp-1">{{ person.full_name }}</h3>
                                     <span class="block text-[13px] font-bold text-[var(--accent-cyan)] mt-1.5 line-clamp-1 uppercase tracking-wider">
-                                        {% if person.role == 'FOUNDER' %}
-                                            {% if person.company_memberships.first %}{{ person.company_memberships.first.company.name }}{% else %}{% trans "Business Leader" %}{% endif %}
-                                        {% else %}
-                                            {% if profile and profile.headlines.first %}
-                                                {{ profile.headlines.first.title }}
-                                            {% elif profile and profile.field_of_interest %}
-                                                {{ profile.field_of_interest }}
-                                            {% else %}
-                                                {{ person.get_role_display }}
-                                            {% endif %}
-                                        {% endif %}
+                                        {% if person.role == 'FOUNDER' %}{% if person.company_memberships.first %}{{ person.company_memberships.first.company.name }}{% else %}{% trans "Business Leader" %}{% endif %}
+                                        {% else %}{{ profile.headlines.first.title|default:person.get_role_display }}{% endif %}
                                     </span>
                                 </div>
-                                <p class="text-[14px] text-slate-500 leading-[1.6] line-clamp-3 mb-6 font-medium">
-                                    {% if profile %}
-                                        {{ profile.bio_narrative|default:profile.current_mission|default:default_bio }}
-                                    {% else %}
-                                        {{ default_bio }}
-                                    {% endif %}
-                                </p>
+                                <p class="text-[14px] text-slate-500 leading-[1.6] line-clamp-3 mb-6 font-medium">{{ profile.bio_narrative|default:default_bio }}</p>
                             </div>
                         </div>
-                        <div class="px-6 xl:px-8 pb-6 mt-auto">
-                            <!-- Target Blank Added Here -->
-                            <a href="{{ person.get_absolute_url }}" target="_blank" rel="noopener noreferrer" class="btn-view-profile">
-                                {% trans "View Full Profile" %}
-                            </a>
-                        </div>
+                        <div class="px-6 xl:px-8 pb-6 mt-auto"><a href="{{ person.get_absolute_url }}" target="_blank" rel="noopener noreferrer" class="btn-view-profile">{% trans "View Full Profile" %}</a></div>
                     </div>
                 </div>
                 {% endwith %}
             {% endfor %}
-
-            <!-- 5th Card: Join the Network (Sleek Empty State using lg:hover logic for pure static mobile view) -->
             <div class="talent-card-wrapper h-full">
-                <a href="{% url 'unified_onboarding' %}" class="talent-card flex flex-col items-center justify-center group h-full border-dashed border-[3px] border-slate-200 bg-[#F8FAFC] lg:hover:bg-white lg:hover:border-[var(--brand-link-blue)] transition-all min-h-[460px] py-10 relative lg:hover:-translate-y-2 lg:hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)]">
-
-                    <!-- Subtle Exclusivity Badge -->
-                    <div class="absolute top-5 right-5 px-3 py-1.5 bg-slate-200/80 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full lg:group-hover:bg-[var(--brand-link-blue)] lg:group-hover:text-white transition-colors duration-300">
-                        {% trans "+ Many More" %}
-                    </div>
-
-                    <div class="w-20 h-20 rounded-full bg-white text-slate-400 shadow-lg border border-slate-200 flex items-center justify-center mb-6 lg:group-hover:bg-magic lg:group-hover:text-white lg:group-hover:border-transparent transition-all duration-500 lg:group-hover:-translate-y-3 mt-4">
-                        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </div>
+                <a href="{% url 'unified_onboarding' %}" class="talent-card flex flex-col items-center justify-center group h-full border-dashed border-[3px] border-slate-200 bg-[#F8FAFC] lg:hover:bg-white lg:hover:border-[var(--brand-link-blue)] transition-all min-h-[460px] py-10 relative lg:hover:-translate-y-2 lg:hover:shadow-2xl">
+                    <div class="absolute top-5 right-5 px-3 py-1.5 bg-slate-200/80 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full lg:group-hover:bg-[var(--brand-link-blue)] lg:group-hover:text-white transition-colors duration-300">{% trans "+ Many More" %}</div>
+                    <div class="w-20 h-20 rounded-full bg-white text-slate-400 shadow-lg border border-slate-200 flex items-center justify-center mb-6 lg:group-hover:bg-magic lg:group-hover:text-white transition-all duration-500 lg:group-hover:-translate-y-3 mt-4"><svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
                     <span class="font-heading text-slate-900 font-black text-center text-[22px] tracking-tight lg:group-hover:text-[var(--brand-link-blue)] transition-colors px-4 leading-tight">{% trans "Explore the Ecosystem" %}</span>
                     <span class="text-slate-500 text-[14px] mt-4 text-center px-6 leading-relaxed font-medium">{% trans "Create your profile to explore countless other verified innovators and get discovered today." %}</span>
                 </a>
             </div>
-
         </div>
     </section>
     {% endif %}
 
-    <!-- ==========================================================================
-         C. THE JOURNEY TIMELINE
-         ========================================================================== -->
+    <!-- JOURNEY TIMELINE -->
     <section id="journey" class="w-full relative z-10 pt-24 pb-32 bg-[var(--color-surface)] selection:bg-[var(--accent-cyan)] selection:text-white">
         <div class="max-w-[1200px] mx-auto px-6 md:px-12">
-
             <div class="text-center mb-24 scroll-fade-up">
-                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.1] mb-6">
-                    {% blocktrans %}Your Path to <span class="text-magic">Success</span>{% endblocktrans %}
-                </h2>
+                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.1] mb-6">{% blocktrans %}Your Path to <span class="text-magic">Success</span>{% endblocktrans %}</h2>
                 <p class="text-slate-500 text-[1.15rem] md:text-[1.3rem] font-medium max-w-2xl mx-auto">{% trans "Three simple steps to secure your future in the digital economy." %}</p>
             </div>
-
             <div class="relative py-10">
                 <div class="timeline-line"></div>
-
                 <!-- Phase 01 -->
                 <div class="timeline-item relative flex flex-col md:flex-row items-center md:justify-between mb-20 md:mb-32 scroll-fade-up pl-20 md:pl-0">
                     <div class="md:w-5/12 text-left md:text-right pr-0 md:pr-16">
-                        <span class="text-[var(--brand-link-blue)] font-black tracking-widest uppercase text-sm mb-2 block">{% trans "Phase 01" %}</span>
+                        <span class="text-[var(--brand-link-blue)] font-black uppercase text-sm mb-2 block">{% trans "Phase 01" %}</span>
                         <h3 class="font-heading text-[2rem] font-black text-slate-900 mb-4 leading-tight">{% trans "Claim your Identity" %}</h3>
                         <p class="text-slate-600 font-medium text-lg leading-relaxed">{% trans "Create a beautiful, deep-dive portfolio. Add your projects, list your exact skills, and upload your proof of work for the world to see." %}</p>
                     </div>
-                    <div class="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center">
-                        <div class="timeline-dot"><span class="font-black text-xl text-slate-400 group-hover:text-white">1</span></div>
-                    </div>
-                    <div class="md:w-5/12 mt-8 md:mt-0 pl-0 md:pl-16 w-full">
-                        <!-- Upgraded Abstract Profile Card -->
-                        <div class="w-full bg-white border border-slate-200 rounded-[2rem] p-8 shadow-xl transform hover:-translate-y-2 transition-all duration-500 relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--brand-link-blue)]/10 to-[var(--accent-cyan)]/10 rounded-bl-full transition-transform duration-500 group-hover:scale-110"></div>
-
-                            <div class="flex items-center gap-5 relative z-10 mb-8">
-                                <div class="w-16 h-16 rounded-full bg-slate-50 border-2 border-slate-100 shadow-inner flex items-center justify-center text-[var(--brand-link-blue)] group-hover:bg-[var(--brand-link-blue)] group-hover:text-white group-hover:border-[var(--brand-link-blue)] transition-all duration-500">
-                                    <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                </div>
-                                <div class="flex-1 space-y-3">
-                                    <div class="h-3.5 w-3/4 bg-slate-800 rounded-full"></div>
-                                    <div class="h-2.5 w-1/2 bg-[var(--brand-link-blue)]/80 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <div class="space-y-4 relative z-10">
-                                <div class="flex gap-3">
-                                    <div class="h-8 w-20 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center"><div class="h-2 w-10 bg-slate-400 rounded-full"></div></div>
-                                    <div class="h-8 w-24 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center"><div class="h-2 w-14 bg-slate-400 rounded-full"></div></div>
-                                </div>
-                                <div class="w-full bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2">
-                                    <div class="h-2 w-full bg-slate-200 rounded-full"></div>
-                                    <div class="h-2 w-5/6 bg-slate-200 rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center"><div class="timeline-dot"><span class="font-black text-xl text-slate-400">1</span></div></div>
+                    <div class="md:w-5/12 mt-8 md:mt-0 pl-0 md:pl-16 w-full"><div class="w-full bg-white border border-slate-200 rounded-[2rem] p-8 shadow-xl h-48"></div></div>
                 </div>
-
-                <!-- Phase 02 -->
-                <div class="timeline-item relative flex flex-col md:flex-row-reverse items-center md:justify-between mb-20 md:mb-32 scroll-fade-up pl-20 md:pl-0">
-                    <div class="md:w-5/12 text-left pl-0 md:pl-16">
-                        <span class="text-[var(--accent-violet)] font-black tracking-widest uppercase text-sm mb-2 block">{% trans "Phase 02" %}</span>
-                        <h3 class="font-heading text-[2rem] font-black text-slate-900 mb-4 leading-tight">{% trans "Connect & Build" %}</h3>
-                        <p class="text-slate-600 font-medium text-lg leading-relaxed">{% trans "Share daily project logs, find co-founders, and collaborate with creative minds who have the exact skills you need." %}</p>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center">
-                        <div class="timeline-dot"><span class="font-black text-xl text-slate-400 group-hover:text-white">2</span></div>
-                    </div>
-                    <div class="md:w-5/12 mt-8 md:mt-0 pr-0 md:pr-16 w-full">
-                        <!-- Upgraded Abstract Network UI -->
-                        <div class="w-full bg-white border border-slate-200 rounded-[2rem] p-8 shadow-xl flex items-center justify-center h-48 transform hover:-translate-y-2 transition-all duration-500 relative overflow-hidden group">
-                            <div class="absolute inset-0 bg-grid-cyber opacity-20"></div>
-                            <div class="flex -space-x-4 relative z-10 transition-transform duration-500 group-hover:scale-110">
-                                <div class="w-16 h-16 rounded-full border-4 border-white bg-gradient-to-br from-rose-400 to-rose-600 shadow-lg flex items-center justify-center text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
-                                <div class="w-16 h-16 rounded-full border-4 border-white bg-gradient-to-br from-[var(--accent-violet)] to-purple-700 shadow-lg transform -translate-y-4 flex items-center justify-center text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div>
-                                <div class="w-16 h-16 rounded-full border-4 border-white bg-gradient-to-br from-[var(--brand-link-blue)] to-blue-600 shadow-lg flex items-center justify-center text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Phase 03 -->
-                <div class="timeline-item relative flex flex-col md:flex-row items-center md:justify-between scroll-fade-up pl-20 md:pl-0">
-                    <div class="md:w-5/12 text-left md:text-right pr-0 md:pr-16">
-                        <span class="text-[var(--accent-cyan)] font-black tracking-widest uppercase text-sm mb-2 block">{% trans "Phase 03" %}</span>
-                        <h3 class="font-heading text-[2rem] font-black text-slate-900 mb-4 leading-tight">{% trans "Get Discovered" %}</h3>
-                        <p class="text-slate-600 font-medium text-lg leading-relaxed">{% trans "Our platform puts your verified profile directly in front of companies, teams, and individuals looking to hire, collaborate on projects, and open doors to every kind of professional opportunity." %}</p>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center">
-                        <div class="timeline-dot"><span class="font-black text-xl text-slate-400 group-hover:text-white">3</span></div>
-                    </div>
-                    <div class="md:w-5/12 mt-8 md:mt-0 pl-0 md:pl-16 w-full">
-                        <!-- Upgraded Abstract Discovery UI (Matching Phase 1 & 2) -->
-                        <div class="w-full bg-white border border-slate-200 rounded-[2rem] p-6 shadow-xl flex flex-col justify-center gap-4 h-48 transform hover:-translate-y-2 transition-all duration-500 relative overflow-hidden group">
-                            <!-- Abstract gradient accent -->
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[var(--accent-cyan)]/10 to-transparent rounded-bl-full transition-transform duration-500 group-hover:scale-110"></div>
-
-                            <!-- Search Bar Mockup -->
-                            <div class="w-full bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center gap-3 relative z-10 transition-colors duration-500 group-hover:border-[var(--accent-cyan)]/30 group-hover:bg-[var(--accent-cyan)]/5">
-                                <svg width="18" height="18" fill="none" stroke="var(--accent-cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="transform transition-transform duration-500 group-hover:scale-110"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                <div class="h-2 w-24 bg-slate-300 rounded-full relative overflow-hidden">
-                                    <div class="absolute top-0 left-0 h-full w-full bg-[var(--accent-cyan)] opacity-50 transform -translate-x-full group-hover:animate-[searchSweep_1.5s_ease-in-out_infinite]"></div>
-                                </div>
-                            </div>
-
-                            <!-- Search Results Mockup -->
-                            <div class="flex flex-col gap-2.5 relative z-10">
-                                <!-- Result 1 -->
-                                <div class="w-full bg-white border border-slate-100 rounded-xl p-2.5 flex items-center gap-3 shadow-sm transform transition-all duration-500 group-hover:translate-x-2 group-hover:border-[var(--accent-cyan)]/20">
-                                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center text-[var(--accent-cyan)] group-hover:bg-[var(--accent-cyan)] group-hover:text-white transition-colors duration-500">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                    </div>
-                                    <div class="space-y-1.5 w-full">
-                                        <div class="h-2 w-1/3 bg-slate-800 rounded-full"></div>
-                                        <div class="h-1.5 w-1/4 bg-slate-400 rounded-full"></div>
-                                    </div>
-                                    <div class="px-2 py-1 rounded bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)] text-[9px] font-black tracking-wider group-hover:bg-[var(--accent-cyan)] group-hover:text-white transition-colors duration-500">{% trans "MATCH" %}</div>
-                                </div>
-
-                                <!-- Result 2 -->
-                                <div class="w-full bg-white border border-slate-100 rounded-xl p-2.5 flex items-center gap-3 shadow-sm transform transition-all duration-500 group-hover:translate-x-2 delay-75 group-hover:border-[var(--brand-link-blue)]/20">
-                                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center text-[var(--brand-link-blue)] group-hover:bg-[var(--brand-link-blue)] group-hover:text-white transition-colors duration-500">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                    </div>
-                                    <div class="space-y-1.5 w-full">
-                                        <div class="h-2 w-1/2 bg-slate-800 rounded-full"></div>
-                                        <div class="h-1.5 w-1/3 bg-[var(--brand-link-blue)]/60 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
 
-    <!-- ==========================================================================
-         D. THE CORELINK ADVANTAGE (Replaces Standard FAQ)
-         ========================================================================== -->
-    <section id="faq" class="w-full relative z-10 pt-32 pb-32 bg-[var(--color-surface)] selection:bg-[var(--accent-cyan)] selection:text-white border-t border-slate-100">
+    <!-- CORELINK ADVANTAGE -->
+    <section id="faq" class="w-full relative z-10 pt-32 pb-32 bg-[var(--color-surface)] border-t border-slate-100">
         <div class="max-w-[1400px] mx-auto px-6 md:px-12">
-
             <div class="text-center mb-20 scroll-fade-up">
-                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight mb-6 leading-tight">
-                    {% blocktrans %}Built for Every <span class="text-magic">Professional</span>{% endblocktrans %}
-                </h2>
+                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight mb-6 leading-tight">{% blocktrans %}Built for Every <span class="text-magic">Professional</span>{% endblocktrans %}</h2>
                 <p class="text-slate-500 text-[1.2rem] font-medium max-w-2xl mx-auto">{% trans "No matter your industry, CoreLink is your definitive platform to build your identity, connect with visionaries, and unlock boundless opportunities." %}</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 scroll-stagger scroll-fade-up">
-
-                <!-- Advantage Card 1 -->
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--brand-link-blue)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 tracking-tight group-hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Build Your Profile" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">
-                        {% trans "CoreLink is engineered for every professional across all industries. Whether you are in tech, design, finance, or the arts, you can build a stunning, verified profile that showcases your true expertise to the world." %}
-                    </p>
+                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Build Your Profile" %}</h3>
+                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "CoreLink is engineered for every professional across all industries. Whether you are in tech, design, finance, or the arts, you can build a stunning, verified profile." %}</p>
                 </div>
-
-                <!-- Advantage Card 2 -->
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--accent-violet)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 tracking-tight group-hover:text-[var(--accent-violet)] transition-colors">{% trans "Connect & Collaborate" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">
-                        {% trans "Surround yourself with excellence. Discover and connect with like-minded professionals, find the perfect co-founder, and collaborate with the talent in the ecosystem to bring your ideas to life." %}
-                    </p>
+                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--accent-violet)] transition-colors">{% trans "Connect & Collaborate" %}</h3>
+                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "Surround yourself with excellence. Discover and connect with like-minded professionals, find the perfect co-founder, and collaborate." %}</p>
                 </div>
-
-                <!-- Advantage Card 3 -->
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--accent-cyan)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 tracking-tight group-hover:text-[var(--accent-cyan)] transition-colors">{% trans "Global & Local Reach" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">
-                        {% trans "Step into the spotlight and be discovered. Our platform bridges the gap between your unique talent and the market, unlocking massive opportunities both locally in Ethiopia and on the global stage." %}
-                    </p>
+                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--accent-cyan)] transition-colors">{% trans "Global & Local Reach" %}</h3>
+                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "Step into the spotlight and be discovered. Our platform bridges the gap between your unique talent and the market." %}</p>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <!-- ==========================================================================
-         E. IMMERSIVE BOTTOM CTA
-         ========================================================================== -->
+    <!-- IMMERSIVE BOTTOM CTA -->
     <section class="w-full relative z-10 pt-20 pb-20 px-6 md:px-12">
-        <div class="max-w-[1400px] mx-auto rounded-[3rem] md:rounded-[4rem] bg-[var(--color-core-dark)] overflow-hidden relative shadow-[0_30px_60px_rgba(0,0,0,0.4)]">
+        <div class="max-w-[1400px] mx-auto rounded-[3rem] md:rounded-[4rem] bg-[var(--color-core-dark)] overflow-hidden relative shadow-2xl">
             <div class="absolute inset-0 bg-noise opacity-10"></div>
-            <div class="absolute top-[-50%] right-[-10%] w-[800px] h-[800px] bg-[var(--brand-link-blue)]/20 rounded-full blur-[120px]"></div>
-            <div class="absolute bottom-[-50%] left-[-10%] w-[600px] h-[600px] bg-[var(--accent-cyan)]/20 rounded-full blur-[100px]"></div>
-
             <div class="relative z-10 py-24 md:py-32 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-left">
                 <div class="md:w-2/3 scroll-fade-up">
-                    <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-white tracking-tight leading-[1.05] mb-6">
-                        {% blocktrans %}Ready to <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Initiate?</span>{% endblocktrans %}
-                    </h2>
-                    <p class="text-slate-300 text-[1.25rem] md:text-[1.5rem] font-medium max-w-2xl text-balance">
-                        {% trans "Join verified professionals building the future of the Ethiopian digital economy." %}
-                    </p>
+                    <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-white tracking-tight leading-[1.05] mb-6">{% blocktrans %}Ready to <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Initiate?</span>{% endblocktrans %}</h2>
+                    <p class="text-slate-300 text-[1.25rem] md:text-[1.5rem] font-medium max-w-2xl text-balance">{% trans "Join verified professionals building the future of the Ethiopian digital economy." %}</p>
                 </div>
                 <div class="md:w-1/3 flex justify-center md:justify-end scroll-fade-up delay-200">
-                    <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-10 py-5 font-extrabold text-white transition-all duration-300 bg-[var(--brand-link-blue)] rounded-full hover:bg-[var(--accent-cyan)] hover:scale-105 shadow-[0_0_40px_rgba(37,99,235,0.5)] overflow-hidden">
-                        <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                    <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-10 py-5 font-extrabold text-white transition-all duration-300 bg-[var(--brand-link-blue)] rounded-full hover:bg-[var(--accent-cyan)] shadow-2xl">
                         <span class="relative text-[16px] tracking-[0.2em] uppercase">{% trans "START YOUR JOURNEY" %}</span>
                     </a>
                 </div>
@@ -838,94 +666,53 @@
 
 </main>
 
-<!-- ==========================================================================
-     V. ELITE FOOTER (Deep Space Anchor)
-     ========================================================================== -->
-<footer class="bg-[var(--color-void)] text-white pt-24 pb-20 md:pt-40 md:pb-32 overflow-hidden relative z-10 selection:bg-[var(--brand-link-blue)] selection:text-white">
-
+<!-- ELITE FOOTER -->
+<footer class="bg-[var(--color-void)] text-white pt-24 pb-20 md:pt-40 md:pb-32 overflow-hidden relative z-10">
     <div class="bg-noise"></div>
-    <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-[var(--brand-link-blue)]/5 rounded-full blur-[150px] pointer-events-none"></div>
-
     <div class="w-full px-6 md:px-12 max-w-[1600px] mx-auto relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-12">
-
             <div class="md:col-span-4 flex flex-col justify-between h-full scroll-fade-up delay-100 order-last md:order-first mt-16 md:mt-0">
                 <div>
-                    <a href="/" class="font-heading block text-[3rem] md:text-[4rem] font-black tracking-tighter mb-4 leading-none transition-transform hover:scale-[1.02]">
-                        <span class="text-white">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Link</span>
-                    </a>
-                    <p class="text-slate-400 text-[15px] font-medium leading-relaxed max-w-[300px] mb-8">
-                        {% trans "The definitive infrastructure uniting talent with boundless opportunity." %}
-                    </p>
-                    <span class="text-slate-500 text-[12px] font-bold tracking-[0.2em] uppercase">{% trans "Â© 2026 CoreLink Ethiopia" %}</span>
+                    <a href="/" class="font-heading block text-[3rem] md:text-[4rem] font-black tracking-tighter mb-4 leading-none"><span class="text-white">Core</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Link</span></a>
+                    <p class="text-slate-400 text-[15px] font-medium leading-relaxed max-w-[300px] mb-8">{% trans "The definitive infrastructure uniting talent with boundless opportunity." %}</p>
+                    <span class="text-slate-500 text-[12px] font-bold tracking-[0.2em] uppercase">{% trans "© 2026 CoreLink Ethiopia" %}</span>
                 </div>
             </div>
-
             <div class="md:col-span-3 scroll-fade-up delay-100">
-                <span class="block text-slate-500 font-extrabold text-[12px] uppercase tracking-[0.2em] mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Location" %}</span>
+                <span class="block text-slate-500 font-extrabold text-[12px] uppercase mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Location" %}</span>
                 <p class="text-slate-200 text-[16px] leading-relaxed font-medium">{% trans "Addis Ababa, Ethiopia" %}</p>
             </div>
-
             <div class="md:col-span-3 scroll-fade-up delay-200">
-                <span class="block text-slate-500 font-extrabold text-[12px] uppercase tracking-[0.2em] mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Communications" %}</span>
-                <div class="flex flex-col gap-5">
-                    <a href="mailto:corelinkethiopia@gmail.com" class="text-slate-200 text-[16px] font-medium hover:text-[var(--brand-link-blue)] transition-colors">corelinkethiopia@gmail.com</a>
-                    <div class="flex items-center gap-2 text-slate-400 text-[14px]">
-                        <span>{% trans "Contact on Telegram at" %}</span>
-                        <a href="https://t.me/corelinkteam" target="_blank" class="hover:text-[var(--brand-link-blue)] transition-colors font-bold tracking-wide">@corelinkteam</a>
-                    </div>
-                </div>
+                <span class="block text-slate-500 font-extrabold text-[12px] uppercase mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Communications" %}</span>
+                <a href="mailto:corelinkethiopia@gmail.com" class="text-slate-200 text-[16px] font-medium hover:text-[var(--brand-link-blue)] transition-colors">corelinkethiopia@gmail.com</a>
             </div>
-
             <div class="md:col-span-2 flex flex-col justify-start scroll-fade-up delay-300">
-                <span class="block text-slate-500 font-extrabold text-[12px] uppercase tracking-[0.2em] mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Community" %}</span>
-                <a href="https://t.me/CoreLinkEthiopia" target="_blank" class="group block p-[2px] rounded-[1.5rem] bg-gradient-to-br from-slate-800 to-slate-900 hover:from-[var(--brand-link-blue)] hover:to-[var(--accent-cyan)] transition-all duration-500 active:scale-[0.98] shadow-lg hover:shadow-[0_10px_40px_rgba(37,99,235,0.4)]">
-                    <div class="bg-[var(--color-void)] flex flex-col items-start gap-6 p-6 rounded-[calc(1.5rem-2px)] h-full transition-colors duration-500 group-hover:bg-[#0A0D14]">
-                        <div class="flex items-center justify-between w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--brand-link-blue)] group-hover:scale-110 group-hover:text-[var(--accent-cyan)] transition-all duration-300"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-white text-white group-hover:text-[var(--brand-link-blue)] transition-colors duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </div>
-                        </div>
-                        <div><span class="block text-[15px] font-bold text-white tracking-wide">{% trans "Join Telegram" %}</span></div>
+                <span class="block text-slate-500 font-extrabold text-[12px] uppercase mb-8 border-b border-slate-800 pb-4 inline-block">{% trans "Community" %}</span>
+                <a href="https://t.me/CoreLinkEthiopia" target="_blank" class="group block p-[2px] rounded-[1.5rem] bg-gradient-to-br from-slate-800 to-slate-900">
+                    <div class="bg-[var(--color-void)] flex flex-col items-start gap-6 p-6 rounded-[calc(1.5rem-2px)]">
+                        <span class="block text-[15px] font-bold text-white tracking-wide">{% trans "Join Telegram" %}</span>
                     </div>
                 </a>
-
-                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top" class="hidden md:flex items-center justify-center w-16 h-16 ml-auto mt-16 border-2 border-slate-800 rounded-full hover:bg-white hover:text-slate-950 hover:border-white hover:scale-110 transition-all duration-500 shadow-md group">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="group-hover:-translate-y-1 transition-transform"><path d="m18 15-6-6-6 6"/></svg>
-                </button>
             </div>
         </div>
     </div>
 </footer>
 
-<!-- ==========================================================================
-     VI. ENTERPRISE JAVASCRIPT LOGIC
-     ========================================================================== -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
-        // 1. GPU-ACCELERATED SCROLL REVEALS
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.willChange = 'transform, opacity';
-                    requestAnimationFrame(() => { entry.target.classList.add('is-visible'); });
-                    setTimeout(() => { entry.target.style.willChange = 'auto'; }, 1200);
+                    entry.target.classList.add('is-visible');
                     obs.unobserve(entry.target);
                 }
             });
         }, observerOptions);
+        document.querySelectorAll('.scroll-fade-up, .scroll-stagger').forEach((el) => observer.observe(el));
 
-        document.querySelectorAll('.scroll-fade-up, .scroll-stagger').forEach((el) => {
-            observer.observe(el);
-        });
-
-        // 2. PARALLAX MATH
         let ticking = false;
         const heroImg = document.getElementById('hero-img');
-
         window.addEventListener('scroll', () => {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
@@ -938,7 +725,6 @@
                 ticking = true;
             }
         }, { passive: true });
-
     });
 </script>
 {% endblock %}
