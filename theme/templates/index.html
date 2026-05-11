@@ -350,9 +350,6 @@
         <!-- Page Navigation Links Below -->
         <div class="flex flex-col pt-4 gap-2">
             <a href="#platform" @click="mobileMenuOpen = false" class="py-2.5 text-[15px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Platform" %}</a>
-            <a href="#network" @click="mobileMenuOpen = false" class="py-2.5 text-[15px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Talent Network" %}</a>
-            <a href="#journey" @click="mobileMenuOpen = false" class="py-2.5 text-[15px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Your Journey" %}</a>
-            <a href="#faq" @click="mobileMenuOpen = false" class="py-2.5 text-[15px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors">{% trans "ecosystem" %}</a>
         </div>
     </div>
 </nav>
@@ -374,9 +371,6 @@
         <!-- PC Center Page Navigation (Absolutely Centered) -->
         <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-10" style="animation: drop-in 1.1s var(--ease-spring) forwards;">
             <a href="#platform" class="text-[13px] font-extrabold text-slate-500 hover:text-[var(--brand-link-blue)] uppercase tracking-widest transition-colors">{% trans "Platform" %}</a>
-            <a href="#network" class="text-[13px] font-extrabold text-slate-500 hover:text-[var(--brand-link-blue)] uppercase tracking-widest transition-colors">{% trans "Network" %}</a>
-            <a href="#journey" class="text-[13px] font-extrabold text-slate-500 hover:text-[var(--brand-link-blue)] uppercase tracking-widest transition-colors">{% trans "Journey" %}</a>
-            <a href="#faq" class="text-[13px] font-extrabold text-slate-500 hover:text-[var(--brand-link-blue)] uppercase tracking-widest transition-colors">{% trans "ecosystem" %}</a>
         </div>
 
         <!-- PC Right Controls -->
@@ -550,129 +544,6 @@
                 <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
                 <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--accent-violet)]">{% trans "Verified Trust" %}</h3>
                 <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Earn verification badges through a deep dive into your proof-of-work and further verification, instantly signaling your high value to recruiters and collaborators" %}</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- TALENT NETWORK -->
-    {% if network_profiles %}
-    <section id="network" class="pt-16 pb-24 relative z-10 selection:bg-[var(--brand-link-blue)] selection:text-white max-w-[1600px] mx-auto px-6 md:px-12 border-b border-slate-100">
-        <div class="text-center mb-20 scroll-fade-up">
-            <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
-                {% blocktrans %}Discover the <span class="text-magic">Network</span>{% endblocktrans %}
-            </h2>
-            <p class="text-slate-500 text-[1.15rem] md:text-[1.3rem] font-medium max-w-2xl mx-auto text-balance leading-relaxed">
-                {% trans "Explore some of the professionals and talent building their professional future on CoreLink" %}
-            </p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 relative z-10">
-            {% trans "A verified member of the CoreLink professional network. Click to view full credentials and project history." as default_bio %}
-            {% for person in network_profiles|slice:":4" %}
-                {% with profile=person.portfolio %}
-                <div class="talent-card-wrapper h-full">
-                    <div class="talent-card group h-full justify-between bg-white min-h-[460px]">
-                        <div>
-                            <div class="talent-cover">
-                                {% if person.cover_image %}<img src="{{ person.cover_image.url }}" alt="Cover">
-                                {% else %}<div class="w-full h-full bg-[#F1F5F9]" style="background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 20px 20px;"></div>{% endif %}
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                            </div>
-                            <div class="px-6 xl:px-8 flex flex-col relative z-10">
-                                <div class="talent-avatar w-[80px] h-[80px] xl:w-[90px] xl:h-[90px] mt-[-40px] xl:mt-[-45px]">
-                                    {% if person.avatar %}<img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy" class="w-full h-full object-cover">
-                                    {% else %}<span class="w-full h-full flex items-center justify-center text-3xl font-black text-white bg-magic">{{ person.full_name|slice:":1" }}</span>{% endif %}
-                                </div>
-                                <div class="mt-4 mb-4">
-                                    <h3 class="font-heading text-[20px] xl:text-[22px] font-extrabold text-slate-900 tracking-tight group-hover:text-[var(--brand-link-blue)] transition-colors line-clamp-1">{{ person.full_name }}</h3>
-                                    <span class="block text-[13px] font-bold text-[var(--accent-cyan)] mt-1.5 line-clamp-1 uppercase tracking-wider">
-                                        {% if person.role == 'FOUNDER' %}{% if person.company_memberships.first %}{{ person.company_memberships.first.company.name }}{% else %}{% trans "Business Leader" %}{% endif %}
-                                        {% else %}{{ profile.headlines.first.title|default:person.get_role_display }}{% endif %}
-                                    </span>
-                                </div>
-                                <p class="text-[14px] text-slate-500 leading-[1.6] line-clamp-3 mb-6 font-medium">{{ profile.bio_narrative|default:default_bio }}</p>
-                            </div>
-                        </div>
-                        <div class="px-6 xl:px-8 pb-6 mt-auto"><a href="{{ person.get_absolute_url }}" target="_blank" rel="noopener noreferrer" class="btn-view-profile">{% trans "View Full Profile" %}</a></div>
-                    </div>
-                </div>
-                {% endwith %}
-            {% endfor %}
-            <div class="talent-card-wrapper h-full">
-                <a href="{% url 'unified_onboarding' %}" class="talent-card flex flex-col items-center justify-center group h-full border-dashed border-[3px] border-slate-200 bg-[#F8FAFC] lg:hover:bg-white lg:hover:border-[var(--brand-link-blue)] transition-all min-h-[460px] py-10 relative lg:hover:-translate-y-2 lg:hover:shadow-2xl">
-                    <div class="absolute top-5 right-5 px-3 py-1.5 bg-slate-200/80 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded-full lg:group-hover:bg-[var(--brand-link-blue)] lg:group-hover:text-white transition-colors duration-300">{% trans "+ Many More" %}</div>
-                    <div class="w-20 h-20 rounded-full bg-white text-slate-400 shadow-lg border border-slate-200 flex items-center justify-center mb-6 lg:group-hover:bg-magic lg:group-hover:text-white transition-all duration-500 lg:group-hover:-translate-y-3 mt-4"><svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
-                    <span class="font-heading text-slate-900 font-black text-center text-[22px] tracking-tight lg:group-hover:text-[var(--brand-link-blue)] transition-colors px-4 leading-tight">{% trans "Explore the Ecosystem" %}</span>
-                    <span class="text-slate-500 text-[14px] mt-4 text-center px-6 leading-relaxed font-medium">{% trans "Create your profile to explore countless other verified innovators and get discovered today." %}</span>
-                </a>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- JOURNEY TIMELINE -->
-    <section id="journey" class="w-full relative z-10 pt-24 pb-32 bg-[var(--color-surface)] selection:bg-[var(--accent-cyan)] selection:text-white">
-        <div class="max-w-[1200px] mx-auto px-6 md:px-12">
-            <div class="text-center mb-24 scroll-fade-up">
-                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.1] mb-6">{% blocktrans %}Your Path to <span class="text-magic">Success</span>{% endblocktrans %}</h2>
-                <p class="text-slate-500 text-[1.15rem] md:text-[1.3rem] font-medium max-w-2xl mx-auto">{% trans "Three simple steps to secure your future in the digital economy." %}</p>
-            </div>
-            <div class="relative py-10">
-                <div class="timeline-line"></div>
-                <!-- Phase 01 -->
-                <div class="timeline-item relative flex flex-col md:flex-row items-center md:justify-between mb-20 md:mb-32 scroll-fade-up pl-20 md:pl-0">
-                    <div class="md:w-5/12 text-left md:text-right pr-0 md:pr-16">
-                        <span class="text-[var(--brand-link-blue)] font-black uppercase text-sm mb-2 block">{% trans "Phase 01" %}</span>
-                        <h3 class="font-heading text-[2rem] font-black text-slate-900 mb-4 leading-tight">{% trans "Claim your Identity" %}</h3>
-                        <p class="text-slate-600 font-medium text-lg leading-relaxed">{% trans "Create a beautiful, deep-dive portfolio. Add your projects, list your exact skills, and upload your proof of work for the world to see." %}</p>
-                    </div>
-                    <div class="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2 flex items-center justify-center"><div class="timeline-dot"><span class="font-black text-xl text-slate-400">1</span></div></div>
-                    <div class="md:w-5/12 mt-8 md:mt-0 pl-0 md:pl-16 w-full"><div class="w-full bg-white border border-slate-200 rounded-[2rem] p-8 shadow-xl h-48"></div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CORELINK ADVANTAGE -->
-    <section id="faq" class="w-full relative z-10 pt-32 pb-32 bg-[var(--color-surface)] border-t border-slate-100">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12">
-            <div class="text-center mb-20 scroll-fade-up">
-                <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight mb-6 leading-tight">{% blocktrans %}Built for Every <span class="text-magic">Professional</span>{% endblocktrans %}</h2>
-                <p class="text-slate-500 text-[1.2rem] font-medium max-w-2xl mx-auto">{% trans "No matter your industry, CoreLink is your definitive platform to build your identity, connect with visionaries, and unlock boundless opportunities." %}</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 scroll-stagger scroll-fade-up">
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--brand-link-blue)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--brand-link-blue)] transition-colors">{% trans "Build Your Profile" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "CoreLink is engineered for every professional across all industries. Whether you are in tech, design, finance, or the arts, you can build a stunning, verified profile." %}</p>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--accent-violet)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--accent-violet)] transition-colors">{% trans "Connect & Collaborate" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "Surround yourself with excellence. Discover and connect with like-minded professionals, find the perfect co-founder, and collaborate." %}</p>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-[2rem] p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-[var(--accent-cyan)] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                    <h3 class="font-heading text-[1.5rem] font-black text-slate-900 mb-4 group-hover:text-[var(--accent-cyan)] transition-colors">{% trans "Global & Local Reach" %}</h3>
-                    <p class="text-slate-600 font-medium leading-[1.7]">{% trans "Step into the spotlight and be discovered. Our platform bridges the gap between your unique talent and the market." %}</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- IMMERSIVE BOTTOM CTA -->
-    <section class="w-full relative z-10 pt-20 pb-20 px-6 md:px-12">
-        <div class="max-w-[1400px] mx-auto rounded-[3rem] md:rounded-[4rem] bg-[var(--color-core-dark)] overflow-hidden relative shadow-2xl">
-            <div class="absolute inset-0 bg-noise opacity-10"></div>
-            <div class="relative z-10 py-24 md:py-32 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-left">
-                <div class="md:w-2/3 scroll-fade-up">
-                    <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-white tracking-tight leading-[1.05] mb-6">{% blocktrans %}Ready to <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Initiate?</span>{% endblocktrans %}</h2>
-                    <p class="text-slate-300 text-[1.25rem] md:text-[1.5rem] font-medium max-w-2xl text-balance">{% trans "Join verified professionals building the future of the Ethiopian digital economy." %}</p>
-                </div>
-                <div class="md:w-1/3 flex justify-center md:justify-end scroll-fade-up delay-200">
-                    <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-10 py-5 font-extrabold text-white transition-all duration-300 bg-[var(--brand-link-blue)] rounded-full hover:bg-[var(--accent-cyan)] shadow-2xl">
-                        <span class="relative text-[16px] tracking-[0.2em] uppercase">{% trans "START YOUR JOURNEY" %}</span>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
