@@ -18,73 +18,73 @@
 {% endblock %}
 
 {% block navbar %}
-<!-- MOBILE ONLY NAVBAR (Editorial Minimalist) -->
-<nav class="lg:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-2xl border-b border-zinc-200/50 transition-all duration-500 h-16 print:hidden">
+<!-- MOBILE ONLY NAVBAR (Premium Glass) -->
+<nav class="lg:hidden sticky top-0 z-[100] bg-white/85 backdrop-blur-2xl border-b border-slate-200/80 transition-all duration-500 h-[4.5rem] print:hidden shadow-sm">
     <div class="px-5 w-full h-full relative flex justify-between items-center">
         <!-- LEFT: Mobile Brand -->
         <div class="flex items-center">
-            <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="group flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">
-                <span class="font-serif-pc font-bold text-[22px] tracking-tight text-zinc-900 transition-opacity group-hover:opacity-70">
-                    CoreLink
-                </span>
+            <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="group flex items-center gap-2 focus-visible:outline-none rounded-sm">
+                <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
             </a>
         </div>
         <!-- RIGHT: Actions -->
         <div class="flex items-center gap-4 ml-auto">
             {% if request.user.is_authenticated %}
-                <button onclick="copyProfileLink()" aria-label="Share Profile" class="text-zinc-600 hover:text-black transition-colors transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">
+                <button onclick="copyProfileLink()" aria-label="Share Profile" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-[#0A66C2] hover:bg-blue-50 transition-colors active:scale-95 shadow-sm">
                     <i data-lucide="share-2" class="w-[18px] h-[18px]"></i>
                 </button>
-                <a href="{% url 'dashboard' %}" class="text-[11px] font-extrabold text-white bg-zinc-900 px-5 py-2.5 rounded-full hover:bg-black shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                <a href="{% url 'dashboard' %}" class="text-[11px] font-black text-white bg-gradient-to-r from-[#0f172a] to-slate-800 px-5 py-2.5 rounded-full hover:shadow-lg transition-all active:scale-95 uppercase tracking-[0.15em]">
                     Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="text-[11px] font-extrabold text-zinc-600 hover:text-black uppercase tracking-[0.2em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">Log In</a>
-                <a href="/#join" class="text-[11px] font-extrabold text-white bg-zinc-900 px-5 py-2.5 rounded-full hover:bg-black shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
-                    Join
+                <a href="{% url 'login' %}?next={{ request.path }}" class="text-[12px] font-bold text-slate-500 hover:text-[#0A66C2] transition-colors">Log In</a>
+                <a href="/#join" class="text-[12px] font-bold text-white bg-gradient-to-r from-[#0A66C2] to-blue-600 px-5 py-2.5 rounded-full hover:shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                    Join Hub
                 </a>
             {% endif %}
         </div>
     </div>
 </nav>
 
-<!-- PC ONLY: FLOATING PILL NAV (Monochrome & Glassmorphic) -->
+<!-- PC ONLY: FLOATING PILL NAV (Premium Glassmorphic) -->
 <nav class="hidden lg:flex fixed top-8 left-0 right-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <div class="pointer-events-auto bg-white/70 backdrop-blur-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-full px-8 py-3 flex items-center gap-8 transition-all duration-500 hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)] hover:bg-white/95 group">
+    <div class="pointer-events-auto bg-white/85 backdrop-blur-[24px] border border-slate-200/90 shadow-[0_12px_40px_-12px_rgba(10,102,194,0.15)] rounded-full px-8 py-3.5 flex items-center gap-8 transition-all duration-500 hover:shadow-[0_20px_50px_-10px_rgba(10,102,194,0.2)] hover:bg-white/95 hover:border-blue-200/50 group">
         <!-- Brand -->
-        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="font-bold text-lg tracking-tight font-sans text-black hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">
-            CoreLink
+        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="flex items-center focus-visible:outline-none">
+            <span class="font-heading font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+            <span class="font-heading font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
         </a>
 
         <!-- Nav Links -->
-        <div class="flex items-center gap-7 text-[13px] font-bold text-gray-500 font-sans nav-scroll-link">
-            {% if profile.bio_narrative %}<a href="#about-pc" class="hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">About</a>{% endif %}
-            {% if live_opportunities %}<a href="#signals-pc" class="hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Signals</a>{% endif %}
-            {% if projects %}<a href="#works-pc" class="hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Works</a>{% endif %}
-            {% if experiences %}<a href="#exp-pc" class="hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Experience</a>{% endif %}
-            {% if skills %}<a href="#skills-pc" class="hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Skills</a>{% endif %}
+        <div class="flex items-center gap-7 text-[12.5px] font-bold text-slate-500 font-heading uppercase tracking-[0.1em] nav-scroll-link">
+            {% if profile.bio_narrative %}<a href="#about-pc" class="hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">About</a>{% endif %}
+            {% if live_opportunities %}<a href="#signals-pc" class="hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Signals</a>{% endif %}
+            {% if projects %}<a href="#works-pc" class="hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Works</a>{% endif %}
+            {% if experiences %}<a href="#exp-pc" class="hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Experience</a>{% endif %}
+            {% if skills %}<a href="#skills-pc" class="hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Skills</a>{% endif %}
 
             <!-- Splitted Content Nav -->
             {% if content_posts %}
-            <a href="#goals-pc" class="dynamic-nav hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Goal</a>
-            <a href="#thoughts-pc" class="dynamic-nav hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Thoughts</a>
-            <a href="#progress-pc" class="dynamic-nav hover:text-black transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-black after:transition-all hover:after:w-full focus-visible:outline-none focus-visible:text-black">Progress</a>
+            <a href="#goals-pc" class="dynamic-nav hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Goal</a>
+            <a href="#thoughts-pc" class="dynamic-nav hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Thoughts</a>
+            <a href="#progress-pc" class="dynamic-nav hover:text-[#0A66C2] transition-colors relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 after:bg-[#0A66C2] after:transition-all hover:after:w-full">Progress</a>
             {% endif %}
         </div>
 
         <!-- RIGHT: Actions -->
-        <div class="pl-6 border-l border-gray-300 flex items-center gap-6">
+        <div class="pl-6 border-l border-slate-200 flex items-center gap-4">
             {% if request.user.is_authenticated %}
-                <button onclick="copyProfileLink()" aria-label="Share Profile" class="magnetic-btn text-gray-500 hover:text-black transition-colors transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">
+                <button onclick="copyProfileLink()" aria-label="Share Profile" class="magnetic-btn w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 border border-slate-200 text-[#0A66C2] hover:bg-blue-50 transition-colors shadow-sm">
                     <i data-lucide="share-2" class="w-[18px] h-[18px]"></i>
                 </button>
-                <a href="{% url 'dashboard' %}" class="bg-zinc-900 text-white text-[12px] font-extrabold px-6 py-2.5 rounded-full hover:bg-black shadow-[0_4px_14px_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                <a href="{% url 'dashboard' %}" class="bg-[#0f172a] text-white text-[12px] font-black px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md hover:shadow-lg transition-all active:scale-95 uppercase tracking-[0.1em]">
                     Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="text-[12px] font-extrabold text-gray-600 hover:text-black uppercase tracking-[0.2em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-sm">Log In</a>
-                <a href="/#join" class="bg-zinc-900 text-white text-[12px] font-extrabold px-6 py-2.5 rounded-full hover:bg-black shadow-[0_4px_14px_0_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
-                    Join
+                <a href="{% url 'login' %}?next={{ request.path }}" class="text-[12.5px] font-bold text-slate-500 hover:text-[#0A66C2] transition-colors px-2">Log In</a>
+                <a href="/#join" class="bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white text-[12.5px] font-bold px-6 py-2.5 rounded-full hover:shadow-lg shadow-blue-500/25 transition-all active:scale-95">
+                    Join Hub
                 </a>
             {% endif %}
         </div>
@@ -96,106 +96,107 @@
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
 <style>
-    /* Mobile Defaults & Core Setup */
-    :root { --font-main: 'Inter', sans-serif; }
+    :root {
+        --font-main: 'Inter', sans-serif;
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+    }
     html { scroll-behavior: smooth; }
     body {
         font-family: var(--font-main);
         -webkit-font-smoothing: antialiased;
-        background-color: #FAFAFA;
-        color: #18181B;
+        background-color: #F4F7FA;
+        color: #0f172a;
         overflow-x: hidden;
     }
 
-    /* Cross-platform Serif */
+    /* Premium Fonts */
     .font-serif-pc { font-family: 'Playfair Display', serif; }
+    .font-heading { font-family: var(--font-heading); }
 
     /* Elegant Custom Scrollbars */
     .scroll-panel::-webkit-scrollbar,
-    .gallery-scroll::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-    }
+    .gallery-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .scroll-panel::-webkit-scrollbar-track,
-    .gallery-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
+    .gallery-scroll::-webkit-scrollbar-track { background: transparent; }
     .scroll-panel::-webkit-scrollbar-thumb,
-    .gallery-scroll::-webkit-scrollbar-thumb {
-        background-color: rgba(0,0,0,0.15);
-        border-radius: 10px;
-    }
-    .scroll-panel::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.3); }
+    .gallery-scroll::-webkit-scrollbar-thumb { background-color: rgba(148, 163, 184, 0.4); border-radius: 10px; }
+    .scroll-panel::-webkit-scrollbar-thumb:hover { background-color: rgba(10, 102, 194, 0.6); }
 
-    /* Horizontal Scroll Mask (UX Hint for swiping) */
     .horizontal-mask {
         -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
         mask-image: linear-gradient(to right, black 85%, transparent 100%);
     }
 
     /* Magic Hover Enhancements */
-    .img-hover-zoom { transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .img-hover-zoom { transition: transform 0.8s var(--ease-magic); }
     .group:hover .img-hover-zoom { transform: scale(1.05); }
 
-    /* Premium Subtle Card Lift */
-    .card-hover-premium {
-        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Premium Glass Lift (Replacing old card hover) */
+    .glass-card-premium {
+        background: rgba(255, 255, 255, 0.88);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        transition: all 0.5s var(--ease-magic);
+        box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
     }
-    .card-hover-premium:hover {
+    .glass-card-premium:hover {
         transform: translateY(-6px);
-        box-shadow: 0 30px 60px -12px rgba(0,0,0,0.08);
-        border-color: rgba(0,0,0,0.2);
+        box-shadow: 0 30px 60px -15px rgba(10, 102, 194, 0.15);
+        border-color: rgba(191, 219, 254, 1); /* blue-200 */
     }
 
     /* Scroll Reveal Animations */
     .reveal-on-scroll {
         opacity: 0;
         transform: translateY(40px);
-        transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 1s var(--ease-magic), transform 1s var(--ease-magic);
         will-change: opacity, transform;
     }
-    .reveal-on-scroll.is-visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
 
     /* Fade Animations */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .animate-fade-up { animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .animate-fade-down { animation: fadeDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .animate-fade-in { animation: fadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-fade-up { animation: fadeUp 1s var(--ease-magic) forwards; }
+    .animate-fade-down { animation: fadeDown 1s var(--ease-magic) forwards; }
+    .animate-fade-in { animation: fadeIn 1.5s var(--ease-magic) forwards; }
 
-    /* PC Specific Styles (Scoped) */
+    /* PC Specific Background */
     @media (min-width: 1024px) {
-        .font-sans-pc { font-family: 'Manrope', sans-serif; }
-
         .pc-bg-mesh {
-            background-color: #FAFAFA;
             background-image:
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,0.015) 0, transparent 40%),
-                radial-gradient(at 100% 100%, hsla(0,0%,0%,0.015) 0, transparent 40%);
+                radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.6) 0%, transparent 42%),
+                radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.8) 0%, transparent 46%),
+                radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
             background-attachment: fixed;
         }
-        .magnetic-btn { transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .magnetic-btn { transition: transform 0.3s var(--ease-magic); }
     }
 </style>
 
 <!-- =========================================================================
      PART 1: MOBILE VIEW (EDITORIAL LUXE PORTFOLIO)
 ========================================================================== -->
-<div class="lg:hidden w-full bg-[#FAFAFA] pb-24 relative overflow-hidden">
+<div class="lg:hidden w-full bg-[#F4F7FA] pb-24 relative overflow-hidden">
 
-    <!-- HERO HEADER (Fixed Height, Edge-to-Edge) -->
-    <div class="w-full bg-zinc-100 flex items-center justify-center animate-fade-in relative z-10 h-[28vh] md:h-[35vh]">
-        <img src="{{ user.get_cover_image_url }}?v={% now 'U' %}"
-             class="w-full h-full object-cover"
-             alt="Cover Background">
+    <!-- HERO HEADER -->
+    <div class="w-full bg-slate-100 flex items-center justify-center animate-fade-in relative z-10 h-[28vh] md:h-[35vh]">
+        {% if user.cover_image %}
+            <img src="{{ user.get_cover_image_url }}?v={% now 'U' %}" class="w-full h-full object-cover" alt="Cover Background">
+        {% else %}
+            <!-- Premium Fallback Mesh -->
+            <div class="w-full h-full bg-gradient-to-tr from-blue-50 via-slate-50 to-indigo-50 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,#0A66C20a_1px,transparent_1px),linear-gradient(to_bottom,#0A66C20a_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-[#0A66C2]/10 blur-[60px] rounded-full"></div>
+            </div>
+        {% endif %}
     </div>
 
     <!-- MAIN CONTENT -->
@@ -203,39 +204,39 @@
 
         <!-- IDENTITY CARD -->
         <section class="text-center mb-10">
-            <!-- Premium Square Avatar (Overlapping the Cover) -->
+            <!-- Premium Square Avatar -->
             <div class="relative inline-block -mt-16 mb-5 z-50">
-                <div class="h-32 w-32 md:h-40 md:w-40 rounded-[2rem] p-1.5 bg-[#FAFAFA] shadow-[0_15px_35px_rgb(0,0,0,0.12)] mx-auto relative border border-zinc-200/50">
-                    <div class="w-full h-full rounded-[1.6rem] overflow-hidden bg-zinc-100">
+                <div class="h-32 w-32 md:h-40 md:w-40 rounded-[2rem] p-1.5 bg-white shadow-[0_15px_40px_rgba(15,23,42,0.12)] mx-auto relative border border-slate-200/80">
+                    <div class="w-full h-full rounded-[1.6rem] overflow-hidden bg-slate-50">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}" class="h-full w-full object-cover">
                         {% else %}
-                            <div class="w-full h-full flex items-center justify-center text-zinc-400 text-6xl font-serif-pc">{{ user.display_name|slice:":1" }}</div>
+                            <div class="w-full h-full flex items-center justify-center text-[#0A66C2] text-6xl font-serif-pc">{{ user.display_name|slice:":1" }}</div>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
             <!-- Title & Field -->
-            <h1 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-2 tracking-tight leading-tight">{{ user.display_name }}</h1>
+            <h1 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-2 tracking-tight leading-tight">{{ user.display_name }}</h1>
 
-            <p class="text-[12px] font-extrabold text-zinc-600 uppercase tracking-[0.2em] mb-6 flex flex-col items-center gap-2">
+            <p class="text-[12px] font-heading font-black text-[#0A66C2] uppercase tracking-[0.15em] mb-6 flex flex-col items-center gap-2">
                 <span>{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}</span>
                 {% if profile.field_of_interest %}
-                <span class="px-4 py-1.5 border border-zinc-200/80 rounded-full text-[11px] tracking-[0.25em] text-zinc-700 bg-white shadow-sm">{{ profile.field_of_interest }}</span>
+                <span class="px-4 py-1.5 border border-blue-200/80 rounded-full text-[10px] tracking-[0.2em] text-[#0A66C2] bg-blue-50 shadow-sm">{{ profile.field_of_interest }}</span>
                 {% endif %}
             </p>
 
             <!-- Status Badges -->
             <div class="mb-8 flex flex-wrap justify-center gap-3">
                 {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                <span class="inline-flex items-center justify-center border border-zinc-200/80 text-zinc-900 text-[11px] font-extrabold uppercase tracking-[0.2em] px-5 py-2.5 rounded-full bg-white shadow-sm transition-shadow hover:shadow-md">
+                <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-700 text-[10px] font-black uppercase tracking-[0.15em] px-4 py-2 rounded-full bg-white shadow-sm">
                     {{ profile.get_current_search_display }}
                 </span>
                 {% endif %}
 
                 {% if profile.collaboration_status %}
-                <span class="inline-flex items-center justify-center border border-zinc-200/80 text-zinc-900 text-[11px] font-extrabold uppercase tracking-[0.2em] px-5 py-2.5 rounded-full bg-white shadow-sm transition-shadow hover:shadow-md">
+                <span class="inline-flex items-center justify-center border border-emerald-200/80 text-emerald-700 text-[10px] font-black uppercase tracking-[0.15em] px-4 py-2 rounded-full bg-emerald-50 shadow-sm">
                     {{ profile.get_collaboration_status_display }}
                 </span>
                 {% endif %}
@@ -243,27 +244,27 @@
 
             {% if profile.current_mission or profile.right_now %}
             <div class="mt-4 max-w-[280px] mx-auto relative mb-6">
-                <p class="text-[16px] font-serif-pc text-zinc-700 italic leading-relaxed font-medium">"{% if profile.current_mission %}{{ profile.current_mission }}{% else %}{{ profile.right_now }}{% endif %}"</p>
+                <p class="text-[16px] font-serif-pc text-slate-700 italic leading-relaxed font-medium">"{% if profile.current_mission %}{{ profile.current_mission }}{% else %}{{ profile.right_now }}{% endif %}"</p>
             </div>
             {% endif %}
 
-            <div class="pt-8 border-t border-zinc-200/60 flex justify-center gap-8 text-[12px] font-extrabold text-zinc-500 uppercase tracking-[0.2em]">
-                {% if profile.institution %}<span class="flex items-center gap-2"><i data-lucide="building-2" class="w-4 h-4 text-zinc-400"></i> {{ profile.institution }}</span>{% endif %}
-                {% if profile.location %}<span class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-zinc-400"></i> {{ profile.location }}</span>{% endif %}
+            <div class="pt-8 border-t border-slate-200/80 flex justify-center gap-6 text-[11px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                {% if profile.institution %}<span class="flex items-center gap-1.5"><i data-lucide="building-2" class="w-4 h-4 text-slate-400"></i> {{ profile.institution }}</span>{% endif %}
+                {% if profile.location %}<span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> {{ profile.location }}</span>{% endif %}
             </div>
 
             <!-- MOBILE CTA: RESUME BUTTON -->
             {% if profile.cv_file %}
             <div class="mt-10 px-2 max-w-[340px] mx-auto">
-                <a href="{{ profile.cv_file.url }}" target="_blank" aria-label="View Resume" class="group relative flex items-center justify-between w-full p-2.5 bg-zinc-900 rounded-full shadow-[0_15px_30px_rgba(0,0,0,0.15)] active:scale-95 transition-all duration-300 overflow-hidden border border-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                <a href="{{ profile.cv_file.url }}" target="_blank" aria-label="View Resume" class="group relative flex items-center justify-between w-full p-2.5 bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-full shadow-[0_15px_30px_rgba(10,102,194,0.25)] active:scale-95 transition-all duration-300 overflow-hidden border border-blue-500">
                     <div class="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
-                        <div class="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transition-all duration-[1.2s] group-active:left-[200%]"></div>
+                        <div class="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-[1.2s] group-active:left-[200%]"></div>
                     </div>
                     <div class="relative z-10 pl-6 flex items-center gap-3">
-                        <i data-lucide="file-text" class="w-4 h-4 text-zinc-400 transition-colors group-hover:text-white"></i>
-                        <span class="text-[12px] font-extrabold text-white uppercase tracking-[0.25em] mt-0.5">View Resumé</span>
+                        <i data-lucide="file-text" class="w-4 h-4 text-blue-100 transition-colors group-hover:text-white"></i>
+                        <span class="text-[12px] font-black text-white uppercase tracking-[0.2em] mt-0.5">View Resumé</span>
                     </div>
-                    <div class="relative z-10 w-12 h-12 bg-white text-zinc-900 rounded-full flex items-center justify-center transition-transform duration-300 group-active:bg-zinc-200">
+                    <div class="relative z-10 w-12 h-12 bg-white text-[#0A66C2] rounded-full flex items-center justify-center transition-transform duration-300 shadow-sm">
                         <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
                     </div>
                 </a>
@@ -271,52 +272,52 @@
             {% endif %}
         </section>
 
-        <!-- MOBILE NAVIGATION -->
-        <div class="sticky top-16 z-50 mb-12 mt-12 bg-[#FAFAFA]/80 backdrop-blur-xl py-4 -mx-5 px-5 border-b border-t border-zinc-200/50 shadow-[0_10px_30px_rgb(0,0,0,0.02)]">
+        <!-- MOBILE NAVIGATION (Glass) -->
+        <div class="sticky top-[4.5rem] z-50 mb-12 mt-12 bg-[#F4F7FA]/85 backdrop-blur-xl py-4 -mx-5 px-5 border-b border-t border-slate-200/80 shadow-sm">
             <nav class="overflow-x-auto no-scrollbar horizontal-mask flex gap-3 pb-1 pr-10 nav-scroll-link">
-                {% if profile.bio_narrative %}<a href="#about-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">About</a>{% endif %}
-                {% if live_opportunities %}<a href="#signals-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Signals</a>{% endif %}
-                {% if projects %}<a href="#works-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Works</a>{% endif %}
-                {% if experiences %}<a href="#exp-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Exp</a>{% endif %}
-                {% if skills %}<a href="#skills-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Skills</a>{% endif %}
+                {% if profile.bio_narrative %}<a href="#about-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">About</a>{% endif %}
+                {% if live_opportunities %}<a href="#signals-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Signals</a>{% endif %}
+                {% if projects %}<a href="#works-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Works</a>{% endif %}
+                {% if experiences %}<a href="#exp-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Exp</a>{% endif %}
+                {% if skills %}<a href="#skills-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Skills</a>{% endif %}
 
                 {% if content_posts %}
-                <a href="#goals-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Goal</a>
-                <a href="#thoughts-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Thoughts</a>
-                <a href="#progress-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Progress</a>
+                <a href="#goals-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-blue-200/90 bg-blue-50/80 backdrop-blur-md text-[#0A66C2] text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Goal</a>
+                <a href="#thoughts-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Thoughts</a>
+                <a href="#progress-mobile" class="dynamic-nav shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Progress</a>
                 {% endif %}
 
-                <a href="#contact-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-zinc-200 bg-white text-zinc-700 text-[12px] font-extrabold uppercase tracking-[0.2em] focus-visible:ring-2 focus-visible:ring-black focus-visible:outline-none">Contact</a>
+                <a href="#contact-mobile" class="shrink-0 px-6 py-2.5 rounded-full border border-slate-200/90 bg-white/80 backdrop-blur-md text-slate-700 text-[11px] font-black uppercase tracking-[0.15em] shadow-sm">Contact</a>
             </nav>
         </div>
 
-        <!-- SECTIONS (High-End Editorial) -->
+        <!-- SECTIONS -->
         <div class="space-y-16">
 
             <!-- 1. ABOUT ME -->
             {% if profile.bio_narrative %}
             <section id="about-mobile" class="scroll-mt-36 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-6 tracking-tight">About Me</h2>
-                <div class="text-[16px] text-zinc-700 leading-[1.8] text-left whitespace-pre-line font-medium">{{ profile.bio_narrative }}</div>
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
+                <div class="text-[15.5px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium">{{ profile.bio_narrative }}</div>
             </section>
             {% endif %}
 
             <!-- 2. LIVE SIGNALS -->
             {% if live_opportunities %}
-            <section id="signals-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-zinc-900 animate-pulse"></div> Signals
+            <section id="signals-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-[#0A66C2] animate-pulse shadow-[0_0_10px_rgba(10,102,194,0.6)]"></div> Signals
                 </h2>
                 <div class="space-y-6">
                     {% for opp in live_opportunities %}
-                    <article class="p-8 bg-white border border-zinc-200/80 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] card-hover-premium">
+                    <article class="p-8 glass-card-premium rounded-[2rem]">
                         <div class="relative z-20">
                             <div class="flex justify-between items-start mb-5">
-                                <span class="px-4 py-1.5 bg-zinc-50 border border-zinc-200 text-zinc-900 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ opp.get_request_type_display }}</span>
-                                {% if opp.expires_at %}<span class="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
+                                <span class="px-4 py-1.5 bg-blue-50 border border-blue-100 text-[#0A66C2] text-[10px] font-black uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
+                                {% if opp.expires_at %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
                             </div>
-                            <h3 class="text-[20px] font-bold text-zinc-900 mb-3">{{ opp.title }}</h3>
-                            <p class="text-[15px] text-zinc-600 leading-[1.8] text-left">{{ opp.details }}</p>
+                            <h3 class="text-[20px] font-bold text-slate-900 mb-3">{{ opp.title }}</h3>
+                            <p class="text-[15px] text-slate-600 leading-[1.8] text-left">{{ opp.details }}</p>
                         </div>
                     </article>
                     {% endfor %}
@@ -326,23 +327,23 @@
 
             <!-- 3. SELECTED WORKS -->
             {% if projects %}
-            <section id="works-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Selected Works</h2>
+            <section id="works-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Selected Works</h2>
                 <div class="space-y-16">
                     {% for project in projects %}
                     <article class="group">
                         {% if project.gallery.count == 0 %}
-                            <div class="w-full bg-white border border-zinc-200 rounded-[2rem] p-8 mb-6 shadow-sm card-hover-premium">
-                                <div class="w-14 h-14 bg-zinc-50 rounded-full flex items-center justify-center border border-zinc-200 mb-5 relative z-20">
-                                    <i data-lucide="layout" class="w-6 h-6 text-zinc-500"></i>
+                            <div class="w-full glass-card-premium rounded-[2rem] p-8 mb-6">
+                                <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 mb-5 relative z-20">
+                                    <i data-lucide="layout" class="w-6 h-6 text-[#0A66C2]"></i>
                                 </div>
-                                <h3 class="text-[22px] font-bold text-zinc-900 relative z-20">{{ project.title }}</h3>
+                                <h3 class="text-[22px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
                             </div>
                         {% elif project.gallery.count == 1 %}
-                            <div class="w-full aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative bg-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-zinc-200/50">
+                            <div class="w-full aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-[0_10px_30px_rgba(15,23,42,0.1)] border border-slate-200/80">
                                 <img src="{{ project.gallery.first.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                 {% if project.gallery.first.caption %}
-                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-[12px] p-6 pt-16 truncate font-medium tracking-wide">
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] p-6 pt-16 truncate font-medium tracking-wide">
                                     {{ project.gallery.first.caption }}
                                 </div>
                                 {% endif %}
@@ -350,39 +351,39 @@
                         {% else %}
                             <div class="w-full flex overflow-x-auto snap-x snap-mandatory gallery-scroll gap-4 mb-2 -mx-5 px-5 pb-4">
                                 {% for img in project.gallery.all %}
-                                <div class="shrink-0 w-[85%] sm:w-[70%] aspect-[4/3] rounded-[2rem] overflow-hidden snap-center relative bg-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-zinc-200/50 group/img">
+                                <div class="shrink-0 w-[85%] sm:w-[70%] aspect-[4/3] rounded-[2rem] overflow-hidden snap-center relative bg-slate-100 shadow-[0_10px_30px_rgba(15,23,42,0.1)] border border-slate-200/80 group/img">
                                     <img src="{{ img.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1s] group-hover/img:scale-105">
                                     {% if img.caption %}
-                                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-[12px] p-6 pt-16 truncate font-medium tracking-wide">
+                                    <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] p-6 pt-16 truncate font-medium tracking-wide">
                                         {{ img.caption }}
                                     </div>
                                     {% endif %}
                                 </div>
                                 {% endfor %}
                             </div>
-                            <div class="text-center text-[10px] font-extrabold text-zinc-500 uppercase tracking-[0.2em] mb-6 flex items-center justify-center gap-1 opacity-70">
+                            <div class="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-6 flex items-center justify-center gap-1 opacity-80">
                                 Swipe to see more <i data-lucide="arrow-right" class="w-3 h-3"></i>
                             </div>
                         {% endif %}
 
                         <div>
                             {% if project.gallery.count > 0 %}
-                            <h3 class="text-[24px] font-bold text-zinc-900 mb-4">{{ project.title }}</h3>
+                            <h3 class="text-[24px] font-bold text-slate-900 mb-4">{{ project.title }}</h3>
                             {% endif %}
 
-                            <div class="flex flex-wrap items-center gap-2 mb-4 text-[11px] font-extrabold text-zinc-600 uppercase tracking-[0.2em]">
-                                {% if project.role %}<span class="px-3 py-1 bg-zinc-100 rounded-md">{{ project.role }}</span>{% endif %}
-                                {% if project.client_name %}<span class="px-3 py-1 border border-zinc-200 rounded-md">Client: {{ project.client_name }}</span>{% endif %}
+                            <div class="flex flex-wrap items-center gap-2 mb-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                                {% if project.role %}<span class="px-3 py-1 bg-white border border-slate-200 rounded-md shadow-sm">{{ project.role }}</span>{% endif %}
+                                {% if project.client_name %}<span class="px-3 py-1 bg-white border border-slate-200 rounded-md shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
                             </div>
 
-                            <div class="text-[15px] text-zinc-700 leading-[1.8] space-y-4 mb-6 text-left">
+                            <div class="text-[15px] text-slate-600 leading-[1.8] space-y-4 mb-6 text-left">
                                 {% if project.main_description %}<p>{{ project.main_description }}</p>{% endif %}
                                 {% if project.problem_statement %}<p>{{ project.problem_statement }}</p>{% endif %}
                                 {% if project.solution_narrative %}<p>{{ project.solution_narrative }}</p>{% endif %}
                             </div>
 
                             {% if project.link %}
-                            <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-extrabold text-zinc-900 uppercase tracking-[0.2em] border-b-2 border-zinc-900 pb-1.5 transition-all active:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
+                            <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-black text-[#0A66C2] uppercase tracking-[0.15em] border-b-2 border-[#0A66C2] pb-1.5 transition-all active:opacity-50">
                                 View Full Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                             </a>
                             {% endif %}
@@ -395,23 +396,23 @@
 
             <!-- 4. EXPERIENCE -->
             {% if experiences %}
-            <section id="exp-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Experience</h2>
-                <div class="space-y-14 border-l-[3px] border-zinc-200 ml-3 pl-8">
+            <section id="exp-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Experience</h2>
+                <div class="space-y-14 border-l-[3px] border-slate-200 ml-3 pl-8">
                     {% for exp in experiences %}
                     <article class="relative">
                         <!-- Node -->
-                        <div class="absolute -left-[45px] top-1.5 w-5 h-5 bg-white border-[4px] {% if forloop.first %}border-zinc-900{% else %}border-zinc-300{% endif %} rounded-full ring-4 ring-[#FAFAFA]"></div>
+                        <div class="absolute -left-[45px] top-1.5 w-5 h-5 bg-white border-[4px] {% if forloop.first %}border-[#0A66C2] shadow-[0_0_10px_rgba(10,102,194,0.3)]{% else %}border-slate-300{% endif %} rounded-full ring-4 ring-[#F4F7FA]"></div>
 
                         <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="text-[12px] font-bold text-zinc-600 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
-                            <span class="px-3 py-1 border border-zinc-200 text-zinc-600 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ exp.get_location_type_display }}</span>
+                            <span class="text-[12px] font-bold text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
+                            <span class="px-3 py-1 border border-slate-200 text-slate-600 text-[9px] font-black uppercase tracking-[0.15em] rounded-md bg-white shadow-sm">{{ exp.get_location_type_display }}</span>
                         </div>
 
-                        <h4 class="text-[20px] font-bold text-zinc-900 mb-1">{{ exp.role_title }}</h4>
-                        <h5 class="text-[14px] font-bold text-zinc-600 mb-4">{{ exp.company_name }}</h5>
+                        <h4 class="text-[20px] font-bold text-slate-900 mb-1">{{ exp.role_title }}</h4>
+                        <h5 class="text-[14px] font-bold text-[#0A66C2] mb-4">{{ exp.company_name }}</h5>
                         {% if exp.description %}
-                        <p class="text-[15px] text-zinc-600 leading-[1.8] whitespace-pre-line text-left">{{ exp.description }}</p>
+                        <p class="text-[15px] text-slate-600 leading-[1.8] whitespace-pre-line text-left">{{ exp.description }}</p>
                         {% endif %}
                     </article>
                     {% endfor %}
@@ -421,22 +422,22 @@
 
             <!-- 5. CORE SKILLS -->
             {% if skills %}
-            <section id="skills-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Core Skills</h2>
+            <section id="skills-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Core Skills</h2>
                 <div class="space-y-10">
                     {% for skill in skills %}
                     <article>
                         <div class="flex justify-between items-end mb-4">
-                            <span class="text-[16px] font-bold text-zinc-900">{{ skill.name }}</span>
-                            <span class="text-[11px] text-zinc-500 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_status_display }}</span>
+                            <span class="text-[16px] font-bold text-slate-900">{{ skill.name }}</span>
+                            <span class="text-[10px] text-[#0A66C2] font-black uppercase tracking-[0.15em]">{{ skill.get_status_display }}</span>
                         </div>
                         {% if skill.progress_bar %}
-                        <div class="h-1.5 w-full bg-zinc-200 mb-4 rounded-full overflow-hidden shadow-inner">
-                            <div class="h-full bg-zinc-900 rounded-full transition-all duration-[1.5s] ease-out" style="width: {{ skill.progress_bar }}%"></div>
+                        <div class="h-1.5 w-full bg-slate-200/80 mb-4 rounded-full overflow-hidden shadow-inner">
+                            <div class="h-full bg-gradient-to-r from-[#0A66C2] to-blue-500 rounded-full transition-all duration-[1.5s] ease-out" style="width: {{ skill.progress_bar }}%"></div>
                         </div>
                         {% endif %}
                         {% if skill.context %}
-                        <p class="text-[14px] text-zinc-600 font-serif-pc italic tracking-wide">"{{ skill.context }}"</p>
+                        <p class="text-[14px] text-slate-500 font-serif-pc italic tracking-wide">"{{ skill.context }}"</p>
                         {% endif %}
                     </article>
                     {% endfor %}
@@ -446,32 +447,32 @@
 
             <!-- 6. CREDENTIALS -->
             {% if credentials %}
-            <section id="certs-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Credentials</h2>
+            <section id="certs-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Credentials</h2>
                 <div class="space-y-8">
                     {% for cred in credentials %}
-                    <article class="p-8 bg-white border border-zinc-200/80 rounded-[2rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] card-hover-premium">
+                    <article class="p-8 glass-card-premium rounded-[2rem]">
                         <div class="relative z-20">
                             <div class="flex flex-wrap items-center gap-3 mb-6">
-                                <span class="px-4 py-1.5 bg-zinc-50 border border-zinc-200 text-zinc-700 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ cred.issuer }}</span>
-                                {% if cred.issue_date %}<span class="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
+                                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-black uppercase tracking-[0.15em] rounded-lg shadow-sm">{{ cred.issuer }}</span>
+                                {% if cred.issue_date %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
                             </div>
 
-                            <h4 class="text-[20px] font-bold text-zinc-900 mb-4 leading-snug">{{ cred.title }}</h4>
+                            <h4 class="text-[20px] font-bold text-slate-900 mb-4 leading-snug">{{ cred.title }}</h4>
 
                             {% if cred.reflection %}
-                            <p class="text-[15px] text-zinc-600 mb-6 leading-[1.8]">{{ cred.reflection }}</p>
+                            <p class="text-[15px] text-slate-600 mb-6 leading-[1.8]">{{ cred.reflection }}</p>
                             {% endif %}
 
                             {% if cred.key_takeaways %}
-                            <div class="bg-zinc-50 p-5 rounded-2xl mb-8 border border-zinc-100">
-                                <span class="block text-[11px] font-extrabold text-zinc-500 uppercase tracking-[0.2em] mb-2">Key Takeaway</span>
-                                <p class="text-[14px] text-zinc-700 italic font-serif-pc">"{{ cred.key_takeaways }}"</p>
+                            <div class="bg-blue-50/50 p-5 rounded-2xl mb-8 border border-blue-100/50">
+                                <span class="block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.15em] mb-2">Key Takeaway</span>
+                                <p class="text-[14px] text-slate-700 italic font-serif-pc">"{{ cred.key_takeaways }}"</p>
                             </div>
                             {% endif %}
 
                             {% if cred.url_link or cred.file_upload %}
-                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-extrabold text-zinc-900 uppercase tracking-[0.2em] border-b border-zinc-300 hover:border-zinc-900 pb-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
+                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-black text-[#0A66C2] uppercase tracking-[0.15em] border-b border-blue-200 hover:border-[#0A66C2] pb-1.5 transition-all">
                                 View Proof <i data-lucide="external-link" class="w-4 h-4"></i>
                             </a>
                             {% endif %}
@@ -487,20 +488,22 @@
             =========================================== -->
             {% if content_posts %}
 
-            <!-- A. GOALS (Vision Block) -->
-            <section id="goals-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">My Goal</h2>
+            <!-- A. GOALS (Vision Block - DARK PREMIUM) -->
+            <section id="goals-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">My Goal</h2>
                 <div class="space-y-6">
                     {% for post in content_posts %}
                         {% if post.post_type == 'VISION_BLOCK' %}
-                        <article class="p-8 bg-zinc-900 rounded-[2rem] shadow-xl text-white relative overflow-hidden">
-                            <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] font-serif-pc leading-none text-white select-none">"</div>
+                        <article class="p-8 bg-[#0f172a] rounded-[2rem] shadow-xl text-white relative overflow-hidden">
+                            <!-- Subtle blue glow behind text -->
+                            <div class="absolute -top-20 -right-20 w-64 h-64 bg-blue-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+                            <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] font-serif-pc leading-none text-white select-none pointer-events-none">"</div>
                             <div class="relative z-10">
-                                <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-white text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-4">Vision</span>
+                                <span class="inline-block px-3 py-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.15em] rounded-md mb-4 shadow-sm">Vision</span>
                                 <h3 class="text-[24px] font-serif-pc font-bold mb-4 leading-tight">{{ post.title }}</h3>
-                                <p class="text-[15px] text-zinc-300 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
+                                <p class="text-[15px] text-slate-300 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
                                 {% if post.media_proof %}
-                                <div class="mt-6 rounded-xl overflow-hidden border border-white/10">
+                                <div class="mt-6 rounded-xl overflow-hidden border border-slate-700">
                                     <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover">
                                 </div>
                                 {% endif %}
@@ -511,23 +514,22 @@
                 </div>
             </section>
 
-            <!-- B. THOUGHTS (Essays - NO LINE CLAMP) -->
-            <section id="thoughts-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Industry Thoughts</h2>
+            <!-- B. THOUGHTS (Essays) -->
+            <section id="thoughts-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Industry Thoughts</h2>
                 <div class="space-y-8">
                     {% for post in content_posts %}
                         {% if post.post_type == 'ESSAY' %}
-                        <article class="bg-white border border-zinc-200 rounded-[2rem] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col">
+                        <article class="glass-card-premium rounded-[2rem] overflow-hidden flex flex-col">
                             {% if post.media_proof %}
-                            <div class="h-48 w-full bg-zinc-100 relative border-b border-zinc-100">
+                            <div class="h-48 w-full bg-slate-100 relative border-b border-slate-200/80">
                                 <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
                             </div>
                             {% endif %}
                             <div class="p-8 flex-1 flex flex-col">
-                                <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-[0.2em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
-                                <h3 class="text-[20px] font-bold text-zinc-900 mb-3">{{ post.title }}</h3>
-                                <!-- REMOVED line-clamp-4, ADDED whitespace-pre-line so full text is readable with paragraphs -->
-                                <p class="text-[15px] text-zinc-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
+                                <h3 class="text-[20px] font-bold text-slate-900 mb-3">{{ post.title }}</h3>
+                                <p class="text-[15px] text-slate-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
                             </div>
                         </article>
                         {% endif %}
@@ -536,21 +538,21 @@
             </section>
 
             <!-- C. PROGRESS (Growth Logs) -->
-            <section id="progress-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Daily Progress</h2>
-                <div class="space-y-12 border-l-[3px] border-zinc-200 ml-3 pl-8">
+            <section id="progress-mobile" class="content-section-wrapper scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Daily Progress</h2>
+                <div class="space-y-12 border-l-[3px] border-slate-200 ml-3 pl-8">
                     {% for post in content_posts %}
                         {% if post.post_type != 'VISION_BLOCK' and post.post_type != 'ESSAY' %}
                         <article class="relative">
-                            <div class="absolute -left-[45px] top-1.5 w-5 h-5 bg-white border-[4px] border-zinc-300 rounded-full ring-4 ring-[#FAFAFA]"></div>
+                            <div class="absolute -left-[45px] top-1.5 w-5 h-5 bg-white border-[4px] border-[#0A66C2] rounded-full ring-4 ring-[#F4F7FA]"></div>
                             <div class="flex flex-wrap items-center gap-3 mb-4">
-                                <span class="text-[12px] font-bold text-zinc-600 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
-                                <span class="px-3 py-1 border border-zinc-200 text-zinc-600 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
+                                <span class="text-[12px] font-bold text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
+                                <span class="px-3 py-1 border border-slate-200 text-[#0A66C2] text-[9px] font-black uppercase tracking-[0.15em] rounded-md bg-blue-50 shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
                             </div>
-                            <h4 class="text-[20px] font-bold text-zinc-900 mb-3">{{ post.title }}</h4>
-                            <p class="text-[15px] text-zinc-600 mb-6 leading-[1.8] whitespace-pre-line text-left">{{ post.content }}</p>
+                            <h4 class="text-[20px] font-bold text-slate-900 mb-3">{{ post.title }}</h4>
+                            <p class="text-[15px] text-slate-600 mb-6 leading-[1.8] whitespace-pre-line text-left">{{ post.content }}</p>
                             {% if post.media_proof %}
-                            <div class="rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200/50 shadow-sm">
+                            <div class="rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/80 shadow-sm">
                                 <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full h-56 object-cover img-hover-zoom">
                             </div>
                             {% endif %}
@@ -563,21 +565,21 @@
             {% endif %}
 
             <!-- 8. CONTACT & CONNECT -->
-            <section id="contact-mobile" class="scroll-mt-36 pt-10 border-t border-zinc-200/60 reveal-on-scroll">
-                <h2 class="text-[32px] font-serif-pc font-bold text-zinc-900 mb-10 tracking-tight">Connect</h2>
+            <section id="contact-mobile" class="scroll-mt-36 pt-10 border-t border-slate-200/80 reveal-on-scroll">
+                <h2 class="text-[32px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">Connect</h2>
 
                 <div class="space-y-12">
                     <div class="grid gap-4">
                         {% if request.user == user %}
                             {% if contact_methods %}
                             <div class="flex items-center gap-2 mb-2">
-                                <i data-lucide="lock" class="w-3.5 h-3.5 text-zinc-500"></i>
-                                <span class="text-[11px] font-extrabold text-zinc-600 uppercase tracking-[0.15em]">Private (Only visible to you)</span>
+                                <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.1em]">Private (Only visible to you)</span>
                             </div>
                             {% for method in contact_methods %}
-                            <div class="flex items-center gap-5 py-4 px-4 bg-white border border-zinc-200/80 rounded-[1.5rem] shadow-sm text-[15px] font-medium text-zinc-800 card-hover-premium">
-                                <div class="w-10 h-10 rounded-full bg-zinc-50 border border-zinc-200 flex items-center justify-center shrink-0 relative z-20">
-                                    <i data-lucide="{{ method.icon_name }}" class="w-5 h-5 text-zinc-600"></i>
+                            <div class="flex items-center gap-5 py-4 px-4 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm text-[15px] font-medium text-slate-800">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 relative z-20">
+                                    <i data-lucide="{{ method.icon_name }}" class="w-5 h-5 text-[#0A66C2]"></i>
                                 </div>
                                 <span class="break-all relative z-20">{{ method.value }}</span>
                             </div>
@@ -585,37 +587,37 @@
                             {% endif %}
                         {% else %}
                             <div class="flex items-center gap-2 mb-2">
-                                <i data-lucide="lock" class="w-3.5 h-3.5 text-zinc-500"></i>
-                                <span class="text-[11px] font-extrabold text-zinc-600 uppercase tracking-[0.15em]">Contact Information</span>
+                                <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.1em]">Contact Information</span>
                             </div>
 
-                            <div class="relative overflow-hidden rounded-[1.5rem] border border-zinc-200/80 bg-white shadow-sm p-6 flex flex-col items-center justify-center min-h-[160px]">
+                            <div class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/80 bg-white shadow-sm p-6 flex flex-col items-center justify-center min-h-[160px]">
                                 <div class="absolute inset-0 flex flex-col gap-4 p-5 blur-[6px] opacity-30 pointer-events-none select-none">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-full bg-zinc-500 shrink-0"></div>
-                                        <div class="h-4 bg-zinc-500 rounded w-3/4"></div>
+                                        <div class="w-10 h-10 rounded-full bg-slate-500 shrink-0"></div>
+                                        <div class="h-4 bg-slate-500 rounded w-3/4"></div>
                                     </div>
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-full bg-zinc-500 shrink-0"></div>
-                                        <div class="h-4 bg-zinc-500 rounded w-1/2"></div>
+                                        <div class="w-10 h-10 rounded-full bg-slate-500 shrink-0"></div>
+                                        <div class="h-4 bg-slate-500 rounded w-1/2"></div>
                                     </div>
                                 </div>
 
                                 <div class="relative z-10 flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center mb-3 border border-zinc-200 shadow-sm">
-                                        <i data-lucide="lock" class="w-5 h-5 text-zinc-600"></i>
+                                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-3 border border-blue-100 shadow-sm">
+                                        <i data-lucide="lock" class="w-5 h-5 text-[#0A66C2]"></i>
                                     </div>
-                                    <h3 class="text-[18px] font-bold text-zinc-900 mb-2">Contact Info Locked</h3>
+                                    <h3 class="text-[18px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
 
                                     {% if not request.user.is_authenticated %}
-                                        <p class="text-[13px] text-zinc-600 font-medium">
-                                            <a href="{% url 'login' %}?next={{ request.path }}" class="text-zinc-900 font-bold border-b border-zinc-400 hover:border-zinc-900 transition-colors pb-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Login</a> to CoreLink to collaborate.
+                                        <p class="text-[13px] text-slate-600 font-medium">
+                                            <a href="{% url 'login' %}?next={{ request.path }}" class="text-[#0A66C2] font-bold border-b border-blue-300 hover:border-[#0A66C2] transition-colors pb-0.5">Login</a> to CoreLink to collaborate.
                                         </p>
                                     {% else %}
-                                        <p class="text-[13px] text-zinc-600 font-medium mb-4">
+                                        <p class="text-[13px] text-slate-600 font-medium mb-4">
                                             Reach out directly to connect.
                                         </p>
-                                        <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-zinc-900 text-white text-[12px] font-extrabold uppercase tracking-[0.2em] rounded-full hover:bg-black transition-all active:scale-95 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                                        <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white text-[12px] font-black uppercase tracking-[0.15em] rounded-full shadow-[0_8px_20px_rgba(10,102,194,0.3)] transition-all active:scale-95">
                                             <i data-lucide="message-circle" class="w-4 h-4"></i> Send Message
                                         </a>
                                     {% endif %}
@@ -626,16 +628,17 @@
 
                     {% if social_links %}
                     <div>
-                        <span class="text-[11px] font-extrabold text-zinc-500 uppercase tracking-[0.2em] mb-5 block">Digital Presence</span>
+                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] mb-5 block">Digital Presence</span>
                         <div class="flex flex-col gap-4">
                             {% for link in social_links %}
-                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-zinc-900 rounded-[1.5rem] shadow-[0_10px_30px_rgb(0,0,0,0.15)] transition-all active:scale-95 group overflow-hidden relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
-                                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm hover:border-blue-200 hover:shadow-md transition-all active:scale-95 group overflow-hidden relative">
                                 <div class="flex items-center gap-4 relative z-10">
-                                    <i data-lucide="{{ link.icon_slug }}" class="w-5 h-5 text-white"></i>
-                                    <span class="text-[15px] font-bold text-white">{{ link.platform_name }}</span>
+                                    <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                                        <i data-lucide="{{ link.icon_slug }}" class="w-4.5 h-4.5 text-slate-600 group-hover:text-[#0A66C2]"></i>
+                                    </div>
+                                    <span class="text-[15px] font-bold text-slate-800 group-hover:text-[#0A66C2]">{{ link.platform_name }}</span>
                                 </div>
-                                <i data-lucide="arrow-up-right" class="w-5 h-5 text-zinc-400 relative z-10"></i>
+                                <i data-lucide="arrow-up-right" class="w-5 h-5 text-slate-400 group-hover:text-[#0A66C2] relative z-10"></i>
                             </a>
                             {% endfor %}
                         </div>
@@ -645,9 +648,9 @@
             </section>
 
             <!-- Mobile Footer -->
-            <footer class="text-center pt-16 pb-12 border-t border-zinc-200/60 reveal-on-scroll">
-                <p class="text-[11px] font-extrabold text-zinc-500 tracking-[0.2em] uppercase">
-                    CoreLink Profile <br><span class="text-zinc-900 text-[12px] mt-2 block">{{ user.display_name }}</span>
+            <footer class="text-center pt-16 pb-12 border-t border-slate-200/80 reveal-on-scroll">
+                <p class="text-[10px] font-black text-slate-400 tracking-[0.15em] uppercase">
+                    CoreLink Profile <br><span class="text-slate-700 text-[12px] mt-2 block">{{ user.display_name }}</span>
                 </p>
             </footer>
         </div>
@@ -656,9 +659,9 @@
 
 <!-- =========================================================================
      PART 2: PC VIEW (UNIFIED SCROLL ARCHITECTURE)
-     (High-Contrast Personal Portfolio Style)
+     (Premium Glassmorphism + Editorial Typography)
 ========================================================================== -->
-<div class="hidden lg:block min-h-screen pc-bg-mesh text-charcoal font-sans-pc selection:bg-black selection:text-white pt-32 pb-24 opacity-0 animate-fade-in">
+<div class="hidden lg:block min-h-screen pc-bg-mesh text-slate-900 font-main selection:bg-[#0A66C2] selection:text-white pt-32 pb-24 opacity-0 animate-fade-in">
     <div class="max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 w-full">
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24 items-start">
@@ -668,24 +671,30 @@
                 <div class="flex flex-col gap-10 pb-10 opacity-0 animate-fade-up">
 
                     <!-- INTEGRATED PREMIUM IDENTITY CARD -->
-                    <div class="bg-white border border-gray-200/80 rounded-[2.5rem] shadow-[0_15px_40px_rgb(0,0,0,0.04)] overflow-hidden transition-all duration-[1s] hover:shadow-[0_30px_60px_rgb(0,0,0,0.08)] group">
+                    <div class="glass-card-premium rounded-[2.5rem] overflow-hidden group">
 
                         <!-- Cover Image Top Half -->
-                        <div class="w-full bg-gray-100 flex items-center justify-center overflow-hidden h-[220px] xl:h-[260px] relative z-10">
-                            <img src="{{ user.get_cover_image_url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105">
+                        <div class="w-full bg-slate-50 flex items-center justify-center overflow-hidden h-[220px] xl:h-[260px] relative z-10 border-b border-slate-200/80">
+                            {% if user.cover_image %}
+                                <img src="{{ user.get_cover_image_url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105">
+                            {% else %}
+                                <div class="w-full h-full bg-gradient-to-tr from-blue-50 via-slate-50 to-indigo-50 relative bg-pan transition-transform duration-[1.5s] group-hover:scale-105">
+                                    <div class="absolute inset-0 bg-[linear-gradient(to_right,#0A66C20a_1px,transparent_1px),linear-gradient(to_bottom,#0A66C20a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <!-- Content Bottom Half -->
                         <div class="px-8 pb-10 relative z-20">
 
-                            <!-- Avatar (Overlapping the Cover) -->
+                            <!-- Avatar -->
                             <div class="-mt-16 mb-5 relative z-30">
-                                <div class="h-32 w-32 rounded-[1.5rem] p-1.5 bg-white shadow-[0_10px_25px_rgb(0,0,0,0.15)] transition-transform duration-500 hover:-translate-y-1 hover:scale-105 border border-gray-100">
-                                    <div class="w-full h-full rounded-[1.1rem] overflow-hidden bg-gray-100">
+                                <div class="h-32 w-32 rounded-[1.5rem] p-1.5 bg-white shadow-[0_15px_40px_rgba(15,23,42,0.12)] transition-transform duration-500 hover:-translate-y-1 hover:scale-105 border border-slate-200">
+                                    <div class="w-full h-full rounded-[1.1rem] overflow-hidden bg-slate-50">
                                         {% if user.avatar %}
                                         <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}" class="w-full h-full object-cover">
                                         {% else %}
-                                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-[3.5rem] font-serif-pc font-bold bg-gray-50">
+                                        <div class="w-full h-full flex items-center justify-center text-[#0A66C2] text-[3.5rem] font-serif-pc font-bold bg-blue-50">
                                             {{ user.display_name|slice:":1" }}
                                         </div>
                                         {% endif %}
@@ -695,24 +704,24 @@
 
                             <!-- Text Info -->
                             <div>
-                                <h1 class="text-[2.5rem] leading-[1.1] font-extrabold tracking-tight text-black mb-3">{{ user.display_name }}</h1>
-                                <p class="text-[16px] text-gray-600 font-medium mb-6 flex flex-wrap items-center gap-3">
+                                <h1 class="text-[2.5rem] leading-[1.1] font-serif-pc font-extrabold tracking-tight text-slate-900 mb-3">{{ user.display_name }}</h1>
+                                <p class="text-[15px] font-heading font-black text-[#0A66C2] tracking-[0.1em] uppercase mb-6 flex flex-wrap items-center gap-3">
                                     <span>{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}</span>
                                     {% if profile.field_of_interest %}
-                                    <span class="px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.2em] bg-gray-50 border border-gray-200 text-gray-700 rounded-md shadow-sm">{{ profile.field_of_interest }}</span>
+                                    <span class="px-3 py-1.5 text-[10px] bg-blue-50 border border-blue-100 text-[#0A66C2] rounded-md shadow-sm">{{ profile.field_of_interest }}</span>
                                     {% endif %}
                                 </p>
 
                                 <!-- Operational Status -->
                                 <div class="flex flex-wrap gap-3 mb-8">
                                      {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                                     <span class="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg border border-gray-200 text-[11px] font-extrabold text-black uppercase tracking-[0.2em]">
+                                     <span class="inline-flex items-center px-4 py-2 bg-white rounded-lg border border-slate-200 text-[10px] font-black text-slate-700 uppercase tracking-[0.15em] shadow-sm">
                                         {{ profile.get_current_search_display }}
                                      </span>
                                      {% endif %}
 
                                      {% if profile.collaboration_status %}
-                                     <span class="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg border border-gray-200 text-[11px] font-extrabold text-gray-900 uppercase tracking-[0.2em]">
+                                     <span class="inline-flex items-center px-4 py-2 bg-emerald-50 rounded-lg border border-emerald-100 text-[10px] font-black text-emerald-700 uppercase tracking-[0.15em] shadow-sm">
                                         {{ profile.get_collaboration_status_display }}
                                      </span>
                                      {% endif %}
@@ -721,18 +730,18 @@
                                 <!-- PC CTA: RESUME BUTTON -->
                                 {% if profile.cv_file %}
                                 <div class="mt-8">
-                                    <a href="{{ profile.cv_file.url }}" target="_blank" aria-label="View Resume" class="magnetic-btn group relative flex items-center justify-between w-full p-3 bg-black rounded-[2rem] shadow-[0_15px_35px_rgba(0,0,0,0.15)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] transition-all duration-500 border border-gray-800 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                                    <a href="{{ profile.cv_file.url }}" target="_blank" aria-label="View Resume" class="magnetic-btn group relative flex items-center justify-between w-full p-3 bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-[2rem] shadow-[0_15px_40px_rgba(10,102,194,0.3)] hover:shadow-[0_20px_50px_rgba(10,102,194,0.4)] transition-all duration-500 overflow-hidden">
                                         <!-- Subtle Shine Overlay -->
                                         <div class="absolute inset-0 overflow-hidden rounded-[2rem] pointer-events-none">
-                                            <div class="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transition-all duration-[1.2s] group-hover:left-[200%]"></div>
+                                            <div class="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transition-all duration-[1.2s] group-hover:left-[200%]"></div>
                                         </div>
 
                                         <div class="relative z-10 pl-6 flex items-center gap-4">
-                                            <i data-lucide="file-text" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-white"></i>
-                                            <span class="text-[13px] font-extrabold text-white uppercase tracking-[0.25em] mt-0.5">View Resumé</span>
+                                            <i data-lucide="file-text" class="w-5 h-5 text-blue-100 transition-colors group-hover:text-white"></i>
+                                            <span class="text-[13px] font-black text-white uppercase tracking-[0.2em] mt-0.5">View Resumé</span>
                                         </div>
 
-                                        <div class="relative z-10 w-14 h-14 bg-white text-black rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-95">
+                                        <div class="relative z-10 w-14 h-14 bg-white text-[#0A66C2] rounded-full flex items-center justify-center transition-transform duration-500 group-hover:scale-95 shadow-sm">
                                             <i data-lucide="arrow-up-right" class="w-6 h-6 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
                                         </div>
                                     </a>
@@ -747,41 +756,41 @@
                         <!-- Institution -->
                         {% if profile.institution %}
                         <div class="mb-10 group cursor-default">
-                             <span class="text-[11px] font-extrabold text-gray-500 uppercase tracking-[0.2em] block mb-2 transition-colors group-hover:text-black">Institution</span>
-                             <p class="text-[16px] font-bold text-gray-900 transition-transform origin-left group-hover:scale-[1.02]">{{ profile.institution }}</p>
+                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-2 transition-colors group-hover:text-[#0A66C2]">Institution</span>
+                             <p class="text-[16px] font-bold text-slate-900 transition-transform origin-left group-hover:scale-[1.02]">{{ profile.institution }}</p>
                         </div>
                         {% endif %}
 
                         <!-- Right Now -->
                         {% if profile.current_mission or profile.right_now %}
                         <div class="mb-12 group cursor-default">
-                             <span class="text-[11px] font-extrabold text-gray-500 uppercase tracking-[0.2em] block mb-4 transition-colors group-hover:text-black">Current Focus</span>
-                             <p class="text-[18px] font-serif-pc text-gray-700 italic border-l-[4px] border-black pl-6 py-1 leading-[1.7] transition-all group-hover:border-gray-600 whitespace-pre-line">"{% if profile.current_mission %}{{ profile.current_mission }}{% else %}{{ profile.right_now }}{% endif %}"</p>
+                             <span class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] block mb-4 transition-colors group-hover:text-[#0A66C2]">Current Focus</span>
+                             <p class="text-[18px] font-serif-pc text-slate-700 italic border-l-[4px] border-[#0A66C2] pl-6 py-1 leading-[1.7] transition-all group-hover:border-blue-400 whitespace-pre-line">"{% if profile.current_mission %}{{ profile.current_mission }}{% else %}{{ profile.right_now }}{% endif %}"</p>
                              {% if profile.location %}
                              <div class="mt-6 flex items-center gap-3 pl-6">
-                                  <div class="h-2 w-2 rounded-full bg-black"></div>
-                                  <span class="text-[14px] font-bold text-gray-800">{{ profile.location }}</span>
+                                  <div class="h-2 w-2 rounded-full bg-[#0A66C2]"></div>
+                                  <span class="text-[14px] font-bold text-slate-800">{{ profile.location }}</span>
                              </div>
                              {% endif %}
                         </div>
                         {% endif %}
 
                         <!-- Socials & Contact -->
-                        <div class="space-y-10 pt-10 border-t border-gray-200/80">
+                        <div class="space-y-10 pt-10 border-t border-slate-200/80">
                             {% if social_links %}
                             <div>
-                                <span class="text-[11px] font-extrabold text-gray-500 uppercase tracking-[0.2em] mb-5 block">Digital Presence</span>
+                                <span class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em] mb-5 block">Digital Presence</span>
                                 <div class="flex flex-col gap-4">
                                     {% for link in social_links %}
-                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="magnetic-btn flex items-center justify-between p-5 rounded-[1.5rem] border border-gray-200 bg-white hover:border-black hover:shadow-[0_15px_30px_rgb(0,0,0,0.08)] transition-all duration-300 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
+                                    <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="magnetic-btn flex items-center justify-between p-5 rounded-[1.5rem] border border-slate-200/90 bg-white/80 backdrop-blur-md hover:border-[#0A66C2] hover:shadow-[0_15px_30px_rgba(10,102,194,0.1)] transition-all duration-300 group">
                                         <div class="flex items-center gap-5 relative z-10">
-                                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 group-hover:bg-black group-hover:text-white transition-colors duration-300">
+                                            <div class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-[#0A66C2] group-hover:border-blue-100 transition-colors duration-300">
                                                 <i data-lucide="{{ link.icon_slug }}" class="w-5 h-5"></i>
                                             </div>
-                                            <span class="text-[16px] font-bold text-gray-800 group-hover:text-black transition-colors">{{ link.platform_name }}</span>
+                                            <span class="text-[15px] font-bold text-slate-700 group-hover:text-[#0A66C2] transition-colors">{{ link.platform_name }}</span>
                                         </div>
                                         <div class="flex items-center gap-2 relative z-10">
-                                            <i data-lucide="arrow-up-right" class="w-6 h-6 text-gray-400 group-hover:text-black transition-all group-hover:-translate-y-1 group-hover:translate-x-1"></i>
+                                            <i data-lucide="arrow-up-right" class="w-6 h-6 text-slate-300 group-hover:text-[#0A66C2] transition-all group-hover:-translate-y-1 group-hover:translate-x-1"></i>
                                         </div>
                                     </a>
                                     {% endfor %}
@@ -791,8 +800,8 @@
 
                             <div class="pb-8">
                                 <div class="flex items-center gap-2 mb-5">
-                                    <i data-lucide="lock" class="w-3.5 h-3.5 text-gray-500"></i>
-                                    <span class="text-[11px] font-extrabold text-gray-600 uppercase tracking-[0.2em] block">
+                                    <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] block">
                                         {% if request.user == user %}Private Contact Info (Only visible to you){% else %}Contact Information{% endif %}
                                     </span>
                                 </div>
@@ -801,43 +810,43 @@
                                     {% if contact_methods %}
                                     <div class="flex flex-col gap-4">
                                         {% for method in contact_methods %}
-                                        <div class="magnetic-btn flex items-center gap-5 p-5 rounded-[1.5rem] border border-gray-200 bg-white hover:border-black hover:shadow-sm transition-all duration-300 group cursor-default">
-                                            <div class="w-12 h-12 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-black group-hover:bg-black group-hover:text-white transition-colors">
+                                        <div class="magnetic-btn flex items-center gap-5 p-5 rounded-[1.5rem] border border-slate-200 bg-white/80 backdrop-blur-md hover:border-[#0A66C2] hover:shadow-sm transition-all duration-300 group cursor-default">
+                                            <div class="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0A66C2] transition-colors">
                                                 <i data-lucide="{{ method.icon_name }}" class="w-5 h-5"></i>
                                             </div>
-                                            <span class="text-[16px] font-medium text-gray-700 truncate group-hover:text-black">{{ method.value }}</span>
+                                            <span class="text-[15px] font-bold text-slate-700 truncate group-hover:text-[#0A66C2]">{{ method.value }}</span>
                                         </div>
                                         {% endfor %}
                                     </div>
                                     {% endif %}
                                 {% else %}
-                                    <div class="relative overflow-hidden rounded-[1.5rem] border border-gray-200 bg-white shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px] group transition-all duration-300 hover:shadow-md">
+                                    <div class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/90 bg-white/80 backdrop-blur-md shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px] group transition-all duration-300 hover:shadow-md hover:border-blue-200">
                                         <div class="absolute inset-0 flex flex-col gap-5 p-6 blur-[8px] opacity-40 pointer-events-none select-none transition-opacity duration-500 group-hover:opacity-50">
                                             <div class="flex items-center gap-5">
-                                                <div class="w-12 h-12 rounded-full bg-gray-500 shrink-0"></div>
-                                                <div class="h-4 bg-gray-500 rounded w-48"></div>
+                                                <div class="w-12 h-12 rounded-full bg-slate-400 shrink-0"></div>
+                                                <div class="h-4 bg-slate-400 rounded w-48"></div>
                                             </div>
                                             <div class="flex items-center gap-5">
-                                                <div class="w-12 h-12 rounded-full bg-gray-500 shrink-0"></div>
-                                                <div class="h-4 bg-gray-500 rounded w-32"></div>
+                                                <div class="w-12 h-12 rounded-full bg-slate-400 shrink-0"></div>
+                                                <div class="h-4 bg-slate-400 rounded w-32"></div>
                                             </div>
                                         </div>
 
                                         <div class="relative z-10 flex flex-col items-center text-center">
-                                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-200 shadow-sm transition-transform duration-500 group-hover:scale-105">
-                                                <i data-lucide="lock" class="w-7 h-7 text-gray-500"></i>
+                                            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 border border-blue-100 shadow-sm transition-transform duration-500 group-hover:scale-105">
+                                                <i data-lucide="lock" class="w-7 h-7 text-[#0A66C2]"></i>
                                             </div>
-                                            <h3 class="text-[22px] font-bold text-gray-900 mb-2">Contact Info Locked</h3>
+                                            <h3 class="text-[22px] font-bold text-slate-900 mb-2 font-heading">Contact Info Locked</h3>
 
                                             {% if not request.user.is_authenticated %}
-                                                <p class="text-[15px] text-gray-600 font-medium">
-                                                    <a href="{% url 'login' %}?next={{ request.path }}" class="text-black font-bold border-b-2 border-gray-400 hover:border-black transition-colors pb-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">Login</a> to CoreLink to collaborate.
+                                                <p class="text-[14.5px] text-slate-600 font-medium">
+                                                    <a href="{% url 'login' %}?next={{ request.path }}" class="text-[#0A66C2] font-bold border-b border-blue-300 hover:border-[#0A66C2] transition-colors pb-0.5">Login</a> to CoreLink to collaborate.
                                                 </p>
                                             {% else %}
-                                                <p class="text-[15px] text-gray-600 font-medium mb-5">
+                                                <p class="text-[14.5px] text-slate-600 font-medium mb-5">
                                                     Reach out directly to connect.
                                                 </p>
-                                                <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-8 py-3 bg-black text-white text-[12px] font-extrabold uppercase tracking-[0.2em] rounded-full hover:bg-gray-800 transition-all active:scale-95 shadow-md hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2">
+                                                <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white text-[12px] font-black uppercase tracking-[0.15em] rounded-full hover:shadow-[0_10px_25px_rgba(10,102,194,0.3)] transition-all active:scale-95 hover:-translate-y-0.5">
                                                     <i data-lucide="message-circle" class="w-4 h-4"></i> Send Message
                                                 </a>
                                             {% endif %}
@@ -857,9 +866,9 @@
                     <!-- 1. ABOUT ME -->
                     {% if profile.bio_narrative %}
                     <section id="about-pc" class="relative scroll-mt-32 reveal-on-scroll pt-6">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-10 tracking-tight">About Me</h2>
-                        <div class="prose prose-lg prose-gray max-w-[85%]">
-                            <p class="text-[19px] leading-[2] text-gray-700 font-medium whitespace-pre-line text-left">
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-10 tracking-tight">About Me</h2>
+                        <div class="prose prose-lg prose-slate max-w-[85%]">
+                            <p class="text-[18px] leading-[2] text-slate-700 font-medium whitespace-pre-line text-left">
                                 {{ profile.bio_narrative }}
                             </p>
                         </div>
@@ -871,22 +880,22 @@
                     <section id="signals-pc" class="relative scroll-mt-32 reveal-on-scroll">
                         <div class="flex items-end justify-between mb-12">
                             <div>
-                                <h2 class="text-[44px] font-serif-pc font-bold text-black tracking-tight flex items-center gap-4">
-                                    <div class="w-4 h-4 rounded-full bg-black animate-pulse"></div> Live Signals
+                                <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 tracking-tight flex items-center gap-4">
+                                    <div class="w-4 h-4 rounded-full bg-[#0A66C2] shadow-[0_0_15px_rgba(10,102,194,0.5)] animate-pulse"></div> Live Signals
                                 </h2>
                             </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-10">
                             {% for opp in live_opportunities %}
-                            <article class="card-hover-premium p-12 bg-white border border-gray-200 rounded-[2.5rem] shadow-sm">
+                            <article class="glass-card-premium p-12 rounded-[2.5rem]">
                                 <div class="relative z-20">
                                     <div class="flex justify-between items-start mb-6">
-                                        <span class="inline-block px-4 py-1.5 bg-gray-50 text-gray-900 border border-gray-200 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ opp.get_request_type_display }}</span>
-                                        {% if opp.expires_at %}<span class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
+                                        <span class="inline-block px-4 py-1.5 bg-blue-50 text-[#0A66C2] border border-blue-100 text-[10px] font-black uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
+                                        {% if opp.expires_at %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
                                     </div>
-                                    <h3 class="text-[22px] font-bold text-gray-900 mb-4">{{ opp.title }}</h3>
-                                    <p class="text-[16px] text-gray-600 leading-[1.8] text-left">
+                                    <h3 class="text-[22px] font-bold text-slate-900 mb-4">{{ opp.title }}</h3>
+                                    <p class="text-[15.5px] text-slate-600 leading-[1.8] text-left">
                                         {{ opp.details }}
                                     </p>
                                 </div>
@@ -899,24 +908,24 @@
                     <!-- 3. SELECTED WORKS -->
                     {% if projects %}
                     <section id="works-pc" class="relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-16 tracking-tight">Selected Works</h2>
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-16 tracking-tight">Selected Works</h2>
 
                         <div class="grid gap-28 max-w-[95%]">
                             {% for project in projects %}
                             <article class="group/project">
 
                                 {% if project.gallery.count == 0 %}
-                                    <div class="w-full bg-white border border-gray-200 rounded-[2.5rem] p-12 mb-10 flex items-center gap-8 shadow-sm transition-shadow hover:shadow-lg card-hover-premium">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 shrink-0 relative z-20">
-                                            <i data-lucide="layout" class="w-7 h-7 text-gray-500"></i>
+                                    <div class="w-full glass-card-premium rounded-[2.5rem] p-12 mb-10 flex items-center gap-8">
+                                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 shrink-0 relative z-20">
+                                            <i data-lucide="layout" class="w-7 h-7 text-[#0A66C2]"></i>
                                         </div>
-                                        <h3 class="text-[30px] font-bold text-gray-900 m-0 relative z-20">{{ project.title }}</h3>
+                                        <h3 class="text-[30px] font-bold text-slate-900 m-0 relative z-20">{{ project.title }}</h3>
                                     </div>
                                 {% elif project.gallery.count == 1 %}
-                                    <div class="w-full aspect-[16/9] rounded-[2.5rem] overflow-hidden mb-12 relative bg-gray-100 border border-gray-200 shadow-[0_10px_40px_rgb(0,0,0,0.06)] transition-all duration-500 hover:shadow-[0_20px_50px_rgb(0,0,0,0.12)] hover:-translate-y-2 group">
+                                    <div class="w-full aspect-[16/9] rounded-[2.5rem] overflow-hidden mb-12 relative bg-slate-100 border border-slate-200/80 shadow-[0_15px_40px_rgba(15,23,42,0.08)] transition-all duration-500 hover:shadow-[0_25px_50px_rgba(10,102,194,0.15)] hover:-translate-y-2 group">
                                         <img src="{{ project.gallery.first.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                         {% if project.gallery.first.caption %}
-                                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-[14px] p-10 pt-20 truncate font-medium">
+                                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[14px] p-10 pt-20 truncate font-medium">
                                             {{ project.gallery.first.caption }}
                                         </div>
                                         {% endif %}
@@ -924,10 +933,10 @@
                                 {% else %}
                                     <div class="w-full flex overflow-x-auto snap-x snap-mandatory gallery-scroll gap-8 mb-12 pb-8 -mx-6 px-6">
                                         {% for img in project.gallery.all %}
-                                        <div class="shrink-0 w-[85%] md:w-[75%] aspect-[16/10] rounded-[2.5rem] overflow-hidden snap-center relative bg-gray-100 border border-gray-200 shadow-[0_10px_40px_rgb(0,0,0,0.06)] transition-all duration-500 hover:shadow-[0_20px_50px_rgb(0,0,0,0.12)] hover:-translate-y-2 group/img">
+                                        <div class="shrink-0 w-[85%] md:w-[75%] aspect-[16/10] rounded-[2.5rem] overflow-hidden snap-center relative bg-slate-100 border border-slate-200/80 shadow-[0_15px_40px_rgba(15,23,42,0.08)] transition-all duration-500 hover:shadow-[0_25px_50px_rgba(10,102,194,0.15)] hover:-translate-y-2 group/img">
                                             <img src="{{ img.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.2s] group-hover/img:scale-105">
                                             {% if img.caption %}
-                                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-[14px] p-8 pt-20 truncate font-medium opacity-100 xl:opacity-0 xl:group-hover/img:opacity-100 transition-opacity duration-500">
+                                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[14px] p-8 pt-20 truncate font-medium opacity-100 xl:opacity-0 xl:group-hover/img:opacity-100 transition-opacity duration-500">
                                                 {{ img.caption }}
                                             </div>
                                             {% endif %}
@@ -938,22 +947,22 @@
 
                                 <div class="px-4">
                                     {% if project.gallery.count > 0 %}
-                                    <h3 class="text-[30px] font-bold text-gray-900 mb-6 transition-colors group-hover/project:text-black">{{ project.title }}</h3>
+                                    <h3 class="text-[30px] font-bold text-slate-900 mb-6 transition-colors group-hover/project:text-[#0A66C2]">{{ project.title }}</h3>
                                     {% endif %}
 
-                                    <div class="flex flex-wrap items-center gap-3 mb-6 text-[11px] font-extrabold text-gray-600 uppercase tracking-[0.2em]">
-                                        {% if project.role %}<span class="px-4 py-1.5 bg-gray-100 rounded-lg border border-gray-200">{{ project.role }}</span>{% endif %}
-                                        {% if project.client_name %}<span class="px-4 py-1.5 bg-white border border-gray-200 rounded-lg shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
+                                    <div class="flex flex-wrap items-center gap-3 mb-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                                        {% if project.role %}<span class="px-4 py-1.5 bg-white rounded-lg border border-slate-200 shadow-sm">{{ project.role }}</span>{% endif %}
+                                        {% if project.client_name %}<span class="px-4 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
                                     </div>
 
-                                    <div class="text-gray-700 text-[17px] leading-[1.9] mb-10 text-left max-w-[90%] space-y-4">
+                                    <div class="text-slate-700 text-[16px] leading-[1.9] mb-10 text-left max-w-[90%] space-y-4">
                                         {% if project.main_description %}<p>{{ project.main_description }}</p>{% endif %}
                                         {% if project.problem_statement %}<p>{{ project.problem_statement }}</p>{% endif %}
                                         {% if project.solution_narrative %}<p>{{ project.solution_narrative }}</p>{% endif %}
                                     </div>
 
                                     {% if project.link %}
-                                    <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-[12px] font-extrabold text-black uppercase tracking-[0.2em] border-b-2 border-black pb-2 hover:text-gray-600 hover:border-gray-600 transition-all group/link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
+                                    <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-[11px] font-black text-[#0A66C2] uppercase tracking-[0.15em] border-b-2 border-[#0A66C2] pb-2 hover:border-blue-400 transition-all group/link">
                                         View Full Project <i data-lucide="arrow-up-right" class="w-4 h-4 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
                                     </a>
                                     {% endif %}
@@ -967,25 +976,25 @@
                     <!-- 4. EXPERIENCE -->
                     {% if experiences %}
                     <section id="exp-pc" class="relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-16 tracking-tight">Experience</h2>
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-16 tracking-tight">Experience</h2>
 
-                        <div class="relative border-l-[4px] border-gray-200 ml-6 space-y-20">
+                        <div class="relative border-l-[4px] border-slate-200 ml-6 space-y-20">
                             {% for exp in experiences %}
                             <article class="relative pl-14 group">
                                 <!-- Node -->
-                                <span class="absolute -left-[18px] top-1.5 h-8 w-8 rounded-full bg-white border-[5px] {% if exp.is_current %}border-black{% else %}border-gray-300{% endif %} transition-colors duration-500 group-hover:border-black shadow-sm"></span>
+                                <span class="absolute -left-[18px] top-1.5 h-8 w-8 rounded-full bg-white border-[5px] {% if exp.is_current %}border-[#0A66C2] shadow-[0_0_15px_rgba(10,102,194,0.4)]{% else %}border-slate-300{% endif %} transition-colors duration-500 group-hover:border-[#0A66C2]"></span>
 
                                 <!-- Meta -->
                                 <div class="flex flex-wrap items-center gap-5 mb-5">
-                                    <span class="text-[14px] font-mono font-bold text-gray-500">{{ exp.start_date|date:"F Y" }} — {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"F Y" }}{% endif %}</span>
-                                    <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] border border-gray-200 text-gray-600 px-4 py-1.5 bg-white rounded-lg shadow-sm">{{ exp.get_location_type_display }}</span>
+                                    <span class="text-[13px] font-bold text-slate-500 uppercase tracking-widest">{{ exp.start_date|date:"F Y" }} — {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"F Y" }}{% endif %}</span>
+                                    <span class="text-[10px] font-black uppercase tracking-[0.15em] border border-slate-200/80 text-slate-600 px-4 py-1.5 bg-white rounded-lg shadow-sm">{{ exp.get_location_type_display }}</span>
                                 </div>
 
-                                <h3 class="text-[26px] font-bold text-gray-900 mb-1 transition-colors group-hover:text-black">{{ exp.role_title }}</h3>
-                                <h4 class="text-[18px] font-serif-pc font-bold text-gray-600 mb-6">{{ exp.company_name }}</h4>
+                                <h3 class="text-[26px] font-bold text-slate-900 mb-1 transition-colors group-hover:text-[#0A66C2]">{{ exp.role_title }}</h3>
+                                <h4 class="text-[18px] font-serif-pc font-bold text-[#0A66C2] mb-6">{{ exp.company_name }}</h4>
 
                                 {% if exp.description %}
-                                <p class="text-gray-600 text-[17px] leading-[1.9] max-w-[85%] whitespace-pre-line text-left">
+                                <p class="text-slate-600 text-[16px] leading-[1.9] max-w-[85%] whitespace-pre-line text-left">
                                     {{ exp.description }}
                                 </p>
                                 {% endif %}
@@ -998,23 +1007,23 @@
                     <!-- 5. CORE SKILLS -->
                     {% if skills %}
                     <section id="skills-pc" class="relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-12 tracking-tight">Core Skills</h2>
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-12 tracking-tight">Core Skills</h2>
 
                         <div class="flex flex-col gap-8 max-w-[90%]">
                             {% for skill in skills %}
-                            <article class="card-hover-premium p-10 bg-white border border-gray-200 rounded-[2rem] shadow-sm cursor-default group">
+                            <article class="glass-card-premium p-10 rounded-[2rem] cursor-default group">
                                 <div class="relative z-20">
                                     <div class="flex items-center justify-between gap-6 mb-6">
-                                        <span class="text-[20px] font-bold text-gray-900">{{ skill.name }}</span>
-                                        <span class="text-[11px] font-extrabold text-gray-500 uppercase tracking-[0.2em]">{{ skill.get_status_display }}</span>
+                                        <span class="text-[20px] font-bold text-slate-900">{{ skill.name }}</span>
+                                        <span class="text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.15em]">{{ skill.get_status_display }}</span>
                                     </div>
                                     {% if skill.progress_bar %}
-                                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden mb-6 shadow-inner">
-                                        <div class="bg-black h-full transition-all duration-[1.5s] ease-out" style="width: {{ skill.progress_bar }}%"></div>
+                                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6 shadow-inner">
+                                        <div class="bg-gradient-to-r from-[#0A66C2] to-blue-500 h-full transition-all duration-[1.5s] ease-out" style="width: {{ skill.progress_bar }}%"></div>
                                     </div>
                                     {% endif %}
                                     {% if skill.context %}
-                                    <p class="text-[16px] font-serif-pc text-gray-600 italic">"{{ skill.context }}"</p>
+                                    <p class="text-[15.5px] font-serif-pc text-slate-500 italic">"{{ skill.context }}"</p>
                                     {% endif %}
                                 </div>
                             </article>
@@ -1026,33 +1035,33 @@
                     <!-- 6. CREDENTIALS -->
                     {% if credentials %}
                     <section id="certs-pc" class="relative scroll-mt-32 reveal-on-scroll">
-                        <h4 class="text-[44px] font-serif-pc font-bold text-black mb-16 tracking-tight">Credentials</h4>
+                        <h4 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-16 tracking-tight">Credentials</h4>
 
                         <div class="grid gap-10 max-w-[90%]">
                             {% for cred in credentials %}
-                            <article class="card-hover-premium p-12 bg-white border border-gray-200 rounded-[2.5rem]">
+                            <article class="glass-card-premium p-12 rounded-[2.5rem]">
                                 <div class="relative z-20">
                                     <div class="flex items-center gap-5 mb-8">
-                                        <span class="inline-block px-5 py-2 bg-gray-50 text-gray-800 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-xl border border-gray-200">{{ cred.issuer }}</span>
-                                        {% if cred.issue_date %}<span class="text-[12px] font-bold text-gray-500 uppercase tracking-widest">{{ cred.issue_date|date:"F Y" }}</span>{% endif %}
+                                        <span class="inline-block px-5 py-2 bg-white text-slate-700 text-[10px] font-black uppercase tracking-[0.15em] rounded-xl border border-slate-200 shadow-sm">{{ cred.issuer }}</span>
+                                        {% if cred.issue_date %}<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{{ cred.issue_date|date:"F Y" }}</span>{% endif %}
                                     </div>
 
-                                    <h5 class="text-[26px] font-bold text-gray-900 mb-6">{{ cred.title }}</h5>
+                                    <h5 class="text-[26px] font-bold text-slate-900 mb-6">{{ cred.title }}</h5>
 
                                     {% if cred.reflection %}
-                                    <p class="text-[17px] text-gray-600 leading-[1.9] mb-10">{{ cred.reflection }}</p>
+                                    <p class="text-[16px] text-slate-600 leading-[1.9] mb-10">{{ cred.reflection }}</p>
                                     {% endif %}
 
                                     {% if cred.key_takeaways %}
-                                    <div class="bg-gray-50 p-8 rounded-[1.5rem] mb-10 border border-gray-100">
-                                        <span class="block text-[11px] font-extrabold text-gray-500 uppercase tracking-[0.2em] mb-4">Key Takeaway</span>
-                                        <p class="text-[16px] text-gray-700 italic font-serif-pc">"{{ cred.key_takeaways }}"</p>
+                                    <div class="bg-blue-50/50 p-8 rounded-[1.5rem] mb-10 border border-blue-100/50">
+                                        <span class="block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.15em] mb-4">Key Takeaway</span>
+                                        <p class="text-[15.5px] text-slate-700 italic font-serif-pc">"{{ cred.key_takeaways }}"</p>
                                     </div>
                                     {% endif %}
 
                                     {% if cred.url_link or cred.file_upload %}
-                                    <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-3 text-[12px] font-extrabold text-gray-900 border-b-2 border-gray-300 hover:border-black transition-all pb-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
-                                        <span class="tracking-[0.2em]">VIEW PROOF</span>
+                                    <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-3 text-[11px] font-black text-[#0A66C2] border-b-2 border-blue-200 hover:border-[#0A66C2] transition-all pb-2 mt-2">
+                                        <span class="tracking-[0.15em] uppercase">VIEW PROOF</span>
                                         <i data-lucide="external-link" class="w-4 h-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"></i>
                                     </a>
                                     {% endif %}
@@ -1068,23 +1077,25 @@
                     =========================================== -->
                     {% if content_posts %}
 
-                    <!-- A. GOALS (Vision Block) -->
+                    <!-- A. GOALS (Vision Block - ULTRA PREMIUM DARK) -->
                     <section id="goals-pc" class="content-section-wrapper relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-12 tracking-tight">My Goal</h2>
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-12 tracking-tight">My Goal</h2>
                         <div class="grid gap-8 max-w-[95%]">
                             {% for post in content_posts %}
                                 {% if post.post_type == 'VISION_BLOCK' %}
-                                <article class="p-14 bg-black rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] text-white relative overflow-hidden group">
+                                <article class="p-14 bg-[#0f172a] rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(10,102,194,0.3)] text-white relative overflow-hidden group">
+                                    <!-- Subtle ambient glow -->
+                                    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"></div>
                                     <!-- Massive Quote Decoration -->
-                                    <div class="absolute top-0 right-0 p-10 opacity-10 text-[160px] font-serif-pc leading-none text-white select-none pointer-events-none">"</div>
+                                    <div class="absolute top-0 right-0 p-10 opacity-5 text-[160px] font-serif-pc leading-none text-white select-none pointer-events-none">"</div>
 
                                     <div class="relative z-10">
-                                        <span class="inline-block px-4 py-1.5 bg-white/10 border border-white/20 text-white text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg mb-8">Vision</span>
+                                        <span class="inline-block px-4 py-1.5 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.15em] rounded-lg mb-8 shadow-sm">Vision</span>
                                         <h3 class="text-[36px] font-serif-pc font-bold mb-8 leading-tight">{{ post.title }}</h3>
-                                        <p class="text-[19px] text-gray-300 leading-[1.9] max-w-[85%] whitespace-pre-line">{{ post.content }}</p>
+                                        <p class="text-[18px] text-slate-300 leading-[1.9] max-w-[85%] whitespace-pre-line">{{ post.content }}</p>
 
                                         {% if post.media_proof %}
-                                        <div class="mt-12 rounded-2xl overflow-hidden border border-white/10">
+                                        <div class="mt-12 rounded-2xl overflow-hidden border border-slate-700/80">
                                             <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100">
                                         </div>
                                         {% endif %}
@@ -1095,23 +1106,22 @@
                         </div>
                     </section>
 
-                    <!-- B. THOUGHTS (Essays - NO LINE CLAMP) -->
+                    <!-- B. THOUGHTS (Essays) -->
                     <section id="thoughts-pc" class="content-section-wrapper relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-12 tracking-tight">Industry Thoughts</h2>
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-12 tracking-tight">Industry Thoughts</h2>
                         <div class="grid xl:grid-cols-2 gap-10 max-w-[95%]">
                             {% for post in content_posts %}
                                 {% if post.post_type == 'ESSAY' %}
-                                <article class="flex flex-col bg-white border border-gray-200 rounded-[2.5rem] overflow-hidden card-hover-premium shadow-sm">
+                                <article class="flex flex-col glass-card-premium rounded-[2.5rem] overflow-hidden">
                                     {% if post.media_proof %}
-                                    <div class="h-64 w-full bg-gray-100 relative overflow-hidden border-b border-gray-100">
+                                    <div class="h-64 w-full bg-slate-100 relative overflow-hidden border-b border-slate-200/80">
                                         <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                     </div>
                                     {% endif %}
-                                    <div class="p-10 flex-1 flex flex-col">
-                                        <span class="text-[11px] font-extrabold text-gray-400 uppercase tracking-[0.2em] mb-4">{{ post.created_at|date:"M d, Y" }}</span>
-                                        <h3 class="text-[26px] font-bold text-gray-900 mb-4 leading-snug">{{ post.title }}</h3>
-                                        <!-- REMOVED line-clamp-4, ADDED whitespace-pre-line so full text is readable with paragraphs -->
-                                        <p class="text-[17px] text-gray-600 leading-[1.9] whitespace-pre-line">{{ post.content }}</p>
+                                    <div class="p-10 flex-1 flex flex-col relative z-20">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-4">{{ post.created_at|date:"M d, Y" }}</span>
+                                        <h3 class="text-[26px] font-bold text-slate-900 mb-4 leading-snug">{{ post.title }}</h3>
+                                        <p class="text-[16px] text-slate-600 leading-[1.9] whitespace-pre-line">{{ post.content }}</p>
                                     </div>
                                 </article>
                                 {% endif %}
@@ -1121,27 +1131,27 @@
 
                     <!-- C. PROGRESS (Growth Logs) -->
                     <section id="progress-pc" class="content-section-wrapper relative scroll-mt-32 reveal-on-scroll">
-                        <h2 class="text-[44px] font-serif-pc font-bold text-black mb-16 tracking-tight">Daily Progress</h2>
-                        <div class="relative border-l-[4px] border-gray-200 ml-6 space-y-20">
+                        <h2 class="text-[44px] font-serif-pc font-bold text-slate-900 mb-16 tracking-tight">Daily Progress</h2>
+                        <div class="relative border-l-[4px] border-slate-200 ml-6 space-y-20">
                             {% for post in content_posts %}
                                 {% if post.post_type != 'VISION_BLOCK' and post.post_type != 'ESSAY' %}
                                 <article class="relative pl-14 group">
                                     <!-- Node -->
-                                    <span class="absolute -left-[18px] top-1.5 h-8 w-8 rounded-full bg-white border-[5px] {% if forloop.first %}border-black{% else %}border-gray-300{% endif %} transition-colors duration-500 group-hover:border-black shadow-sm"></span>
+                                    <span class="absolute -left-[18px] top-1.5 h-8 w-8 rounded-full bg-white border-[5px] {% if forloop.first %}border-[#0A66C2] shadow-[0_0_15px_rgba(10,102,194,0.4)]{% else %}border-slate-300{% endif %} transition-colors duration-500 group-hover:border-[#0A66C2]"></span>
 
                                     <!-- Meta -->
                                     <div class="flex flex-wrap items-center gap-5 mb-5">
-                                        <span class="text-[14px] font-mono font-bold text-gray-500">{{ post.created_at|date:"F d, Y" }}</span>
-                                        <span class="text-[11px] font-extrabold uppercase tracking-[0.2em] border border-gray-200 text-gray-500 px-4 py-1.5 bg-white rounded-lg shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
+                                        <span class="text-[13px] font-bold text-slate-500 uppercase tracking-widest">{{ post.created_at|date:"F d, Y" }}</span>
+                                        <span class="text-[10px] font-black uppercase tracking-[0.15em] border border-blue-100 text-[#0A66C2] px-4 py-1.5 bg-blue-50 rounded-lg shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
                                     </div>
 
-                                    <h3 class="text-[26px] font-bold text-gray-900 mb-5 transition-colors group-hover:text-black">{{ post.title }}</h3>
-                                    <p class="text-gray-600 text-[17px] leading-[1.9] max-w-[85%] whitespace-pre-line text-left">
+                                    <h3 class="text-[26px] font-bold text-slate-900 mb-5 transition-colors group-hover:text-[#0A66C2]">{{ post.title }}</h3>
+                                    <p class="text-slate-600 text-[16px] leading-[1.9] max-w-[85%] whitespace-pre-line text-left">
                                         {{ post.content }}
                                     </p>
 
                                     {% if post.media_proof %}
-                                    <div class="mt-10 w-[26rem] h-64 rounded-[2rem] overflow-hidden border border-gray-200 bg-gray-50 shadow-sm group-hover:shadow-[0_15px_30px_rgb(0,0,0,0.08)] transition-all duration-500 group-hover:-translate-y-2">
+                                    <div class="mt-10 w-[26rem] h-64 rounded-[2rem] overflow-hidden border border-slate-200/80 bg-slate-50 shadow-sm group-hover:shadow-[0_20px_40px_rgba(15,23,42,0.1)] transition-all duration-500 group-hover:-translate-y-2">
                                         <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
                                     </div>
                                     {% endif %}
@@ -1154,8 +1164,8 @@
                     {% endif %}
 
                     <!-- FOOTER -->
-                    <footer class="mt-20 border-t border-gray-200/80 pt-20 text-center md:text-left text-gray-500 text-[13px] reveal-on-scroll">
-                        <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Profile / <span class="text-gray-900">{{ user.display_name }}</span></p>
+                    <footer class="mt-20 border-t border-slate-200/80 pt-20 text-center md:text-left text-slate-500 text-[12px] reveal-on-scroll">
+                        <p class="font-black tracking-[0.15em] uppercase">CoreLink Profile / <span class="text-[#0A66C2]">{{ user.display_name }}</span></p>
                     </footer>
 
                 </div>
@@ -1165,8 +1175,8 @@
 </div>
 
 <!-- Shared Copy Toast -->
-<div id="share-toast" aria-live="polite" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-4.5 rounded-full shadow-[0_20px_40px_rgb(0,0,0,0.25)] transition-all duration-500 transform translate-y-32 opacity-0 z-[200] font-extrabold text-[12px] uppercase tracking-[0.2em] flex items-center gap-3">
-    <i data-lucide="check" class="w-4 h-4 text-white"></i> Link Copied
+<div id="share-toast" aria-live="polite" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4.5 rounded-full shadow-[0_20px_40px_rgba(15,23,42,0.3)] transition-all duration-500 transform translate-y-32 opacity-0 z-[200] font-black text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 border border-slate-700">
+    <i data-lucide="check" class="w-4 h-4 text-[#38bdf8]"></i> Link Copied
 </div>
 
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -1223,9 +1233,9 @@
                         const id = entry.target.id;
                         document.querySelectorAll('.nav-scroll-link a').forEach(link => {
                             if (link.getAttribute('href') === `#${id}`) {
-                                link.classList.add('text-black', 'after:w-full');
+                                link.classList.add('text-[#0A66C2]', 'after:w-full');
                             } else {
-                                link.classList.remove('text-black', 'after:w-full');
+                                link.classList.remove('text-[#0A66C2]', 'after:w-full');
                             }
                         });
                     }
