@@ -1,3 +1,5 @@
+--- START OF FILE Paste May 12, 2026 - 9:32PM ---
+
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -119,6 +121,9 @@
 {% endblock navbar %}
 
 {% block content %}
+<!-- Global Page Loading Bar -->
+<div id="top-loading-bar"></div>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -130,6 +135,21 @@
         --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
     * { -webkit-tap-highlight-color: transparent; }
+
+    /* Top Progress Bar CSS */
+    #top-loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb);
+        z-index: 99999;
+        width: 0%;
+        transition: width 0.4s ease-out, opacity 0.4s ease-in;
+        pointer-events: none;
+        box-shadow: 0 0 10px rgba(10, 102, 194, 0.5);
+        opacity: 0;
+    }
 
     body {
         font-family: var(--font-body);
@@ -316,14 +336,16 @@
             {% for person in people %}
                 <div class="glass-card group">
 
-                    <!-- Dynamic Premium Cover Image - NO DARK OVERLAYS -->
+                    <!-- Dynamic Premium Cover Image -->
                     <div class="h-32 md:h-36 w-full rounded-t-[1.7rem] md:rounded-t-[2rem] bg-slate-50 relative overflow-hidden border-b border-slate-200/50 shrink-0">
                         {% if person.cover_image %}
                             <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
                         {% else %}
-                            <!-- Premium Light Fallback Mesh -->
-                            <div class="w-full h-full bg-gradient-to-tr from-blue-50 via-slate-50 to-blue-100 relative bg-pan group-hover:scale-105 transition-transform duration-700">
-                                <div class="absolute inset-0 bg-[linear-gradient(to_right,#0A66C20a_1px,transparent_1px),linear-gradient(to_bottom,#0A66C20a_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+                            <!-- Premium Smooth Abstract Fallback Mesh (Replaced the harsh square grids) -->
+                            <div class="w-full h-full bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 relative group-hover:scale-105 transition-transform duration-700 overflow-hidden flex items-center justify-center">
+                                <!-- Elegant abstract light circles -->
+                                <div class="absolute -top-12 -left-10 w-40 h-40 bg-blue-300/30 rounded-full blur-3xl"></div>
+                                <div class="absolute -bottom-16 -right-12 w-48 h-48 bg-slate-300/40 rounded-full blur-3xl"></div>
                             </div>
                         {% endif %}
                     </div>
@@ -527,6 +549,43 @@
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* ==============================================
+       PAGE PROGRESS BAR LOGIC (Fixing missing PC Bar)
+       ============================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+        const loadingBar = document.getElementById('top-loading-bar');
+
+        // Initial fake progress on load
+        if(loadingBar) {
+            loadingBar.style.opacity = '1';
+            loadingBar.style.width = '30%';
+
+            setTimeout(() => { loadingBar.style.width = '70%'; }, 200);
+            setTimeout(() => {
+                loadingBar.style.width = '100%';
+                setTimeout(() => { loadingBar.style.opacity = '0'; }, 300);
+            }, 500);
+        }
+
+        // Trigger loading bar when a user clicks a regular link
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target && target.href && !target.href.startsWith('javascript:') && !target.href.startsWith('#') && target.target !== '_blank') {
+                if (target.hostname === window.location.hostname) {
+                    loadingBar.style.transition = 'none';
+                    loadingBar.style.width = '0%';
+                    loadingBar.style.opacity = '1';
+
+                    // Small delay to allow CSS reset
+                    setTimeout(() => {
+                        loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+                        loadingBar.style.width = '60%';
+                    }, 10);
+                }
+            }
+        });
+    });
 
     let shareTimeout;
     function showToast(message) {
