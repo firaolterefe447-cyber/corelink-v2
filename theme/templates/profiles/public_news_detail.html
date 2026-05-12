@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{{ article.title }} | {{ article.company.name }} | CoreLink</title>
+
+    <!-- SEO & Metadata -->
+    <meta name="description" content="{{ article.excerpt|default:article.content|truncatechars:160 }}">
+    <meta property="og:title" content="{{ article.title }}">
+    <meta property="og:description" content="{{ article.excerpt|default:article.content|truncatechars:160 }}">
+    {% if article.cover_image %}
+    <meta property="og:image" content="{{ article.cover_image.url }}">
+    {% endif %}
+
+    <!-- Core Assets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Unified Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        corelink: {
+                            DEFAULT: '#0A66C2',
+                            light: '#E6F0F9',
+                            dark: '#004182'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7FA;
+            background-image:
+                radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+                radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+                radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+            background-attachment: fixed;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.03em; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px -16px rgba(15, 23, 42, 0.08);
+        }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+
+    <!-- FLOATING TOP NAVIGATION -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+         :class="scrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/90 shadow-sm py-3' : 'bg-transparent py-5'">
+        <div class="max-w-[900px] mx-auto px-4 md:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+                <!-- Dynamic Backlink to Company Profile -->
+                <a href="{% url 'company_public_profile' slug=article.company.slug %}" class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-corelink hover:border-corelink/30 hover:shadow-md transition-all group">
+                    <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
+                </a>
+
+                <div class="flex flex-col">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider hidden md:block">Company Updates</span>
+                    <div class="font-heading font-black text-lg md:text-xl tracking-tight text-slate-900">
+                        {{ article.company.name }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ARTICLE WRAPPER (Narrower for comfortable reading) -->
+    <main class="max-w-[800px] mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-24 relative z-20">
+
+        <!-- ARTICLE HEADER -->
+        <header class="mb-10 text-center md:text-left">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-corelink/10 text-corelink font-bold text-[12px] uppercase tracking-wider rounded-md mb-5">
+                <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i> News & Updates
+            </span>
+
+            <h1 class="font-heading font-black text-3xl md:text-4xl lg:text-5xl text-slate-900 mb-6 leading-tight tracking-tight">
+                {{ article.title }}
+            </h1>
+
+            <div class="flex items-center justify-center md:justify-start gap-4 text-[14px] font-medium text-slate-500">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                    {{ article.published_date|date:"F j, Y" }}
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN COVER IMAGE -->
+        {% if article.cover_image %}
+        <div class="w-full aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden bg-slate-100 shadow-lg mb-10 border border-slate-200">
+            <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="w-full h-full object-cover">
+        </div>
+        {% endif %}
+
+        <!-- ARTICLE CONTENT (Rich Text Formatting) -->
+        <div class="glass-card p-6 md:p-10 mb-10">
+            <!-- Ensure whitespace and paragraphs map nicely using linebreaksbr -->
+            <div class="prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed font-medium text-[16px] md:text-[18px]">
+                {{ article.content|linebreaksbr }}
+            </div>
+        </div>
+
+        <!-- OPTIONAL: ATTACHED IMAGE GALLERY -->
+        {% if article.gallery.exists %}
+        <div class="mb-10">
+            <h3 class="font-heading font-black text-xl text-slate-900 mb-4 flex items-center gap-2">
+                <i data-lucide="image" class="w-5 h-5 text-corelink"></i> Event / Update Gallery
+            </h3>
+
+            <div x-data="{ activeImage: null }" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% for img in article.gallery.all %}
+                <button @click="activeImage = '{{ img.image.url }}'" class="w-full aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-corelink hover:shadow-md transition-all group outline-none focus:ring-2 focus:ring-corelink">
+                    <img src="{{ img.image.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Gallery image">
+                </button>
+                {% endfor %}
+
+                <!-- Lightbox Modal (Appears when an image is clicked) -->
+                <div x-show="activeImage" style="display: none;"
+                     class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+                     @keydown.escape.window="activeImage = null">
+
+                    <!-- Close button -->
+                    <button @click="activeImage = null" class="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+
+                    <!-- Expanded Image -->
+                    <img :src="activeImage" @click.away="activeImage = null" class="max-w-full max-h-full rounded-lg shadow-2xl object-contain">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- FOOTER CTA -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 p-6 md:p-8 bg-slate-900 rounded-2xl text-white shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-corelink rounded-full filter blur-[60px] opacity-40 pointer-events-none"></div>
+
+            <div class="text-center md:text-left relative z-10">
+                <h4 class="font-heading font-black text-lg mb-1">Want to learn more?</h4>
+                <p class="text-slate-300 text-[14px]">Reach out to the team at {{ article.company.name }}</p>
+            </div>
+
+            <a href="{% url 'company_public_profile' slug=article.company.slug %}#contact" class="px-6 py-3 bg-white text-slate-900 font-bold text-[14px] rounded-xl hover:bg-corelink hover:text-white transition-colors relative z-10 whitespace-nowrap shadow-md">
+                Contact Company
+            </a>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200/80 bg-white/50 backdrop-blur-md py-8 text-center mt-auto relative z-20">
+        <p class="text-[13px] font-bold text-slate-400 uppercase tracking-wider">&copy; {% now "Y" %} {{ article.company.name }}. Powered by Corelink.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
