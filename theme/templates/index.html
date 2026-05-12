@@ -18,7 +18,7 @@
 
 <style>
     /* ==========================================================================
-       1. ROOT VARIABLES & ADVANCED THEME ENGINE (Restored to Original)
+       1. ROOT VARIABLES & ADVANCED THEME ENGINE
        ========================================================================== */
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
@@ -208,46 +208,53 @@
 </style>
 
 <!-- ==========================================================================
-     I. SMART NAVBAR (Dark Glass + Full Language Word)
+     I. SMART MORPHING NAVBAR (Transparent -> Bright Glass)
      ========================================================================== -->
 <nav x-data="{ scrolled: false, mobileMenuOpen: false }"
      @scroll.window="scrolled = (window.pageYOffset > 50)"
-     :class="scrolled ? 'bg-[#02000A]/85 backdrop-blur-xl border-white/10 shadow-lg' : 'bg-transparent border-transparent'"
-     class="fixed top-0 left-0 right-0 w-full z-[100] transition-all duration-500 border-b">
+     :class="scrolled ? 'bg-white/95 backdrop-blur-xl border-slate-200 shadow-sm' : 'bg-transparent border-transparent'"
+     class="fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-500 border-b">
 
     <div class="w-full max-w-[1400px] mx-auto h-[72px] px-6 md:px-12 flex items-center justify-between">
 
         <!-- Logo -->
         <div class="flex-shrink-0" style="animation: drop-in 0.8s var(--ease-spring) forwards;">
             <a href="/" class="font-heading text-2xl font-black tracking-tight">
-                <span class="text-white">Core</span><span class="text-[var(--brand-link-blue)] drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]">Link</span>
+                <span :class="scrolled ? 'text-slate-900' : 'text-white'" class="transition-colors duration-500">Core</span><span class="text-[var(--brand-link-blue)] drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]">Link</span>
             </a>
         </div>
 
         <!-- Desktop Links -->
         <div class="hidden lg:flex items-center gap-8" style="animation: drop-in 1.0s var(--ease-spring) forwards;">
-            <a href="{% url 'nexus_feed' %}" class="text-[14px] font-medium text-slate-300 hover:text-white transition-colors tracking-wide">{% trans "Discover Talent" %}</a>
-            <a href="{% url 'company_nexus' %}" class="text-[14px] font-medium text-slate-300 hover:text-white transition-colors tracking-wide">{% trans "Discover Companies" %}</a>
+            <a href="{% url 'nexus_feed' %}"
+               :class="scrolled ? 'text-slate-600 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
+               class="text-[14px] font-bold transition-colors tracking-wide">{% trans "Discover Talent" %}</a>
+
+            <a href="{% url 'company_nexus' %}"
+               :class="scrolled ? 'text-slate-600 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
+               class="text-[14px] font-bold transition-colors tracking-wide">{% trans "Discover Companies" %}</a>
         </div>
 
         <!-- Desktop Controls -->
         <div class="hidden lg:flex items-center gap-5 z-10" style="animation: drop-in 1.2s var(--ease-spring) forwards;">
 
-            <!-- Language Dropdown (Full Word, No Globe) -->
+            <!-- Language Dropdown -->
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" @click.outside="open = false" aria-label="Language Selector" class="text-slate-200 hover:text-white bg-white/5 border border-white/10 hover:border-white/30 flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-semibold transition-all">
+                <button @click="open = !open" @click.outside="open = false" aria-label="Language Selector"
+                        :class="scrolled ? 'text-slate-700 bg-slate-50 border-slate-200 hover:border-[var(--brand-link-blue)]' : 'text-slate-200 hover:text-white bg-white/5 border-white/20 hover:border-white/50'"
+                        class="border flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-bold transition-all">
                     <span>{{ current_lang.name_local|title|default:"English" }}</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
 
-                <!-- Dropdown -->
-                <div x-show="open" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute top-full right-0 mt-3 w-40 bg-[#0F172A] rounded-xl shadow-2xl border border-white/10 p-1.5 z-[200]">
+                <!-- Dropdown Menu (Always Bright/Readable) -->
+                <div x-show="open" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute top-full right-0 mt-3 w-40 bg-white rounded-xl shadow-2xl border border-slate-100 p-1.5 z-[200]">
                     <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.get_full_path }}">
                         {% for language in languages %}
                             {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-                            <button type="submit" name="language" value="{{ language.code }}" class="w-full text-left px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white{% else %}text-slate-300 hover:bg-white/5 hover:text-white{% endif %}">
+                            <button type="submit" name="language" value="{{ language.code }}" class="w-full text-left px-3 py-2.5 rounded-lg text-[13px] font-bold transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white shadow-sm{% else %}text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-link-blue)]{% endif %}">
                                 {{ language.name_local|title }}
                             </button>
                             {% endif %}
@@ -256,34 +263,42 @@
                 </div>
             </div>
 
-            <div class="w-px h-5 bg-white/10 mx-1"></div>
+            <div :class="scrolled ? 'bg-slate-200' : 'bg-white/10'" class="w-px h-5 mx-1 transition-colors duration-500"></div>
 
-            <a href="{% url 'login' %}" class="text-[13px] font-bold text-slate-300 hover:text-white transition-colors tracking-wide">{% trans "Log In" %}</a>
-            <a href="{% url 'unified_onboarding' %}" class="relative group overflow-hidden bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-2 rounded-full text-[13px] font-bold shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all duration-300 tracking-wide">
-                <span class="relative z-10">{% trans "Join CoreLink" %}</span>
+            <a href="{% url 'login' %}"
+               :class="scrolled ? 'text-slate-700 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
+               class="text-[13px] font-bold transition-colors tracking-wide">{% trans "Log In" %}</a>
+
+            <a href="{% url 'unified_onboarding' %}"
+               :class="scrolled ? 'bg-[var(--brand-link-blue)] text-white hover:bg-[var(--accent-cyan)] shadow-md border-transparent' : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'"
+               class="relative overflow-hidden border px-5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 tracking-wide">
+                {% trans "Join CoreLink" %}
             </a>
         </div>
 
         <!-- Mobile Hamburger -->
         <div class="lg:hidden flex items-center">
-            <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle Menu" class="text-slate-300 p-1.5 focus:outline-none bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white transition-colors">
+            <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle Menu"
+                    :class="scrolled ? 'text-slate-700 bg-slate-50 border-slate-200 hover:bg-slate-100' : 'text-slate-300 bg-white/5 border-white/10 hover:bg-white/10'"
+                    class="p-1.5 border focus:outline-none rounded-lg transition-colors">
                 <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 <svg x-show="mobileMenuOpen" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
     </div>
 
-    <!-- Mobile Dropdown Menu -->
-    <div x-show="mobileMenuOpen" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="lg:hidden absolute top-full left-0 w-full bg-[#0F172A]/95 backdrop-blur-xl shadow-2xl border-b border-white/10 p-6 flex flex-col">
+    <!-- Mobile Dropdown Menu (Bright theme) -->
+    <div x-show="mobileMenuOpen" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-b border-slate-200 p-6 flex flex-col">
 
-        <div class="pb-5 mb-5 border-b border-white/10">
-            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 block">{% trans "Language" %}</span>
+        <!-- Language Mobile -->
+        <div class="pb-5 mb-5 border-b border-slate-100">
+            <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 block">{% trans "Language" %}</span>
             <form action="{% url 'set_language' %}" method="post" class="flex flex-wrap gap-2 m-0">
                 {% csrf_token %}
                 <input name="next" type="hidden" value="{{ request.get_full_path }}">
                 {% for language in languages %}
                     {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-                    <button type="submit" name="language" value="{{ language.code }}" class="px-4 py-2 rounded-lg text-[13px] font-semibold transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white shadow-md{% else %}bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10{% endif %}">
+                    <button type="submit" name="language" value="{{ language.code }}" class="px-4 py-2 rounded-lg text-[13px] font-bold transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white shadow-md{% else %}bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200{% endif %}">
                         {{ language.name_local|title }}
                     </button>
                     {% endif %}
@@ -291,12 +306,15 @@
             </form>
         </div>
 
+        <!-- Links Mobile -->
         <div class="flex flex-col gap-3 pb-2">
-            <a href="{% url 'nexus_feed' %}" class="w-full text-left py-3 text-[14px] font-semibold text-slate-300 hover:text-white transition-all tracking-wide">{% trans "Discover Talent" %}</a>
-            <a href="{% url 'company_nexus' %}" class="w-full text-left py-3 text-[14px] font-semibold text-slate-300 hover:text-white transition-all tracking-wide">{% trans "Discover Companies" %}</a>
-            <div class="w-full h-px bg-white/10 my-2"></div>
-            <a href="{% url 'login' %}" class="w-full text-center py-3 text-[14px] font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors tracking-wide">{% trans "Log In" %}</a>
-            <a href="{% url 'unified_onboarding' %}" class="w-full text-center bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] text-white py-3 rounded-xl text-[14px] font-bold shadow-lg active:scale-95 transition-all tracking-wide">{% trans "Join CoreLink" %}</a>
+            <a href="{% url 'nexus_feed' %}" class="w-full text-left py-3.5 text-[14px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors tracking-wide">{% trans "Discover Talent" %}</a>
+            <a href="{% url 'company_nexus' %}" class="w-full text-left py-3.5 text-[14px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors tracking-wide">{% trans "Discover Companies" %}</a>
+
+            <div class="w-full h-px bg-slate-100 my-2"></div>
+
+            <a href="{% url 'login' %}" class="w-full text-center py-3.5 text-[14px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors tracking-wide">{% trans "Log In" %}</a>
+            <a href="{% url 'unified_onboarding' %}" class="w-full text-center bg-[var(--brand-link-blue)] text-white py-3.5 rounded-xl text-[14px] font-bold shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] active:scale-95 transition-all tracking-wide">{% trans "Join CoreLink" %}</a>
         </div>
     </div>
 </nav>
