@@ -104,6 +104,9 @@
 {% endblock navbar %}
 
 {% block content %}
+<!-- PEERLIST-STYLE UNIVERSAL TOP LOADING BAR -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-500 via-emerald-400 to-teal-400 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(16,185,129,0.7), 0 0 4px rgba(16,185,129,0.4);"></div>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -199,7 +202,7 @@
     .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
     .btn-manage-icon:active { transform: scale(0.92); }
 
-    /* High-contrast Emerald Add Button */
+    /* High-contrast Emerald Add Button (Wide on Mobile) */
     .btn-add-solid {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
         height: 44px; padding: 0 1.25rem; border-radius: 0.85rem; background: #10B981; color: #ffffff;
@@ -715,6 +718,88 @@
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* ==============================================
+       PEERLIST-STYLE UNIVERSAL LOADING BAR
+       ============================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('global-page-loader');
+        let loaderInterval;
+
+        function startGlobalLoader() {
+            if(!loader) return;
+            loader.style.opacity = '1';
+            loader.style.transitionDuration = '300ms';
+            loader.style.width = '15%';
+
+            let progress = 15;
+            clearInterval(loaderInterval);
+            loaderInterval = setInterval(() => {
+                progress += (Math.random() * 5 + 1); // jump by 1-6%
+                if(progress > 85) {
+                    progress = 85;
+                    clearInterval(loaderInterval); // hold at 85% until page naturally unloads
+                }
+                loader.style.transitionDuration = '200ms';
+                loader.style.width = progress + '%';
+            }, 300);
+        }
+
+        function stopGlobalLoader() {
+            if(!loader) return;
+            clearInterval(loaderInterval);
+            loader.style.transitionDuration = '200ms';
+            loader.style.width = '100%';
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.transitionDuration = '0ms';
+                    loader.style.width = '0%';
+                }, 300);
+            }, 250);
+        }
+
+        // Intercept standard link clicks
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                const target = link.getAttribute('target');
+                const isJS = href && href.startsWith('javascript:');
+                const isHash = href && href.startsWith('#');
+                const isNewTab = target === '_blank';
+                const hasDownload = link.hasAttribute('download');
+
+                // Allow users to open in new tab with cmd/ctrl click without triggering loader
+                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+
+                if (href && !isJS && !isHash && !isNewTab && !hasDownload && !isModifierPressed) {
+                    startGlobalLoader();
+                }
+            }
+        });
+
+        // Intercept form submissions
+        document.body.addEventListener('submit', (e) => {
+            const form = e.target.closest('form');
+            if (form) {
+                const target = form.getAttribute('target');
+                if (target !== '_blank') {
+                    // Start loader only if form is valid
+                    if (form.checkValidity()) {
+                        startGlobalLoader();
+                    }
+                }
+            }
+        });
+
+        // Reset loader if user uses the browser 'Back' button (bfcache hit)
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                stopGlobalLoader();
+            }
+        });
+    });
 
     /* ==============================================
        NAVIGATION & UI LOGIC (Matches Profile)
