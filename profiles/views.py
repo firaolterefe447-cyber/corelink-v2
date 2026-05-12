@@ -933,31 +933,45 @@ def company_quick_update(request, slug):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+
 @login_required
 def company_media_manage(request, slug):
-    """AJAX compatible Company Media Manager."""
+    """AJAX and HTML compatible Company Media Manager."""
     company = get_object_or_404(Company, slug=slug, members__user=request.user)
 
+    # Security: Ensure user is OWNER or ADMIN
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True,
+                                        role__in=['OWNER', 'ADMIN']).exists():
+        raise PermissionDenied("You do not have permission to manage this company's media.")
+
     if request.method == 'POST':
+        action = request.POST.get('action')
+
+        # 1. Handle Standard HTML Form Deletions (Remove Buttons)
+        if action == 'remove_logo' and company.logo:
+            company.logo.delete(save=True)
+            messages.success(request, "Company logo removed successfully.")
+            return redirect('company_media_manage', slug=company.slug)
+
+        elif action == 'remove_cover' and company.cover_image:
+            company.cover_image.delete(save=True)
+            messages.success(request, "Company banner removed successfully.")
+            return redirect('company_media_manage', slug=company.slug)
+
+        # 2. Handle CropperJS Uploads (AJAX)
         if 'logo' in request.FILES:
             company.logo = request.FILES['logo']
             company.save()
             return JsonResponse({'status': 'success', 'message': 'Logo updated.'})
+
         elif 'cover_image' in request.FILES:
             company.cover_image = request.FILES['cover_image']
             company.save()
             return JsonResponse({'status': 'success', 'message': 'Cover updated.'})
-        elif request.POST.get('action') == 'remove_logo':
-            company.logo.delete(save=True)
-            return JsonResponse({'status': 'success', 'message': 'Logo removed.'})
-        elif request.POST.get('action') == 'remove_cover':
-            company.cover_image.delete(save=True)
-            return JsonResponse({'status': 'success', 'message': 'Cover removed.'})
-        return JsonResponse({'status': 'error'}, status=400)
+
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
     return render(request, 'dashboard/company/media_manage.html', {'company': company})
-
-
 @login_required
 def company_team_manage(request, slug):
     """Handles adding new team members to the company."""

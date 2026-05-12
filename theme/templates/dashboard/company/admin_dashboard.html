@@ -104,7 +104,6 @@
 {% endblock navbar %}
 
 {% block content %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -213,13 +212,13 @@
                 {% else %}
                     <div class="w-full h-full bg-gradient-to-r from-emerald-500 to-teal-600 relative overflow-hidden"></div>
                 {% endif %}
-                <button onclick="document.getElementById('cover_upload').click()" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></button>
+                <a href="{% url 'company_media_manage' company.slug %}" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></a>
             </div>
 
             <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col h-full">
                 <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
                     <!-- Clean Square Logo Wrapper -->
-                    <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/logo cursor-pointer" onclick="document.getElementById('logo_upload').click()">
+                    <a href="{% url 'company_media_manage' company.slug %}" class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/logo cursor-pointer block">
                         {% if company.logo %}
                             <img src="{{ company.logo.url }}" class="w-full h-full object-contain bg-white group-hover/logo:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
@@ -231,15 +230,8 @@
                                 <span class="text-[11px] md:text-[12px] font-black uppercase tracking-widest">Upload</span>
                             </div>
                         {% endif %}
-                    </div>
+                    </a>
                 </div>
-
-                <!-- Hidden file inputs for AJAX upload -->
-                <form id="media_form" style="display:none;" data-url="{% url 'company_media_manage' company.slug %}">
-                    {% csrf_token %}
-                    <input type="file" id="logo_upload" name="logo" accept="image/*" onchange="uploadCompanyMedia('logo')">
-                    <input type="file" id="cover_upload" name="cover_image" accept="image/*" onchange="uploadCompanyMedia('cover_image')">
-                </form>
 
                 <div class="flex flex-col lg:flex-row justify-between items-start gap-6 md:gap-10 w-full shrink-0">
                     <div class="flex-1 w-full">
@@ -261,7 +253,7 @@
                             <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Public Site" %}</span>
                         </a>
                         <a href="{% url 'company_edit' company.slug %}" class="btn-secondary flex-1 sm:flex-none hover:!text-emerald-600 hover:!border-emerald-600">
-                            <i data-lucide="settings" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Edit Profile" %}</span>
+                            <span class="pointer-events-none">{% trans "Edit Basic Business Profile" %}</span>
                         </a>
                     </div>
                 </div>
@@ -294,7 +286,7 @@
         <!-- MODULAR HORIZONTAL BENTO CARDS -->
         <div class="flex flex-col gap-6 lg:gap-8 mb-6 lg:mb-12">
 
-            <!-- 1. Products & Services (Full Width Card, Grid Layout) -->
+            <!-- 1. Products & Services -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Products & Services" %}</h3>
@@ -325,7 +317,39 @@
                 </div>
             </div>
 
-            <!-- 2. Core Team (Full Width Card, Grid Layout) -->
+            <!-- 2. Milestones -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Milestones" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-20">
+                        <a href="{% url 'manage_milestones' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
+                        <a href="{% url 'milestone_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Add" %}</span></a>
+                    </div>
+                </div>
+                <div class="insight-banner">
+                    <p>{% trans "Track your company's growth timeline. Documenting key achievements and product launches shows operational momentum." %}</p>
+                </div>
+                <div class="flex-1 mt-2">
+                    {% if milestones %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {% for milestone in milestones|slice:":3" %}
+                            <div class="p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-md transition-all cursor-default group/item relative">
+                                <span class="inline-block px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[11px] font-black tracking-widest rounded-md mb-3 shadow-sm">{{ milestone.year }}</span>
+                                <h4 class="font-bold text-slate-800 text-[15px] group-hover/item:text-emerald-600 transition-colors leading-snug mb-1">{{ milestone.title }}</h4>
+                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-300 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-all shrink-0 z-50"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'milestone_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-20">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Log timeline" %}</h4>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 3. Core Team -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Core Team" %}</h3>
@@ -361,39 +385,52 @@
                 </div>
             </div>
 
-            <!-- 3. Milestones (Full Width Card, Horizontal Flow) -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Milestones" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-20">
-                        <a href="{% url 'manage_milestones' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
-                        <a href="{% url 'milestone_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Add" %}</span></a>
+            <!-- 4. Press & Journal -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Press & Journal" %}</h3>
+                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'manage_news_list' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
+                        <a href="{% url 'news_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="pen-tool" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Write Article" %}</span></a>
                     </div>
                 </div>
-                <div class="insight-banner">
-                    <p>{% trans "Track your company's growth timeline. Documenting key achievements and product launches shows operational momentum." %}</p>
+
+                <div class="insight-banner relative z-10">
+                    <p>{% trans "Publish company news, press releases, or thought leadership articles to build authority within the network." %}</p>
                 </div>
-                <div class="flex-1 mt-2">
-                    {% if milestones %}
+
+                <div class="flex-1 mt-4 relative z-10">
+                    {% if news %}
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {% for milestone in milestones|slice:":3" %}
-                            <div class="p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-md transition-all cursor-default group/item relative">
-                                <span class="inline-block px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[11px] font-black tracking-widest rounded-md mb-3 shadow-sm">{{ milestone.year }}</span>
-                                <h4 class="font-bold text-slate-800 text-[15px] group-hover/item:text-emerald-600 transition-colors leading-snug mb-1">{{ milestone.title }}</h4>
-                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-300 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-all shrink-0 z-50"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                            {% for article in news|slice:":3" %}
+                            <div class="border border-slate-200/80 rounded-2xl overflow-hidden group/news relative bg-white hover:shadow-md transition-all">
+                                <div class="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover/news:opacity-100 transition-opacity">
+                                    <a href="{% url 'news_update' article.pk %}" class="w-9 h-9 bg-white/95 backdrop-blur-md rounded-xl flex items-center justify-center text-slate-600 hover:text-emerald-600 shadow-sm relative z-50"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
+                                    <a href="{% url 'news_delete' article.pk %}" class="w-9 h-9 bg-white/95 backdrop-blur-md rounded-xl flex items-center justify-center text-rose-500 hover:text-rose-700 shadow-sm relative z-50"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                </div>
+                                {% if article.cover_image %}
+                                <div class="h-40 w-full bg-slate-100 overflow-hidden"><img src="{{ article.cover_image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/news:scale-105 pointer-events-none"></div>
+                                {% else %}
+                                <div class="h-40 w-full bg-emerald-50/50 border-b border-slate-100 flex items-center justify-center text-emerald-200 pointer-events-none"><i data-lucide="newspaper" class="w-10 h-10"></i></div>
+                                {% endif %}
+                                <div class="p-5 relative z-10 cursor-default">
+                                    <span class="inline-block text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-lg mb-2">{{ article.published_date|date:"M d, Y" }}</span>
+                                    <h4 class="font-bold text-slate-900 text-[16px] line-clamp-2 leading-snug">{{ article.title }}</h4>
+                                </div>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'milestone_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-20">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Log timeline" %}</h4>
+                        <a href="{% url 'news_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-8 flex flex-col items-center justify-center gap-3 relative z-20 text-center">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover/empty:bg-emerald-50 group-hover/empty:text-emerald-600 transition-all pointer-events-none"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                            <h4 class="font-bold text-slate-700 group-hover/empty:text-slate-900 text-[15px] transition-colors pointer-events-none">{% trans "No Articles Published" %}</h4>
+                            <p class="text-slate-400 text-[13px] font-medium pointer-events-none">{% trans "Share your first update with the network." %}</p>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 4. Contacts & Links (Full Width Card, 4-Col Grid) -->
+            <!-- 5. Contacts & Links -->
             <div class="bento-card p-6 md:p-8 flex flex-col group relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contacts & Links" %}</h3>
@@ -438,51 +475,6 @@
                                 <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Add contact info" %}</h4>
                             </a>
                         </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- 5. Press & Journal (Full Width Card, Grid Layout) -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Press & Journal" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_news_list' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
-                        <a href="{% url 'news_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="pen-tool" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Write Article" %}</span></a>
-                    </div>
-                </div>
-
-                <div class="insight-banner relative z-10">
-                    <p>{% trans "Publish company news, press releases, or thought leadership articles to build authority within the network." %}</p>
-                </div>
-
-                <div class="flex-1 mt-4 relative z-10">
-                    {% if news %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {% for article in news|slice:":3" %}
-                            <div class="border border-slate-200/80 rounded-2xl overflow-hidden group/news relative bg-white hover:shadow-md transition-all">
-                                <div class="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover/news:opacity-100 transition-opacity">
-                                    <a href="{% url 'news_update' article.pk %}" class="w-9 h-9 bg-white/95 backdrop-blur-md rounded-xl flex items-center justify-center text-slate-600 hover:text-emerald-600 shadow-sm relative z-50"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
-                                    <a href="{% url 'news_delete' article.pk %}" class="w-9 h-9 bg-white/95 backdrop-blur-md rounded-xl flex items-center justify-center text-rose-500 hover:text-rose-700 shadow-sm relative z-50"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
-                                </div>
-                                {% if article.cover_image %}
-                                <div class="h-40 w-full bg-slate-100 overflow-hidden"><img src="{{ article.cover_image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/news:scale-105 pointer-events-none"></div>
-                                {% else %}
-                                <div class="h-40 w-full bg-emerald-50/50 border-b border-slate-100 flex items-center justify-center text-emerald-200 pointer-events-none"><i data-lucide="newspaper" class="w-10 h-10"></i></div>
-                                {% endif %}
-                                <div class="p-5 relative z-10 cursor-default">
-                                    <span class="inline-block text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-lg mb-2">{{ article.published_date|date:"M d, Y" }}</span>
-                                    <h4 class="font-bold text-slate-900 text-[16px] line-clamp-2 leading-snug">{{ article.title }}</h4>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'news_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-8 flex flex-col items-center justify-center gap-3 relative z-20 text-center">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover/empty:bg-emerald-50 group-hover/empty:text-emerald-600 transition-all pointer-events-none"><i data-lucide="file-text" class="w-6 h-6"></i></div>
-                            <h4 class="font-bold text-slate-700 group-hover/empty:text-slate-900 text-[15px] transition-colors pointer-events-none">{% trans "No Articles Published" %}</h4>
-                            <p class="text-slate-400 text-[13px] font-medium pointer-events-none">{% trans "Share your first update with the network." %}</p>
-                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -653,32 +645,12 @@
     </form>
 </div>
 
-<!-- Clean Toast (Matches profile UI) -->
+<!-- Clean Toast -->
 <div id="share-toast" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-400 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
     <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
     <span id="toast-msg">{% trans "Success!" %}</span>
 </div>
 
-<!-- MAGIC CROPPER MODAL -->
-<div id="crop-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col">
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h3 class="font-black text-xl text-slate-900">{% trans "Adjust Image" %}</h3>
-            <button onclick="closeCropModal()" class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-sm"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-        <div class="p-6 bg-slate-900 w-full h-[50vh] relative">
-            <img id="crop-image" src="" class="max-w-full hidden">
-        </div>
-        <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50">
-            <button onclick="closeCropModal()" class="px-6 py-2.5 font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
-            <button id="apply-crop-btn" onclick="applyCrop()" class="px-8 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-lg shadow-emerald-500/20 transition-all active:scale-95 flex items-center gap-2">
-                <i data-lucide="crop" class="w-4 h-4"></i> {% trans "Apply & Save" %}
-            </button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
@@ -750,63 +722,8 @@
     }
 
     /* ==============================================
-       COMPANY SPECIFIC LOGIC
+       COMPANY COMMAND CENTER LOGIC
        ============================================== */
-    let cropper = null;
-    let currentCropType = '';
-
-    function uploadCompanyMedia(field) {
-        const fileInput = document.getElementById(field + '_upload');
-        if (!fileInput.files.length) return;
-
-        const file = fileInput.files[0];
-        currentCropType = field;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const imageElement = document.getElementById('crop-image');
-            imageElement.src = e.target.result;
-            imageElement.classList.remove('hidden');
-            document.getElementById('crop-modal').classList.remove('hidden');
-
-            if (cropper) { cropper.destroy(); }
-            const aspectRatio = field === 'logo' ? 1 / 1 : 21 / 9;
-            cropper = new Cropper(imageElement, { aspectRatio: aspectRatio, viewMode: 2, background: false, autoCropArea: 1, });
-        };
-        reader.readAsDataURL(file);
-        fileInput.value = '';
-    }
-
-    function closeCropModal() {
-        document.getElementById('crop-modal').classList.add('hidden');
-        if (cropper) { cropper.destroy(); cropper = null; }
-    }
-
-    function applyCrop() {
-        if (!cropper) return;
-        const btn = document.getElementById('apply-crop-btn');
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline"></i> {% trans "Saving..." %}';
-        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
-
-        cropper.getCroppedCanvas({
-            width: currentCropType === 'logo' ? 500 : 1920,
-            imageSmoothingQuality: 'high'
-        }).toBlob((blob) => {
-            const formData = new FormData();
-            formData.append(currentCropType, blob, `${currentCropType}.jpg`);
-            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
-            const url = document.getElementById('media_form').getAttribute('data-url');
-
-            fetch(url, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') { window.location.reload(); }
-                else { showToast('{% trans "Upload failed. Please try again." %}'); closeCropModal(); }
-            });
-        }, 'image/jpeg', 0.9);
-    }
-
     function submitQuickCompanyUpdate(e) {
         e.preventDefault();
         const btn = document.getElementById('save-command-btn');

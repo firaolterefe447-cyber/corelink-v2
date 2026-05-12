@@ -403,7 +403,7 @@ class CompanyProfileUpdateForm(DBRestrictedChoiceFieldsMixin, TailwindFormMixin,
     restricted_source_models = {'location': City}
     class Meta:
         model = Company
-        fields = ['name', 'sector', 'location', 'operating_since', 'mission_stmt', 'is_hiring', 'looking_for', 'logo', 'cover_image']
+        fields = ['name', 'sector', 'location', 'operating_since', 'mission_stmt', 'is_hiring', 'looking_for', ]
 
 class CompanyNewsForm(TailwindFormMixin, forms.ModelForm):
     class Meta: model = CompanyNews; fields = ['title', 'excerpt', 'content', 'cover_image', 'is_published']

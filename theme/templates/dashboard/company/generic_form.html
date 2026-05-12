@@ -1,124 +1,462 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 
+{% block meta_tags %}
+<title>{% trans "Update Details" %} | CoreLink</title>
+{% endblock %}
+
 {% block navbar %}
-<!-- Fixed Back Button (Moved to top-left so it never overlaps the title) -->
-<div class="fixed top-6 left-6 md:left-10 z-[60] flex pointer-events-none animate-fade-in-down">
-    <div class="pointer-events-auto flex items-center p-1.5 bg-white/90 backdrop-blur-xl border border-slate-200/60 shadow-lg rounded-full">
-        <a href="javascript:history.back()" class="px-5 py-2 rounded-full text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
+<!-- ==============================================
+     LEFT SIDEBAR NAVIGATION (PC) - COMPANY HUB
+     ============================================== -->
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <div class="flex-1">
+            <!-- Typographic Logo -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Personal Profile" %}
+                </a>
+
+                <!-- ACTIVE: Back to My Company -->
+                <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Back to Hub" %}
+                </a>
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+    <div class="flex items-center gap-3 pb-0.5">
+        <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </a>
+        <span class="font-black text-[18px] text-slate-900 tracking-tight font-heading">{% trans "Editor" %}</span>
+    </div>
+    <div class="flex items-center gap-3">
+        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+            <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+        </button>
     </div>
 </div>
 {% endblock navbar %}
 
 {% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-    body { background-color: #F8FAFC; }
-    .form-wrapper p { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .form-wrapper label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; }
-    .form-wrapper .helptext { font-size: 0.8rem; color: #94A3B8; margin-top: -0.25rem; margin-bottom: 0.5rem; }
-    .form-wrapper ul.errorlist { color: #ef4444; font-size: 0.85rem; font-weight: 600; padding: 0.5rem 0; }
-
-    /* Safely target text inputs, NOT checkboxes or files */
-    .form-wrapper input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-    .form-wrapper textarea,
-    .form-wrapper select {
-        width: 100%; background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 500; outline: none; transition: all 0.3s; color: #0F172A;
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .form-wrapper input:focus, .form-wrapper textarea:focus { background-color: #FFFFFF; border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    body {
+        font-family: var(--font-body);
+        background-color: #F4F7FA;
+        /* Premium Emerald/Teal Glass Background */
+        background-image:
+            radial-gradient(circle at 12% 0%, rgba(209, 250, 229, 0.6) 0%, transparent 42%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+    }
 
-    /* Fix Checkbox Layout */
-    .form-wrapper input[type="checkbox"] { width: 1.25rem; height: 1.25rem; cursor: pointer; accent-color: #10B981; }
-    .form-wrapper p:has(input[type="checkbox"]) { flex-direction: row-reverse; justify-content: flex-end; align-items: center; border: 1.5px solid #E2E8F0; padding: 1rem 1.25rem; border-radius: 1rem; background: #F8FAFC; }
-    .form-wrapper p:has(input[type="checkbox"]) label { margin-bottom: 0; cursor: pointer; }
+    .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+    /* Premium Glass Card */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.88);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 2rem;
+        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Override Django/Tailwind Form Inputs to match Emerald Glassmorphism */
+    .django-form input:not([type="checkbox"]):not([type="file"]),
+    .django-form select,
+    .django-form textarea {
+        width: 100% !important;
+        border: 1.5px solid rgba(226, 232, 240, 0.9) !important;
+        border-radius: 1.25rem !important;
+        background: rgba(255, 255, 255, 0.8) !important;
+        transition: all 0.25s var(--ease-magic) !important;
+        color: #0f172a !important;
+        font-size: 14.5px !important;
+        font-weight: 600 !important;
+        padding: 1rem 1.2rem !important;
+        outline: none !important;
+        box-shadow: none !important;
+        appearance: none;
+    }
+    .django-form select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+        background-position: right 1rem center !important;
+        background-repeat: no-repeat !important;
+        background-size: 1.2em !important;
+        padding-right: 3rem !important;
+    }
+    .django-form input:not([type="checkbox"]):not([type="file"]):focus,
+    .django-form select:focus,
+    .django-form textarea:focus {
+        background: #ffffff !important;
+        border-color: rgba(16, 185, 129, 0.45) !important; /* Emerald Focus */
+        box-shadow: 0 10px 28px -14px rgba(16, 185, 129, 0.35) !important; /* Emerald Focus */
+    }
+    .django-form textarea { min-height: 140px !important; resize: vertical !important; line-height: 1.6 !important; }
+
+    .django-form input[type="checkbox"] {
+        width: 1.2rem; height: 1.2rem; border-radius: 0.3rem;
+        accent-color: #10B981; /* Emerald */
+        cursor: pointer;
+    }
+
+    /* Animations */
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+
+    /* Layout canvas spacing */
+    .app-canvas {
+        padding: calc(6rem + env(safe-area-inset-top)) 1.25rem calc(4rem + env(safe-area-inset-bottom)) 1.25rem;
+        max-width: 900px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 6rem; padding-bottom: 8rem; max-width: 1200px;} }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); max-width: 1280px; } }
 </style>
 
-<div class="pt-28 pb-20 px-4 min-h-screen flex items-start justify-center">
-    <div class="w-full max-w-3xl bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden animate-fade-in-up">
+<main class="app-canvas anim-smooth-appear">
+    <!-- Center the form in a readable column -->
+    <div class="max-w-2xl mx-auto w-full">
 
-        <!-- Header -->
-        <div class="px-8 pt-8 pb-6 border-b border-slate-100 bg-emerald-50/30 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{% if object %}Update Record{% else %}Create New{% endif %}</h1>
-                <p class="text-slate-500 font-medium text-[14px] mt-1">{% trans "Fill out the details below." %}</p>
+        <!-- Standalone Header with ONLY Back Navigation -->
+        <div class="flex items-center justify-between mb-8 md:mb-10 px-2">
+            <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all shadow-sm active:scale-95 group shrink-0">
+                <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
+            </a>
+
+            <div class="text-center flex-1 px-4">
+                <h1 class="font-heading text-[1.5rem] md:text-[1.8rem] font-black text-slate-900 tracking-tight leading-none mb-2">
+                    {% if 'service' in request.resolver_match.url_name %}
+                        {% if form.instance.pk %}{% trans "Edit Service" %}{% else %}{% trans "Add New Service" %}{% endif %}
+                    {% elif 'news' in request.resolver_match.url_name %}
+                        {% if form.instance.pk %}{% trans "Edit Article" %}{% else %}{% trans "Publish News" %}{% endif %}
+                    {% elif 'milestone' in request.resolver_match.url_name %}
+                        {% if form.instance.pk %}{% trans "Edit Milestone" %}{% else %}{% trans "Add Milestone" %}{% endif %}
+                    {% elif 'contact' in request.resolver_match.url_name %}
+                        {% if form.instance.pk %}{% trans "Edit Contact" %}{% else %}{% trans "Add Contact Method" %}{% endif %}
+                    {% elif 'social' in request.resolver_match.url_name %}
+                        {% if form.instance.pk %}{% trans "Edit Link" %}{% else %}{% trans "Add Social Link" %}{% endif %}
+                    {% else %}
+                        {% if form.instance.pk %}{% trans "Edit Details" %}{% else %}{% trans "Add New Entry" %}{% endif %}
+                    {% endif %}
+                </h1>
+                <p class="text-[13.5px] text-slate-500 font-semibold tracking-wide">{% trans "Update your company records." %}</p>
             </div>
-            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100"><i data-lucide="edit" class="w-5 h-5"></i></div>
+
+            <div class="w-11 h-11 shrink-0"></div> <!-- Spacer for perfect centering -->
         </div>
 
-        <form method="POST" enctype="multipart/form-data" class="p-8">
-            {% csrf_token %}
+        <!-- Main Form Glass Card -->
+        <div class="glass-card relative group">
+            <!-- Subtle ambient Emerald glow inside the card -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/10 to-teal-500/5 blur-[60px] rounded-full pointer-events-none"></div>
 
-            <div class="form-wrapper">
-                {{ form.as_p }}
-            </div>
+            <form method="post" enctype="multipart/form-data" id="main-form" class="p-6 md:p-10 space-y-7 relative z-10 django-form">
+                {% csrf_token %}
 
-            <!-- MAGIC GALLERY UPLOADER (For Services & News) -->
-            <div class="mt-8 border-t border-slate-100 pt-8">
-                <label class="text-[0.8rem] font-bold text-slate-500 uppercase tracking-widest mb-3 block">{% trans "Attach Media Gallery (Optional)" %}</label>
+                {% for field in form %}
+                    {% if not field.is_hidden %}
+                    <div class="form-group flex flex-col w-full">
 
-                <!-- Existing Images (If Editing) -->
-                {% if object and object.gallery.all %}
-                <div class="grid grid-cols-3 sm:grid-cols-4 gap-4 mb-6">
-                    {% for img in object.gallery.all %}
-                    <div class="relative group aspect-square rounded-xl overflow-hidden border border-slate-200">
-                        <img src="{{ img.image.url }}" class="w-full h-full object-cover">
-                        <label class="absolute inset-0 bg-rose-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer backdrop-blur-sm">
-                            <input type="checkbox" name="delete_images" value="{{ img.id }}" class="hidden">
-                            <i data-lucide="trash-2" class="w-6 h-6 mb-1"></i>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Delete</span>
-                        </label>
+                        <!-- Checkbox Layout -->
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <label class="flex items-center gap-4 cursor-pointer p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-emerald-200 hover:shadow-sm transition-all group/check">
+                                <div class="pt-0.5">{{ field }}</div>
+                                <div>
+                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-emerald-600 transition-colors">{{ field.label }}</span>
+                                    {% if field.help_text %}
+                                        <span class="block text-[13px] text-slate-500 font-medium mt-1">{{ field.help_text|safe }}</span>
+                                    {% endif %}
+                                </div>
+                            </label>
+
+                        <!-- Standard Input Layout -->
+                        {% else %}
+                            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-2" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required == False and field.name != "is_current" %}
+                                    <span class="text-slate-400 font-bold tracking-normal normal-case ml-1">({% trans "Optional" %})</span>
+                                {% endif %}
+                            </label>
+
+                            <!-- The input itself -->
+                            <div class="relative w-full group/input">
+                                {{ field }}
+                            </div>
+
+                            <!-- Help Text UI -->
+                            {% if field.help_text %}
+                                <div class="mt-2.5 flex items-start gap-2.5 bg-emerald-50/50 p-3.5 rounded-xl border border-emerald-100/50">
+                                    <i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5 text-emerald-600"></i>
+                                    <p class="text-[12.5px] font-semibold text-slate-600 leading-relaxed">{{ field.help_text|safe }}</p>
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+
+                        <!-- Errors UI -->
+                        {% if field.errors %}
+                            <div class="bg-rose-50 border border-rose-100 rounded-xl p-3.5 mt-2 flex items-start gap-2.5 anim-smooth-appear">
+                                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
+                                <div class="text-[13px] font-bold text-rose-700">
+                                    {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
 
-                <!-- Drag & Drop Zone -->
-                <div class="w-full relative">
-                    <input type="file" name="gallery_images" id="gallery_input" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer" onchange="previewImages(this)">
-                    <div class="w-full border-2 border-dashed border-emerald-200 bg-emerald-50/50 rounded-2xl p-8 text-center flex flex-col items-center justify-center transition-colors hover:bg-emerald-50">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-sm mb-3">
-                            <i data-lucide="image-plus" class="w-6 h-6"></i>
+                <!-- ========================================== -->
+                <!-- ADVANCED MULTI-IMAGE UPLOADER GALLERY      -->
+                <!-- ========================================== -->
+                {% if 'service' in request.resolver_match.url_name or 'news' in request.resolver_match.url_name %}
+                    <div class="pt-6 border-t border-slate-200/80">
+                        <div class="mb-5">
+                            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] flex items-center gap-2">
+                                <i data-lucide="images" class="w-4 h-4 text-emerald-600"></i> {% trans "Media Gallery" %} <span class="text-slate-400 font-bold tracking-normal normal-case ml-1">({% trans "Optional" %})</span>
+                            </label>
+                            <p class="text-[13px] text-slate-500 font-medium mt-1.5">{% trans "Upload multiple images to showcase this record visually." %}</p>
                         </div>
-                        <h4 class="font-bold text-slate-800">{% trans "Click or Drag Images Here" %}</h4>
-                        <p class="text-[13px] text-slate-500 mt-1">{% trans "Upload high-quality JPEGs or PNGs." %}</p>
+
+                        <!-- Hidden Native Input -->
+                        <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
+
+                        <!-- Visual Gallery Grid -->
+                        <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 transition-all">
+
+                            <!-- EXISTING IMAGES (If Editing) -->
+                            {% if form.instance.pk and form.instance.gallery.all %}
+                                {% for media in form.instance.gallery.all %}
+                                <div class="relative group aspect-square rounded-[1.25rem] overflow-hidden border border-slate-200 transition-all duration-300 shadow-sm bg-white" id="existing-wrapper-{{ media.pk }}">
+                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105" id="existing-img-{{ media.pk }}">
+                                    <div class="absolute inset-0 bg-rose-500/10 opacity-0 transition-opacity duration-300 pointer-events-none" id="existing-overlay-{{ media.pk }}"></div>
+                                    <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
+                                    <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 text-slate-600 hover:text-white rounded-xl flex items-center justify-center shadow-md backdrop-blur-md transition-all z-10" id="btn-{{ media.pk }}">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <!-- ADD MORE BUTTON -->
+                            <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[1.25rem] border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-white/50 hover:bg-emerald-50/50 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-emerald-600 transition-all cursor-pointer shadow-sm group">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 pointer-events-none transition-transform group-hover:scale-110">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[11px] font-black uppercase tracking-[0.15em] pointer-events-none">{% trans "Add Media" %}</span>
+                            </button>
+                        </div>
                     </div>
+                {% endif %}
+                <!-- ========================================== -->
+
+                <!-- Submit Area -->
+                <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-8 border-t border-slate-200/80 mt-10">
+                    <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[13px] font-bold uppercase tracking-wide rounded-xl shadow-sm transition-all text-center flex items-center justify-center gap-2 order-2 sm:order-1 active:scale-95">
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[13px] font-bold uppercase tracking-[0.1em] rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2 active:scale-95">
+                        <i data-lucide="save" id="submit-icon" class="w-4.5 h-4.5"></i> <span id="submit-text">{% trans "Save Entry" %}</span>
+                    </button>
                 </div>
-
-                <!-- Preview Container -->
-                <div id="image_preview" class="grid grid-cols-3 sm:grid-cols-5 gap-3 mt-4 empty:hidden"></div>
-            </div>
-
-            <!-- Submit Buttons -->
-            <div class="pt-8 border-t border-slate-100 mt-8 flex justify-end gap-3">
-                <a href="javascript:history.back()" class="px-6 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</a>
-                <button type="submit" class="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-600/20 active:scale-[0.98] flex items-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i> {% trans "Save Details" %}
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => lucide.createIcons());
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
-    function previewImages(input) {
-        const preview = document.getElementById('image_preview');
-        preview.innerHTML = '';
-        if (input.files) {
-            Array.from(input.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const div = document.createElement('div');
-                    div.className = 'aspect-square rounded-xl overflow-hidden border border-emerald-200 shadow-sm relative group animate-fade-in-up';
-                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">
-                                     <div class="absolute inset-0 bg-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>`;
-                    preview.appendChild(div);
-                }
-                reader.readAsDataURL(file);
+        // ==========================================
+        // 1. AUTO-FOCUS MAGIC (UX Improvement)
+        // ==========================================
+        setTimeout(() => {
+            const firstInput = document.querySelector('form input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]), form textarea');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 300);
+
+        // ==========================================
+        // 2. SUBMIT LOADING STATE (Prevents Double Clicks)
+        // ==========================================
+        const mainForm = document.getElementById('main-form');
+        if (mainForm) {
+            mainForm.addEventListener('submit', function() {
+                const btn = document.getElementById('submit-btn');
+                const text = document.getElementById('submit-text');
+                const icon = document.getElementById('submit-icon');
+
+                btn.disabled = true;
+                btn.classList.add('opacity-80', 'cursor-not-allowed', 'scale-95');
+                text.innerText = '{% trans "Saving..." %}';
+
+                icon.setAttribute('data-lucide', 'loader-2');
+                icon.classList.add('animate-spin');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             });
         }
+
+        // ==========================================
+        // 3. MULTI-IMAGE GALLERY LOGIC
+        // ==========================================
+        const fileInput = document.getElementById('gallery-upload');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const addMoreBtn = document.getElementById('add-more-btn');
+
+        if (fileInput && galleryGrid && addMoreBtn) {
+            let queuedFiles =[];
+
+            fileInput.addEventListener('change', function(e) {
+                const newFiles = Array.from(e.target.files);
+                newFiles.forEach(file => {
+                    const isDuplicate = queuedFiles.some(f => f.name === file.name && f.size === file.size);
+                    if (!isDuplicate) { queuedFiles.push(file); }
+                });
+                updateGalleryUI();
+            });
+
+            function updateGalleryUI() {
+                document.querySelectorAll('.queued-image-preview').forEach(el => el.remove());
+
+                queuedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const div = document.createElement('div');
+                        div.className = 'queued-image-preview img-pop relative group aspect-square rounded-[1.25rem] overflow-hidden border-2 border-emerald-500 shadow-sm bg-white';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-full object-cover">
+                            <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 hover:text-white text-slate-600 rounded-xl flex items-center justify-center shadow-md backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                            <div class="absolute bottom-2 left-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg shadow-sm">NEW</div>
+                        `;
+                        galleryGrid.insertBefore(div, addMoreBtn);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                const dataTransfer = new DataTransfer();
+                queuedFiles.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            }
+
+            window.removeQueuedFile = function(index) {
+                queuedFiles.splice(index, 1);
+                updateGalleryUI();
+            };
+
+            // Existing Deletion Toggle Logic
+            window.toggleDeleteExisting = function(mediaPk) {
+                const checkbox = document.getElementById(`delete-${mediaPk}`);
+                const wrapper = document.getElementById(`existing-wrapper-${mediaPk}`);
+                const img = document.getElementById(`existing-img-${mediaPk}`);
+                const overlay = document.getElementById(`existing-overlay-${mediaPk}`);
+                const btn = document.getElementById(`btn-${mediaPk}`);
+
+                checkbox.checked = !checkbox.checked;
+
+                if (checkbox.checked) {
+                    img.classList.add('opacity-50', 'grayscale');
+                    overlay.classList.replace('opacity-0', 'opacity-100');
+                    wrapper.classList.replace('border-slate-200', 'border-rose-300');
+                    btn.classList.replace('hover:bg-rose-500', 'hover:bg-slate-500');
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`;
+                } else {
+                    img.classList.remove('opacity-50', 'grayscale');
+                    overlay.classList.replace('opacity-100', 'opacity-0');
+                    wrapper.classList.replace('border-rose-300', 'border-slate-200');
+                    btn.classList.replace('hover:bg-slate-500', 'hover:bg-rose-500');
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`;
+                }
+            };
+        }
+    });
+
+    /* --- DRAWER LOGIC --- */
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.remove('opacity-0', 'pointer-events-none');
+            bd.classList.add('opacity-100');
+            dw.classList.remove('drawer-closed');
+            dw.classList.add('drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
     }
 </script>
 {% endblock %}
