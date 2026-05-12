@@ -933,7 +933,18 @@ def company_quick_update(request, slug):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+from django.views.generic import DetailView
+from profiles.models import CompanyService
 
+class ServiceDetailView(DetailView):
+    """Public detail page for a specific company service/product."""
+    model = CompanyService
+    template_name = 'profiles/public_service_detail.html'
+    context_object_name = 'service'
+
+    def get_queryset(self):
+        # Ensure we only show active services
+        return CompanyService.objects.filter(is_active=True).select_related('company')
 @login_required
 def company_media_manage(request, slug):
     """AJAX and HTML compatible Company Media Manager."""

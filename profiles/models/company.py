@@ -182,7 +182,8 @@ class ServiceGalleryImage(models.Model):
     def __str__(self) -> str:
         return f"Img: {self.service.name}"
 
-
+    def get_absolute_url(self):
+        return reverse("public_service_detail", kwargs={"pk": self.pk})
 class CompanyMilestone(models.Model):
     """Narrative Corporate Timeline records."""
 

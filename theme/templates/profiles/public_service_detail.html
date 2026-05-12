@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{{ service.name }} | {{ service.company.name }} | CoreLink</title>
+
+    <!-- SEO & Metadata -->
+    <meta name="description" content="{{ service.description|truncatechars:160 }}">
+    <meta property="og:title" content="{{ service.name }} - {{ service.company.name }}">
+    <meta property="og:description" content="{{ service.description|truncatechars:160 }}">
+    {% if service.gallery.exists %}
+    <meta property="og:image" content="{{ service.gallery.first.image.url }}">
+    {% endif %}
+
+    <!-- Core Assets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Unified Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        corelink: {
+                            DEFAULT: '#0A66C2',
+                            light: '#E6F0F9',
+                            dark: '#004182'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7FA;
+            /* Premium Light Glass Background matching the Feed & Company Page */
+            background-image:
+                radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+                radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+                radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+            background-attachment: fixed;
+            color: #0F172A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.03em; }
+
+        /* Structured Glass Bento Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px -16px rgba(15, 23, 42, 0.08);
+        }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+
+    <!-- FLOATING TOP NAVIGATION -->
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+         :class="scrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/90 shadow-sm py-3' : 'bg-transparent py-5'">
+        <div class="max-w-[1000px] mx-auto px-4 md:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-4">
+                <!-- Back to Company Profile -->
+                <a href="{{ service.company.get_absolute_url }}" class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-corelink hover:border-corelink/30 hover:shadow-md transition-all group">
+                    <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
+                </a>
+
+                <div class="flex flex-col">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider hidden md:block">Back to Profile</span>
+                    <div class="font-heading font-black text-lg md:text-xl tracking-tight text-slate-900">
+                        {{ service.company.name }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ service.company.get_absolute_url }}#contact" class="hidden md:flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-[13px] bg-slate-900 text-white hover:bg-corelink transition-all active:scale-95 shadow-md">
+                    Inquire Now
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-[1000px] mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-24 relative z-20">
+
+        <!-- BREADCRUMB -->
+        <nav class="flex text-slate-500 text-[13px] font-medium mb-6 px-2">
+            <a href="{{ service.company.get_absolute_url }}" class="hover:text-corelink transition-colors">Profile</a>
+            <span class="mx-2">/</span>
+            <span class="text-slate-900 truncate max-w-[200px] md:max-w-none">{{ service.name }}</span>
+        </nav>
+
+        <!-- MAIN DETAIL CARD -->
+        <div class="glass-card p-6 md:p-10">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14">
+
+                <!-- LEFT COLUMN: Interactive Image Gallery -->
+                <div class="space-y-4"
+                     x-data="{ activeImage: '{{ service.gallery.first.image.url|default:'' }}' }">
+
+                    {% if service.gallery.exists %}
+                        <!-- Main Featured Image (Aspect Ratio carefully tuned for PC and Mobile) -->
+                        <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner relative group">
+                            <!-- Image -->
+                            <img :src="activeImage" :key="activeImage"
+                                 class="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
+                                 alt="{{ service.name }} visual">
+
+                            <!-- Overlay gradient to make it pop -->
+                            <div class="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl pointer-events-none"></div>
+                        </div>
+
+                        <!-- Thumbnails (Only show if > 1 image) -->
+                        {% if service.gallery.count > 1 %}
+                        <div class="flex gap-3 overflow-x-auto pb-2 pt-2 hide-scroll">
+                            {% for img in service.gallery.all %}
+                            <button @click="activeImage = '{{ img.image.url }}'"
+                                    class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 transition-all shrink-0 relative outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corelink"
+                                    :class="activeImage === '{{ img.image.url }}' ? 'border-corelink opacity-100 ring-2 ring-corelink/20' : 'border-transparent opacity-60 hover:opacity-100'">
+                                <img src="{{ img.image.url }}" class="w-full h-full object-cover">
+                            </button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Elegant Fallback if no images are uploaded -->
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                            <i data-lucide="package-search" class="w-16 h-16 mb-4 text-slate-300"></i>
+                            <span class="font-medium text-[14px]">No images available</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- RIGHT COLUMN: Service Details & Long Text -->
+                <div class="flex flex-col h-full">
+
+                    <!-- Meta Tag -->
+                    <div class="mb-5">
+                        <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-corelink/10 text-corelink font-bold text-[12px] uppercase tracking-wider rounded-lg">
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                            Product / Service
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="font-heading font-black text-3xl md:text-4xl lg:text-5xl text-slate-900 mb-6 leading-tight tracking-tight">
+                        {{ service.name }}
+                    </h1>
+
+                    <!-- Long Form Description -->
+                    <!-- We use linebreaksbr so user's paragraphs render correctly. -->
+                    <div class="text-[15px] md:text-[16px] text-slate-600 leading-relaxed font-medium">
+                        {{ service.description|linebreaksbr }}
+                    </div>
+
+                    <!-- Call To Action Area (Pushed to bottom) -->
+                    <div class="mt-10 lg:mt-auto pt-8 border-t border-slate-200/80">
+                        <p class="text-slate-500 text-[13px] font-medium mb-4">Interested in exploring how this can help you?</p>
+                        <a href="{{ service.company.get_absolute_url }}#contact" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-3.5 rounded-xl font-bold text-[15px] bg-slate-900 text-white hover:bg-corelink transition-all duration-300 shadow-lg hover:shadow-corelink/30 hover:-translate-y-0.5 active:translate-y-0">
+                            <i data-lucide="mail" class="w-4 h-4 mr-2"></i> Discuss this Service
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200/80 bg-white/50 backdrop-blur-md py-8 text-center mt-auto relative z-20">
+        <p class="text-[13px] font-bold text-slate-400 uppercase tracking-wider">&copy; {% now "Y" %} {{ service.company.name }}. Powered by Corelink.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

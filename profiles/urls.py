@@ -7,7 +7,7 @@
 
 from django.urls import path
 from . import views
-from .views import GrowthLogListView, EssayListView, VisionBlockListView
+from .views import GrowthLogListView, EssayListView, VisionBlockListView,ServiceDetailView
 
 urlpatterns = [
     # ==========================================
@@ -144,7 +144,7 @@ path('dashboard/logs/', GrowthLogListView.as_view(), name='manage_growth_logs'),
 
     # Media API Endpoint (Already in views, just adding the route)
     path('company/<slug:slug>/media/', views.company_media_manage, name='company_media_manage'),
-
+path('service/<uuid:pk>/', ServiceDetailView.as_view(), name='public_service_detail'),
     # Company Network/Contacts
     path('company/network/', views.ManageCompanyNetworkView.as_view(), name='manage_company_network'),
     path('company/contact/add/', views.CompanyContactCreateView.as_view(), name='company_contact_create'),
