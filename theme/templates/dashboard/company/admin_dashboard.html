@@ -158,12 +158,32 @@
     @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
     .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
 
-    /* Standardized Buttons */
+    /* Standardized Inputs */
     .premium-input { width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 1rem; background: #ffffff; transition: all 0.25s var(--ease-magic); color: #0f172a; font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none; }
     .premium-input:focus { border-color: rgba(16, 185, 129, 0.45); box-shadow: 0 10px 28px -14px rgba(16, 185, 129, 0.35); }
 
-    .insight-banner { background: linear-gradient(to right, rgba(236, 253, 245, 0.6), rgba(248, 250, 252, 0.4)); border: 1px solid rgba(167, 243, 208, 0.8); border-radius: 1rem; padding: 0.875rem 1.25rem; margin-bottom: 1.5rem; }
-    .insight-banner p { font-size: 13px; font-weight: 600; color: #475569; line-height: 1.5; margin:0; }
+    /* Upgraded Insight Banners (Help Text) */
+    .insight-banner {
+        background: rgba(248, 250, 252, 0.8);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-left: 4px solid #10B981;
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    .insight-banner p {
+        font-family: var(--font-body);
+        font-size: 14.5px;
+        font-weight: 500;
+        color: #334155;
+        line-height: 1.6;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+    @media (min-width: 768px) {
+        .insight-banner { padding: 1.125rem 1.5rem; }
+        .insight-banner p { font-size: 15px; }
+    }
 
     /* Robust Button Clickability Fix */
     .bento-card a[href], .bento-card button, .bento-card select, .bento-card input, .group\/empty { position: relative !important; z-index: 50 !important; pointer-events: auto !important; cursor: pointer !important; }
@@ -261,11 +281,11 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
-                        <a href="{% url 'company_public_profile' company.slug %}" target="_blank" class="btn-action flex-1 sm:flex-none uppercase !bg-gradient-to-r !from-slate-900 !to-slate-800 hover:!from-black hover:!to-slate-900 shadow-slate-900/20">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
+                        <a href="{% url 'company_public_profile' company.slug %}" target="_blank" class="btn-action w-full sm:w-auto uppercase !bg-gradient-to-r !from-slate-900 !to-slate-800 hover:!from-black hover:!to-slate-900 shadow-slate-900/20">
                             <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Public Site" %}</span>
                         </a>
-                        <a href="{% url 'company_edit' company.slug %}" class="btn-secondary flex-1 sm:flex-none hover:!text-emerald-600 hover:!border-emerald-600">
+                        <a href="{% url 'company_edit' company.slug %}" class="btn-secondary w-full sm:w-auto hover:!text-emerald-600 hover:!border-emerald-600">
                             <span class="pointer-events-none">{% trans "Edit Basic Business Profile" %}</span>
                         </a>
                     </div>
@@ -301,13 +321,13 @@
 
             <!-- 1. Products & Services -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Products & Services" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 shrink-0 relative z-20">
-                        <a href="{% url 'manage_services' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'manage_services' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
                             <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
                         </a>
-                        <a href="{% url 'service_create' %}" class="btn-add-solid">
+                        <a href="{% url 'service_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Service" %}</span>
                         </a>
@@ -337,13 +357,13 @@
 
             <!-- 2. Milestones -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Milestones" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 shrink-0 relative z-20">
-                        <a href="{% url 'manage_milestones' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'manage_milestones' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
                             <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
                         </a>
-                        <a href="{% url 'milestone_create' %}" class="btn-add-solid">
+                        <a href="{% url 'milestone_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Milestone" %}</span>
                         </a>
@@ -374,13 +394,13 @@
 
             <!-- 3. Core Team -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Core Team" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 shrink-0 relative z-20">
-                        <button onclick="showComingSoon()" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <button onclick="showComingSoon()" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
                             <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
                         </button>
-                        <button onclick="showComingSoon()" class="btn-add-solid">
+                        <button onclick="showComingSoon()" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="user-plus" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Member" %}</span>
                         </button>
@@ -415,13 +435,13 @@
 
             <!-- 4. Press & Journal -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Press & Journal" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 shrink-0 relative z-20">
-                        <a href="{% url 'manage_news_list' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'manage_news_list' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
                             <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
                         </a>
-                        <a href="{% url 'news_create' %}" class="btn-add-solid">
+                        <a href="{% url 'news_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="pen-tool" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Article" %}</span>
                         </a>
@@ -465,17 +485,18 @@
 
             <!-- 5. Contacts & Links -->
             <div class="bento-card p-6 md:p-8 flex flex-col group relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contacts & Links" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:shrink-0 relative z-20 flex-wrap">
-                        <a href="{% url 'manage_company_network' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                    <!-- Uses flex-wrap so the buttons split width on mobile while keeping proper structure -->
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'manage_company_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
                             <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
                         </a>
-                        <a href="{% url 'company_social_create' %}" class="btn-add-solid">
+                        <a href="{% url 'company_social_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
                             <i data-lucide="link" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Link" %}</span>
                         </a>
-                        <a href="{% url 'company_contact_create' %}" class="btn-add-solid">
+                        <a href="{% url 'company_contact_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
                             <i data-lucide="phone" class="w-4.5 h-4.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Contact" %}</span>
                         </a>
