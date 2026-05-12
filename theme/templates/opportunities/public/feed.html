@@ -130,6 +130,9 @@
 {% endblock navbar %}
 
 {% block content %}
+<!-- Global Page Loading Bar -->
+<div id="top-loading-bar"></div>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -141,6 +144,22 @@
         --app-bg: #F8FAFC;
     }
     * { -webkit-tap-highlight-color: transparent; }
+
+    /* Top Progress Bar CSS */
+    #top-loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb);
+        z-index: 99999;
+        width: 0%;
+        transition: width 0.4s ease-out, opacity 0.4s ease-in;
+        pointer-events: none;
+        box-shadow: 0 0 10px rgba(10, 102, 194, 0.5);
+        opacity: 0;
+    }
+
     body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
@@ -565,6 +584,42 @@
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* ==============================================
+       PAGE PROGRESS BAR LOGIC
+       ============================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+        const loadingBar = document.getElementById('top-loading-bar');
+
+        // Initial fake progress on load
+        if(loadingBar) {
+            loadingBar.style.opacity = '1';
+            loadingBar.style.width = '30%';
+
+            setTimeout(() => { loadingBar.style.width = '70%'; }, 200);
+            setTimeout(() => {
+                loadingBar.style.width = '100%';
+                setTimeout(() => { loadingBar.style.opacity = '0'; }, 300);
+            }, 500);
+        }
+
+        // Trigger loading bar when a user clicks a regular link
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target && target.href && !target.href.startsWith('javascript:') && !target.href.startsWith('#') && target.target !== '_blank') {
+                if (target.hostname === window.location.hostname) {
+                    loadingBar.style.transition = 'none';
+                    loadingBar.style.width = '0%';
+                    loadingBar.style.opacity = '1';
+
+                    setTimeout(() => {
+                        loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+                        loadingBar.style.width = '60%';
+                    }, 10);
+                }
+            }
+        });
+    });
 
     let shareTimeout;
     function showToast(message) {
