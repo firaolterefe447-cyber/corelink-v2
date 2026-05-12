@@ -196,8 +196,6 @@
     /* Animations & Utils */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
-    @keyframes slowPan { 0% { transform: scale(1.1) translate(0, 0); } 50% { transform: scale(1.1) translate(-10px, -10px); } 100% { transform: scale(1.1) translate(0, 0); } }
-    .bg-pan { animation: slowPan 20s ease-in-out infinite; }
     .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
     .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
@@ -208,14 +206,12 @@
 
         <!-- COMPANY HERO (FULL WIDTH) -->
         <div class="bento-card md:rounded-[3rem] relative flex flex-col w-full mb-6 lg:mb-10" id="company-hero">
-            <!-- Premium Light Fallback Cover (Like profile but subtle emerald) -->
+            <!-- Solid Premium Green Fallback Cover -->
             <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[1.7rem] md:rounded-t-[3rem] group/cover">
                 {% if company.cover_image %}
                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center">
                 {% else %}
-                    <div class="w-full h-full bg-gradient-to-tr from-emerald-50 via-slate-50 to-emerald-100 relative overflow-hidden bg-pan">
-                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#10B9810a_1px,transparent_1px),linear-gradient(to_bottom,#10B9810a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-                    </div>
+                    <div class="w-full h-full bg-gradient-to-r from-emerald-500 to-teal-600 relative overflow-hidden"></div>
                 {% endif %}
                 <button onclick="document.getElementById('cover_upload').click()" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></button>
             </div>
@@ -273,7 +269,7 @@
                 <!-- Mission Statement -->
                 <div class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative w-full">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center gap-2 uppercase tracking-widest"><i data-lucide="target" class="w-4.5 h-4.5 text-emerald-600"></i> {% trans "Mission Statement" %}</h3>
+                        <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center uppercase tracking-widest">{% trans "Mission Statement" %}</h3>
                         <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> {% trans "Edit" %}
                         </a>
