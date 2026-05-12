@@ -206,150 +206,100 @@
 <main class="app-canvas anim-smooth-appear">
     <div class="max-w-[1200px] mx-auto w-full relative z-10">
 
-        <!-- COMPANY HERO & COMMAND CENTER (GRID IDENTICAL TO PROFILE) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-6 lg:mb-10 items-stretch">
+        <!-- COMPANY HERO (FULL WIDTH) -->
+        <div class="bento-card md:rounded-[3rem] relative flex flex-col w-full mb-6 lg:mb-10" id="company-hero">
+            <!-- Premium Light Fallback Cover (Like profile but subtle emerald) -->
+            <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[1.7rem] md:rounded-t-[3rem] group/cover">
+                {% if company.cover_image %}
+                    <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center">
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-tr from-emerald-50 via-slate-50 to-emerald-100 relative overflow-hidden bg-pan">
+                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#10B9810a_1px,transparent_1px),linear-gradient(to_bottom,#10B9810a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+                    </div>
+                {% endif %}
+                <button onclick="document.getElementById('cover_upload').click()" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></button>
+            </div>
 
-            <!-- Company Identity Hero -->
-            <div class="lg:col-span-8 bento-card md:rounded-[3rem] relative flex flex-col w-full h-full">
-                <!-- Premium Light Fallback Cover (Like profile but subtle emerald) -->
-                <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[1.7rem] md:rounded-t-[3rem] group/cover">
-                    {% if company.cover_image %}
-                        <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center">
-                    {% else %}
-                        <div class="w-full h-full bg-gradient-to-tr from-emerald-50 via-slate-50 to-emerald-100 relative overflow-hidden bg-pan">
-                            <div class="absolute inset-0 bg-[linear-gradient(to_right,#10B9810a_1px,transparent_1px),linear-gradient(to_bottom,#10B9810a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-                        </div>
-                    {% endif %}
-                    <button onclick="document.getElementById('cover_upload').click()" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></button>
+            <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col h-full">
+                <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
+                    <!-- Clean Square Logo Wrapper -->
+                    <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/logo cursor-pointer" onclick="document.getElementById('logo_upload').click()">
+                        {% if company.logo %}
+                            <img src="{{ company.logo.url }}" class="w-full h-full object-contain bg-white group-hover/logo:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
+                                <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-md"></i>
+                            </div>
+                        {% else %}
+                            <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-500 group-hover/logo:bg-emerald-50 group-hover/logo:text-emerald-600 transition-colors duration-300 pointer-events-none">
+                                <i data-lucide="camera" class="w-10 h-10 md:w-12 md:h-12 mb-1 md:mb-2"></i>
+                                <span class="text-[11px] md:text-[12px] font-black uppercase tracking-widest">Upload</span>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col h-full">
-                    <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
-                        <!-- Clean Square Logo Wrapper -->
-                        <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/logo cursor-pointer" onclick="document.getElementById('logo_upload').click()">
-                            {% if company.logo %}
-                                <img src="{{ company.logo.url }}" class="w-full h-full object-contain bg-white group-hover/logo:scale-105 transition-transform duration-500">
-                                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
-                                    <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-md"></i>
-                                </div>
-                            {% else %}
-                                <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-500 group-hover/logo:bg-emerald-50 group-hover/logo:text-emerald-600 transition-colors duration-300 pointer-events-none">
-                                    <i data-lucide="camera" class="w-10 h-10 md:w-12 md:h-12 mb-1 md:mb-2"></i>
-                                    <span class="text-[11px] md:text-[12px] font-black uppercase tracking-widest">Upload</span>
-                                </div>
+                <!-- Hidden file inputs for AJAX upload -->
+                <form id="media_form" style="display:none;" data-url="{% url 'company_media_manage' company.slug %}">
+                    {% csrf_token %}
+                    <input type="file" id="logo_upload" name="logo" accept="image/*" onchange="uploadCompanyMedia('logo')">
+                    <input type="file" id="cover_upload" name="cover_image" accept="image/*" onchange="uploadCompanyMedia('cover_image')">
+                </form>
+
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 md:gap-10 w-full shrink-0">
+                    <div class="flex-1 w-full">
+                        <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] md:text-[42px] font-black text-slate-900 tracking-tight leading-none mb-2 md:mb-3">{{ company.name }}</h1>
+                        <p class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 font-extrabold text-[16px] sm:text-[18px] md:text-[22px] uppercase tracking-wider">
+                            {{ company.sector }}
+                        </p>
+
+                        <div class="flex flex-wrap items-center gap-3 md:gap-4 mt-6 md:mt-8">
+                            <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="map-pin" class="w-4 h-4 md:w-4.5 md:h-4.5 text-emerald-600"></i> {{ company.location }}</span>
+                            {% if company.operating_since %}
+                            <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="calendar" class="w-4 h-4 md:w-4.5 md:h-4.5 text-slate-500"></i> Est. {{ company.operating_since }}</span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- Hidden file inputs for AJAX upload -->
-                    <form id="media_form" style="display:none;" data-url="{% url 'company_media_manage' company.slug %}">
-                        {% csrf_token %}
-                        <input type="file" id="logo_upload" name="logo" accept="image/*" onchange="uploadCompanyMedia('logo')">
-                        <input type="file" id="cover_upload" name="cover_image" accept="image/*" onchange="uploadCompanyMedia('cover_image')">
-                    </form>
-
-                    <div class="flex flex-col lg:flex-row justify-between items-start gap-6 md:gap-10 w-full shrink-0">
-                        <div class="flex-1 w-full">
-                            <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] md:text-[42px] font-black text-slate-900 tracking-tight leading-none mb-2 md:mb-3">{{ company.name }}</h1>
-                            <p class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 font-extrabold text-[16px] sm:text-[18px] md:text-[22px] uppercase tracking-wider">
-                                {{ company.sector }}
-                            </p>
-
-                            <div class="flex flex-wrap items-center gap-3 md:gap-4 mt-6 md:mt-8">
-                                <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="map-pin" class="w-4 h-4 md:w-4.5 md:h-4.5 text-emerald-600"></i> {{ company.location }}</span>
-                                {% if company.operating_since %}
-                                <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="calendar" class="w-4 h-4 md:w-4.5 md:h-4.5 text-slate-500"></i> Est. {{ company.operating_since }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
-                            <a href="{% url 'company_public_profile' company.slug %}" target="_blank" class="btn-action flex-1 sm:flex-none uppercase !bg-gradient-to-r !from-slate-900 !to-slate-800 hover:!from-black hover:!to-slate-900 shadow-slate-900/20">
-                                <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Public Site" %}</span>
-                            </a>
-                            <a href="{% url 'company_edit' company.slug %}" class="btn-secondary flex-1 sm:flex-none hover:!text-emerald-600 hover:!border-emerald-600">
-                                <i data-lucide="settings" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Edit Profile" %}</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Mission Statement (Matches the Bio block in Profile) -->
-                    <div class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-auto shadow-inner relative w-full">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center gap-2 uppercase tracking-widest"><i data-lucide="target" class="w-4.5 h-4.5 text-emerald-600"></i> {% trans "Mission Statement" %}</h3>
-                            <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> {% trans "Edit" %}
-                            </a>
-                        </div>
-                        {% if company.mission_stmt %}
-                            <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-700 font-medium leading-[1.9] whitespace-pre-line">{{ company.mission_stmt }}</p>
-                        {% else %}
-                            <a href="{% url 'company_edit' company.slug %}" class="group/empty w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-50 mt-2">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                                <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
-                            </a>
-                        {% endif %}
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
+                        <a href="{% url 'company_public_profile' company.slug %}" target="_blank" class="btn-action flex-1 sm:flex-none uppercase !bg-gradient-to-r !from-slate-900 !to-slate-800 hover:!from-black hover:!to-slate-900 shadow-slate-900/20">
+                            <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Public Site" %}</span>
+                        </a>
+                        <a href="{% url 'company_edit' company.slug %}" class="btn-secondary flex-1 sm:flex-none hover:!text-emerald-600 hover:!border-emerald-600">
+                            <i data-lucide="settings" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Edit Profile" %}</span>
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Command Center (Replaces Trust Score from Profile) -->
-            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col relative h-full">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 blur-[50px] rounded-full pointer-events-none" aria-hidden="true"></div>
-                <div class="relative z-10 flex flex-col h-full">
-                    <div class="mb-4 md:mb-5">
-                        <h3 class="text-[1.4rem] md:text-[1.8rem] font-black text-slate-900 tracking-tight leading-tight inline-block">{% trans "Command Center" %}</h3>
-                        <div class="h-1 md:h-1.5 w-12 md:w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-2 md:mt-3"></div>
+                <!-- Mission Statement -->
+                <div class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center gap-2 uppercase tracking-widest"><i data-lucide="target" class="w-4.5 h-4.5 text-emerald-600"></i> {% trans "Mission Statement" %}</h3>
+                        <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> {% trans "Edit" %}
+                        </a>
                     </div>
 
-                    <div class="insight-banner">
-                        <p>{% trans "Broadcast your company's current needs to the network to match with opportunities." %}</p>
+                    <div class="insight-banner mb-4">
+                        <p>{% trans "Define your company mission to clearly communicate your core purpose and vision to the network." %}</p>
                     </div>
 
-                    <form id="quick-company-form" onsubmit="submitQuickCompanyUpdate(event)" class="mt-auto flex flex-col gap-5">
-                        {% csrf_token %}
-
-                        <!-- Hiring Toggle Re-designed to match UI -->
-                        <div class="p-4 rounded-xl border border-slate-200/80 bg-white shadow-sm flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-[14.5px] flex items-center gap-2">
-                                    <i data-lucide="user-plus" class="w-4.5 h-4.5 text-emerald-600"></i> {% trans "We are hiring" %}
-                                </h4>
-                                <p class="text-[12px] font-semibold text-slate-500 mt-0.5">{% trans "Show badge on profile" %}</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer z-50">
-                                <input type="checkbox" id="is_hiring_toggle" class="sr-only peer" {% if company.is_hiring %}checked{% endif %}>
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                            </label>
-                        </div>
-
-                        <div class="relative group/select z-50">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "CURRENT OBJECTIVE" %}</label>
-                            <select id="looking_for_select" class="premium-input pr-12 cursor-pointer text-slate-700">
-                                <option value="BUILDING" {% if company.looking_for == 'BUILDING' %}selected{% endif %}>{% trans "Expanding Operations" %}</option>
-                                <option value="FUNDRAISING" {% if company.looking_for == 'FUNDRAISING' %}selected{% endif %}>{% trans "Seeking Investment" %}</option>
-                                <option value="HIRING" {% if company.looking_for == 'HIRING' %}selected{% endif %}>{% trans "Hiring Talent" %}</option>
-                                <option value="PARTNERING" {% if company.looking_for == 'PARTNERING' %}selected{% endif %}>{% trans "Seeking Partners/Co-Founders" %}</option>
-                                <option value="SALES" {% if company.looking_for == 'SALES' %}selected{% endif %}>{% trans "Seeking B2B Clients" %}</option>
-                            </select>
-                            <div class="absolute right-4 bottom-[0.6rem] w-8 h-8 md:w-10 md:h-10 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover/select:text-emerald-600 transition-colors z-20" aria-hidden="true">
-                                <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="save-command-btn" class="btn-action w-full mt-2 relative z-50 shadow-emerald-500/20">
-                            <span class="pointer-events-none">{% trans "BROADCAST UPDATE" %}</span>
-                        </button>
-                    </form>
+                    {% if company.mission_stmt %}
+                        <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-700 font-medium leading-[1.9] whitespace-pre-line">{{ company.mission_stmt }}</p>
+                    {% else %}
+                        <a href="{% url 'company_edit' company.slug %}" class="group/empty w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-50 mt-2">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- MODULAR BENTO CARDS (Matches Profile grid-cols-6 logic) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8 mb-6 lg:mb-12">
+        <!-- MODULAR HORIZONTAL BENTO CARDS -->
+        <div class="flex flex-col gap-6 lg:gap-8 mb-6 lg:mb-12">
 
-            <!-- 1. Products & Services (Medium Card) -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3">
+            <!-- 1. Products & Services (Full Width Card, Grid Layout) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Products & Services" %}</h3>
                     <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-20">
@@ -358,12 +308,12 @@
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "List the core offerings provided by this company." %}</p>
+                    <p>{% trans "List your core offerings, products, or services to show exactly what value your company provides to the market." %}</p>
                 </div>
                 <div class="flex-1 mt-2">
                     {% if services %}
-                        <div class="space-y-3">
-                            {% for service in services|slice:":3" %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {% for service in services|slice:":4" %}
                             <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:shadow-md flex justify-between items-center transition-all cursor-default group/item">
                                 <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ service.name }}</h4>
                                 <a href="{% url 'service_update' service.pk %}" class="text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-all relative z-50"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
@@ -379,8 +329,8 @@
                 </div>
             </div>
 
-            <!-- 2. Core Team (Medium Card) -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-3">
+            <!-- 2. Core Team (Full Width Card, Grid Layout) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Core Team" %}</h3>
                     <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-20">
@@ -389,13 +339,13 @@
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "The people building the vision behind the company." %}</p>
+                    <p>{% trans "Highlight the key individuals building the vision behind the company. A strong, visible team builds trust and authority." %}</p>
                 </div>
                 <div class="flex-1 mt-2">
                     {% if team_members %}
-                        <div class="space-y-4">
-                            {% for member in team_members|slice:":3" %}
-                            <div class="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-200/80 cursor-default">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {% for member in team_members|slice:":4" %}
+                            <div class="flex items-center gap-4 p-4 border border-slate-200/80 bg-white hover:shadow-md rounded-xl transition-all cursor-default">
                                 <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0 border-2 border-white shadow-sm">
                                     <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover">
                                 </div>
@@ -415,27 +365,29 @@
                 </div>
             </div>
 
-            <!-- 3. Milestones (Narrow Card - spans 2) -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-2">
-                <div class="flex flex-col gap-3 mb-5 w-full">
+            <!-- 3. Milestones (Full Width Card, Horizontal Flow) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Milestones" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full relative z-20">
-                        <a href="{% url 'manage_milestones' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
-                        <a href="{% url 'milestone_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-20">
+                        <a href="{% url 'manage_milestones' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Manage" %}</span></a>
+                        <a href="{% url 'milestone_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Add" %}</span></a>
                     </div>
                 </div>
-                <div class="flex-1 mt-4 relative before:absolute before:inset-y-1 before:left-[11px] before:w-0.5 before:bg-slate-200 before:pointer-events-none space-y-6">
+                <div class="insight-banner">
+                    <p>{% trans "Track your company's growth timeline. Documenting key achievements and product launches shows operational momentum." %}</p>
+                </div>
+                <div class="flex-1 mt-2">
                     {% if milestones %}
-                        {% for milestone in milestones|slice:":3" %}
-                        <div class="relative group/item pl-8">
-                            <div class="absolute left-[5px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-emerald-300 group-hover/item:border-emerald-600 group-hover/item:scale-125 transition-all z-10 pointer-events-none"></div>
-                            <span class="font-black text-[10px] text-emerald-600 tracking-widest block mb-0.5">{{ milestone.year }}</span>
-                            <div class="flex justify-between items-start gap-2">
-                                <h4 class="font-bold text-slate-800 text-[14px] group-hover/item:text-emerald-600 transition-colors leading-snug">{{ milestone.title }}</h4>
-                                <a href="{% url 'milestone_update' milestone.pk %}" class="text-slate-300 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-all shrink-0 relative z-50"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></a>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {% for milestone in milestones|slice:":3" %}
+                            <div class="p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-md transition-all cursor-default group/item relative">
+                                <span class="inline-block px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[11px] font-black tracking-widest rounded-md mb-3 shadow-sm">{{ milestone.year }}</span>
+                                <h4 class="font-bold text-slate-800 text-[15px] group-hover/item:text-emerald-600 transition-colors leading-snug mb-1">{{ milestone.title }}</h4>
+                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-300 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-all shrink-0 z-50"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     {% else %}
                         <a href="{% url 'milestone_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-20">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
@@ -445,8 +397,8 @@
                 </div>
             </div>
 
-            <!-- 4. Contacts & Links (Full Width to match Profile's format) spans 4 -->
-            <div class="bento-card p-6 md:p-8 flex flex-col group relative lg:col-span-4">
+            <!-- 4. Contacts & Links (Full Width Card, 4-Col Grid) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col group relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contacts & Links" %}</h3>
                     <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-20">
@@ -456,11 +408,11 @@
                     </div>
                 </div>
                 <div class="insight-banner">
-                    <p>{% trans "Official company communications and social profiles." %}</p>
+                    <p>{% trans "Provide official communication channels, website links, and social media profiles to make networking frictionless." %}</p>
                 </div>
                 <div class="flex-1 mt-2">
                     {% if company.contacts.all or company.socials.all %}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
                             {% for contact in company.contacts.all|slice:":4" %}
                             <div class="flex items-center gap-3.5 p-4 bg-white shadow-sm border border-slate-200/80 rounded-xl group/item transition-all cursor-default">
                                 <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600 border border-slate-100 shrink-0"><i data-lucide="mail" class="w-4.5 h-4.5"></i></div>
@@ -494,8 +446,8 @@
                 </div>
             </div>
 
-            <!-- 5. Press & Journal (Full Width) lg:col-span-6 -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative lg:col-span-6 bg-white/80">
+            <!-- 5. Press & Journal (Full Width Card, Grid Layout) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Press & Journal" %}</h3>
                     <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-20">
@@ -504,9 +456,13 @@
                     </div>
                 </div>
 
+                <div class="insight-banner relative z-10">
+                    <p>{% trans "Publish company news, press releases, or thought leadership articles to build authority within the network." %}</p>
+                </div>
+
                 <div class="flex-1 mt-4 relative z-10">
                     {% if news %}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {% for article in news|slice:":3" %}
                             <div class="border border-slate-200/80 rounded-2xl overflow-hidden group/news relative bg-white hover:shadow-md transition-all">
                                 <div class="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover/news:opacity-100 transition-opacity">
@@ -536,6 +492,80 @@
             </div>
 
         </div>
+
+        <!-- BOTTOM GRID (COMMAND CENTER & TRUST SCORE) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-8 lg:mb-12 items-stretch" id="section-command">
+
+            <!-- Command Center -->
+            <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col relative h-full">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 blur-[50px] rounded-full pointer-events-none" aria-hidden="true"></div>
+                <div class="relative z-10 flex flex-col h-full">
+                    <div class="mb-4 md:mb-5">
+                        <h3 class="text-[1.4rem] md:text-[1.8rem] font-black text-slate-900 tracking-tight leading-tight inline-block">{% trans "Command Center" %}</h3>
+                        <div class="h-1 md:h-1.5 w-12 md:w-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-2 md:mt-3"></div>
+                    </div>
+
+                    <div class="insight-banner">
+                        <p>{% trans "Broadcast your company's current needs to the network to instantly match with opportunities, investors, or talent." %}</p>
+                    </div>
+
+                    <form id="quick-company-form" onsubmit="submitQuickCompanyUpdate(event)" class="mt-auto flex flex-col gap-5">
+                        {% csrf_token %}
+
+                        <!-- Hiring Toggle -->
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-white shadow-sm flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-[14.5px] flex items-center gap-2">
+                                    <i data-lucide="user-plus" class="w-4.5 h-4.5 text-emerald-600"></i> {% trans "We are hiring" %}
+                                </h4>
+                                <p class="text-[12px] font-semibold text-slate-500 mt-0.5">{% trans "Show 'Hiring' badge on public profile" %}</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer z-50">
+                                <input type="checkbox" id="is_hiring_toggle" class="sr-only peer" {% if company.is_hiring %}checked{% endif %}>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
+
+                        <div class="relative group/select z-50">
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "CURRENT OBJECTIVE" %}</label>
+                            <select id="looking_for_select" class="premium-input pr-12 cursor-pointer text-slate-700">
+                                <option value="BUILDING" {% if company.looking_for == 'BUILDING' %}selected{% endif %}>{% trans "Expanding Operations" %}</option>
+                                <option value="FUNDRAISING" {% if company.looking_for == 'FUNDRAISING' %}selected{% endif %}>{% trans "Seeking Investment" %}</option>
+                                <option value="HIRING" {% if company.looking_for == 'HIRING' %}selected{% endif %}>{% trans "Hiring Talent" %}</option>
+                                <option value="PARTNERING" {% if company.looking_for == 'PARTNERING' %}selected{% endif %}>{% trans "Seeking Partners/Co-Founders" %}</option>
+                                <option value="SALES" {% if company.looking_for == 'SALES' %}selected{% endif %}>{% trans "Seeking B2B Clients" %}</option>
+                            </select>
+                            <div class="absolute right-4 bottom-[0.6rem] w-8 h-8 md:w-10 md:h-10 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover/select:text-emerald-600 transition-colors z-20" aria-hidden="true">
+                                <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="save-command-btn" class="btn-action w-full mt-2 relative z-50 shadow-emerald-500/20">
+                            <span class="pointer-events-none">{% trans "BROADCAST UPDATE" %}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Company Trust / Completion Score -->
+            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center h-full group cursor-default">
+                <div class="w-16 h-16 mx-auto bg-transparent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform pointer-events-none">
+                    <i data-lucide="shield-check" class="w-12 h-12 text-emerald-500 drop-shadow-sm"></i>
+                </div>
+                <span class="font-black text-[11px] md:text-[12px] tracking-[0.18em] uppercase text-slate-500 mb-2">{% trans "Company Trust" %}</span>
+                <span class="font-black text-5xl md:text-6xl text-slate-900 leading-none mb-6 font-heading">
+                     95<span class="text-2xl text-slate-400">%</span>
+                </span>
+                <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden relative shadow-inner mb-5">
+                    <div class="absolute top-0 bottom-0 left-0 bg-emerald-500 transition-all duration-1000 ease-out rounded-full" style="width: 95%;"></div>
+                </div>
+                <p class="text-slate-600 text-[12.5px] font-semibold leading-relaxed bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50">
+                    {% trans "Complete every section to reach 100%. Fully detailed company profiles are prioritized in our partnership algorithms." %}
+                </p>
+            </div>
+
+        </div>
+
     </div>
 </main>
 
