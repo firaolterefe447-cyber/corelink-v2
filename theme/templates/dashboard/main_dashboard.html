@@ -93,6 +93,9 @@
 {% endblock navbar %}
 
 {% block content %}
+<!-- PEERLIST-STYLE UNIVERSAL TOP LOADING BAR (Blue Theme) -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(10,102,194,0.7), 0 0 4px rgba(10,102,194,0.4);"></div>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -192,16 +195,30 @@
         box-shadow: 0 10px 28px -14px rgba(10, 102, 194, 0.35);
     }
 
+    /* Upgraded Insight Banners (Help Text - Blue Theme) */
     .insight-banner {
-        background: linear-gradient(to right, rgba(239, 246, 255, 0.6), rgba(248, 250, 252, 0.4));
-        border: 1px solid rgba(219, 234, 254, 0.8);
+        background: rgba(248, 250, 252, 0.8);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-left: 4px solid #0A66C2;
         border-radius: 1rem;
-        padding: 0.875rem 1.25rem;
+        padding: 1rem 1.25rem;
         margin-bottom: 1.5rem;
         position: relative;
         z-index: 10;
     }
-    .insight-banner p { font-size: 13px; font-weight: 600; color: #475569; line-height: 1.5; margin:0; }
+    .insight-banner p {
+        font-family: var(--font-body);
+        font-size: 14.5px;
+        font-weight: 500;
+        color: #334155;
+        line-height: 1.6;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+    @media (min-width: 768px) {
+        .insight-banner { padding: 1.125rem 1.5rem; }
+        .insight-banner p { font-size: 15px; }
+    }
 
     /* =============================================
        ROBUST FIX: GUARANTEED CLICKABILITY FOR BUTTONS & LINKS
@@ -217,7 +234,29 @@
         cursor: pointer !important;
     }
 
-    .btn-add-ghost, .btn-manage, .btn-action, .btn-secondary {
+    /* Clean Square Manage Button */
+    .btn-manage-icon {
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        width: 44px; height: 44px; border-radius: 0.85rem; background: transparent; border: 1.5px solid rgba(226, 232, 240, 0.9);
+        color: #64748b; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s var(--ease-magic); flex-shrink: 0;
+    }
+    @media (min-width: 768px) { .btn-manage-icon { width: 46px; height: 46px; border-radius: 1rem; } }
+    .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
+    .btn-manage-icon:active { transform: scale(0.92); }
+
+    /* High-contrast Blue Add Button (Wide on Mobile) */
+    .btn-add-solid {
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        height: 44px; padding: 0 1.25rem; border-radius: 0.85rem; background: #0A66C2; color: #ffffff;
+        font-size: 13.5px; font-weight: 900; letter-spacing: 0.02em; border: none;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
+        box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.4);
+    }
+    @media (min-width: 768px) { .btn-add-solid { height: 46px; padding: 0 1.5rem; border-radius: 1rem; font-size: 14px; } }
+    .btn-add-solid:hover { background: #084e96; transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(10, 102, 194, 0.5); }
+    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.4); }
+
+    .btn-action, .btn-secondary {
         position: relative !important;
         z-index: 60 !important;
         pointer-events: auto !important;
@@ -235,40 +274,8 @@
     }
 
     @media (min-width: 768px) {
-        .btn-add-ghost, .btn-manage, .btn-action, .btn-secondary { min-height: 44px; }
+        .btn-action, .btn-secondary { min-height: 46px; }
     }
-
-    .btn-add-ghost {
-        padding: 0.5rem 1rem;
-        background: rgba(239, 246, 255, 0.8);
-        color: #0A66C2;
-        font-size: 13px;
-        font-weight: 800;
-        border: 1px solid rgba(191, 219, 254, 0.8);
-    }
-    .btn-add-ghost:hover {
-        background: #0A66C2;
-        color: #ffffff;
-        border-color: #0A66C2;
-        box-shadow: 0 8px 20px -6px rgba(10, 102, 194, 0.4);
-    }
-    .btn-add-ghost:active { transform: scale(0.96); }
-
-    .btn-manage {
-        padding: 0.5rem 1rem;
-        background: transparent;
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 800;
-        border: 1px solid rgba(226, 232, 240, 0.9);
-    }
-    .btn-manage:hover {
-        background: #ffffff;
-        color: #0f172a;
-        border-color: #cbd5e1;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
-    }
-    .btn-manage:active { transform: scale(0.96); }
 
     .btn-action { background: #0f172a; color: white; font-weight: 800; font-size: 13px; padding: 0.75rem 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(15,23,42,0.4); background: #1e293b; }
@@ -413,11 +420,16 @@
 
             <!-- 0. Headlines (Full-Width Card) -->
             <div id="section-headlines" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Headlines" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'headline_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Title" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -448,11 +460,16 @@
 
             <!-- 1. Skills (Full-Width Card) -->
             <div id="section-skills" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_skills' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'skill_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_skills' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'skill_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Skill" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -478,11 +495,16 @@
 
             <!-- 2. Credentials (Full-Width Card) -->
             <div id="section-education" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.edu_title|default:"Credentials" }}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_credentials' %}" class="btn-manage flex-1"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'credential_create' %}" class="btn-add-ghost flex-1"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_credentials' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Credential" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -507,11 +529,16 @@
 
             <!-- 3. Projects Grid (Full-Width Card) -->
             <div id="section-projects" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_projects' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'project_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_projects' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'project_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Project" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -546,11 +573,16 @@
 
             <!-- 4. Experience (Full-Width Card) -->
             <div id="section-experience" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.exp_title|default:"Experience" }}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_experiences' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'experience_create' %}" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_experiences' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Experience" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -579,11 +611,16 @@
             <!-- 5. My Goal & Vision (Full-Width Card) -->
             <div id="section-vision" class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
                 <div class="absolute top-4 right-8 text-[120px] md:text-[160px] font-serif-pc leading-none text-slate-100/50 select-none pointer-events-none" aria-hidden="true">"</div>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Vision" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner relative z-10">
@@ -611,11 +648,16 @@
 
             <!-- 6. Industry Thoughts (Full-Width Card) -->
             <div id="section-thoughts" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Industry Thoughts" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_essays' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_essays' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Essay" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -650,11 +692,16 @@
 
             <!-- 7. Daily Progress (Full-Width Card) -->
             <div id="section-progress" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Daily Progress" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full xl:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage flex-1 xl:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-ghost flex-1 xl:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Add" %}</span></a>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -686,12 +733,20 @@
 
             <!-- 8. Contact & Links (Full-Width Card) -->
             <div id="section-contact" class="bento-card p-6 md:p-8 flex flex-col group relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contact & Network" %}</h3>
-                    <div class="flex flex-row items-center gap-2 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_network' %}" class="btn-manage flex-1 sm:flex-none"><i data-lucide="settings-2" class="w-4 h-4 shrink-0"></i> <span>{% trans "Manage" %}</span></a>
-                        <a href="{% url 'social_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Social" %}</span></a>
-                        <a href="{% url 'contact_create' %}" class="btn-add-ghost flex-1 sm:flex-none"><i data-lucide="plus" class="w-4 h-4 shrink-0"></i> <span>{% trans "Contact" %}</span></a>
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+                        <a href="{% url 'manage_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        </a>
+                        <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Social" %}</span>
+                        </a>
+                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
+                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Contact" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="insight-banner">
@@ -926,6 +981,88 @@
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* ==============================================
+       PEERLIST-STYLE UNIVERSAL LOADING BAR
+       ============================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('global-page-loader');
+        let loaderInterval;
+
+        function startGlobalLoader() {
+            if(!loader) return;
+            loader.style.opacity = '1';
+            loader.style.transitionDuration = '300ms';
+            loader.style.width = '15%';
+
+            let progress = 15;
+            clearInterval(loaderInterval);
+            loaderInterval = setInterval(() => {
+                progress += (Math.random() * 5 + 1); // jump by 1-6%
+                if(progress > 85) {
+                    progress = 85;
+                    clearInterval(loaderInterval); // hold at 85% until page naturally unloads
+                }
+                loader.style.transitionDuration = '200ms';
+                loader.style.width = progress + '%';
+            }, 300);
+        }
+
+        function stopGlobalLoader() {
+            if(!loader) return;
+            clearInterval(loaderInterval);
+            loader.style.transitionDuration = '200ms';
+            loader.style.width = '100%';
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.transitionDuration = '0ms';
+                    loader.style.width = '0%';
+                }, 300);
+            }, 250);
+        }
+
+        // Intercept standard link clicks
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                const target = link.getAttribute('target');
+                const isJS = href && href.startsWith('javascript:');
+                const isHash = href && href.startsWith('#');
+                const isNewTab = target === '_blank';
+                const hasDownload = link.hasAttribute('download');
+
+                // Allow users to open in new tab with cmd/ctrl click without triggering loader
+                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+
+                if (href && !isJS && !isHash && !isNewTab && !hasDownload && !isModifierPressed) {
+                    startGlobalLoader();
+                }
+            }
+        });
+
+        // Intercept form submissions
+        document.body.addEventListener('submit', (e) => {
+            const form = e.target.closest('form');
+            if (form) {
+                const target = form.getAttribute('target');
+                if (target !== '_blank') {
+                    // Start loader only if form is valid
+                    if (form.checkValidity()) {
+                        startGlobalLoader();
+                    }
+                }
+            }
+        });
+
+        // Reset loader if user uses the browser 'Back' button (bfcache hit)
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                stopGlobalLoader();
+            }
+        });
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
         initBioExpansion();
