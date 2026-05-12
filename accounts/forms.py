@@ -353,9 +353,41 @@ from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
+from django import forms
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
+
+# --- IMPORT NEW DB ARCHITECTURE ---
+from .models import (
+    CustomUser,
+    UniversalContactMethod,
+    ApplicationRequest,
+    Institution,
+)
+from profiles.models import (
+    UserProfile,
+    ProfileHeadline,
+    Company,
+    CompanyMember
+)
+
 
 class UnifiedOnboardingForm(BaseRegistrationForm):
-    # MANUAL CITY ENTRY
+    ROLE_CHOICES = [
+        ('EXPERT', 'Professional / Learner'),
+        ('FOUNDER', 'Business / Company'),
+    ]
+
+    selected_role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        widget=forms.HiddenInput(),
+        required=False,
+        initial='EXPERT'
+    )
+
+    # ---------------------------------------------------------
+    # SHARED FIELDS
+    # ---------------------------------------------------------
     city_name = forms.CharField(
         label=_("City"),
         required=True,
@@ -363,33 +395,27 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
         help_text=_("Please type the exact spelling of your city."),
     )
 
-    # MANUAL INSTITUTION / COMPANY ENTRY (Flexible for self-learners)
+    # ---------------------------------------------------------
+    # INDIVIDUAL (EXPERT / VISIONARY) SPECIFIC FIELDS
+    # ---------------------------------------------------------
     institution_name = forms.CharField(
         label=_("Institution / Company / Self-Learning"),
-        required=True,
+        required=False,
         widget=forms.TextInput(
-            attrs={
-                "placeholder": _(
-                    "e.g. Addis Ababa University, Ethio Telecom, or Self-Learning"
-                )
-            }
+            attrs={"placeholder": _("e.g. Addis Ababa University, Ethio Telecom, or Self-Learning")}
         ),
-        help_text=_(
-            "Enter your institution, company, or write 'Self-Learning' if you're studying independently."
-        ),
+        help_text=_("Enter your institution, company, or write 'Self-Learning'."),
     )
 
-    # UNIFIED ROLE / STATUS
     current_role = forms.CharField(
         label=_("Professional / Academic Identity"),
-        required=True,
+        required=False,
         widget=forms.TextInput(
-            attrs={"placeholder": _("e.g. Third Year Computer Science Student")}
+            attrs={"placeholder": _("e.g. Third Year Computer Science Student or Senior Dev")}
         ),
         help_text=_("Write fully (e.g., Software Developer or Senior Accountant)."),
     )
 
-    # 🟢 NEW: BIO / NARRATIVE FIELD
     bio_narrative = forms.CharField(
         label=_("About Me / Your Goals"),
         required=False,
@@ -403,78 +429,163 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
         help_text=_("Share your story. This will act as the bio on your public portfolio."),
     )
 
+    # ---------------------------------------------------------
+    # FOUNDER / COMPANY SPECIFIC FIELDS
+    # ---------------------------------------------------------
+    company_name = forms.CharField(
+        label=_("Company / Startup Name"),
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": _("e.g. CoreLink Technologies")}),
+    )
+    founder_role = forms.CharField(
+        label=_("Your Role in the Company"),
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": _("e.g. Founder, CEO, Lead Developer")}),
+    )
+    sector = forms.CharField(
+        label=_("Industry / Sector"),
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": _("e.g. Fintech, EdTech, Agriculture")}),
+    )
+
+    # 🟢 NEW: DEDICATED COMPANY MISSION FIELD
+    company_mission = forms.CharField(
+        label=_("Company Mission / Overview"),
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": _("What does your company do? What is the core mission or product you are building?"),
+                "rows": 4,
+            }
+        ),
+        help_text=_("Share your company's core mission. This will be displayed on the public Company Profile."),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # 🟢 NEW: Update the email help text dynamically
         self.fields['email'].help_text = _(
             "IMPORTANT: We will send a verification link here. Please use your active, current email address."
         )
 
     def clean(self):
         cleaned_data = super().clean()
+        role = cleaned_data.get("selected_role") or "EXPERT"
 
-        # Get or create the Institution based on exact typed name
-        inst_name = cleaned_data.get("institution_name")
-        if inst_name:
-            institution, _ = Institution.objects.get_or_create(
-                name__iexact=inst_name,
-                defaults={"name": inst_name, "is_verified": False},
-            )
-            cleaned_data["institution"] = institution
+        # --- CONDITIONAL VALIDATION BASED ON ROLE PATH ---
+        if role in ["EXPERT", "VISIONARY"]:
+            if not cleaned_data.get("current_role"):
+                self.add_error("current_role", _("Please specify your professional/academic identity."))
+
+            inst_name = cleaned_data.get("institution_name")
+            if not inst_name:
+                self.add_error("institution_name", _("Please specify your institution or enter 'Self-Learning'."))
+            else:
+                institution, _ = Institution.objects.get_or_create(
+                    name__iexact=inst_name,
+                    defaults={"name": inst_name, "is_verified": False},
+                )
+                cleaned_data["institution"] = institution
+
+        elif role == "FOUNDER":
+            if not cleaned_data.get("company_name"):
+                self.add_error("company_name", _("Company name is required."))
+            if not cleaned_data.get("founder_role"):
+                self.add_error("founder_role", _("Your role in the company is required."))
+            if not cleaned_data.get("sector"):
+                self.add_error("sector", _("Please specify your industry sector."))
 
         return cleaned_data
 
     def save(self, commit=True):
         with transaction.atomic():
-            # 1. SAVE AS EXPERT BY DEFAULT
-            user = self.save_user(role_type="EXPERT")
+            role = self.cleaned_data.get("selected_role") or "EXPERT"
+
+            # 1. SAVE BASE USER
+            user = self.save_user(role_type=role)
 
             if self.cleaned_data.get("phone_number"):
                 UniversalContactMethod.objects.create(
                     user=user, type="Phone", value=self.cleaned_data["phone_number"]
                 )
 
-            # Extract location string from manual input
+            # Extract shared data
             loc_str = self.cleaned_data.get("city_name", "").strip()
-            institution = self.cleaned_data.get("institution")
-            inst_str = institution.name if institution else ""
 
-            # 🟢 NEW: Extract the bio text
+            # 🟢 DYNAMICALLY PULL EITHER BIO OR MISSION
             bio_text = self.cleaned_data.get("bio_narrative", "").strip()
+            mission_text = self.cleaned_data.get("company_mission", "").strip()
 
             user.current_location = loc_str
             user.save(update_fields=["current_location"])
 
-            # 2. CREATE EXPERT PROFILE
-            role_str = self.cleaned_data.get("current_role", "").strip()
-
+            # 2. EVERYONE GETS A UNIVERSAL PROFILE NOW (Founders get an empty bio, filled later if they want)
             profile = UserProfile.objects.create(
                 user=user,
                 location=loc_str,
-                institution=inst_str,
-                bio_narrative=bio_text,  # 🟢 NEW: Pass to DB
+                bio_narrative=bio_text if role in ["EXPERT", "VISIONARY"] else "",
                 years_experience=0,
             )
 
-            # 3. SET STATUS AS HEADLINE
-            if role_str:
-                ProfileHeadline.objects.create(
-                    profile=profile, title=role_str, is_primary=True, order=0
-                )
-
-            # 4. SNAPSHOT
+            # 3. ROUTE BASED ON ROLE (THE LEGO BLOCK ARCHITECTURE)
             snapshot_data = {
                 "full_name": user.full_name,
                 "phone_number": str(self.cleaned_data.get("phone_number", "")),
                 "location": loc_str,
-                "current_role": role_str,
-                "institution": inst_str,
-                "bio_narrative": bio_text,  # 🟢 NEW: Save for Admin Verification Snapshot
+                "role_type": role
             }
 
+            if role in ["EXPERT", "VISIONARY"]:
+                institution = self.cleaned_data.get("institution")
+                inst_str = institution.name if institution else ""
+                role_str = self.cleaned_data.get("current_role", "").strip()
+
+                profile.institution = inst_str
+                profile.save(update_fields=["institution"])
+
+                if role_str:
+                    ProfileHeadline.objects.create(profile=profile, title=role_str, is_primary=True, order=0)
+
+                snapshot_data.update({
+                    "current_role": role_str,
+                    "institution": inst_str,
+                    "bio_narrative": bio_text,
+                })
+
+            elif role == "FOUNDER":
+                company_name = self.cleaned_data.get("company_name", "").strip()
+                sector = self.cleaned_data.get("sector", "").strip()
+                founder_role = self.cleaned_data.get("founder_role", "").strip()
+
+                # 🟢 Create Independent Company Block with proper mission statement
+                company = Company.objects.create(
+                    name=company_name,
+                    sector=sector,
+                    location=loc_str,
+                    mission_stmt=mission_text
+                )
+
+                CompanyMember.objects.create(
+                    company=company,
+                    user=user,
+                    role="OWNER",
+                    job_title=founder_role,
+                    is_active=True
+                )
+
+                ProfileHeadline.objects.create(profile=profile, title=founder_role, is_primary=True, order=0)
+
+                snapshot_data.update({
+                    "company_name": company_name,
+                    "sector": sector,
+                    "founder_role": founder_role,
+                    "company_mission": mission_text
+                })
+
+            # 4. FINAL AIRLOCK SNAPSHOT
             ApplicationRequest.objects.create(
-                user=user, role_type="EXPERT", submission_data=snapshot_data
+                user=user, role_type=role, submission_data=snapshot_data
             )
+
             return user
 
 # ==============================================================================
