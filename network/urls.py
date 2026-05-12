@@ -6,14 +6,14 @@ from .views import (
     NetworkPostDeleteView,
     MyNetworkPostListView,
     NetworkPostDetailView,
-    nexus_posts
+    nexus_posts,company_nexus
 )
 
 urlpatterns = [
     # Main Feed
     path('', nexus_feed, name='nexus_feed'),
 path('nexus/signals/', nexus_posts, name='nexus_posts'),
-
+    path('discover/companies/', company_nexus, name='company_nexus'),
     # User's Posts
     path('my-broadcasts/', MyNetworkPostListView.as_view(), name='my_signals'),
 

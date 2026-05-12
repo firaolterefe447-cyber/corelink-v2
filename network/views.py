@@ -18,17 +18,20 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 
 from django.db.models import (
-    Q, F, Case, When, Value, IntegerField, FloatField, Max, ExpressionWrapper, Prefetch
+    Q, F, Case, When, Value, IntegerField, FloatField, Max, ExpressionWrapper, Prefetch, Count
 )
 from django.db.models.functions import Coalesce, Greatest, Cast, Now, ExtractDay
 
-# Standard Postgres Full-Text Search (No pg_trgm needed, perfectly cPanel safe)
+# Standard Postgres Full-Text Search
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.postgres.aggregates import StringAgg
 
 # Local App Imports
 from .models import NetworkPost
 from .forms import NetworkPostForm
+
+# For Company Nexus
+from profiles.models import Company
 
 try:
     from workspace.models import ChatMessage  # Preserving Inbox Badge Logic
@@ -157,8 +160,7 @@ def nexus_feed(request):
     raw_query = request.GET.get('q', '')
     role_filter = request.GET.get('role', 'ALL')
 
-    # 🛡️ 1. BASE SHIELD (Fluid Architecture Transition)
-    # Using 'portfolio' relation explicitly. Exclude internal Admin roles.
+    # 🛡️ 1. BASE SHIELD
     base_users = CustomUser.objects.filter(
         is_active=True, is_public=True, is_nexus_visible=True
     ).exclude(
@@ -206,7 +208,7 @@ def nexus_feed(request):
             min_experience, is_hiring, is_senior, is_junior
         ) = OmniIndustryOracle.process_omni_intent(raw_query)
 
-        # --- APPLY INVISIBLE HR CONSTRAINTS (FLUID BLOCK ADAPTATION) ---
+        # --- APPLY INVISIBLE HR CONSTRAINTS ---
         for loc in loc_tags:
             scored_users = scored_users.filter(
                 Q(current_location__icontains=loc) |
@@ -228,24 +230,19 @@ def nexus_feed(request):
         # 🚀 4. THE CARTESIAN COMPRESSION & PLATINUM-PRIORITY VECTORS
         if direct_string or semantic_string:
             scored_users = scored_users.annotate(
-                # Fluid Sub-Block Aggregations
                 all_skills=StringAgg('portfolio__skills__name', delimiter=' ', distinct=True),
                 all_headlines=StringAgg('portfolio__headlines__title', delimiter=' ', distinct=True),
                 all_exp_roles=StringAgg('portfolio__experiences__role_title', delimiter=' ', distinct=True),
-
-                # Company Legacy fallback
                 all_job_titles=StringAgg('company_memberships__job_title', delimiter=' ', distinct=True),
                 all_company_sectors=StringAgg('company_memberships__company__sector', delimiter=' ', distinct=True),
             )
 
-            # 👑 THE PLATINUM VECTOR (Titles, Current Focus, Headlines)
             platinum_vector = (
                     SearchVector('portfolio__current_mission', weight='A') +
                     SearchVector('portfolio__field_of_interest', weight='A') +
                     SearchVector('all_headlines', weight='A')
             )
 
-            # 🥇 THE GOLD VECTOR (Skills, Roles, Sectors)
             gold_vector = (
                     SearchVector('all_skills', weight='A') +
                     SearchVector('all_exp_roles', weight='B') +
@@ -253,37 +250,29 @@ def nexus_feed(request):
                     SearchVector('all_company_sectors', weight='B')
             )
 
-            # 🥈 THE SILVER VECTOR (Biographies, Long Text)
             silver_vector = SearchVector('portfolio__bio_narrative', weight='C')
 
             direct_db_query = SearchQuery(direct_string, search_type='websearch') if direct_string else None
             semantic_db_query = SearchQuery(semantic_string, search_type='websearch') if semantic_string else None
 
-            # Base word for Regex Fallback
             clean_query_word = direct_string.split()[0].lower() if direct_string else raw_query.split()[0].lower()
 
             results = scored_users.annotate(
-
-                # 👑 PLATINUM SCORE (Multiplier x1000)
                 platinum_rank=Cast(SearchRank(platinum_vector, direct_db_query) * 1000.0,
                                    FloatField()) if direct_db_query else Value(0.0, output_field=FloatField()),
 
-                # 🥇 GOLD SCORE (Multiplier x300)
                 gold_rank=Cast(SearchRank(gold_vector, direct_db_query) * 300.0,
                                FloatField()) if direct_db_query else Value(0.0, output_field=FloatField()),
 
-                # 🥈 SILVER SCORE (Multiplier x50)
                 silver_rank=Cast(SearchRank(silver_vector, direct_db_query) * 50.0,
                                  FloatField()) if direct_db_query else Value(0.0, output_field=FloatField()),
 
-                # 🌌 SEMANTIC NETWORK SCORE (Multiplier x100)
                 semantic_rank=Cast(
                     SearchRank(platinum_vector, semantic_db_query) * 100.0 +
                     SearchRank(gold_vector, semantic_db_query) * 50.0,
                     FloatField()
                 ) if semantic_db_query else Value(0.0, output_field=FloatField()),
 
-                # 🎯 EXACT REGEX BOOST (The Ultimate Guarantee)
                 regex_boost=Case(
                     When(full_name__iregex=fr'\b{clean_query_word}\b', then=Value(1000.0)),
                     When(portfolio__field_of_interest__iregex=fr'\b{clean_query_word}\b', then=Value(800.0)),
@@ -293,23 +282,14 @@ def nexus_feed(request):
                 )
 
             ).annotate(
-                # THE ABSOLUTE MASTER FORMULA
                 absolute_score=ExpressionWrapper(
-                    F('platinum_rank') +
-                    F('gold_rank') +
-                    F('silver_rank') +
-                    F('semantic_rank') +
-                    F('regex_boost') +
-                    F('total_quality'),
+                    F('platinum_rank') + F('gold_rank') + F('silver_rank') + F('semantic_rank') + F('regex_boost') + F(
+                        'total_quality'),
                     output_field=FloatField()
                 )
             ).filter(
-                # Ensure they actually matched the search conceptually
-                Q(platinum_rank__gt=0.0) |
-                Q(gold_rank__gt=0.0) |
-                Q(silver_rank__gt=0.0) |
-                Q(semantic_rank__gt=0.0) |
-                Q(regex_boost__gt=0.0)
+                Q(platinum_rank__gt=0.0) | Q(gold_rank__gt=0.0) | Q(silver_rank__gt=0.0) | Q(semantic_rank__gt=0.0) | Q(
+                    regex_boost__gt=0.0)
             ).order_by('-is_selected', '-absolute_score', '-portfolio__last_signal_update', '-date_joined')
 
         else:
@@ -317,7 +297,6 @@ def nexus_feed(request):
     else:
         results = scored_users.order_by('-is_selected', '-total_quality', '-portfolio__last_signal_update')
 
-    # 🧹 5. CLEANUP & HIGH-SPEED PAGINATION
     if role_filter and role_filter != 'ALL':
         results = results.filter(role=role_filter)
 
@@ -332,7 +311,6 @@ def nexus_feed(request):
     except EmptyPage:
         people_page = paginator.get_page(paginator.num_pages)
 
-    # 📬 INBOX BADGE
     unread_count = 0
     if request.user.is_authenticated:
         try:
@@ -347,6 +325,147 @@ def nexus_feed(request):
         'current_role': role_filter,
         'unread_msg_count': unread_count,
         'active_tab': 'people',
+    })
+
+
+# ==============================================================================
+# 🏢 THE COMPANY NEXUS (INTELLIGENT BUSINESS DISCOVERY)
+# ==============================================================================
+def company_nexus(request):
+    """
+    The Business Hub / Company Discovery Feed.
+    Prioritizes fully completed company profiles (Logos, Covers, Services).
+    """
+    raw_query = request.GET.get('q', '').strip()
+    sector_filter = request.GET.get('sector', 'ALL')
+    objective_filter = request.GET.get('objective', 'ALL')
+
+    # 1. Base Queryset & QUALITY ALGORITHM 🏆
+    base_companies = Company.objects.prefetch_related(
+        'services', 'members__user'
+    ).annotate(
+        # A. Count how many services they have built out
+        service_count=Count('services', distinct=True),
+
+        # B. Reward complete profiles with heavy points
+        score_logo=Case(
+            When(Q(logo='') | Q(logo__isnull=True), then=Value(0.0)),
+            default=Value(20.0), output_field=FloatField()
+        ),
+        score_cover=Case(
+            When(Q(cover_image='') | Q(cover_image__isnull=True), then=Value(0.0)),
+            default=Value(15.0), output_field=FloatField()
+        ),
+        score_mission=Case(
+            When(Q(mission_stmt='') | Q(mission_stmt__isnull=True), then=Value(0.0)),
+            default=Value(10.0), output_field=FloatField()
+        ),
+
+        # C. Multiply services count by 5 points each
+        score_services=Cast(F('service_count') * 5, FloatField()),
+
+        # D. Small boost if they are actively looking to hire (shows active intent)
+        score_hiring=Case(When(is_hiring=True, then=Value(10.0)), default=Value(0.0), output_field=FloatField())
+    ).annotate(
+        # THE ULTIMATE COMPANY QUALITY METRIC
+        total_company_quality=ExpressionWrapper(
+            F('score_logo') + F('score_cover') + F('score_mission') + F('score_services') + F('score_hiring'),
+            output_field=FloatField()
+        )
+    )
+
+    # 2. Search & Filtering Engine
+    if raw_query:
+        # A. Tap into the OmniIndustryOracle to mind-read the query
+        (
+            direct_string, semantic_string, loc_tags, skill_tags,
+            min_experience, is_hiring, is_senior, is_junior
+        ) = OmniIndustryOracle.process_omni_intent(raw_query)
+
+        # B. Apply Invisible Constraints derived from NLP
+        if is_hiring:
+            base_companies = base_companies.filter(is_hiring=True)
+        for loc in loc_tags:
+            base_companies = base_companies.filter(location__icontains=loc)
+
+        # C. Deep Search Vectors (Cross-table aggregations for products/services)
+        base_companies = base_companies.annotate(
+            all_services=StringAgg('services__name', delimiter=' ', distinct=True),
+            all_service_desc=StringAgg('services__description', delimiter=' ', distinct=True),
+        )
+
+        business_vector = (
+                SearchVector('name', weight='A') +
+                SearchVector('sector', weight='A') +
+                SearchVector('location', weight='B') +
+                SearchVector('mission_stmt', weight='C') +
+                SearchVector('all_services', weight='B') +
+                SearchVector('all_service_desc', weight='D')
+        )
+
+        # Combine direct and semantic keywords for the final DB query
+        combined_query_string = f"{direct_string} {semantic_string}".strip()
+        final_search_string = combined_query_string if combined_query_string else raw_query
+
+        search_query = SearchQuery(final_search_string, search_type='websearch')
+        clean_query_word = raw_query.split()[0].lower() if raw_query else ''
+
+        companies = base_companies.annotate(
+            search_rank=Cast(SearchRank(business_vector, search_query) * 100.0, FloatField()),
+            exact_boost=Case(
+                When(name__iregex=fr'\b{clean_query_word}\b', then=Value(500.0)),
+                When(sector__iregex=fr'\b{clean_query_word}\b', then=Value(200.0)),
+                default=Value(0.0),
+                output_field=FloatField()
+            )
+        ).annotate(
+            # Combine Rank + Exact Matches + The Quality Metric
+            total_rank=ExpressionWrapper(
+                F('search_rank') + F('exact_boost') + F('total_company_quality'),
+                output_field=FloatField()
+            )
+        ).filter(
+            Q(search_rank__gt=0.01) | Q(exact_boost__gt=0.0) | Q(name__icontains=raw_query)
+        ).order_by('-total_rank', '-created_at')
+
+    else:
+        # Default sort: Prioritize the highest quality, most complete profiles first!
+        companies = base_companies.order_by('-total_company_quality', '-created_at')
+
+    # 3. Apply Hard Filters from UI Dropdowns
+    if sector_filter and sector_filter != 'ALL':
+        companies = companies.filter(sector__iexact=sector_filter)
+    if objective_filter and objective_filter != 'ALL':
+        companies = companies.filter(looking_for=objective_filter)
+
+    # 4. Pagination
+    companies = companies.distinct()
+    paginator = Paginator(companies, 48)  # 48 items per page
+    page_number = request.GET.get('page')
+
+    try:
+        companies_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        companies_page = paginator.get_page(1)
+    except EmptyPage:
+        companies_page = paginator.get_page(paginator.num_pages)
+
+    # 5. Global Inbox Badge Context
+    unread_count = 0
+    if request.user.is_authenticated:
+        try:
+            from workspace.models import ChatMessage
+            unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
+        except ImportError:
+            pass
+
+    return render(request, 'network/company_nexus.html', {
+        'companies': companies_page,
+        'search_query': raw_query,
+        'current_sector': sector_filter,
+        'current_objective': objective_filter,
+        'unread_msg_count': unread_count,
+        'active_tab': 'teams',  # Lets UI know to highlight the 'Companies' tab
     })
 
 
@@ -468,6 +587,9 @@ class NetworkPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMess
 
     def test_func(self):
         return self.request.user == self.get_object().author
+
+
+# ⚠️ Legacy view block preserved exactly as provided to prevent breakage
 class NetworkPostDetailView(DetailView):
     """Deep dive page for a specific post."""
     model = NetworkPost
@@ -486,4 +608,3 @@ class NetworkPostDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         ctx['page_title'] = "View Initiative"
         return ctx
-
