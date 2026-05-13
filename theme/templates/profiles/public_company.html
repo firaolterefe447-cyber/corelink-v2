@@ -85,14 +85,12 @@
     <!-- FLOATING TOP NAVIGATION -->
     <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
          :class="scrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/90 shadow-sm py-3' : 'bg-transparent py-5'">
-        <div class="max-w-[1200px] mx-auto px-4 md:px-8 flex items-center justify-between">
+        <div class="max-w-[1000px] mx-auto px-4 md:px-8 flex items-center justify-between">
 
             <div class="flex items-center gap-4">
-                <!-- Back to Discover -->
                 <a href="{% url 'company_nexus' %}" class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-corelink hover:border-corelink/30 hover:shadow-md transition-all">
                     <i data-lucide="arrow-left" class="w-5 h-5"></i>
                 </a>
-
                 <div class="font-heading font-black text-xl tracking-tight" :class="scrolled ? 'text-slate-900' : 'text-slate-900 drop-shadow-sm'">
                     {{ company.name }}
                 </div>
@@ -111,7 +109,7 @@
         {% if company.cover_image %}
             <img src="{{ company.cover_image.url }}" alt="{{ company.name }} Cover" class="w-full h-full object-cover opacity-80">
         {% else %}
-            <!-- Abstract Vibrant Fallback (Matches Feed) -->
+            <!-- Abstract Vibrant Fallback (Original corelink style) -->
             <div class="w-full h-full bg-gradient-to-br from-[#0A66C2] via-indigo-600 to-purple-800 relative">
                 <div class="absolute -top-24 -right-12 w-64 h-64 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-70"></div>
                 <div class="absolute bottom-0 left-0 w-full h-full bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -121,13 +119,13 @@
         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
     </div>
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-[1200px] mx-auto px-4 md:px-8 relative z-20 -mt-20 md:-mt-28 pb-24">
+    <!-- MAIN CONTENT CONTAINER (Centered, Single Column Flow for great padding) -->
+    <main class="max-w-[900px] mx-auto px-4 md:px-8 relative z-20 -mt-20 md:-mt-28 pb-24 space-y-8 md:space-y-10">
 
         <!-- PROFILE HEADER CARD -->
-        <div class="glass-card p-6 md:p-10 mb-8 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative">
+        <div class="glass-card p-6 md:p-10 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative">
 
-            <!-- Logo -->
+            <!-- Clean Original Logo -->
             <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white border-4 border-white shadow-lg shrink-0 flex items-center justify-center overflow-hidden -mt-16 md:-mt-20 relative z-30">
                 {% if company.logo %}
                     <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo" class="w-full h-full object-cover">
@@ -159,183 +157,180 @@
             </div>
         </div>
 
-        <!-- TWO COLUMN BENTO GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- About / Mission -->
+        {% if company.mission_stmt %}
+        <section class="glass-card p-6 md:p-8">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="sparkles" class="w-5 h-5 text-corelink"></i>
+                <h2 class="font-heading font-black text-xl text-slate-900">About & Mission</h2>
+            </div>
+            <p class="text-slate-600 font-medium text-[15px] md:text-[16px] leading-relaxed">
+                {{ company.mission_stmt|linebreaksbr }}
+            </p>
+        </section>
+        {% endif %}
 
-            <!-- LEFT COLUMN: Main Content (About, Services, Updates) -->
-            <div class="lg:col-span-2 space-y-8">
-
-                <!-- About / Mission -->
-                {% if company.mission_stmt %}
-                <section class="glass-card p-6 md:p-8">
-                    <div class="flex items-center gap-2 mb-4">
-                        <i data-lucide="sparkles" class="w-5 h-5 text-corelink"></i>
-                        <h2 class="font-heading font-black text-xl text-slate-900">About & Mission</h2>
-                    </div>
-                    <p class="text-slate-600 font-medium text-[15px] md:text-[16px] leading-relaxed">
-                        {{ company.mission_stmt|linebreaksbr }}
-                    </p>
-                </section>
-                {% endif %}
-
-                <!-- Services & Products (UPDATED) -->
-                {% if company.services.exists %}
-                <section>
-                    <div class="flex items-center gap-2 mb-6 px-2">
-                        <i data-lucide="package" class="w-5 h-5 text-slate-700"></i>
-                        <h2 class="font-heading font-black text-2xl text-slate-900">Products & Services</h2>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {% for service in company.services.all %}
-                        <div class="glass-card overflow-hidden flex flex-col group relative">
-                            {% if service.gallery.exists %}
-                                <div class="h-48 w-full bg-slate-100 overflow-hidden relative">
-                                    <img src="{{ service.gallery.first.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                    {% if service.gallery.count > 1 %}
-                                        <!-- Indicator that there are more images -->
-                                        <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[11px] font-bold px-2 py-1 rounded-md">
-                                            +{{ service.gallery.count|add:"-1" }} Photos
-                                        </div>
-                                    {% endif %}
+        <!-- Services & Products -->
+        {% if company.services.exists %}
+        <section>
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i data-lucide="package" class="w-5 h-5 text-slate-700"></i>
+                <h2 class="font-heading font-black text-2xl text-slate-900">Products & Services</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for service in company.services.all %}
+                <div class="glass-card overflow-hidden flex flex-col group relative">
+                    {% if service.gallery.exists %}
+                        <div class="h-48 w-full bg-slate-100 overflow-hidden relative">
+                            <img src="{{ service.gallery.first.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            {% if service.gallery.count > 1 %}
+                                <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                                    +{{ service.gallery.count|add:"-1" }} Photos
                                 </div>
                             {% endif %}
-                            <div class="p-6 flex-1 flex flex-col">
-                                <h3 class="font-heading font-black text-lg text-slate-900 mb-2">{{ service.name }}</h3>
-
-                                <!-- line-clamp-3 limits the text to 3 lines -->
-                                <p class="text-slate-500 text-[14px] leading-relaxed line-clamp-3 flex-1">
-                                    {{ service.description }}
-                                </p>
-
-                                <!-- CTA Button to Dedicated Details Page -->
-                                <a href="{% url 'public_service_detail' pk=service.id %}" class="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-corelink hover:text-slate-900 transition-colors">
-                                    Explore Details <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                </a>
-                            </div>
                         </div>
-                        {% endfor %}
-                    </div>
-                </section>
-                {% endif %}
-
-                <!-- Updates / News -->
-                {% if company.news_articles.exists %}
-                <section>
-                    <div class="flex items-center gap-2 mb-6 px-2">
-                        <i data-lucide="zap" class="w-5 h-5 text-slate-700"></i>
-                        <h2 class="font-heading font-black text-2xl text-slate-900">Latest Updates</h2>
-                    </div>
-                    <div class="space-y-4">
-                        {% for article in company.news_articles.all %}
-                        <a href="{% url 'news_detail' article.slug %}" class="glass-card p-4 md:p-5 flex flex-col sm:flex-row gap-5 group hover:-translate-y-1 transition-all">
-                            {% if article.cover_image %}
-                            <div class="w-full sm:w-40 h-40 sm:h-auto rounded-xl overflow-hidden shrink-0">
-                                <img src="{{ article.cover_image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            </div>
-                            {% endif %}
-                            <div class="flex flex-col justify-center">
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-corelink mb-2">{{ article.published_date|date:"M d, Y" }}</span>
-                                <h3 class="font-heading font-black text-lg text-slate-900 mb-2 group-hover:text-corelink transition-colors">{{ article.title }}</h3>
-                                <p class="text-slate-500 text-[14px] line-clamp-2">{{ article.excerpt|default:article.content|truncatechars:100 }}</p>
-                            </div>
+                    {% endif %}
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="font-heading font-black text-lg text-slate-900 mb-2">{{ service.name }}</h3>
+                        <p class="text-slate-500 text-[14px] leading-relaxed line-clamp-3 flex-1">
+                            {{ service.description }}
+                        </p>
+                        <a href="{% url 'public_service_detail' pk=service.id %}" class="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-corelink hover:text-slate-900 transition-colors">
+                            Explore Details <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </a>
-                        {% endfor %}
-                    </div>
-                </section>
-                {% endif %}
-
-                <!-- History / Timeline -->
-                {% if company.milestones.exists %}
-                <section class="glass-card p-6 md:p-8">
-                    <div class="flex items-center gap-2 mb-8">
-                        <i data-lucide="history" class="w-5 h-5 text-slate-700"></i>
-                        <h2 class="font-heading font-black text-xl text-slate-900">Company History</h2>
-                    </div>
-                    <div class="relative border-l-2 border-slate-100 ml-3 space-y-8">
-                        {% for m in company.milestones.all %}
-                        <div class="relative pl-8">
-                            <div class="absolute -left-[9px] top-1 w-4 h-4 bg-white border-4 border-corelink rounded-full"></div>
-                            <span class="block text-corelink font-black text-[14px] mb-1">{{ m.year }}</span>
-                            <h4 class="font-heading font-black text-lg text-slate-900">{{ m.title }}</h4>
-                            <p class="text-slate-500 text-[14px] mt-1">{{ m.description }}</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </section>
-                {% endif %}
-
-            </div>
-
-            <!-- RIGHT COLUMN: Sidebar (Team, Contact) -->
-            <div class="lg:col-span-1 space-y-6">
-
-                <!-- Leadership / Team -->
-                {% if company.members.exists %}
-                <div class="glass-card p-6">
-                    <h3 class="font-heading font-black text-[16px] text-slate-900 mb-4 uppercase tracking-wide">Key Leadership</h3>
-                    <div class="space-y-4">
-                        {% for member in company.members.all|slice:":3" %}
-                        <div class="flex items-center gap-4 bg-slate-50 rounded-xl p-3 border border-slate-100">
-                            {% if member.user.avatar %}
-                                <img src="{{ member.user.avatar.url }}" class="w-12 h-12 rounded-full object-cover">
-                            {% else %}
-                                <div class="w-12 h-12 rounded-full bg-corelink/10 text-corelink font-black flex items-center justify-center text-lg">{{ member.user.full_name|slice:":1" }}</div>
-                            {% endif %}
-                            <div>
-                                <h4 class="font-bold text-slate-900 text-[14px]">{{ member.user.full_name }}</h4>
-                                <p class="text-[12px] text-slate-500">{{ member.job_title }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
                     </div>
                 </div>
-                {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
-                <!-- Contact & Socials -->
-                <div id="contact" class="glass-card p-6 bg-slate-900 text-white border-none shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-corelink rounded-full filter blur-[60px] opacity-30 pointer-events-none"></div>
+        <!-- Updates / News -->
+        {% if company.news_articles.exists %}
+        <section>
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i data-lucide="zap" class="w-5 h-5 text-slate-700"></i>
+                <h2 class="font-heading font-black text-2xl text-slate-900">Latest Updates</h2>
+            </div>
+            <div class="space-y-4">
+                {% for article in company.news_articles.all %}
+                <a href="{% url 'news_detail' article.slug %}" class="glass-card p-4 md:p-5 flex flex-col sm:flex-row gap-5 group hover:-translate-y-1 transition-all">
+                    {% if article.cover_image %}
+                    <div class="w-full sm:w-40 h-40 sm:h-auto rounded-xl overflow-hidden shrink-0">
+                        <img src="{{ article.cover_image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    {% endif %}
+                    <div class="flex flex-col justify-center">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-corelink mb-2">{{ article.published_date|date:"M d, Y" }}</span>
+                        <h3 class="font-heading font-black text-lg text-slate-900 mb-2 group-hover:text-corelink transition-colors">{{ article.title }}</h3>
+                        <p class="text-slate-500 text-[14px] line-clamp-2">{{ article.excerpt|default:article.content|truncatechars:100 }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
-                    <h3 class="font-heading font-black text-[18px] mb-6 relative z-10">Get in Touch</h3>
+        <!-- History / Timeline -->
+        {% if company.milestones.exists %}
+        <section class="glass-card p-6 md:p-8">
+            <div class="flex items-center gap-2 mb-8">
+                <i data-lucide="history" class="w-5 h-5 text-slate-700"></i>
+                <h2 class="font-heading font-black text-xl text-slate-900">Company History</h2>
+            </div>
+            <div class="relative border-l-2 border-slate-200 ml-3 space-y-8">
+                {% for m in company.milestones.all %}
+                <div class="relative pl-8">
+                    <div class="absolute -left-[9px] top-1 w-4 h-4 bg-white border-4 border-corelink rounded-full"></div>
+                    <span class="block text-corelink font-black text-[14px] mb-1">{{ m.year }}</span>
+                    <h4 class="font-heading font-black text-lg text-slate-900">{{ m.title }}</h4>
+                    <p class="text-slate-500 text-[14px] mt-1">{{ m.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
-                    <ul class="space-y-4 relative z-10 mb-6 text-[14px]">
-                        {% if company.location %}
-                        <li class="flex items-start gap-3 text-slate-300">
-                            <i data-lucide="map-pin" class="w-5 h-5 text-corelink shrink-0"></i>
-                            <span>{{ company.location }}</span>
-                        </li>
-                        {% endif %}
+        <!-- Leadership / Team -->
+        {% if company.members.exists %}
+        <section>
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i data-lucide="users" class="w-5 h-5 text-slate-700"></i>
+                <h2 class="font-heading font-black text-2xl text-slate-900">Key Leadership</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for member in company.members.all %}
+                <div class="glass-card p-4 flex items-center gap-4">
+                    {% if member.user.avatar %}
+                        <img src="{{ member.user.avatar.url }}" class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 font-black flex items-center justify-center text-lg">{{ member.user.full_name|slice:":1" }}</div>
+                    {% endif %}
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-[15px]">{{ member.user.full_name }}</h4>
+                        <p class="text-[13px] text-slate-500">{{ member.job_title }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
 
-                        {% for contact in company.contacts.all %}
-                        <li class="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                            <i data-lucide="phone" class="w-5 h-5 text-corelink shrink-0"></i>
-                            <span>{{ contact.value }}</span>
-                        </li>
-                        {% endfor %}
+        <!-- CONTACT SECTION (Beautiful dark gradient replica) -->
+        <section id="contact" class="pt-8">
+            <div class="max-w-[650px] mx-auto w-full rounded-[20px] p-6 md:p-10 bg-gradient-to-br from-[#0e1628] via-[#1b2b5a] to-[#45429c] shadow-2xl border border-white/10">
 
-                        {% if company.members.exists %}
-                        <li class="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                            <i data-lucide="mail" class="w-5 h-5 text-corelink shrink-0"></i>
-                            <a href="mailto:{{ company.members.first.user.email }}">{{ company.members.first.user.email }}</a>
-                        </li>
-                        {% endif %}
-                    </ul>
+                <h3 class="font-heading font-black text-[22px] md:text-[26px] text-white mb-8 flex items-center gap-3">
+                    <i data-lucide="message-square" class="w-6 h-6 text-white"></i> Get in Touch
+                </h3>
 
-                    {% if company.socials.exists %}
-                    <div class="pt-6 border-t border-slate-700 relative z-10">
-                        <div class="flex flex-wrap gap-2">
-                            {% for social in company.socials.all %}
-                            <a href="{{ social.url }}" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-corelink rounded-lg text-[13px] font-bold text-white transition-colors shadow-sm">
-                                {{ social.platform }}
-                            </a>
-                            {% endfor %}
+                <!-- Contact Rows -->
+                <div class="space-y-4">
+                    {% if company.location %}
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-blue-200"></i>
                         </div>
+                        <span class="text-[15px] font-semibold text-white">{{ company.location }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% for contact in company.contacts.all %}
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="phone" class="w-5 h-5 text-blue-200"></i>
+                        </div>
+                        <span class="text-[15px] font-semibold text-white">{{ contact.value }}</span>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Fixed Email: Will completely hide if empty or if user wrote 'None' -->
+                    {% if company.members.exists and company.members.first.user.email and company.members.first.user.email|lower != 'none' %}
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="mail" class="w-5 h-5 text-blue-200"></i>
+                        </div>
+                        <a href="mailto:{{ company.members.first.user.email }}" class="text-[15px] font-semibold text-white hover:text-blue-300 transition-colors">{{ company.members.first.user.email }}</a>
                     </div>
                     {% endif %}
                 </div>
 
+                <!-- Socials Section -->
+                {% if company.socials.exists %}
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-slate-300 mb-4">Connect With Us</p>
+                    <div class="flex flex-wrap gap-3">
+                        {% for social in company.socials.all %}
+                        <a href="{{ social.url }}" target="_blank" class="px-5 py-2.5 bg-white/[0.08] hover:bg-white/[0.15] border border-white/10 rounded-xl text-[14px] font-semibold text-white transition-all">
+                            {{ social.platform }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
+        </section>
 
-        </div>
     </main>
 
     <!-- FOOTER -->

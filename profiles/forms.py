@@ -41,7 +41,7 @@ from profiles.models import (
 class TailwindFormMixin:
     """Injects Tailwind CSS classes securely. Icons cached at class level."""
     ICONS = {
-        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
+        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
         'link': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' /%3E%3C/svg%3E",
         'calendar': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E",
         'chevron': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E",
@@ -135,16 +135,16 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
         help_texts = {
             'location': _("E.g., Addis Ababa, London, San Francisco, or Remote."),
             'institution': _("Where do you currently work, study, or practice?"),
-            'field_of_interest': _("E.g., Software Engineering, Public Health, UI/UX Design, Corporate Finance."),
-            'bio_narrative': _("Don't just paste your resume! Tell us how you started, what you're passionate about, and what you want to build or achieve next."),
-            'cv_file': _("Upload your 1-page CV. Recruiters, startup founders, and clinics look at this first."),
+            'field_of_interest': _("E.g., Agriculture, Healthcare, Education, Engineering, or Business."),
+            'bio_narrative': _("Provide a detailed professional biography. Tell us about your background, your current work, and your future goals."),
+            'cv_file': _("Upload your 1-page CV or Resume. This helps others understand your full professional background."),
         }
 
         widgets = {
             'location': forms.TextInput(attrs={'placeholder': _('e.g. Nairobi, Kenya')}),
-            'institution': forms.TextInput(attrs={'placeholder': _('e.g. Google, Black Lion Hospital, Safaricom')}),
-            'field_of_interest': forms.TextInput(attrs={'placeholder': _('e.g. AI Research or Graphic Design')}),
-            'bio_narrative': forms.Textarea(attrs={'placeholder': _('I started my journey when...')}),
+            'institution': forms.TextInput(attrs={'placeholder': _('e.g. Black Lion Hospital, Safaricom, or Addis Ababa University')}),
+            'field_of_interest': forms.TextInput(attrs={'placeholder': _('e.g. Healthcare Administration or Civil Engineering')}),
+            'bio_narrative': forms.Textarea(attrs={'placeholder': _('I began my career in...')}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -176,13 +176,13 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'name': _("Add your best strengths (e.g., Python, Patient Care, React.js, Financial Modeling, Video Editing)."),
-            'status': _("Are you actively learning this, or do you already use it like a pro?"),
-            'context': _("Briefly mention where you applied this. (e.g., 'Used Django to build an API', 'Managed a clinical trial', or 'Designed a brand identity')."),
+            'name': _("Add a specific skill or strength (e.g., Patient Care, Logistics Management, Python, Financial Modeling, Graphic Design)."),
+            'status': _("Indicate whether you are currently learning this, or if you already use it professionally."),
+            'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch', or 'Used for daily patient reporting')."),
         }
 
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'e.g., Data Analysis'}),
+            'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
             'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 3}),
         }
 
@@ -196,21 +196,21 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
             'title': _("Title of Work"),
             'context': _("Category"),
             'role': _("Your Role"),
-            'link': _("Live Link, Publication, or Portfolio"),
+            'link': _("Live Link, Publication, or Document"),
             'problem_statement': _("The Goal or Challenge"),
             'solution_narrative': _("Your Approach & Results"),
         }
 
         help_texts = {
-            'title': _("Name of the app, research paper, business plan, or artwork."),
-            'role': _("E.g., Lead Full-Stack Engineer, Research Assistant, Sole Designer."),
-            'problem_statement': _("What was the main problem you were trying to solve, study, or create?"),
-            'solution_narrative': _("How did you do it, and what was the final result or impact?"),
+            'title': _("The name of the project, research paper, business plan, or campaign."),
+            'role': _("Your specific position during this work (e.g., Project Manager, Research Assistant, Lead Technician)."),
+            'problem_statement': _("Explain the main objective or the problem you were trying to solve."),
+            'solution_narrative': _("Describe the steps you took and the final outcome or impact of the work."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., CoreLink App or Malaria Prevention Study'}),
-            'role': forms.TextInput(attrs={'placeholder': 'e.g., Project Manager'}),
+            'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study or Store Expansion Project'}),
+            'role': forms.TextInput(attrs={'placeholder': 'e.g., Operations Lead'}),
             'problem_statement': forms.Textarea(attrs={'placeholder': 'We needed to find a way to...', 'rows': 3}),
             'solution_narrative': forms.Textarea(attrs={'placeholder': 'I organized a system that resulted in...', 'rows': 4}),
         }
@@ -226,17 +226,17 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
             'role_title': _("Your Title"),
             'location_type': _("Location Setup"),
             'is_current': _("I currently work here"),
-            'description': _("What did you do?"),
+            'description': _("Role Description"),
         }
 
         help_texts = {
-            'description': _("Highlight your responsibilities and achievements. Don't be humble, tell us your wins! Use bullet points if possible."),
+            'description': _("Highlight your key responsibilities and professional achievements. Using bullet points makes it easier to read."),
         }
 
         widgets = {
-            'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Microsoft, United Nations, Commercial Bank'}),
-            'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Frontend Developer or Logistics Officer'}),
-            'description': forms.Textarea(attrs={'placeholder': '• Coordinated supply chain\n• Reduced costs by 15%', 'rows': 4}),
+            'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank, United Nations'}),
+            'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Logistics Officer or Clinic Supervisor'}),
+            'description': forms.Textarea(attrs={'placeholder': '• Coordinated daily operations\n• Managed a team of 15 staff members', 'rows': 4}),
         }
 
     def clean(self):
@@ -260,15 +260,15 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'title': _("E.g., AWS Certified Architect, B.Sc. Nursing, Google Data Analytics."),
-            'issuer': _("The university, board, or platform (e.g., Coursera, Addis Ababa University)."),
-            'url_link': _("Optional link to a digital badge or online publication."),
-            'file_upload': _("Upload a scanned copy of your degree or certificate to boost your Trust Score."),
+            'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or Project Management Professional."),
+            'issuer': _("The university, licensing board, or training organization."),
+            'url_link': _("An optional web link to verify the credential digitally."),
+            'file_upload': _("Upload a clear copy of your degree or certificate to improve your profile verification."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., Certified Public Accountant (CPA)'}),
-            'issuer': forms.TextInput(attrs={'placeholder': 'e.g., Board of Accountancy'}),
+            'title': forms.TextInput(attrs={'placeholder': 'e.g., Master of Business Administration (MBA)'}),
+            'issuer': forms.TextInput(attrs={'placeholder': 'e.g., Addis Ababa University'}),
         }
 
     def clean_issue_date(self):
@@ -283,23 +283,23 @@ class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
         fields = ['title', 'current_search', 'collaboration_status', 'body_narrative', 'external_link', 'is_published']
 
         labels = {
-            'title': _("Catchy Headline"),
-            'current_search': _("What are you looking for right now?"),
+            'title': _("Update Title"),
+            'current_search': _("Current Objective"),
             'collaboration_status': _("Your Availability"),
-            'body_narrative': _("The Details"),
-            'external_link': _("Link to your work"),
+            'body_narrative': _("Details"),
+            'external_link': _("External Link"),
             'is_published': _("Publish to Global Feed"),
         }
 
         help_texts = {
-            'title': _("E.g., 'Just shipped my first React app!', 'Published a new medical paper', or 'Looking for a design co-founder'."),
-            'body_narrative': _("Explain what you're working on or learning. The community loves detailed, authentic updates!"),
-            'external_link': _("Paste a link to an article, GitHub repo, or website. We'll generate a beautiful preview!"),
+            'title': _("E.g., 'Completed a major supply chain project', 'Published a new research paper', or 'Looking for a business partner'."),
+            'body_narrative': _("Provide the details of your current work or learning focus. Clear updates help others understand how to collaborate with you."),
+            'external_link': _("Include a link to an article, document, or website related to your update."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'What are you focusing on?'}),
-            'body_narrative': forms.Textarea(attrs={'placeholder': 'I just spent the weekend studying...', 'rows': 4}),
+            'title': forms.TextInput(attrs={'placeholder': 'What are you currently focusing on?'}),
+            'body_narrative': forms.Textarea(attrs={'placeholder': 'I have recently been working on...', 'rows': 4}),
         }
 
 
@@ -314,41 +314,36 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         current_type = self.requested_type or (self.instance.post_type if self.instance and self.instance.pk else None)
 
-        # 1. Provide Universal Labels for Visibility
         if 'visibility' in self.fields:
             self.fields['visibility'].label = _("Visibility Status")
 
-        # 2. Shapeshift into a Daily Growth Log
         if current_type == 'GROWTH_LOG':
-            self.fields['title'].label = _("What did you learn today?")
-            self.fields['content'].label = _("Your Notes")
-            self.fields['content'].help_text = _("Jot down your daily learnings, coding bugs you fixed, or study notes. Future you will thank you.")
+            self.fields['title'].label = _("Entry Title")
+            self.fields['content'].label = _("Notes & Observations")
+            self.fields['content'].help_text = _("A place to document your daily progress, challenges overcome, or important notes.")
             if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this log private in your diary, or share it on your public profile to show your consistency?")
+                self.fields['visibility'].help_text = _("Keep this log private for your own records, or share it on your profile.")
 
-        # 3. Shapeshift into a Vision Manifesto
         elif current_type == 'VISION_BLOCK':
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
-            self.fields['title'].label = _("Your Goal")
-            self.fields['content'].label = _("Why does this matter?")
-            self.fields['content'].help_text = _("Write a long-term vision statement. Where do you see your career or industry heading?")
+            self.fields['title'].label = _("Vision or Goal")
+            self.fields['content'].label = _("Detailed Plan")
+            self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
             if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this goal private to stay focused, or share it publicly to attract collaborators who share your vision?")
+                self.fields['visibility'].help_text = _("Keep this private to stay focused, or publish it to connect with others who share similar goals.")
 
-        # 4. Shapeshift into an Industry Essay
         elif current_type == 'ESSAY':
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
-            self.fields['title'].label = _("Essay Title")
-            self.fields['content'].label = _("Your Thoughts")
-            self.fields['content'].help_text = _("Share your deep industry insights, tech tutorials, or personal essays. (Markdown is supported).")
+            self.fields['title'].label = _("Article Title")
+            self.fields['content'].label = _("Article Content")
+            self.fields['content'].help_text = _("Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
             if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this as a private draft while you edit, or publish it publicly to your profile?")
+                self.fields['visibility'].help_text = _("Keep this as a private draft while writing, or publish it to your profile.")
 
-        # Lock the Post Type in the background
         if current_type:
             self.fields['post_type'].widget = forms.HiddenInput()
             self.fields['post_type'].initial = current_type
@@ -360,20 +355,20 @@ class LiveOpportunityForm(TailwindFormMixin, forms.ModelForm):
         fields = ['request_type', 'title', 'details', 'expires_at']
 
         labels = {
-            'request_type': _("What do you need?"),
+            'request_type': _("Type of Request"),
             'title': _("Headline"),
-            'details': _("The Details"),
-            'expires_at': _("When does this expire?"),
+            'details': _("Full Details"),
+            'expires_at': _("Expiration Date"),
         }
 
         help_texts = {
-            'title': _("e.g., Seeking a Technical Co-Founder, Looking for a Medical Mentor, Available for Freelance UI Work."),
-            'details': _("Provide the exact details, budget, timeline, and what you expect from the other person."),
+            'title': _("E.g., Seeking an Agricultural Consultant, Looking for a Study Partner, Available for Accounting Consultation."),
+            'details': _("Provide clear details regarding expectations, timelines, and the type of collaboration you are seeking."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., Looking for a Business Partner'}),
-            'details': forms.Textarea(attrs={'placeholder': 'I am currently preparing for my exams and need someone to... ', 'rows': 4}),
+            'title': forms.TextInput(attrs={'placeholder': 'e.g., Looking for a Logistics Expert'}),
+            'details': forms.Textarea(attrs={'placeholder': 'I am currently organizing a project and require someone who can...', 'rows': 4}),
             'expires_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
@@ -383,8 +378,8 @@ class ProfileHeadlineForm(TailwindFormMixin, forms.ModelForm):
         model = ProfileHeadline
         fields = ['title', 'is_primary']
         labels = {'title': _("Your Professional Headline")}
-        help_texts = {'title': _("A short identity (e.g., 'Senior Cloud Architect', 'Medical Student', 'Freelance Writer').")}
-        widgets = {'title': forms.TextInput(attrs={'placeholder': 'e.g., Marketing Specialist'})}
+        help_texts = {'title': _("A short description of your primary role (e.g., 'Hospital Administrator', 'Civil Engineer', 'Retail Manager').")}
+        widgets = {'title': forms.TextInput(attrs={'placeholder': 'e.g., Operations Manager'})}
 
 
 class JobPreferenceForm(TailwindFormMixin, forms.ModelForm):
@@ -395,33 +390,125 @@ class JobPreferenceForm(TailwindFormMixin, forms.ModelForm):
 
 
 # ==============================================================================
-# 4. COMPANY & ADMIN FORMS (Untouched Logic)
+# 4. COMPANY & ADMIN FORMS (UNIVERSAL & PROFESSIONAL)
 # ==============================================================================
+
 class CompanyProfileUpdateForm(DBRestrictedChoiceFieldsMixin, TailwindFormMixin, forms.ModelForm):
     restricted_model = Company
     restricted_db_fields = ('sector', 'location')
     restricted_source_models = {'location': City}
+
     class Meta:
         model = Company
-        fields = ['name', 'sector', 'location', 'operating_since', 'mission_stmt', 'is_hiring', 'looking_for', ]
+        fields = ['name', 'sector', 'location', 'operating_since', 'mission_stmt', 'is_hiring', 'looking_for']
+
+        labels = {
+            'name': _("Company Name"),
+            'sector': _("Industry / Sector"),
+            'location': _("Headquarters Location"),
+            'operating_since': _("Year Established"),
+            'mission_stmt': _("About the Company"),
+            'is_hiring': _("Currently Hiring"),
+            'looking_for': _("Primary Objective"),
+        }
+
+        help_texts = {
+            'name': _("The official registered or trading name of your business or organization."),
+            'sector': _("E.g., Agriculture, Manufacturing, Healthcare, Retail, Education, or Finance."),
+            'location': _("The city and country where your primary operations or headquarters are located."),
+            'operating_since': _("The year the business was officially founded or established."),
+            'mission_stmt': _("Describe your business, the services you provide, and the customers you serve. Share your history and what makes your company unique."),
+            'is_hiring': _("Check this box if your company currently has open job positions."),
+            'looking_for': _("Select your primary business objective to help others in the network understand how they can collaborate with you."),
+        }
+
+        widgets = {
+            'mission_stmt': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Our organization was founded to provide...'}),
+            'operating_since': forms.NumberInput(attrs={'placeholder': 'e.g. 2015'}),
+        }
 
 class CompanyNewsForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = CompanyNews; fields = ['title', 'excerpt', 'content', 'cover_image', 'is_published']
+    class Meta:
+        model = CompanyNews
+        fields = ['title', 'excerpt', 'content', 'is_published']
+
+        labels = {
+            'title': _("News Headline"),
+            'excerpt': _("Short Summary"),
+            'content': _("Full Article"),
+            'is_published': _("Publish Immediately"),
+        }
+
+        help_texts = {
+            'title': _("The title of your announcement, event summary, or press release."),
+            'excerpt': _("A brief summary of your announcement. This appears as a preview before people click to read the full article."),
+            'content': _("The full details of your news or update. You can use formatting to create a clear and professional article."),
+            'is_published': _("Uncheck this box if you wish to save the article as a draft to review later."),
+        }
+
+        widgets = {
+            'excerpt': forms.Textarea(attrs={'rows': 2, 'placeholder': 'A brief overview of the announcement...'}),
+            'content': forms.Textarea(attrs={'rows': 8, 'placeholder': 'Provide the full details here...'}),
+        }
 
 class CompanyServiceForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = CompanyService; fields = ['name', 'description', 'is_active']
+    class Meta:
+        model = CompanyService
+        fields = ['name', 'description', 'is_active']
+
+        labels = {
+            'name': _("Product or Service Name"),
+            'description': _("Description"),
+            'is_active': _("Currently Available"),
+        }
+
+        help_texts = {
+            'name': _("The name of the specific product, good, or service you provide."),
+            'description': _("Explain what this offering is, who your target customers are, and the value it brings to them."),
+            'is_active': _("Uncheck this box if you no longer provide this product or service."),
+        }
+
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'This service is designed to help customers...'}),
+        }
 
 class CompanyMilestoneForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = CompanyMilestone; fields = ['year', 'title', 'description']
+    class Meta:
+        model = CompanyMilestone
+        fields = ['year', 'title', 'description']
+
+        labels = {
+            'year': _("Year Achieved"),
+            'title': _("Milestone Title"),
+            'description': _("Details"),
+        }
+
+        help_texts = {
+            'year': _("The year this event occurred."),
+            'title': _("A short headline (e.g., 'Opened New Branch', 'Reached 100 Employees', 'Launched New Product Line')."),
+            'description': _("Share details about this achievement and how it helped your organization grow."),
+        }
+
+        widgets = {
+            'year': forms.NumberInput(attrs={'placeholder': 'e.g. 2022'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'placeholder': 'This milestone allowed the organization to...'}),
+        }
 
 class AddCompanyMemberForm(TailwindFormMixin, forms.Form):
-    user_identifier = forms.CharField(label=_("User ID or Phone"), widget=forms.TextInput(attrs={'placeholder': 'Search user...'}))
-    job_title = forms.CharField(max_length=100)
-    role = forms.ChoiceField(choices=CompanyMember.Role.choices, initial=CompanyMember.Role.EDITOR)
+    user_identifier = forms.CharField(label=_("Search User"), widget=forms.TextInput(attrs={'placeholder': 'Enter Email or Phone number...'}))
+    job_title = forms.CharField(max_length=100, label=_("Job Title"), help_text=_("The person's official role within the organization (e.g., 'Operations Manager' or 'Senior Accountant')."))
+    role = forms.ChoiceField(
+        choices=CompanyMember.Role.choices,
+        initial=CompanyMember.Role.EDITOR,
+        label=_("Permissions Level"),
+        help_text=_("Admins have full access to settings. Editors can only write news articles and update services.")
+    )
+
 
 # ==============================================================================
 # 5. ASSET & GALLERY FORMS
 # ==============================================================================
+
 class IdentityMediaForm(forms.ModelForm):
     class Meta: model = CustomUser; fields = ['avatar', 'cover_image']
 
