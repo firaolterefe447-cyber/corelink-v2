@@ -12,584 +12,519 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,600;1,700&display=swap" rel="stylesheet">
-
 <style>
-    /* ==========================================================================
-       1. ROOT VARIABLES & ADVANCED THEME ENGINE
-       ========================================================================== */
-    :root {
-        --font-heading: 'Plus Jakarta Sans', sans-serif;
-        --font-body: 'Inter', sans-serif;
+  /* ==========================================================================
+     CORE VARIABLES & RESET
+     ========================================================================== */
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; background: #fff; color: #0f172a; overflow-x: hidden; }
 
-        --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-        --ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
-        --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* ==========================================================================
+     NAVBAR & MOBILE MENU
+     ========================================================================== */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e2e8f0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 72px;
+  }
+  .logo { font-size: 22px; font-weight: 900; letter-spacing: -0.05em; color: #0f172a; text-decoration: none; }
+  .logo span { color: #0A66C2; }
+  
+  .nav-desktop { display: flex; align-items: center; gap: 32px; }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-link { font-size: 14px; font-weight: 700; color: #64748b; text-decoration: none; transition: color 0.2s; }
+  .nav-link:hover { color: #0A66C2; }
+  .nav-btns { display: flex; align-items: center; gap: 12px; }
+  
+  .btn-ghost { font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; background: #fff; padding: 10px 20px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .btn-ghost:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .btn-primary { font-size: 13px; font-weight: 700; color: #fff; background: #0A66C2; border: none; padding: 10px 24px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: background 0.2s; box-shadow: 0 4px 12px rgba(10,102,194,0.2); }
+  .btn-primary:hover { background: #0052a3; box-shadow: 0 6px 16px rgba(10,102,194,0.3); }
 
-        --color-void: #02000A;
-        --color-surface: #FFFFFF;
-        --color-surface-alt: #F8FAFC;
-        --color-core-dark: #0F172A;
+  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; }
+  .mobile-menu { display: none; flex-direction: column; background: #fff; border-bottom: 1px solid #e2e8f0; position: absolute; top: 72px; left: 0; width: 100%; padding: 20px 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+  .mobile-menu a { padding: 12px 0; font-weight: 700; color: #0f172a; text-decoration: none; border-bottom: 1px solid #f1f5f9; }
+  .mobile-menu .m-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 
-        --brand-link-blue: #2563EB;
-        --accent-violet: #8B5CF6;
-        --accent-fuchsia: #D946EF;
-        --accent-cyan: #06B6D4;
-        --accent-emerald: #10B981;
-        --accent-amber: #F59E0B;
+  /* Language Dropdown */
+  .lang-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .lang-btn:hover { border-color: #cbd5e1; }
+  .lang-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 200; }
+  .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #475569; background: none; border: none; border-radius: 6px; cursor: pointer; }
+  .lang-option:hover { background: #f8fafc; color: #0A66C2; }
+  .lang-option.active { background: #eff6ff; color: #0A66C2; }
 
-        --shadow-elevation-1: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-elevation-2: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        --shadow-elevation-3: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
+  /* ==========================================================================
+     HERO SECTION
+     ========================================================================== */
+  .hero {
+    background: #F4F7FA;
+    background-image:
+      radial-gradient(circle at 12% 0%, rgba(219,234,254,0.9) 0%, transparent 42%),
+      radial-gradient(circle at 88% 20%, rgba(241,245,249,0.9) 0%, transparent 46%);
+    padding: 80px 24px 72px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(to right, rgba(10,102,194,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(10,102,194,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .hero-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fff; border: 1px solid #bfdbfe;
+    color: #0A66C2; font-size: 11px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 999px;
+    margin-bottom: 24px; position: relative;
+    box-shadow: 0 2px 8px rgba(10,102,194,0.08);
+  }
+  .pill-dot { width: 7px; height: 7px; background: #10b981; border-radius: 50%; }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 900; letter-spacing: -0.04em;
+    line-height: 1.05; color: #0f172a;
+    margin-bottom: 16px; position: relative;
+  }
+  .hero h1 .blue { color: #0A66C2; }
+  .hero-sub {
+    font-size: clamp(0.95rem, 2vw, 1.15rem); font-weight: 500; color: #64748b;
+    max-width: 600px; margin: 0 auto 32px; line-height: 1.7;
+    position: relative;
+  }
 
-    html {
-        scroll-behavior: smooth;
-        -webkit-tap-highlight-color: transparent;
-    }
+  /* AVATAR CLOUD IN HERO */
+  .hero-avatar-cloud {
+    position: relative; display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 6px; margin: 0 auto 16px; max-width: 700px; padding: 0 10px;
+  }
+  .av {
+    width: 46px; height: 46px; border-radius: 50%; border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
+    overflow: hidden; text-decoration: none; transition: transform 0.2s, z-index 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative;
+  }
+  .av:hover { transform: scale(1.2) translateY(-4px); z-index: 10; box-shadow: 0 6px 16px rgba(0,0,0,0.15); border-color: #bfdbfe; }
+  .av img { width: 100%; height: 100%; object-fit: cover; }
 
-    body {
-        font-family: var(--font-body);
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: var(--color-surface);
-        color: var(--color-core-dark);
-    }
+  /* Fallback Background Colors for users without photos */
+  .av-bg-1 { background: #0A66C2; }
+  .av-bg-2 { background: #7c3aed; }
+  .av-bg-3 { background: #059669; }
+  .av-bg-4 { background: #d97706; }
+  .av-bg-5 { background: #dc2626; }
+  .av-bg-6 { background: #0891b2; }
+  .av-bg-7 { background: #be185d; }
+  .av-bg-8 { background: #4338ca; }
 
-    .font-heading { font-family: var(--font-heading); }
+  .av-plus { background: #eff6ff; border: 2px solid #bfdbfe; color: #0A66C2; font-size: 12px; font-weight: 900; }
+  .hero-stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 6px; position: relative; }
+  .hero-stars .star { color: #f59e0b; font-size: 16px; }
+  .hero-av-count { font-size: 12px; font-weight: 700; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px; position: relative; }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: var(--color-void); }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--brand-link-blue); }
+  /* CTAs & STATS */
+  .hero-ctas { display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; flex-wrap: wrap; }
+  .hero-cta-main {
+    background: #0A66C2; color: #fff; font-size: 15px; font-weight: 800; text-decoration: none;
+    border: none; padding: 16px 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(10,102,194,0.25); letter-spacing: -0.01em; width: auto;
+  }
+  .hero-cta-main:hover { background: #0052a3; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(10,102,194,0.3); }
+  .hero-cta-ghost {
+    background: #fff; color: #0f172a; font-size: 15px; font-weight: 700; text-decoration: none;
+    border: 1px solid #e2e8f0; padding: 16px 32px; border-radius: 999px; cursor: pointer; transition: all 0.2s; width: auto;
+  }
+  .hero-cta-ghost:hover { border-color: #0A66C2; color: #0A66C2; background: #f8fafc; }
 
-    /* ==========================================================================
-       2. TYPOGRAPHY & UTILITIES
-       ========================================================================== */
-    .text-balance { text-wrap: balance; }
-    .text-magic {
-        background: linear-gradient(to right, var(--brand-link-blue), var(--accent-fuchsia), var(--accent-cyan));
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        animation: text-shine 5s linear infinite;
-    }
-    .bg-magic {
-        background: linear-gradient(135deg, var(--brand-link-blue), var(--accent-cyan));
-    }
+  .hero-stats {
+    display: flex; align-items: center; justify-content: center; gap: 40px;
+    margin-top: 64px; flex-wrap: wrap; position: relative;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 900; color: #0f172a; letter-spacing: -0.04em; }
+  .stat-label { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+  .stat-divider { width: 1px; height: 40px; background: #cbd5e1; }
 
-    @keyframes text-shine {
-        to { background-position: 200% center; }
-    }
+  /* ==========================================================================
+     DUAL MARKETPLACE & FEATURES
+     ========================================================================== */
+  .dual-hub { padding: 96px 32px; background: #fff; }
+  .section-label { text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #0A66C2; margin-bottom: 12px; }
+  .section-h2 { text-align: center; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -0.04em; color: #0f172a; margin-bottom: 16px; }
+  .section-sub { text-align: center; font-size: 16px; font-weight: 500; color: #64748b; max-width: 580px; margin: 0 auto 64px; line-height: 1.7; }
 
-    .bg-noise {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        opacity: 0.03;
-        pointer-events: none;
-        z-index: 1;
-    }
+  .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto; }
+  .hub-card {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 40px;
+    position: relative; overflow: hidden; transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .hub-card:hover { box-shadow: 0 20px 48px rgba(10,102,194,0.12); border-color: #bfdbfe; transform: translateY(-4px); }
+  .hub-card-bar { height: 4px; border-radius: 2px; margin-bottom: 32px; }
+  .bar-blue { background: linear-gradient(to right, #0A66C2, #60a5fa); }
+  .bar-emerald { background: linear-gradient(to right, #10b981, #34d399); }
+  .hub-icon {
+    width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; font-size: 26px;
+  }
+  .icon-blue { background: #eff6ff; color: #0A66C2; border: 1px solid #bfdbfe; }
+  .icon-green { background: #f0fdf4; color: #10b981; border: 1px solid #bbf7d0; }
+  .hub-card h3 { font-size: 22px; font-weight: 900; letter-spacing: -0.03em; color: #0f172a; margin-bottom: 10px; }
+  .hub-card p { font-size: 15px; font-weight: 500; color: #64748b; line-height: 1.7; margin-bottom: 28px; }
+  .hub-tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .hub-tag { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 8px; letter-spacing: 0.03em; }
+  .tag-blue { background: #eff6ff; color: #0A66C2; border: 1px solid #bfdbfe; }
+  .tag-green { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; }
 
-    /* ==========================================================================
-       3. GPU-ACCELERATED REVEALS & PARALLAX
-       ========================================================================== */
-    .reveal-mask { overflow: hidden; position: relative; }
-    .reveal-text {
-        animation: revealUp 1.2s var(--ease-out-expo) forwards;
-        transform: translate3d(0, 100%, 0) rotate(3deg);
-        opacity: 0;
-        transform-origin: left bottom;
-        will-change: transform, opacity;
-    }
+  .hub-cta {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; text-decoration: none;
+    padding: 12px 24px; border-radius: 999px; transition: all 0.2s;
+  }
+  .cta-blue { background: #eff6ff; color: #0A66C2; border: 1px solid #bfdbfe; }
+  .cta-blue:hover { background: #dbeafe; }
+  .cta-green { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; }
+  .cta-green:hover { background: #dcfce7; }
 
-    @keyframes revealUp {
-        0% { transform: translate3d(0, 100%, 0) rotate(3deg); opacity: 0; filter: blur(10px); }
-        100% { transform: translate3d(0, 0, 0) rotate(0); opacity: 1; filter: blur(0); }
-    }
+  .features {
+    background: #F4F7FA;
+    background-image: radial-gradient(circle at 88% 24%, rgba(241,245,249,0.9) 0%, transparent 46%);
+    padding: 96px 32px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+  }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+  .feat-card {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 32px 28px; transition: all 0.3s;
+  }
+  .feat-card:hover { box-shadow: 0 12px 32px rgba(10,102,194,0.1); border-color: #bfdbfe; transform: translateY(-4px); }
+  .feat-card-top { height: 3px; border-radius: 2px; margin-bottom: 24px; }
+  .feat-icon { font-size: 24px; margin-bottom: 16px; }
+  .feat-card h4 { font-size: 18px; font-weight: 900; letter-spacing: -0.02em; color: #0f172a; margin-bottom: 10px; }
+  .feat-card p { font-size: 14px; font-weight: 500; color: #64748b; line-height: 1.7; }
 
-    .delay-100 { animation-delay: 100ms; }
-    .delay-200 { animation-delay: 200ms; }
-    .delay-300 { animation-delay: 300ms; }
+  /* ==========================================================================
+     FOOTER
+     ========================================================================== */
+  .footer { background: #0f172a; color: #fff; padding: 80px 32px 40px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 64px; }
+  .footer-brand .logo { font-size: 28px; margin-bottom: 16px; display: block; color: #fff; }
+  .footer-brand p { font-size: 14px; color: #94a3b8; line-height: 1.7; max-width: 300px; font-weight: 500; }
 
-    @keyframes subtle-zoom {
-        0% { transform: scale(1.0) translateZ(0); }
-        100% { transform: scale(1.15) translateZ(0); }
-    }
-    .bg-zoom { animation: subtle-zoom 35s ease-in-out infinite alternate; will-change: transform; }
+  .footer-links-group { display: flex; gap: 64px; flex-wrap: wrap; }
+  .footer-links h4 { font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #475569; margin-bottom: 20px; }
+  .footer-links a { display: block; font-size: 14px; font-weight: 600; color: #94a3b8; text-decoration: none; margin-bottom: 12px; transition: color 0.2s; }
+  .footer-links a:hover { color: #fff; }
 
-    .scroll-fade-up {
-        opacity: 0;
-        transform: translate3d(0, 60px, 0) scale(0.95);
-        transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo);
-        will-change: opacity, transform;
-    }
-    .scroll-fade-up.is-visible { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  .footer-cta-card { background: #1e293b; border: 1px solid #334155; border-radius: 24px; padding: 32px; max-width: 320px; }
+  .footer-cta-card h4 { font-size: 18px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .footer-cta-card p { font-size: 14px; color: #94a3b8; margin-bottom: 24px; line-height: 1.6; }
+  .footer-cta-btn {
+    display: block; text-align: center; background: #0A66C2; color: #fff; text-decoration: none;
+    font-size: 14px; font-weight: 800; padding: 14px 24px; border-radius: 999px; transition: background 0.2s; width: 100%;
+  }
+  .footer-cta-btn:hover { background: #0052a3; }
 
-    .scroll-stagger > * {
-        opacity: 0; transform: translateY(40px);
-        transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
-    }
-    .scroll-stagger.is-visible > * { opacity: 1; transform: translateY(0); }
-    .scroll-stagger > *:nth-child(1) { transition-delay: 0.1s; }
-    .scroll-stagger > *:nth-child(2) { transition-delay: 0.2s; }
-    .scroll-stagger > *:nth-child(3) { transition-delay: 0.3s; }
+  .footer-bottom { border-top: 1px solid #1e293b; padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-bottom p { font-size: 13px; color: #475569; font-weight: 600; }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 13px; color: #475569; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+  .footer-bottom-links a:hover { color: #94a3b8; }
 
-    /* ==========================================================================
-       4. LIVE CSS MAGIC ART & DYNAMIC ELEMENTS
-       ========================================================================== */
-    .bg-grid-cyber {
-        background-size: 80px 80px;
-        background-image: linear-gradient(to right, rgba(37, 99, 235, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
-        mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
-        -webkit-mask-image: linear-gradient(to bottom, black 5%, transparent 95%);
-    }
+  /* ==========================================================================
+     RESPONSIVE
+     ========================================================================== */
+  @media (max-width: 900px) {
+    .nav-desktop { display: none; }
+    .mobile-menu-btn { display: block; }
+    .hub-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stat-divider { display: none; }
+    .hero-stats { gap: 24px; }
+    .footer-top { flex-direction: column; }
+  }
 
-    .feature-card {
-        transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s ease, border-color 0.5s ease;
-    }
-    .feature-card .card-gradient-bar {
-        transform: scaleX(0);
-        transition: transform 0.8s var(--ease-out-expo);
-    }
-    .feature-card .title-anim {
-        transition: color 0.6s ease;
-    }
+  @media (max-width: 600px) {
+    .hero { padding: 48px 16px; }
+    .hero-ctas { flex-direction: column; width: 100%; }
+    .hero-cta-main, .hero-cta-ghost { width: 100%; }
 
-    .scroll-stagger.is-visible .feature-card .card-gradient-bar { transform: scaleX(1); }
-    .scroll-stagger.is-visible .card-1 .card-gradient-bar { transition-delay: 0.2s; }
-    .scroll-stagger.is-visible .card-2 .card-gradient-bar { transition-delay: 0.4s; }
-    .scroll-stagger.is-visible .card-3 .card-gradient-bar { transition-delay: 0.6s; }
+    /* Shrink avatars slightly on mobile so more can fit */
+    .av { width: 38px; height: 38px; font-size: 11px; }
+    .av-plus { font-size: 11px; }
+    .hero-avatar-cloud { gap: 4px; margin-bottom: 12px; }
 
-    .scroll-stagger.is-visible .card-1 .title-anim { color: var(--brand-link-blue); transition-delay: 0.2s; }
-    .scroll-stagger.is-visible .card-2 .title-anim { color: var(--accent-cyan); transition-delay: 0.4s; }
-    .scroll-stagger.is-visible .card-3 .title-anim { color: var(--accent-violet); transition-delay: 0.6s; }
+    .hero-stats { margin-top: 48px; gap: 12px; justify-content: space-around; }
+    .stat-item { flex: 1 1 40%; background: #fff; padding: 16px 12px; border-radius: 16px; border: 1px solid #e2e8f0; }
+    .stat-num { font-size: 22px; }
+    .stat-label { font-size: 10px; }
 
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-elevation-2);
-        border-color: var(--brand-link-blue);
-    }
-
-    /* FACE CLOUD CSS */
-    .face-cloud-wrapper {
-        width: 100%; position: relative; max-height: 180px; overflow: hidden;
-        mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-    }
-    @media (min-width: 1024px) {
-        .face-cloud-wrapper { max-height: none; overflow: visible; mask-image: none; -webkit-mask-image: none; }
-    }
-
-    .face-cloud-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 650px; }
-    @media (min-width: 1024px) { .face-cloud-container { justify-content: flex-start; gap: 12px; } }
-
-    .cloud-avatar-item {
-        width: 34px; height: 34px; border-radius: 50%; overflow: hidden; background: #1e293b;
-        border: 2px solid rgba(255,255,255,0.1); transition: all 0.5s var(--ease-spring);
-        opacity: 0; animation: cloudPop 0.8s var(--ease-spring) forwards;
-    }
-    @media (min-width: 768px) { .cloud-avatar-item { width: 50px; height: 50px; } }
-    .cloud-avatar-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%); transition: 0.4s; }
-    .cloud-avatar-item:hover { transform: scale(1.3) translateY(-5px); border-color: var(--accent-cyan); z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-    .cloud-avatar-item:hover img { filter: grayscale(0%); }
-
-    @keyframes cloudPop {
-        from { opacity: 0; transform: scale(0.5) translateY(20px); }
-        to { opacity: 1; transform: scale(1) translateY(0); }
-    }
+    .dual-hub, .features { padding: 56px 16px; }
+    .hub-card { padding: 24px; }
+  }
 </style>
 
-<!-- ==========================================================================
-     I. SMART MORPHING NAVBAR (Transparent -> Bright Glass)
-     ========================================================================== -->
-<nav x-data="{ scrolled: false, mobileMenuOpen: false }"
-     @scroll.window="scrolled = (window.pageYOffset > 50)"
-     :class="scrolled ? 'bg-white/95 backdrop-blur-xl border-slate-200 shadow-sm' : 'bg-transparent border-transparent'"
-     class="fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-500 border-b">
+<!-- NAVBAR -->
+<nav class="nav" x-data="{ mobileMenuOpen: false }">
+  <a href="/" class="logo">core<span>link</span></a>
 
-    <div class="w-full max-w-[1400px] mx-auto h-[72px] px-6 md:px-12 flex items-center justify-between">
+  <div class="nav-desktop">
+    <div class="nav-links">
+      <a class="nav-link" href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
+      <a class="nav-link" href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
+    </div>
+    <div class="nav-btns">
 
-        <!-- Logo -->
-        <div class="flex-shrink-0" style="animation: drop-in 0.8s var(--ease-spring) forwards;">
-            <a href="/" class="font-heading text-2xl font-black tracking-tight">
-                <span :class="scrolled ? 'text-slate-900' : 'text-white'" class="transition-colors duration-500">Core</span><span class="text-[var(--brand-link-blue)] drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]">Link</span>
-            </a>
+      <!-- Language Dropdown (Alpine) -->
+      <div x-data="{ open: false }" class="relative">
+        <button @click="open = !open" @click.outside="open = false" class="lang-btn">
+          <span>{{ current_lang.name_local|title|default:"English" }}</span>
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <div x-show="open" style="display: none;" class="lang-dropdown">
+          <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+            {% for language in languages %}
+              {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+              <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                {{ language.name_local|title }}
+              </button>
+              {% endif %}
+            {% endfor %}
+          </form>
         </div>
+      </div>
 
-        <!-- Desktop Links -->
-        <div class="hidden lg:flex items-center gap-8" style="animation: drop-in 1.0s var(--ease-spring) forwards;">
-            <a href="{% url 'nexus_feed' %}"
-               :class="scrolled ? 'text-slate-600 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
-               class="text-[14px] font-bold transition-colors tracking-wide">{% trans "Discover Talent" %}</a>
+      <a href="{% url 'login' %}" class="btn-ghost">{% trans "Log In" %}</a>
+      <a href="{% url 'unified_onboarding' %}" class="btn-primary">{% trans "Join CoreLink" %}</a>
+    </div>
+  </div>
 
-            <a href="{% url 'company_nexus' %}"
-               :class="scrolled ? 'text-slate-600 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
-               class="text-[14px] font-bold transition-colors tracking-wide">{% trans "Discover Companies" %}</a>
-        </div>
+  <!-- Mobile Hamburger -->
+  <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
+    <svg x-show="!mobileMenuOpen" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    <svg x-show="mobileMenuOpen" style="display:none;" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+  </button>
 
-        <!-- Desktop Controls -->
-        <div class="hidden lg:flex items-center gap-5 z-10" style="animation: drop-in 1.2s var(--ease-spring) forwards;">
+  <!-- Mobile Menu Pane -->
+  <div class="mobile-menu" x-show="mobileMenuOpen" style="display:none;">
+    <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
+    <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
 
-            <!-- Language Dropdown -->
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" @click.outside="open = false" aria-label="Language Selector"
-                        :class="scrolled ? 'text-slate-700 bg-slate-50 border-slate-200 hover:border-[var(--brand-link-blue)]' : 'text-slate-200 hover:text-white bg-white/5 border-white/20 hover:border-white/50'"
-                        class="border flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-bold transition-all">
-                    <span>{{ current_lang.name_local|title|default:"English" }}</span>
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-
-                <!-- Dropdown Menu (Always Bright/Readable) -->
-                <div x-show="open" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute top-full right-0 mt-3 w-40 bg-white rounded-xl shadow-2xl border border-slate-100 p-1.5 z-[200]">
-                    <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        {% for language in languages %}
-                            {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-                            <button type="submit" name="language" value="{{ language.code }}" class="w-full text-left px-3 py-2.5 rounded-lg text-[13px] font-bold transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white shadow-sm{% else %}text-slate-600 hover:bg-slate-50 hover:text-[var(--brand-link-blue)]{% endif %}">
-                                {{ language.name_local|title }}
-                            </button>
-                            {% endif %}
-                        {% endfor %}
-                    </form>
-                </div>
-            </div>
-
-            <div :class="scrolled ? 'bg-slate-200' : 'bg-white/10'" class="w-px h-5 mx-1 transition-colors duration-500"></div>
-
-            <a href="{% url 'login' %}"
-               :class="scrolled ? 'text-slate-700 hover:text-[var(--brand-link-blue)]' : 'text-slate-300 hover:text-white'"
-               class="text-[13px] font-bold transition-colors tracking-wide">{% trans "Log In" %}</a>
-
-            <a href="{% url 'unified_onboarding' %}"
-               :class="scrolled ? 'bg-[var(--brand-link-blue)] text-white hover:bg-[var(--accent-cyan)] shadow-md border-transparent' : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'"
-               class="relative overflow-hidden border px-5 py-2 rounded-full text-[13px] font-bold transition-all duration-300 tracking-wide">
-                {% trans "Join CoreLink" %}
-            </a>
-        </div>
-
-        <!-- Mobile Hamburger -->
-        <div class="lg:hidden flex items-center">
-            <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle Menu"
-                    :class="scrolled ? 'text-slate-700 bg-slate-50 border-slate-200 hover:bg-slate-100' : 'text-slate-300 bg-white/5 border-white/10 hover:bg-white/10'"
-                    class="p-1.5 border focus:outline-none rounded-lg transition-colors">
-                <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                <svg x-show="mobileMenuOpen" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
+    <!-- Mobile Language form -->
+    <div style="padding: 16px 0; border-bottom: 1px solid #f1f5f9;">
+      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; display: block;">{% trans "Language" %}</span>
+      <form action="{% url 'set_language' %}" method="post" style="display:flex; gap:8px; flex-wrap:wrap;">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+        {% for language in languages %}
+          {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+          <button type="submit" name="language" value="{{ language.code }}" style="font-size:12px; font-weight:700; padding:6px 12px; border-radius:6px; border:1px solid {% if language.code == LANGUAGE_CODE %}#0A66C2{% else %}#e2e8f0{% endif %}; background:{% if language.code == LANGUAGE_CODE %}#eff6ff{% else %}#fff{% endif %}; color:{% if language.code == LANGUAGE_CODE %}#0A66C2{% else %}#64748b{% endif %};">
+            {{ language.name_local|title }}
+          </button>
+          {% endif %}
+        {% endfor %}
+      </form>
     </div>
 
-    <!-- Mobile Dropdown Menu (Bright theme) -->
-    <div x-show="mobileMenuOpen" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-b border-slate-200 p-6 flex flex-col">
-
-        <!-- Language Mobile -->
-        <div class="pb-5 mb-5 border-b border-slate-100">
-            <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 block">{% trans "Language" %}</span>
-            <form action="{% url 'set_language' %}" method="post" class="flex flex-wrap gap-2 m-0">
-                {% csrf_token %}
-                <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                {% for language in languages %}
-                    {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-                    <button type="submit" name="language" value="{{ language.code }}" class="px-4 py-2 rounded-lg text-[13px] font-bold transition-all {% if language.code == LANGUAGE_CODE %}bg-[var(--brand-link-blue)] text-white shadow-md{% else %}bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200{% endif %}">
-                        {{ language.name_local|title }}
-                    </button>
-                    {% endif %}
-                {% endfor %}
-            </form>
-        </div>
-
-        <!-- Links Mobile -->
-        <div class="flex flex-col gap-3 pb-2">
-            <a href="{% url 'nexus_feed' %}" class="w-full text-left py-3.5 text-[14px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors tracking-wide">{% trans "Discover Talent" %}</a>
-            <a href="{% url 'company_nexus' %}" class="w-full text-left py-3.5 text-[14px] font-bold text-slate-600 hover:text-[var(--brand-link-blue)] transition-colors tracking-wide">{% trans "Discover Companies" %}</a>
-
-            <div class="w-full h-px bg-slate-100 my-2"></div>
-
-            <a href="{% url 'login' %}" class="w-full text-center py-3.5 text-[14px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors tracking-wide">{% trans "Log In" %}</a>
-            <a href="{% url 'unified_onboarding' %}" class="w-full text-center bg-[var(--brand-link-blue)] text-white py-3.5 rounded-xl text-[14px] font-bold shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] active:scale-95 transition-all tracking-wide">{% trans "Join CoreLink" %}</a>
-        </div>
+    <div class="m-btns">
+      <a href="{% url 'login' %}" class="btn-ghost" style="text-align: center;">{% trans "Log In" %}</a>
+      <a href="{% url 'unified_onboarding' %}" class="btn-primary" style="text-align: center;">{% trans "Join CoreLink" %}</a>
     </div>
+  </div>
 </nav>
 
-<!-- ==========================================================================
-     II. CINEMATIC HERO (Original Design)
-     ========================================================================== -->
-<header class="relative w-full min-h-screen bg-[var(--color-void)] overflow-hidden flex flex-col justify-center lg:justify-end selection:bg-[var(--brand-link-blue)] selection:text-white pt-24 pb-12 md:pb-24">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-pill">
+    <span class="pill-dot"></span>
+    {% trans "Ethiopian Professional Community" %}
+  </div>
 
-    <div class="bg-noise"></div>
+  <h1>
+    {% trans "Talent & Business Hub" %}<br>{% trans "for" %} <span class="blue">{% trans "Ethiopia" %}</span>
+  </h1>
+  <p class="hero-sub">
+    {% trans "Connecting professionals and businesses — accelerating discovery and opportunity." %}
+  </p>
 
-    <div class="absolute inset-0 z-0">
-        <img id="hero-img" src="{% static 'img/hero_image_v2.jpg' %}" alt="Innovation" aria-hidden="true" class="w-full h-full object-cover bg-zoom opacity-[0.20]" style="filter: contrast(1.3) saturate(1.1);">
-        <div class="absolute top-[-20%] left-[-10%] w-[1200px] h-[1200px] bg-[var(--accent-violet)]/10 rounded-full blur-[180px] mix-blend-screen pointer-events-none"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[1000px] h-[1000px] bg-[var(--brand-link-blue)]/15 rounded-full blur-[180px] mix-blend-screen pointer-events-none"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-void)] via-[var(--color-void)]/80 to-transparent"></div>
+  <!-- AVATAR CLOUD -->
+  {% if hero_avatars %}
+  <div class="hero-avatar-cloud">
+    {% for person in hero_avatars %}
+      <a href="{{ person.get_absolute_url }}" class="av {% cycle 'av-bg-1' 'av-bg-2' 'av-bg-3' 'av-bg-4' 'av-bg-5' 'av-bg-6' 'av-bg-7' 'av-bg-8' %}">
+        {% if person.avatar %}
+          <img src="{{ person.get_avatar_url }}" alt="{{ person.display_name }}" loading="lazy">
+        {% else %}
+          <span>{{ person.display_name|slice:":2"|upper }}</span>
+        {% endif %}
+      </a>
+    {% endfor %}
+    <a href="{% url 'nexus_feed' %}" class="av av-plus">+2k</a>
+  </div>
+
+  <div class="hero-stars">
+    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+  </div>
+  <p class="hero-av-count">{% trans "Verified Ethiopian Professionals" %}</p>
+  {% endif %}
+
+  <!-- CTAS -->
+  <div class="hero-ctas">
+    <a href="{% url 'unified_onboarding' %}" class="hero-cta-main">{% trans "Start Your Journey" %}</a>
+    <a href="{% url 'company_nexus' %}" class="hero-cta-ghost">{% trans "Explore Companies" %} →</a>
+  </div>
+
+  <!-- STATS -->
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">2,400+</div>
+      <div class="stat-label">{% trans "Professionals" %}</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num">380+</div>
+      <div class="stat-label">{% trans "Companies" %}</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num">12+</div>
+      <div class="stat-label">{% trans "Industries" %}</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">{% trans "Ethiopian" %}</div>
+    </div>
+  </div>
+</section>
+
+<!-- DUAL MARKETPLACE -->
+<section class="dual-hub">
+  <div class="section-label">{% trans "Two Marketplaces. One Platform." %}</div>
+  <h2 class="section-h2">{% trans "Built for talent and business" %}</h2>
+  <p class="section-sub">{% trans "Whether you're a professional building your career or a company finding talent and partners — CoreLink serves both sides." %}</p>
+
+  <div class="hub-grid">
+    <div class="hub-card">
+      <div class="hub-card-bar bar-blue"></div>
+      <div class="hub-icon icon-blue">
+        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+      </div>
+      <h3>{% trans "Talent Hub" %}</h3>
+      <p>{% trans "Build a deep portfolio, showcase your work, and get discovered by companies and collaborators looking for your skills." %}</p>
+      <div class="hub-tag-row">
+        <span class="hub-tag tag-blue">{% trans "Portfolios" %}</span>
+        <span class="hub-tag tag-blue">{% trans "Skills" %}</span>
+        <span class="hub-tag tag-blue">{% trans "Credentials" %}</span>
+        <span class="hub-tag tag-blue">{% trans "Projects" %}</span>
+      </div>
+      <a href="{% url 'nexus_feed' %}" class="hub-cta cta-blue">
+        {% trans "Discover People" %} →
+      </a>
     </div>
 
-    <div class="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-12 items-center lg:items-end">
-
-            <!-- Left Side: Colossal Typography -->
-            <div class="lg:col-span-6 xl:col-span-7 pt-4 md:pt-0 text-left">
-                <div class="reveal-mask pb-1 md:pb-0">
-                    <h1 class="font-heading reveal-text text-white font-black tracking-[-0.04em] leading-[0.95] text-[3.2rem] sm:text-[4rem] md:text-[5rem] lg:text-[5.5rem] xl:text-[6.5rem]" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">{% trans "CORELINK" %}</h1>
-                </div>
-                <div class="reveal-mask">
-                    <h1 class="font-heading reveal-text delay-100 text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] font-black tracking-[-0.04em] leading-[0.95] text-[3.2rem] sm:text-[4rem] md:text-[5rem] lg:text-[5.5rem] xl:text-[6.5rem]" style="filter: drop-shadow(0 10px 20px rgba(37,99,235,0.3));">{% trans "ETHIOPIA" %}</h1>
-                </div>
-
-                <div class="reveal-mask mt-8 lg:hidden">
-                    <div class="reveal-text delay-200 flex flex-col text-left max-w-[500px]">
-                        <h3 class="font-heading text-[1.15rem] text-slate-200 font-semibold tracking-wide mb-1">
-                            {% trans "Ethiopian professional community" %}
-                        </h3>
-                        <h4 class="font-heading text-[1.4rem] text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-bold tracking-tight mb-4">
-                            {% trans "Talent and business hub" %}
-                        </h4>
-                        <p class="text-slate-400 text-[1.05rem] font-medium leading-[1.6] flex items-start gap-3">
-                            <span class="w-6 h-[2px] bg-[var(--brand-link-blue)] mt-[10px] flex-shrink-0 shadow-[0_0_8px_rgba(37,99,235,0.6)]"></span>
-                            <span>{% trans "accelerating discovery, innovation, and opportunity across the nation" %}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side: Action Cluster -->
-            <div class="lg:col-span-6 xl:col-span-5 flex flex-col items-start xl:pl-6 w-full">
-
-                <div class="reveal-mask mb-10 w-full hidden lg:block">
-                    <div class="reveal-text delay-200 flex flex-col text-left max-w-[550px]">
-                        <h3 class="font-heading text-[1.2rem] xl:text-[1.4rem] text-slate-200 font-semibold tracking-wide mb-1">
-                            {% trans "Ethiopian professional community" %}
-                        </h3>
-                        <h4 class="font-heading text-[1.5rem] xl:text-[1.8rem] text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-bold tracking-tight mb-5">
-                            {% trans "Talent and business hub" %}
-                        </h4>
-                        <p class="text-slate-400 text-[1.05rem] xl:text-[1.15rem] font-medium leading-[1.7] flex items-start gap-3">
-                            <span class="w-8 h-[2px] bg-[var(--brand-link-blue)] mt-[12px] flex-shrink-0 shadow-[0_0_10px_rgba(37,99,235,0.5)]"></span>
-                            <span>{% trans "accelerating discovery, innovation, and opportunity across the nation" %}</span>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="reveal-mask w-full !overflow-visible">
-                    <div class="reveal-text delay-300 flex flex-col gap-8 w-full">
-
-                        <!-- THE MAGIC CTA BUTTON -->
-                        <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-4 bg-white/5 border border-white/10 hover:border-white/20 backdrop-blur-md rounded-full transition-all duration-500 active:scale-95 shadow-[0_0_30px_rgba(37,99,235,0.15)] hover:shadow-[0_0_50px_rgba(217,70,239,0.3)] w-fit">
-                            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-fuchsia)] opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-500"></div>
-                            <span class="relative text-[14px] md:text-[16px] font-black tracking-[0.25em] uppercase text-magic drop-shadow-lg">
-                                {% trans "START YOUR JOURNEY" %}
-                            </span>
-                        </a>
-
-                        <!-- THE MASSIVE FACE CLOUD CLUSTER -->
-                        {% if hero_avatars %}
-                        <div class="flex flex-col gap-4 mt-2">
-                            <div class="face-cloud-wrapper">
-                                <div class="face-cloud-container">
-                                    {% for person in hero_avatars %}
-                                        <div class="cloud-avatar-item" style="animation-delay: {{ forloop.counter0|add:5 }}0ms">
-                                            {% if person.avatar %}
-                                                <img src="{{ person.get_avatar_url }}" alt="Verified User" loading="lazy">
-                                            {% else %}
-                                                <div class="w-full h-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white text-[10px] font-bold">{{ person.full_name|slice:":1" }}</div>
-                                            {% endif %}
-                                        </div>
-                                    {% endfor %}
-                                    <a href="{% url 'unified_onboarding' %}" class="cloud-avatar-item flex items-center justify-center bg-[var(--brand-link-blue)] border-none hover:scale-125 transition-transform" style="animation-delay: 500ms; opacity: 1;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col items-start gap-1 pl-1">
-                                <div class="flex items-center gap-1 text-[var(--accent-amber)] mb-1">
-                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                                </div>
-                                <span class="text-[12px] md:text-[13px] font-black text-slate-400 tracking-[0.15em] uppercase whitespace-nowrap">
-                                    {% trans "VERIFIED ETHIOPIAN PROFESSIONALS" %}
-                                </span>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="hub-card">
+      <div class="hub-card-bar bar-emerald"></div>
+      <div class="hub-icon icon-green">
+        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M16 10h.01M8 10h.01M8 14h.01M12 14h.01M16 14h.01"/></svg>
+      </div>
+      <h3>{% trans "Business Hub" %}</h3>
+      <p>{% trans "List your company, post opportunities, find partners, and build brand presence within Ethiopia's growing professional ecosystem." %}</p>
+      <div class="hub-tag-row">
+        <span class="hub-tag tag-green">{% trans "Startups" %}</span>
+        <span class="hub-tag tag-green">{% trans "Agencies" %}</span>
+        <span class="hub-tag tag-green">{% trans "Enterprises" %}</span>
+        <span class="hub-tag tag-green">{% trans "NGOs" %}</span>
+      </div>
+      <a href="{% url 'company_nexus' %}" class="hub-cta cta-green">
+        {% trans "Discover Companies" %} →
+      </a>
     </div>
-</header>
+  </div>
+</section>
 
-<!-- ==========================================================================
-     III. MAIN CONTENT (Original Design)
-     ========================================================================== -->
-<main class="relative z-20 pb-32 -mt-12 md:-mt-16 rounded-t-[3rem] md:rounded-t-[5rem] bg-[var(--color-surface)] shadow-[0_-40px_80px_rgba(0,0,0,0.9)] overflow-hidden" id="main-content">
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-label">{% trans "What makes CoreLink different" %}</div>
+  <h2 class="section-h2">{% trans "Engineered for excellence" %}</h2>
+  <p class="section-sub">{% trans "The infrastructure Ethiopian professionals have been waiting for." %}</p>
 
-    <div class="absolute inset-0 bg-grid-cyber pointer-events-none rounded-t-[5rem]"></div>
-
-    <section id="platform" class="pt-32 pb-20 relative z-10 max-w-[1400px] mx-auto px-6 md:px-12">
-        <div class="text-center mb-24 scroll-fade-up">
-            <h2 class="font-heading text-[3rem] md:text-[4.5rem] font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
-                {% blocktrans %}Engineered for <span class="text-magic">Excellence</span>{% endblocktrans %}
-            </h2>
-            <p class="text-slate-500 text-[1.15rem] md:text-[1.3rem] font-medium max-w-3xl mx-auto text-balance leading-relaxed">
-                {% trans "CoreLink provides the ultimate infrastructure for Ethiopian professionals and students to showcase skills, build portfolios, and meet like-minded people to collaborate on projects, launch startups, and connect with local and global opportunities for professional growth" %}
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 scroll-stagger scroll-fade-up">
-            <div class="feature-card card-1 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
-                <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-                <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--brand-link-blue)]">{% trans "Deep Portfolios" %}</h3>
-                <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Build an immersive, interactive portfolio that goes far beyond a standard PDF resume to build a real professional identity that represents your real professional stage" %}</p>
-            </div>
-            <div class="feature-card card-2 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
-                <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-                <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--accent-cyan)]">{% trans "Seamless Connections" %}</h3>
-                <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Connect with the right people for projects and professional growth, and get discovered by companies and initiatives looking for your talent, or find co-founders to build the next big thing together" %}</p>
-            </div>
-            <div class="feature-card card-3 group relative bg-white rounded-[2rem] p-10 md:p-12 border border-slate-100 shadow-lg overflow-hidden flex flex-col justify-start">
-                <div class="card-gradient-bar absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)] origin-left"></div>
-                <h3 class="title-anim font-heading text-2xl md:text-3xl font-black text-slate-900 mb-5 tracking-tight group-hover:text-[var(--accent-violet)]">{% trans "Verified Trust" %}</h3>
-                <p class="text-slate-500 text-[1.05rem] leading-[1.7] font-medium">{% trans "Earn verification badges through a deep dive into your proof-of-work and further verification, instantly signaling your high value to recruiters and collaborators" %}</p>
-            </div>
-        </div>
-    </section>
-
-</main>
-
-<!-- ==========================================================================
-     IV. ELITE SAAS FOOTER (Original Design)
-     ========================================================================== -->
-<footer class="relative bg-[#02000A] text-white pt-24 pb-12 overflow-hidden z-10 border-t border-white/5">
-
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[var(--brand-link-blue)]/10 to-transparent blur-[120px] pointer-events-none"></div>
-    <div class="bg-noise opacity-[0.02]"></div>
-
-    <div class="w-full px-6 md:px-12 max-w-[1400px] mx-auto relative z-10">
-
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-20 scroll-fade-up">
-            <div class="max-w-2xl">
-                <h2 class="font-heading text-4xl md:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
-                    Shape the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand-link-blue)] to-[var(--accent-cyan)]">Future.</span>
-                </h2>
-                <p class="text-slate-400 text-lg font-medium">
-                    {% trans "Join the definitive infrastructure uniting talent with boundless opportunity in Ethiopia." %}
-                </p>
-            </div>
-            <div class="mt-8 md:mt-0 flex-shrink-0">
-                <a href="{% url 'unified_onboarding' %}" class="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-[var(--color-void)] rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)]">
-                    <span class="text-[14px] font-black tracking-[0.15em] uppercase">{% trans "Get Started" %}</span>
-                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                </a>
-            </div>
-        </div>
-
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-16"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16">
-
-            <div class="md:col-span-4 scroll-fade-up delay-100">
-                <a href="/" class="font-heading block text-3xl font-black tracking-tight mb-5">
-                    <span class="text-white">Core</span><span class="text-[var(--brand-link-blue)] drop-shadow-[0_0_12px_rgba(37,99,235,0.4)]">Link</span>
-                </a>
-                <p class="text-slate-400 text-[14.5px] leading-relaxed max-w-[300px]">
-                    {% trans "Elevating Ethiopian professionals through verified proof-of-work, deep portfolios, and seamless global connections." %}
-                </p>
-            </div>
-
-            <div class="hidden md:block md:col-span-1"></div>
-
-            <div class="md:col-span-3 scroll-fade-up delay-200">
-                <h4 class="text-white font-bold text-[12px] tracking-[0.2em] uppercase mb-6">{% trans "Connect" %}</h4>
-                <ul class="space-y-5">
-                    <li>
-                        <a href="mailto:corelinkethiopia@gmail.com" class="text-slate-400 hover:text-white transition-colors text-[14.5px] flex items-center gap-3.5 group font-medium">
-                            <span class="p-2 rounded-xl bg-white/5 border border-white/5 group-hover:bg-[var(--brand-link-blue)]/20 group-hover:border-[var(--brand-link-blue)]/30 transition-all">
-                                <svg class="w-4 h-4 text-[var(--accent-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            </span>
-                            corelinkethiopia@gmail.com
-                        </a>
-                    </li>
-                    <li class="text-slate-400 text-[14.5px] flex items-center gap-3.5 font-medium">
-                        <span class="p-2 rounded-xl bg-white/5 border border-white/5">
-                            <svg class="w-4 h-4 text-[var(--accent-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </span>
-                        {% trans "Addis Ababa, Ethiopia" %}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="md:col-span-4 lg:col-span-4 scroll-fade-up delay-300">
-                <h4 class="text-white font-bold text-[12px] tracking-[0.2em] uppercase mb-6">{% trans "Community" %}</h4>
-                <a href="https://t.me/CoreLinkEthiopia" target="_blank" class="group relative flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-b from-white/5 to-white/[0.01] border border-white/10 hover:border-[#229ED9]/50 transition-all duration-400 overflow-hidden shadow-lg">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#229ED9]/0 via-[#229ED9]/10 to-[#229ED9]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                    <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-[#229ED9]/10 border border-[#229ED9]/20 text-[#229ED9] group-hover:bg-[#229ED9] group-hover:text-white group-hover:shadow-[0_0_20px_rgba(34,158,217,0.5)] transition-all duration-400">
-                        <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
-                    </div>
-
-                    <div class="relative z-10">
-                        <span class="block text-[15px] font-bold text-white mb-1 group-hover:text-[#229ED9] transition-colors">{% trans "Join Telegram" %}</span>
-                        <span class="block text-[13px] font-medium text-slate-400 group-hover:text-slate-300 transition-colors">{% trans "Connect with the community" %}</span>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-
-        <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 scroll-fade-up delay-300">
-            <p class="text-slate-500 text-[13px] font-semibold tracking-wide">
-                {% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}
-            </p>
-            <div class="flex items-center gap-8 text-[13px] font-semibold text-slate-500">
-                <span class="hover:text-white transition-colors cursor-pointer">{% trans "Privacy Policy" %}</span>
-                <span class="hover:text-white transition-colors cursor-pointer">{% trans "Terms of Service" %}</span>
-            </div>
-        </div>
-
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-card-top" style="background: linear-gradient(to right, #0A66C2, #60a5fa);"></div>
+      <div class="feat-icon"><svg width="28" height="28" fill="none" stroke="#0A66C2" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"/><path d="M7 8h10M7 12h10M7 16h10"/></svg></div>
+      <h4>{% trans "Deep Portfolios" %}</h4>
+      <p>{% trans "Far beyond a PDF resume — build a real professional identity with projects, credentials, and your story." %}</p>
     </div>
+
+    <div class="feat-card">
+      <div class="feat-card-top" style="background: linear-gradient(to right, #06b6d4, #34d399);"></div>
+      <div class="feat-icon"><svg width="28" height="28" fill="none" stroke="#06b6d4" viewBox="0 0 24 24" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <h4>{% trans "Seamless Connections" %}</h4>
+      <p>{% trans "Meet co-founders, collaborators, and companies actively looking for your exact background." %}</p>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-card-top" style="background: linear-gradient(to right, #8b5cf6, #d946ef);"></div>
+      <div class="feat-icon"><svg width="28" height="28" fill="none" stroke="#8b5cf6" viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h4>{% trans "Verified Trust" %}</h4>
+      <p>{% trans "Earn verification badges through proof-of-work review — instantly signal your value to recruiters." %}</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      
+      <div class="footer-brand">
+        <a href="/" class="logo">core<span style="color:#0A66C2;">link</span></a>
+        <p>{% trans "Elevating Ethiopian professionals through verified proof-of-work, deep portfolios, and seamless connections." %}</p>
+      </div>
+      
+      <div class="footer-links-group">
+        <div class="footer-links">
+          <h4>{% trans "Platform" %}</h4>
+          <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
+          <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
+          <a href="{% url 'login' %}">{% trans "Log In" %}</a>
+        </div>
+        
+        <div class="footer-links">
+          <h4>{% trans "Community" %}</h4>
+          <a href="mailto:corelinkethiopia@gmail.com">{% trans "Contact Us" %}</a>
+          <a href="https://t.me/CoreLinkEthiopia" target="_blank" style="display:flex; align-items:center; gap:6px;">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+            Telegram
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-cta-card">
+        <h4>{% trans "Shape the Future." %}</h4>
+        <p>{% trans "Join the community uniting talent with opportunity in Ethiopia." %}</p>
+        <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">{% trans "Get Started" %} →</a>
+      </div>
+      
+    </div>
+    
+    <div class="footer-bottom">
+      <p>{% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}</p>
+      <div class="footer-bottom-links">
+        <a href="#">{% trans "Privacy Policy" %}</a>
+        <a href="#">{% trans "Terms of Service" %}</a>
+      </div>
+    </div>
+  </div>
 </footer>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-        document.querySelectorAll('.scroll-fade-up, .scroll-stagger').forEach((el) => observer.observe(el));
-
-        let ticking = false;
-        const heroImg = document.getElementById('hero-img');
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    const scrolled = window.scrollY;
-                    if(heroImg && scrolled < window.innerHeight) {
-                        heroImg.style.transform = `translate3d(0, ${scrolled * 0.3}px, 0) scale(1.05)`;
-                    }
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
-    });
-</script>
 {% endblock %}

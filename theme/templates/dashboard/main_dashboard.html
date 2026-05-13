@@ -135,10 +135,7 @@
     .horizontal-mask { -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%); mask-image: linear-gradient(to right, black 85%, transparent 100%); }
     @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; } }
 
-    /* ── Canvas / Layout ──
-       FIX: Reduced 1280px padding from 4rem → 2.5rem so content
-       isn't squished on standard 1440px monitors.
-    ── */
+    /* ── Canvas / Layout ── */
     .app-canvas {
         width: 100%;
         position: relative;
@@ -152,20 +149,10 @@
         .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
     }
     @media (min-width: 1280px) {
-        /* FIXED: was calc(280px + 4rem) which crushed the content column */
         .app-canvas { padding-left: calc(280px + 2.5rem); padding-right: 2.5rem; }
     }
 
-    /* ── Bento Card ──
-       FIX 1: Removed `isolation: isolate` — it created a stacking
-               context that trapped z-index values, making buttons
-               un-clickable relative to sibling layers.
-       FIX 2: Changed `overflow: visible` → `overflow: hidden` so
-               decorative absolute blobs don't bleed outside rounded
-               corners and cause visual mess.
-       FIX 3: Reduced PC border-radius from 2.5rem → 2rem for a
-               more proportional look on wide screens.
-    ── */
+    /* ── Bento Card ── */
     .bento-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
@@ -173,14 +160,43 @@
         box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
         position: relative;
         z-index: 10;
-        /* isolation: isolate; ← REMOVED: was causing stacking context button-click bug */
-        overflow: hidden; /* CHANGED from visible: prevents blob bleed */
+        overflow: hidden;
         transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } /* was 2.5rem */ }
     .bento-card:hover {
         box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.15), 0 4px 6px -2px rgba(10, 102, 194, 0.05);
         border-color: rgba(203, 213, 225, 1);
+    }
+
+    /* Only block clicks on DECORATIVE elements inside cards */
+    .bento-card > [aria-hidden="true"] {
+        pointer-events: none;
+    }
+
+    /* ── Insight Banners (Beautiful contextual help) ── */
+    .insight-banner {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 0.875rem 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        transition: all 0.3s var(--ease-magic);
+    }
+    .insight-banner:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(15,23,42,0.03);
+    }
+    .insight-banner p {
+        font-family: var(--font-body);
+        font-size: 13.5px;
+        font-weight: 500;
+        color: #475569;
+        line-height: 1.5;
+        margin: 0;
     }
 
     /* ── Inputs ── */
@@ -202,59 +218,61 @@
         box-shadow: 0 10px 28px -14px rgba(10, 102, 194, 0.35);
     }
 
-    /* ── Insight Banners ── */
-    .insight-banner {
-        background: rgba(248, 250, 252, 0.8);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-left: 4px solid #0A66C2;
-        border-radius: 1rem;
-        padding: 1rem 1.25rem;
-        margin-bottom: 1.5rem;
+    /* ── Action Buttons (Dynamic, modern, pill-shaped) ── */
+    .btn-add-solid {
+        height: 40px;
+        padding: 0 1.25rem;
+        border-radius: 9999px;
+        background: #0A66C2;
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 700;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic);
+        text-decoration: none;
+        box-shadow: 0 4px 14px -2px rgba(10, 102, 194, 0.3);
+        cursor: pointer;
     }
-    .insight-banner p {
-        font-family: var(--font-body);
-        font-size: 14.5px;
-        font-weight: 500;
-        color: #334155;
-        line-height: 1.6;
-        margin: 0;
-        letter-spacing: -0.01em;
-    }
-    @media (min-width: 768px) {
-        .insight-banner { padding: 1.125rem 1.5rem; }
-        .insight-banner p { font-size: 15px; }
-    }
+    @media (min-width: 768px) { .btn-add-solid { height: 42px; font-size: 14px; } }
+    .btn-add-solid:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 6px 20px -4px rgba(10, 102, 194, 0.4); }
+    .btn-add-solid:active { transform: translateY(0) scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.4); }
 
-    /* ══════════════════════════════════════════════
-       BUTTON CLICKABILITY — CLEAN APPROACH
-       ──────────────────────────────────────────────
-       The original code had three overlapping bugs:
-       1. `.pointer-events-none` (a global Tailwind utility)
-          was set to `pointer-events: none !important` —
-          this killed clicks on EVERYTHING with that class,
-          including icon wrappers inside buttons.
-       2. `isolation: isolate` on .bento-card created a
-          stacking context that trapped z-index competition.
-       3. Excessive !important z-index wars between z-50/z-60
-          rules that fought each other.
-
-       SOLUTION: Remove all the above and use ONE clean rule —
-       only suppress pointer-events on elements that are truly
-       decorative (aria-hidden direct children of bento-card).
-    ══════════════════════════════════════════════ */
-
-    /* Only block clicks on DECORATIVE elements inside cards */
-    .bento-card > [aria-hidden="true"] {
-        pointer-events: none;
+    .btn-action, .btn-secondary {
+        min-height: 40px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic);
+        white-space: nowrap;
+        text-decoration: none;
+        font-size: 13.5px;
+        font-weight: 700;
+        padding: 0 1.25rem;
+        cursor: pointer;
     }
+    @media (min-width: 768px) { .btn-action, .btn-secondary { min-height: 42px; font-size: 14px; } }
+
+    .btn-action { background: #0f172a; color: #ffffff; box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.25); }
+    .btn-action:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 6px 20px -4px rgba(15, 23, 42, 0.3); }
+    .btn-action:active { transform: translateY(0) scale(0.96); }
+
+    .btn-secondary { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; }
+    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #f8fafc; transform: translateY(-2px); box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.1); }
+    .btn-secondary:active { transform: translateY(0) scale(0.96); }
 
     /* ── Manage Icon Button ── */
     .btn-manage-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 0.85rem;
-        background: transparent;
-        border: 1.5px solid rgba(226, 232, 240, 0.9);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
         color: #64748b;
         display: inline-flex;
         align-items: center;
@@ -264,82 +282,34 @@
         cursor: pointer;
         text-decoration: none;
     }
-    @media (min-width: 768px) { .btn-manage-icon { width: 46px; height: 46px; border-radius: 1rem; } }
-    .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
-    .btn-manage-icon:active { transform: scale(0.92); }
+    @media (min-width: 768px) { .btn-manage-icon { width: 42px; height: 42px; } }
+    .btn-manage-icon:hover { background: #f8fafc; color: #0f172a; border-color: #94a3b8; box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.1); transform: translateY(-2px); }
+    .btn-manage-icon:active { transform: translateY(0) scale(0.95); }
 
-    /* ── Add Solid Button ── */
-    .btn-add-solid {
-        height: 44px;
-        padding: 0 1.25rem;
-        border-radius: 0.85rem;
-        background: #0A66C2;
-        color: #ffffff;
-        font-size: 13.5px;
-        font-weight: 900;
-        letter-spacing: 0.02em;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        transition: all 0.3s var(--ease-magic);
-        text-decoration: none;
-        white-space: nowrap;
-        box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.4);
-        cursor: pointer;
-    }
-    @media (min-width: 768px) { .btn-add-solid { height: 46px; padding: 0 1.5rem; border-radius: 1rem; font-size: 14px; } }
-    .btn-add-solid:hover { background: #084e96; transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(10, 102, 194, 0.5); }
-    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.4); }
-
-    /* ── Action / Secondary Buttons ── */
-    .btn-action, .btn-secondary {
-        cursor: pointer;
-        min-height: 48px;
-        border-radius: 9999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        transition: all 0.3s var(--ease-magic);
-        white-space: nowrap;
-        text-decoration: none;
-    }
-    @media (min-width: 768px) { .btn-action, .btn-secondary { min-height: 46px; } }
-
-    .btn-action { background: #0f172a; color: white; font-weight: 800; font-size: 13px; padding: 0.75rem 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(15,23,42,0.4); background: #1e293b; }
-    .btn-action:active { transform: scale(0.96); }
-
-    .btn-secondary { background: white; border: 1px solid rgba(226, 232, 240, 0.9); color: #475569; font-size: 13px; font-weight: 800; padding: 0.75rem 1.5rem; }
-    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
-    .btn-secondary:active { transform: scale(0.96); }
-
-    /* ── Empty-state clickable rows ── */
+    /* ── Empty-state clickable rows (Soft hover feedback) ── */
     .empty-cta {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.875rem;
         width: 100%;
-        padding: 1.25rem;
+        padding: 1rem 1.25rem;
         border-radius: 1rem;
-        border: 2px dashed rgba(226, 232, 240, 0.9);
-        background: #ffffff;
-        transition: all 0.25s var(--ease-magic);
+        border: 1.5px dashed #cbd5e1;
+        background: #f8fafc;
+        transition: all 0.3s var(--ease-magic);
         cursor: pointer;
         text-decoration: none;
     }
-    .empty-cta:hover { background: #F8FAFC; border-color: #93C5FD; }
+    .empty-cta:hover { background: #eff6ff; border-color: #93c5fd; border-style: solid; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(10,102,194,0.06); }
     .empty-cta-icon {
-        width: 2rem; height: 2rem; border-radius: 9999px;
-        background: #F1F5F9; color: #94A3B8;
+        width: 2.25rem; height: 2.25rem; border-radius: 9999px;
+        background: #ffffff; color: #94a3b8; border: 1px solid #e2e8f0;
         display: flex; align-items: center; justify-content: center;
-        transition: all 0.25s var(--ease-magic); flex-shrink: 0;
+        transition: all 0.3s var(--ease-magic); flex-shrink: 0;
     }
-    .empty-cta:hover .empty-cta-icon { background: #ffffff; color: #0A66C2; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
-    .empty-cta-label { font-weight: 700; color: #475569; font-size: 14px; transition: color 0.2s; }
-    .empty-cta:hover .empty-cta-label { color: #1E293B; }
+    .empty-cta:hover .empty-cta-icon { color: #0A66C2; background: #ffffff; border-color: #bfdbfe; box-shadow: 0 4px 8px rgba(10,102,194,0.1); }
+    .empty-cta-label { font-weight: 600; color: #64748b; font-size: 14px; transition: color 0.2s; }
+    .empty-cta:hover .empty-cta-label { color: #0f172a; }
 
     /* ── Animations ── */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -358,9 +328,6 @@
 </style>
 
 <main class="app-canvas anim-smooth-appear">
-    <!-- FIX: max-w changed from 1200px → 920px. On a 1440px screen with a
-         280px sidebar + 2.5rem padding each side, the real estate is ~1060px.
-         920px fills it comfortably without over-stretching bento cards. -->
     <div class="max-w-[920px] mx-auto w-full">
 
         <!-- ══════════════════════════════════
@@ -368,10 +335,7 @@
         ══════════════════════════════════ -->
         <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-8" id="profile-hero">
 
-            <!-- Cover Image
-                 FIX: Added lg/xl height steps so the cover scales
-                 gracefully instead of sitting at a fixed 250px on all
-                 desktop sizes. -->
+            <!-- Cover Image -->
             <div class="relative h-[140px] sm:h-[180px] md:h-[220px] lg:h-[240px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[2rem]">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
@@ -382,7 +346,6 @@
                         <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 blur-[60px] rounded-full" aria-hidden="true"></div>
                     </div>
                 {% endif %}
-                <!-- Cover edit button — z-20 is sufficient now that bento-card has no isolation -->
                 <a href="{% url 'media_manager' %}" class="absolute top-4 md:top-5 right-4 md:right-5 w-10 h-10 md:w-11 md:h-11 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-[#0A66C2] hover:scale-110 transition-all shadow-lg z-20" aria-label="{% trans 'Edit cover image' %}">
                     <i data-lucide="image" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </a>
@@ -437,15 +400,15 @@
                         </div>
                     </div>
 
-                    <!-- CTA Buttons — no z-index tricks needed now -->
+                    <!-- CTA Buttons -->
                     <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto shrink-0 lg:pt-1">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
-                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 flex-1 sm:flex-none">
+                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-500 hover:!from-emerald-600 hover:!to-teal-600 !border-none !text-white !shadow-[0_4px_14px_-2px_rgba(16,185,129,0.3)] flex-1 sm:flex-none">
                                     <i data-lucide="building" class="w-4 h-4"></i> <span>{% trans "Manage Company" %}</span>
                                 </a>
                             {% else %}
-                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 flex-1 sm:flex-none">
+                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-500 hover:!from-emerald-600 hover:!to-teal-600 !border-none !text-white !shadow-[0_4px_14px_-2px_rgba(16,185,129,0.3)] flex-1 sm:flex-none">
                                     <i data-lucide="plus-circle" class="w-4 h-4"></i> <span>{% trans "Add Company" %}</span>
                                 </a>
                             {% endif %}
@@ -454,7 +417,7 @@
                             <i data-lucide="external-link" class="w-4 h-4"></i> <span>{% trans "Public Profile" %}</span>
                         </a>
                         <a href="{% url 'profile_settings' %}" class="btn-secondary flex-1 sm:flex-none">
-                            <i data-lucide="settings" class="w-4 h-4"></i> <span>{% trans "Edit Basics" %}</span>
+                            <span>{% trans "Edit Profile Settings" %}</span>
                         </a>
                     </div>
                 </div>
@@ -462,14 +425,10 @@
                 <!-- Professional Bio -->
                 <div class="p-5 sm:p-6 md:p-8 bg-slate-50/60 rounded-2xl border border-slate-200/80 mt-6 md:mt-8 shadow-inner">
                     <div class="flex items-center justify-end mb-3">
-                        <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 min-h-[40px] border border-transparent hover:border-blue-100 cursor-pointer">
+                        <button onclick="openBioEditor()" class="text-[#0A66C2] font-semibold text-[13px] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 min-h-[40px] border border-transparent hover:border-blue-100 cursor-pointer">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                             <span>{% if portfolio.bio_narrative %}{% trans "Edit Story" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
                         </button>
-                    </div>
-
-                    <div class="insight-banner">
-                        <p>{% trans "Write a professional summary detailing your background, focus, and future goals to build a complete profile." %}</p>
                     </div>
 
                     {% if not portfolio.bio_narrative %}
@@ -483,7 +442,7 @@
                                 <p class="text-[14.5px] sm:text-[15px] md:text-[16px] text-slate-700 font-medium leading-[1.85] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
                                 <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50/90 to-transparent transition-opacity duration-300 pointer-events-none" aria-hidden="true"></div>
                             </div>
-                            <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 text-[#0A66C2] font-black text-[13px] hover:text-blue-800 flex items-center gap-1.5 min-h-[40px] transition-colors cursor-pointer">
+                            <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 text-[#0A66C2] font-bold text-[13px] hover:text-blue-800 flex items-center gap-1.5 min-h-[40px] transition-colors cursor-pointer">
                                 <span id="bio-btn-text">{% trans "Read More" %}</span>
                                 <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
                             </button>
@@ -513,6 +472,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Add your current professional titles (e.g., 'Software Engineer') to define your expertise." %}</p>
                 </div>
                 {% if headlines %}
@@ -551,12 +511,13 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "List technical tools and methodologies. Comprehensive skills strengthen your profile." %}</p>
                 </div>
                 {% if skills %}
                     <div class="flex flex-wrap gap-2 md:gap-2.5">
                         {% for skill in skills|slice:":10" %}
-                        <div class="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-[13px] md:text-[13.5px] font-bold text-slate-700 shadow-sm hover:border-[#0A66C2] hover:text-[#0A66C2] transition-all">
+                        <div class="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-[13px] md:text-[13.5px] font-bold text-slate-700 shadow-sm hover:border-[#0A66C2] hover:text-[#0A66C2] transition-all cursor-default">
                             {{ skill.name }}
                         </div>
                         {% endfor %}
@@ -584,6 +545,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Add educational background, degrees, licenses, and completed certificates." %}</p>
                 </div>
                 {% if credentials %}
@@ -618,6 +580,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Upload examples of past work, case studies, business plans, or creative projects." %}</p>
                 </div>
                 {% if projects %}
@@ -660,6 +623,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Add detailed career and volunteer history to provide a complete experience timeline." %}</p>
                 </div>
                 {% if experiences %}
@@ -682,7 +646,6 @@
 
             <!-- ── 5. Goal & Vision ── -->
             <div id="section-vision" class="bento-card p-6 md:p-8 flex flex-col bg-white/80">
-                <!-- Decorative quote mark — aria-hidden so pointer-events rule suppresses it correctly -->
                 <div class="absolute top-4 right-6 text-[100px] md:text-[130px] font-serif-pc leading-none text-slate-100/60 select-none" aria-hidden="true">"</div>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
                     <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
@@ -697,6 +660,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "State primary professional goals and long-term vision to show what you are building." %}</p>
                 </div>
                 {% if vision_blocks %}
@@ -732,6 +696,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Publish short essays or insights about your industry to demonstrate knowledge." %}</p>
                 </div>
                 {% if essays %}
@@ -774,6 +739,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Log daily progress, minor updates, or milestones to keep your profile active." %}</p>
                 </div>
                 {% if growth_logs %}
@@ -817,6 +783,7 @@
                     </div>
                 </div>
                 <div class="insight-banner">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                     <p>{% trans "Add your email, phone number, and social links so people can reach you." %}</p>
                 </div>
                 {% if user.contact_methods.all or user.social_links.all %}
@@ -861,7 +828,6 @@
 
             <!-- Goal Card -->
             <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col">
-                <!-- Decorative blob — aria-hidden ensures it's pointer-blocked -->
                 <div class="absolute top-0 right-0 w-56 h-56 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 blur-[50px] rounded-full" aria-hidden="true"></div>
                 <div class="relative flex flex-col h-full">
                     <div class="mb-4 flex justify-between items-start">
@@ -874,6 +840,7 @@
                         </div>
                     </div>
                     <div class="insight-banner">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-[2px]" aria-hidden="true"></i>
                         <p>{% trans "Select your current objective below to help the system match your portfolio with relevant opportunities." %}</p>
                     </div>
                     <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-4">
