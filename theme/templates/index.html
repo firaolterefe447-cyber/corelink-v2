@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
@@ -82,7 +84,7 @@
   .lang-option.active { background: #eff6ff; color: #0A66C2; }
 
   /* ==========================================================================
-     HERO SECTION (ORIGINAL UNCHANGED)
+     HERO SECTION
      ========================================================================== */
   .hero {
     background: #F4F7FA;
@@ -109,6 +111,7 @@
   .av img { width: 100%; height: 100%; object-fit: cover; }
   .av-bg-1 { background: #0A66C2; } .av-bg-2 { background: #7c3aed; } .av-bg-3 { background: #059669; } .av-bg-4 { background: #d97706; } .av-bg-5 { background: #dc2626; } .av-bg-6 { background: #0891b2; } .av-bg-7 { background: #be185d; } .av-bg-8 { background: #4338ca; }
   .av-plus { background: #eff6ff; border: 2px solid #bfdbfe; color: #0A66C2; font-size: 13px; font-weight: 900; }
+
   .hero-stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; position: relative; }
   .hero-stars .star { color: #f59e0b; font-size: 18px; }
   .hero-av-count { font-size: 12px; font-weight: 700; color: #94a3b8; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 40px; position: relative; }
@@ -119,43 +122,78 @@
   .hero-cta-ghost { background: #fff; color: #0f172a; font-size: 15px; font-weight: 700; text-decoration: none; border: 1px solid #e2e8f0; padding: 18px 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; width: auto; }
   .hero-cta-ghost:hover { border-color: #0A66C2; color: #0A66C2; background: #f8fafc; }
 
-  .hero-stats { display: flex; align-items: center; justify-content: center; gap: 48px; margin-top: 72px; flex-wrap: wrap; position: relative; }
-  .stat-item { text-align: center; }
-  .stat-num { font-size: 32px; font-weight: 900; color: #0f172a; letter-spacing: -0.04em; }
-  .stat-label { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
-  .stat-divider { width: 1px; height: 48px; background: #cbd5e1; }
+  /* AMAZING TRANSFORMATION BANNER (Green Dot Removed) */
+  .hero-transformation-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 64px;
+    padding: 14px 28px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(10, 102, 194, 0.08);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hero-transformation-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(10, 102, 194, 0.12);
+  }
+  .hero-transformation-wrapper p {
+    font-size: 14px;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .hero-transformation-wrapper .gradient-text {
+    background: linear-gradient(135deg, #0A66C2, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+  }
 
   /* ==========================================================================
-     PROFESSIONAL FEATURE LIST (CLEAN, NO MOCKUPS)
+     NEW: EDITORIAL IMPACT SECTION (Replacing Generic Cards)
      ========================================================================== */
-  .content-section { padding: 100px 32px; background: #fff; border-bottom: 1px solid #e2e8f0; }
-  .content-section.alt { background: #F8FAFC; }
+  .impact-section { padding: 120px 32px; background: #fff; overflow: hidden; }
+  .impact-header { text-align: center; max-width: 700px; margin: 0 auto 100px; }
+  .impact-header h2 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.05em; color: #0f172a; line-height: 1.05; margin-bottom: 24px; }
+  .impact-header p { font-size: 18px; color: #64748b; line-height: 1.6; font-weight: 500; }
 
-  .sec-header { text-align: center; max-width: 800px; margin: 0 auto 64px; }
-  .sec-label { display: inline-block; background: #eff6ff; color: #0A66C2; border: 1px solid #bfdbfe; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
-  .sec-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -0.04em; color: #0f172a; margin-bottom: 16px; line-height: 1.1; }
-  .sec-desc { font-size: 18px; font-weight: 500; color: #64748b; line-height: 1.7; }
+  .impact-container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 120px; }
 
-  .value-list { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-  .value-card { display: flex; align-items: flex-start; gap: 32px; background: #fff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 40px; box-shadow: 0 10px 30px rgba(15,23,42,0.03); transition: all 0.3s ease; }
-  .value-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(15,23,42,0.08); border-color: #cbd5e1; }
-  .value-icon { width: 72px; height: 72px; flex-shrink: 0; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-  .value-text { flex: 1; }
-  .value-text h3 { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 12px; letter-spacing: -0.02em; }
-  .value-text p { font-size: 16px; color: #475569; line-height: 1.7; font-weight: 500; }
+  .impact-row { display: flex; align-items: center; justify-content: space-between; gap: 64px; }
+  .impact-row:nth-child(even) { flex-direction: row-reverse; }
 
-  /* Platform Architecture Grid */
-  .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
-  .arch-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 32px; transition: transform 0.3s, box-shadow 0.3s; }
-  .arch-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(10,102,194,0.08); border-color: #bfdbfe; }
-  .arch-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
-  .arch-card h4 { font-size: 18px; font-weight: 900; color: #0f172a; margin-bottom: 12px; letter-spacing: -0.02em; }
-  .arch-card p { font-size: 14px; color: #64748b; line-height: 1.6; font-weight: 500; }
+  .impact-visual { flex: 0 0 45%; position: relative; }
+  .impact-number {
+    font-size: 160px; font-weight: 900; line-height: 0.8;
+    color: transparent; -webkit-text-stroke: 2px #e2e8f0;
+    position: absolute; top: -60px; left: -40px; z-index: 1;
+    user-select: none;
+  }
+  .impact-row:nth-child(even) .impact-number { left: auto; right: -40px; }
+
+  .impact-visual-box { position: relative; z-index: 2; padding: 40px 0; }
+  .impact-visual-box h3 { font-size: 32px; font-weight: 900; letter-spacing: -0.04em; color: #0f172a; line-height: 1.1; margin-bottom: 16px; }
+  .impact-badge { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; }
+
+  .badge-talent { background: #eff6ff; color: #0A66C2; }
+  .badge-company { background: #f0fdf4; color: #10b981; }
+  .badge-team { background: #faf5ff; color: #7c3aed; }
+
+  .impact-content { flex: 0 0 45%; }
+  .impact-content p { font-size: 18px; color: #475569; line-height: 1.8; font-weight: 500; margin-bottom: 24px; }
+  .impact-content p:last-child { margin-bottom: 0; }
+  .impact-content strong { color: #0f172a; font-weight: 800; }
 
   /* ==========================================================================
      FOOTER
      ========================================================================== */
-  .footer { background: #0f172a; color: #fff; padding: 80px 32px 40px; }
+  .footer { background: #0f172a; color: #fff; padding: 80px 32px 40px; border-top: 1px solid #e2e8f0; }
   .footer-inner { max-width: 1100px; margin: 0 auto; }
   .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; margin-bottom: 64px; }
   .footer-brand .logo { font-size: 28px; margin-bottom: 16px; display: block; color: #fff; }
@@ -181,16 +219,16 @@
   /* ==========================================================================
      RESPONSIVE
      ========================================================================== */
-  @media (max-width: 1024px) {
-    .arch-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 900px) {
     .nav-desktop { display: none; }
     .mobile-menu-btn { display: block; }
-    .hero-stats { gap: 24px; }
-    .stat-divider { display: none; }
     .footer-top { flex-direction: column; }
-    .value-card { flex-direction: column; align-items: flex-start; gap: 20px; padding: 32px 24px; }
+
+    .impact-row, .impact-row:nth-child(even) { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .impact-visual, .impact-content { flex: 0 0 100%; width: 100%; }
+    .impact-number { font-size: 120px; top: -40px; left: -10px; }
+    .impact-row:nth-child(even) .impact-number { right: auto; left: -10px; }
+    .impact-container { gap: 80px; }
   }
   @media (max-width: 600px) {
     .hero { padding: 48px 16px; }
@@ -198,14 +236,13 @@
     .hero-cta-main, .hero-cta-ghost { width: 100%; }
     .av { width: 40px; height: 40px; font-size: 11px; }
     .hero-avatar-cloud { gap: 4px; margin-bottom: 12px; }
-    .hero-stats { margin-top: 48px; gap: 12px; justify-content: space-around; }
-    .stat-item { flex: 1 1 40%; background: #fff; padding: 16px 12px; border-radius: 16px; border: 1px solid #e2e8f0; }
-    .stat-num { font-size: 24px; }
-    .stat-label { font-size: 10px; }
-    .content-section { padding: 64px 20px; }
-    .value-icon { width: 56px; height: 56px; font-size: 24px; }
-    .value-text h3 { font-size: 20px; }
-    .arch-grid { grid-template-columns: 1fr; }
+
+    .hero-transformation-wrapper { padding: 12px 20px; margin-top: 48px; }
+    .hero-transformation-wrapper p { font-size: 11px; }
+
+    .impact-section { padding: 64px 20px; }
+    .impact-visual-box h3 { font-size: 26px; }
+    .impact-content p { font-size: 16px; }
   }
 </style>
 
@@ -221,7 +258,6 @@
     </div>
     <div class="nav-btns">
 
-      <!-- Language Dropdown -->
       <div x-data="{ open: false }" class="relative">
         <button @click="open = !open" @click.outside="open = false" class="lang-btn">
           <span>{{ current_lang.name_local|title|default:"English" }}</span>
@@ -247,13 +283,11 @@
     </div>
   </div>
 
-  <!-- Mobile Hamburger -->
   <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
     <svg x-show="!mobileMenuOpen" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
     <svg x-show="mobileMenuOpen" style="display:none;" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
   </button>
 
-  <!-- Mobile Menu Pane -->
   <div class="mobile-menu" x-show="mobileMenuOpen" style="display:none;">
     <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
     <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
@@ -281,7 +315,7 @@
   </div>
 </nav>
 
-<!-- HERO (ORIGINAL UNCHANGED) -->
+<!-- HERO -->
 <section class="hero">
   <div class="hero-grid-bg"></div>
   <div class="hero-pill">
@@ -320,133 +354,69 @@
     <a href="{% url 'company_nexus' %}" class="hero-cta-ghost">{% trans "Explore Companies" %} →</a>
   </div>
 
-  <div class="hero-stats">
-    <div class="stat-item">
-      <div class="stat-num">2,400+</div>
-      <div class="stat-label">{% trans "Professionals" %}</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-num">380+</div>
-      <div class="stat-label">{% trans "Companies" %}</div>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-item">
-      <div class="stat-num">12+</div>
-      <div class="stat-label">{% trans "Industries" %}</div>
-    </div>
+  <!-- THE AMAZING TRANSFORMATION BANNER -->
+  <div class="hero-transformation-wrapper">
+    <p>{% trans "Be part of Ethiopia's" %} <span class="gradient-text">{% trans "Digital Transformation & Optimization" %}</span></p>
   </div>
 </section>
 
-<!-- THE PLATFORM CAPABILITIES (CLEAN LIST FORMAT) -->
-<section class="content-section">
-  <div class="sec-header">
-    <span class="sec-label">{% trans "The CoreLink Solution" %}</span>
-    <h2 class="sec-title">{% trans "Bridging Ethiopia’s Professional Discovery Gap" %}</h2>
-    <p class="sec-desc">{% trans "We are replacing outdated PDF CVs and hidden Telegram job posts with a centralized, smart database. Find the exact talent, team, or service you need instantly." %}</p>
+<!-- EDITORIAL IMPACT SECTION -->
+<section class="impact-section">
+  <div class="impact-header">
+    <h2>{% trans "A New Reality for Ethiopian Professionals." %}</h2>
+    <p>{% trans "We are tearing down the barriers of outdated job boards, invisible talent pools, and disconnected networks. Welcome to a unified, instant discovery engine." %}</p>
   </div>
 
-  <div class="value-list">
-    <!-- Item 1: Profiles -->
-    <div class="value-card">
-      <div class="value-icon" style="background: #eff6ff; color: #0A66C2;">
-        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-      </div>
-      <div class="value-text">
-        <h3>{% trans "Deep-Dive Professional Identity" %}</h3>
-        <p>{% trans "A basic one-page resume doesn't show your actual problem-solving skills. CoreLink profiles capture your deep-dive professional identity. Upload detailed histories of your work, link your GitHub or Figma, and showcase cross-industry proof of work—from software development to medical research." %}</p>
-      </div>
-    </div>
+  <div class="impact-container">
 
-    <!-- Item 2: Smart Matching -->
-    <div class="value-card">
-      <div class="value-icon" style="background: #f0fdf4; color: #10b981;">
-        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+    <!-- Row 1: Talent -->
+    <div class="impact-row">
+      <div class="impact-visual">
+        <div class="impact-number">01</div>
+        <div class="impact-visual-box">
+          <span class="impact-badge badge-talent">{% trans "For Talent" %}</span>
+          <h3>{% trans "Beyond the PDF Resume." %}</h3>
+        </div>
       </div>
-      <div class="value-text">
-        <h3>{% trans "Smart Opportunity Matching" %}</h3>
-        <p>{% trans "Stop endless scrolling through job boards. Update your exact career intent—whether you want an internship, full-time role, or startup to join. When a recruiter posts a role, our active matching engine scans your skills and delivers the opportunity directly to you." %}</p>
+      <div class="impact-content">
+        <p>{% trans "You are vastly more capable than a one-page summary can show. It is time the market sees your actual problem-solving abilities." %}</p>
+        <p>{% trans "CoreLink captures your deep-dive professional identity. Whether you are pushing code to GitHub, designing interfaces on Figma, or publishing medical research—your proof-of-work speaks louder than traditional job titles." %}</p>
+        <p>{% trans "The best part? You no longer have to endlessly scroll to find work. Tell the system what you want, and our matching engine brings the right opportunities directly to you." %}</p>
       </div>
     </div>
 
-    <!-- Item 3: Team Formation -->
-    <div class="value-card">
-      <div class="value-icon" style="background: #faf5ff; color: #7c3aed;">
-        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+    <!-- Row 2: Companies -->
+    <div class="impact-row">
+      <div class="impact-visual">
+        <div class="impact-number">02</div>
+        <div class="impact-visual-box">
+          <span class="impact-badge badge-company">{% trans "For Companies" %}</span>
+          <h3>{% trans "Stop Waiting. Start Finding." %}</h3>
+        </div>
       </div>
-      <div class="value-text">
-        <h3>{% trans "Team Formation & Collaboration" %}</h3>
-        <p>{% trans "Have a business idea but need a developer? Want to join a hackathon but need a designer? Use the Teams framework to open specific slots, broadcast your mission, and instantly recruit the exact talent to turn ideas into execution." %}</p>
-      </div>
-    </div>
-
-    <!-- Item 4: Real Time Updates -->
-    <div class="value-card">
-      <div class="value-icon" style="background: #fef3c7; color: #d97706;">
-        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-      </div>
-      <div class="value-text">
-        <h3>{% trans "The Real-Time Build Feed" %}</h3>
-        <p>{% trans "A dedicated workspace where users log exactly what they are working on in real-time. We replaced generic 'Likes' and 'Comments' with functional 'Feedback' and 'Questions', creating a professional environment focused strictly on technical refinement and active learning." %}</p>
+      <div class="impact-content">
+        <p>{% trans "Posting a vacancy on Telegram and waiting months for the right fit—while your post gets buried—is obsolete." %}</p>
+        <p>{% trans "Your business deserves a premium digital storefront. Create a verified Company Hub, showcase your entire service catalog, and let local clients find you exactly when they need you." %}</p>
+        <p>{% trans "When you need to hire, don't wait for applications. Use our intelligence engine to filter the exact talent you need—down to specific skills and geography—and contact them instantly." %}</p>
       </div>
     </div>
 
-    <!-- Item 5: B2B Company Hub -->
-    <div class="value-card">
-      <div class="value-icon" style="background: #ecfeff; color: #0891b2;">
-        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+    <!-- Row 3: Synergy / Teams -->
+    <div class="impact-row">
+      <div class="impact-visual">
+        <div class="impact-number">03</div>
+        <div class="impact-visual-box">
+          <span class="impact-badge badge-team">{% trans "For Builders" %}</span>
+          <h3>{% trans "The Missing Piece is Here." %}</h3>
+        </div>
       </div>
-      <div class="value-text">
-        <h3>{% trans "B2B Company Hub & Service Discovery" %}</h3>
-        <p>{% trans "Ethiopian businesses often lack high-quality websites. The Company Hub acts as a premium digital storefront. Build a deep-dive catalog of your services, create a visual company timeline, and link your job postings directly to your verified business profile." %}</p>
+      <div class="impact-content">
+        <p>{% trans "Brilliant ideas often die in the ideation stage simply because founders cannot find the right technical or strategic partner." %}</p>
+        <p>{% trans "Do not let your immediate social circle limit your potential. CoreLink introduces a structured space for collective building. Broadcast your startup's mission, open specific role slots, and instantly recruit the exact minds required to turn your vision into execution." %}</p>
+        <p><strong>{% trans "Stop searching in the dark. Build the future, together." %}</strong></p>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- PLATFORM ARCHITECTURE GRID -->
-<section class="content-section alt">
-  <div class="sec-header">
-    <h2 class="sec-title">{% trans "CoreLink Navigation Architecture" %}</h2>
-    <p class="sec-desc">{% trans "Everything you need to build, network, and grow in the Ethiopian professional ecosystem, integrated into one seamless platform." %}</p>
-  </div>
-
-  <div class="arch-grid">
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#eff6ff; color:#0A66C2;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <h4>{% trans "My Profile" %}</h4>
-      <p>{% trans "The central professional dashboard. Manage your personal data, technical skill sets, project histories, and current career intent." %}</p>
-    </div>
-
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#f0fdf4; color:#10b981;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div>
-      <h4>{% trans "Discover Network" %}</h4>
-      <p>{% trans "Intelligence-driven search. Scan the community using advanced filters or natural language AI queries to find the precise talent you need." %}</p>
-    </div>
-
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#fef3c7; color:#d97706;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg></div>
-      <h4>{% trans "Live Updates" %}</h4>
-      <p>{% trans "The real-time build feed. Log what you are working on, ask for technical feedback, and collaborate with peers on active projects." %}</p>
-    </div>
-
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#faf5ff; color:#7c3aed;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
-      <h4>{% trans "Smart Opportunities" %}</h4>
-      <p>{% trans "A career board powered by precision matching. The system recommends opportunities that specifically align with your verified skills." %}</p>
-    </div>
-
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#ffe4e6; color:#e11d48;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <h4>{% trans "Inbox & Comms" %}</h4>
-      <p>{% trans "Integrated professional messaging. Coordinate directly with recruiters, project collaborators, or new connections found via Discover." %}</p>
-    </div>
-
-    <div class="arch-card">
-      <div class="arch-icon" style="background:#ecfeff; color:#0891b2;"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <h4>{% trans "Teams & Groups" %}</h4>
-      <p>{% trans "The collective innovation hub. Search for active startups, hackathons, or study groups that have open slots for your exact expertise." %}</p>
-    </div>
   </div>
 </section>
 
@@ -481,7 +451,7 @@
 
       <div class="footer-cta-card">
         <h4>{% trans "Shape the Future." %}</h4>
-        <p>{% trans "Join the platform uniting talent with opportunity in Ethiopia." %}</p>
+        <p>{% trans "Join the community uniting talent with opportunity in Ethiopia." %}</p>
         <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">{% trans "Get Started" %} →</a>
       </div>
 
