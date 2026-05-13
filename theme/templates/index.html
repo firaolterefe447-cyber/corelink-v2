@@ -12,12 +12,38 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+<!-- AMAZING PAGE LOADER ELEMENT -->
+<div id="page-loader"></div>
+
 <style>
   /* ==========================================================================
      CORE VARIABLES & RESET
      ========================================================================== */
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; background: #fff; color: #0f172a; overflow-x: hidden; }
+
+  /* ==========================================================================
+     AMAZING TOP LOADING BAR
+     ========================================================================== */
+  #page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3.5px;
+    background: linear-gradient(to right, #0A66C2, #3b82f6, #06b6d4, #10b981);
+    background-size: 200% 100%;
+    z-index: 99999;
+    transition: width 0.3s ease, opacity 0.4s ease;
+    width: 0%;
+    opacity: 1;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(10, 102, 194, 0.6);
+    animation: loader-gradient 2s linear infinite;
+  }
+  @keyframes loader-gradient {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
 
   /* ==========================================================================
      NAVBAR & MOBILE MENU
@@ -32,13 +58,13 @@
   }
   .logo { font-size: 22px; font-weight: 900; letter-spacing: -0.05em; color: #0f172a; text-decoration: none; }
   .logo span { color: #0A66C2; }
-  
+
   .nav-desktop { display: flex; align-items: center; gap: 32px; }
   .nav-links { display: flex; align-items: center; gap: 28px; }
   .nav-link { font-size: 14px; font-weight: 700; color: #64748b; text-decoration: none; transition: color 0.2s; }
   .nav-link:hover { color: #0A66C2; }
   .nav-btns { display: flex; align-items: center; gap: 12px; }
-  
+
   .btn-ghost { font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; background: #fff; padding: 10px 20px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
   .btn-ghost:hover { border-color: #cbd5e1; background: #f8fafc; }
   .btn-primary { font-size: 13px; font-weight: 700; color: #fff; background: #0A66C2; border: none; padding: 10px 24px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: background 0.2s; box-shadow: 0 4px 12px rgba(10,102,194,0.2); }
@@ -86,7 +112,6 @@
     margin-bottom: 24px; position: relative;
     box-shadow: 0 2px 8px rgba(10,102,194,0.08);
   }
-  .pill-dot { width: 7px; height: 7px; background: #10b981; border-radius: 50%; }
   .hero h1 {
     font-size: clamp(2.4rem, 6vw, 4.2rem);
     font-weight: 900; letter-spacing: -0.04em;
@@ -115,7 +140,6 @@
   .av:hover { transform: scale(1.2) translateY(-4px); z-index: 10; box-shadow: 0 6px 16px rgba(0,0,0,0.15); border-color: #bfdbfe; }
   .av img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* Fallback Background Colors for users without photos */
   .av-bg-1 { background: #0A66C2; }
   .av-bg-2 { background: #7c3aed; }
   .av-bg-3 { background: #059669; }
@@ -254,7 +278,6 @@
     .hero-ctas { flex-direction: column; width: 100%; }
     .hero-cta-main, .hero-cta-ghost { width: 100%; }
 
-    /* Shrink avatars slightly on mobile so more can fit */
     .av { width: 38px; height: 38px; font-size: 11px; }
     .av-plus { font-size: 11px; }
     .hero-avatar-cloud { gap: 4px; margin-bottom: 12px; }
@@ -344,7 +367,6 @@
 <section class="hero">
   <div class="hero-grid-bg"></div>
   <div class="hero-pill">
-    <span class="pill-dot"></span>
     {% trans "Ethiopian Professional Community" %}
   </div>
 
@@ -485,12 +507,12 @@
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-top">
-      
+
       <div class="footer-brand">
         <a href="/" class="logo">core<span style="color:#0A66C2;">link</span></a>
         <p>{% trans "Elevating Ethiopian professionals through verified proof-of-work, deep portfolios, and seamless connections." %}</p>
       </div>
-      
+
       <div class="footer-links-group">
         <div class="footer-links">
           <h4>{% trans "Platform" %}</h4>
@@ -498,7 +520,7 @@
           <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
           <a href="{% url 'login' %}">{% trans "Log In" %}</a>
         </div>
-        
+
         <div class="footer-links">
           <h4>{% trans "Community" %}</h4>
           <a href="mailto:corelinkethiopia@gmail.com">{% trans "Contact Us" %}</a>
@@ -508,15 +530,15 @@
           </a>
         </div>
       </div>
-      
+
       <div class="footer-cta-card">
         <h4>{% trans "Shape the Future." %}</h4>
         <p>{% trans "Join the community uniting talent with opportunity in Ethiopia." %}</p>
         <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">{% trans "Get Started" %} →</a>
       </div>
-      
+
     </div>
-    
+
     <div class="footer-bottom">
       <p>{% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}</p>
       <div class="footer-bottom-links">
@@ -526,5 +548,47 @@
     </div>
   </div>
 </footer>
+
+<!-- AMAZING TOP LOADER SCRIPT -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById('page-loader');
+
+    // Simulate loading progress when page starts drawing
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 85) clearInterval(interval);
+      else {
+        width += Math.random() * 12;
+        loader.style.width = width + '%';
+      }
+    }, 150);
+
+    // Complete the loading bar when all assets are loaded
+    window.addEventListener('load', () => {
+      clearInterval(interval);
+      loader.style.width = '100%';
+      setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.style.display = 'none', 400); // Hide after fade out
+      }, 300);
+    });
+
+    // Trigger the loading bar gracefully on internal anchor clicks
+    document.querySelectorAll('a[href^="/"], a[href^="http"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Ignore if opening in a new tab
+            if (link.target !== '_blank' && !e.ctrlKey && !e.metaKey) {
+                loader.style.display = 'block';
+                // Small delay ensures smooth animation reset
+                setTimeout(() => {
+                    loader.style.opacity = '1';
+                    loader.style.width = '30%';
+                }, 10);
+            }
+        });
+    });
+  });
+</script>
 
 {% endblock %}
