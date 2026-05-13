@@ -302,7 +302,12 @@ def nexus_feed(request):
 
     results = results.distinct()
 
-    paginator = Paginator(results, 1000)
+    # ==============================================================================
+    # 🔒 TEMPORARY PAYWALL LOCK: Hard limit to top 20 profiles
+    # ==============================================================================
+    results = results[:20]  # Strictly slice the results to 20
+
+    paginator = Paginator(results, 100)
     page_number = request.GET.get('page')
     try:
         people_page = paginator.get_page(page_number)
@@ -325,9 +330,8 @@ def nexus_feed(request):
         'current_role': role_filter,
         'unread_msg_count': unread_count,
         'active_tab': 'people',
+        'show_paywall': True,  # <--- Always show the CTA for now
     })
-
-
 # ==============================================================================
 # 🏢 THE COMPANY NEXUS (INTELLIGENT BUSINESS DISCOVERY)
 # ==============================================================================

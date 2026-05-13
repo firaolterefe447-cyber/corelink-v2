@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -69,7 +67,6 @@
 
         <!-- Actions Bottom -->
         <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <!-- REPLACED LANGUAGE WITH DISCOVER TEAMS -->
             <a href="{% url 'team_nexus' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
                 <i data-lucide="users" class="w-4.5 h-4.5"></i>
                 <span>{% trans "Discover Teams" %}</span>
@@ -443,6 +440,35 @@
                     </a>
                 </div>
             {% endfor %}
+
+            <!-- ==============================================
+                 🔒 TEASER PAYWALL CTA (Always shows at 20 limit)
+                 ============================================== -->
+            {% if show_paywall and people|length == 20 %}
+                <div class="col-span-full mt-6 md:mt-8 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[2rem] p-10 md:p-16 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden group anim-smooth-appear" style="animation-delay: 0.4s;">
+                    <!-- Elegant Glass Orbs -->
+                    <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-400/30 transition-colors duration-1000"></div>
+                    <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-colors duration-1000"></div>
+
+                    <div class="w-20 h-20 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl flex items-center justify-center mb-6 shadow-lg relative z-10 transition-transform duration-500 group-hover:scale-110">
+                        <i data-lucide="lock" class="w-10 h-10 text-blue-200"></i>
+                    </div>
+
+                    <h3 class="text-[28px] md:text-[36px] font-black text-white font-heading tracking-tight mb-4 relative z-10 drop-shadow-md">
+                        Unlock Full Talent Access
+                    </h3>
+
+                    <p class="text-blue-100/90 text-[16px] md:text-[18px] font-medium max-w-2xl leading-relaxed mb-10 relative z-10">
+                        You've reached the limit of the top 20 highest-rated profiles. Subscribe to Corelink Premium to discover, message, and collaborate with thousands of verified professionals and untapped talent.
+                    </p>
+
+                    <!-- Dynamic Interactive Button -->
+                    <button id="premium-teaser-btn" onclick="handlePremiumClick(event)" class="bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-300 hover:to-blue-400 text-slate-900 font-black text-[15px] md:text-[16px] uppercase tracking-[0.05em] px-10 py-5 rounded-2xl shadow-[0_10px_30px_rgba(59,130,246,0.2)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.4)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 relative z-10 min-w-[280px]">
+                        <i data-lucide="search" class="w-5 h-5"></i> <span>Search Extended Network</span>
+                    </button>
+                </div>
+            {% endif %}
+
         </div>
 
     </div>
@@ -556,7 +582,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         const loadingBar = document.getElementById('top-loading-bar');
 
-        // Initial fake progress on load
         if(loadingBar) {
             loadingBar.style.opacity = '1';
             loadingBar.style.width = '30%';
@@ -568,7 +593,6 @@
             }, 500);
         }
 
-        // Trigger loading bar when a user clicks a regular link
         document.addEventListener('click', (e) => {
             const target = e.target.closest('a');
             if (target && target.href && !target.href.startsWith('javascript:') && !target.href.startsWith('#') && target.target !== '_blank') {
@@ -577,7 +601,6 @@
                     loadingBar.style.width = '0%';
                     loadingBar.style.opacity = '1';
 
-                    // Small delay to allow CSS reset
                     setTimeout(() => {
                         loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
                         loadingBar.style.width = '60%';
@@ -604,7 +627,6 @@
         document.getElementById('login-gate-modal').classList.remove('hidden');
     }
 
-    // Modal / Drawer reset logic
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const bds = document.querySelectorAll('[id$="-backdrop"]');
@@ -627,7 +649,7 @@
         const navBd = document.getElementById('mobile-nav-backdrop');
 
         if (navDw.classList.contains('opacity-0')) {
-            closeAllDrawers(); // Safety close
+            closeAllDrawers();
             navBd.classList.remove('opacity-0', 'pointer-events-none');
             navBd.classList.add('opacity-100', 'pointer-events-auto');
 
@@ -640,7 +662,6 @@
         }
     }
 
-    // Hide bottom nav when typing on mobile so it doesn't block the screen
     document.addEventListener("DOMContentLoaded", function() {
         const bottomNav = document.getElementById('mobile-bottom-nav');
         if (bottomNav) {
@@ -656,5 +677,31 @@
             });
         }
     });
+
+    /* ==============================================
+       PREMIUM TEASER BUTTON LOGIC
+       ============================================== */
+    function handlePremiumClick(event) {
+        event.preventDefault();
+        const btn = document.getElementById('premium-teaser-btn');
+        const originalContent = btn.innerHTML;
+
+        // 1. Change to spinning state
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>Searching Database...</span>`;
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+        btn.classList.add('opacity-90', 'cursor-not-allowed');
+        btn.style.pointerEvents = 'none';
+
+        // 2. Simulate search delay then alert user
+        setTimeout(() => {
+            alert("To access the extended network and view thousands of additional profiles, you need to subscribe to Corelink Premium. Launching soon!");
+
+            // 3. Reset button back to normal
+            btn.innerHTML = originalContent;
+            if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+            btn.classList.remove('opacity-90', 'cursor-not-allowed');
+            btn.style.pointerEvents = 'auto';
+        }, 1800);
+    }
 </script>
 {% endblock content %}
