@@ -93,7 +93,7 @@
 {% endblock navbar %}
 
 {% block content %}
-<!-- PEERLIST-STYLE UNIVERSAL TOP LOADING BAR (Blue Theme) -->
+<!-- TOP LOADING BAR -->
 <div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(10,102,194,0.7), 0 0 4px rgba(10,102,194,0.4);"></div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,29 +125,26 @@
     .font-serif-pc { font-family: 'Playfair Display', serif; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    /* Scrollbars & Mobile Masks */
+    /* ── Scrollbars ── */
     .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
     .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
     .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
-
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .horizontal-mask {
-        -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-        mask-image: linear-gradient(to right, black 85%, transparent 100%);
-    }
-
+    .horizontal-mask { -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%); mask-image: linear-gradient(to right, black 85%, transparent 100%); }
     @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; } }
 
+    /* ── Canvas / Layout ──
+       FIX: Reduced 1280px padding from 4rem → 2.5rem so content
+       isn't squished on standard 1440px monitors.
+    ── */
     .app-canvas {
         width: 100%;
         position: relative;
         z-index: 10;
         padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-
     @media (min-width: 768px) {
         .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
     }
@@ -155,9 +152,20 @@
         .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
     }
     @media (min-width: 1280px) {
-        .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; }
+        /* FIXED: was calc(280px + 4rem) which crushed the content column */
+        .app-canvas { padding-left: calc(280px + 2.5rem); padding-right: 2.5rem; }
     }
 
+    /* ── Bento Card ──
+       FIX 1: Removed `isolation: isolate` — it created a stacking
+               context that trapped z-index values, making buttons
+               un-clickable relative to sibling layers.
+       FIX 2: Changed `overflow: visible` → `overflow: hidden` so
+               decorative absolute blobs don't bleed outside rounded
+               corners and cause visual mess.
+       FIX 3: Reduced PC border-radius from 2.5rem → 2rem for a
+               more proportional look on wide screens.
+    ── */
     .bento-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
@@ -165,16 +173,17 @@
         box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
         position: relative;
         z-index: 10;
-        isolation: isolate;
+        /* isolation: isolate; ← REMOVED: was causing stacking context button-click bug */
+        overflow: hidden; /* CHANGED from visible: prevents blob bleed */
         transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
-        overflow: visible;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } /* was 2.5rem */ }
     .bento-card:hover {
         box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.15), 0 4px 6px -2px rgba(10, 102, 194, 0.05);
         border-color: rgba(203, 213, 225, 1);
     }
 
+    /* ── Inputs ── */
     .premium-input {
         width: 100%;
         border: 1.5px solid rgba(226, 232, 240, 0.9);
@@ -187,15 +196,13 @@
         padding: 0.95rem 1rem;
         outline: none;
         appearance: none;
-        position: relative;
-        z-index: 1;
     }
     .premium-input:focus {
         border-color: rgba(10, 102, 194, 0.45);
         box-shadow: 0 10px 28px -14px rgba(10, 102, 194, 0.35);
     }
 
-    /* Upgraded Insight Banners (Help Text - Blue Theme) */
+    /* ── Insight Banners ── */
     .insight-banner {
         background: rgba(248, 250, 252, 0.8);
         border: 1px solid rgba(226, 232, 240, 0.9);
@@ -203,8 +210,6 @@
         border-radius: 1rem;
         padding: 1rem 1.25rem;
         margin-bottom: 1.5rem;
-        position: relative;
-        z-index: 10;
     }
     .insight-banner p {
         font-family: var(--font-body);
@@ -220,51 +225,80 @@
         .insight-banner p { font-size: 15px; }
     }
 
-    /* =============================================
-       ROBUST FIX: GUARANTEED CLICKABILITY FOR BUTTONS & LINKS
-       ============================================= */
-    .bento-card a[href],
-    .bento-card button,
-    .bento-card select,
-    .bento-card input,
-    .group\/empty {
-        position: relative !important;
-        z-index: 50 !important;
-        pointer-events: auto !important;
-        cursor: pointer !important;
+    /* ══════════════════════════════════════════════
+       BUTTON CLICKABILITY — CLEAN APPROACH
+       ──────────────────────────────────────────────
+       The original code had three overlapping bugs:
+       1. `.pointer-events-none` (a global Tailwind utility)
+          was set to `pointer-events: none !important` —
+          this killed clicks on EVERYTHING with that class,
+          including icon wrappers inside buttons.
+       2. `isolation: isolate` on .bento-card created a
+          stacking context that trapped z-index competition.
+       3. Excessive !important z-index wars between z-50/z-60
+          rules that fought each other.
+
+       SOLUTION: Remove all the above and use ONE clean rule —
+       only suppress pointer-events on elements that are truly
+       decorative (aria-hidden direct children of bento-card).
+    ══════════════════════════════════════════════ */
+
+    /* Only block clicks on DECORATIVE elements inside cards */
+    .bento-card > [aria-hidden="true"] {
+        pointer-events: none;
     }
 
-    /* Clean Square Manage Button */
+    /* ── Manage Icon Button ── */
     .btn-manage-icon {
-        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        width: 44px; height: 44px; border-radius: 0.85rem; background: transparent; border: 1.5px solid rgba(226, 232, 240, 0.9);
-        color: #64748b; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s var(--ease-magic); flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 0.85rem;
+        background: transparent;
+        border: 1.5px solid rgba(226, 232, 240, 0.9);
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s var(--ease-magic);
+        flex-shrink: 0;
+        cursor: pointer;
+        text-decoration: none;
     }
     @media (min-width: 768px) { .btn-manage-icon { width: 46px; height: 46px; border-radius: 1rem; } }
     .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
     .btn-manage-icon:active { transform: scale(0.92); }
 
-    /* High-contrast Blue Add Button (Wide on Mobile) */
+    /* ── Add Solid Button ── */
     .btn-add-solid {
-        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 44px; padding: 0 1.25rem; border-radius: 0.85rem; background: #0A66C2; color: #ffffff;
-        font-size: 13.5px; font-weight: 900; letter-spacing: 0.02em; border: none;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
+        height: 44px;
+        padding: 0 1.25rem;
+        border-radius: 0.85rem;
+        background: #0A66C2;
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic);
+        text-decoration: none;
+        white-space: nowrap;
         box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.4);
+        cursor: pointer;
     }
     @media (min-width: 768px) { .btn-add-solid { height: 46px; padding: 0 1.5rem; border-radius: 1rem; font-size: 14px; } }
     .btn-add-solid:hover { background: #084e96; transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(10, 102, 194, 0.5); }
     .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.4); }
 
+    /* ── Action / Secondary Buttons ── */
     .btn-action, .btn-secondary {
-        position: relative !important;
-        z-index: 60 !important;
-        pointer-events: auto !important;
-        touch-action: manipulation !important;
-        cursor: pointer !important;
+        cursor: pointer;
         min-height: 48px;
         border-radius: 9999px;
-        display: inline-flex !important;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.4rem;
@@ -272,10 +306,7 @@
         white-space: nowrap;
         text-decoration: none;
     }
-
-    @media (min-width: 768px) {
-        .btn-action, .btn-secondary { min-height: 46px; }
-    }
+    @media (min-width: 768px) { .btn-action, .btn-secondary { min-height: 46px; } }
 
     .btn-action { background: #0f172a; color: white; font-weight: 800; font-size: 13px; padding: 0.75rem 1.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(15,23,42,0.4); background: #1e293b; }
@@ -285,96 +316,141 @@
     .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
     .btn-secondary:active { transform: scale(0.96); }
 
-    /* Force background decorative elements to stay out of the way of clicks */
-    .bento-card > .absolute,
-    .bento-card [aria-hidden="true"],
-    .pointer-events-none {
-        pointer-events: none !important;
+    /* ── Empty-state clickable rows ── */
+    .empty-cta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 1.25rem;
+        border-radius: 1rem;
+        border: 2px dashed rgba(226, 232, 240, 0.9);
+        background: #ffffff;
+        transition: all 0.25s var(--ease-magic);
+        cursor: pointer;
+        text-decoration: none;
     }
+    .empty-cta:hover { background: #F8FAFC; border-color: #93C5FD; }
+    .empty-cta-icon {
+        width: 2rem; height: 2rem; border-radius: 9999px;
+        background: #F1F5F9; color: #94A3B8;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.25s var(--ease-magic); flex-shrink: 0;
+    }
+    .empty-cta:hover .empty-cta-icon { background: #ffffff; color: #0A66C2; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+    .empty-cta-label { font-weight: 700; color: #475569; font-size: 14px; transition: color 0.2s; }
+    .empty-cta:hover .empty-cta-label { color: #1E293B; }
 
-    /* Animations */
+    /* ── Animations ── */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
 
     @keyframes slowPan { 0% { transform: scale(1.1) translate(0, 0); } 50% { transform: scale(1.1) translate(-10px, -10px); } 100% { transform: scale(1.1) translate(0, 0); } }
     .bg-pan { animation: slowPan 20s ease-in-out infinite; }
 
-    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    /* ── Drawers ── */
+    .drawer-open  { transform: translateY(0);    box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
     .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
+
+    /* ── Section header button group — sits above card content ── */
+    .card-actions { position: relative; z-index: 20; }
 </style>
 
 <main class="app-canvas anim-smooth-appear">
-    <div class="max-w-[1200px] mx-auto w-full relative z-10">
+    <!-- FIX: max-w changed from 1200px → 920px. On a 1440px screen with a
+         280px sidebar + 2.5rem padding each side, the real estate is ~1060px.
+         920px fills it comfortably without over-stretching bento cards. -->
+    <div class="max-w-[920px] mx-auto w-full">
 
-        <!-- MAIN IDENTITY BOX -->
-        <div class="bento-card md:rounded-[3rem] relative flex flex-col w-full mb-6 lg:mb-10" id="profile-hero">
+        <!-- ══════════════════════════════════
+             PROFILE HERO CARD
+        ══════════════════════════════════ -->
+        <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-8" id="profile-hero">
 
-            <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[1.7rem] md:rounded-t-[3rem]">
+            <!-- Cover Image
+                 FIX: Added lg/xl height steps so the cover scales
+                 gracefully instead of sitting at a fixed 250px on all
+                 desktop sizes. -->
+            <div class="relative h-[140px] sm:h-[180px] md:h-[220px] lg:h-[240px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[2rem]">
                 {% if user.cover_image %}
-                    <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center">
+                    <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
                 {% else %}
-                    <!-- Premium Light Fallback -->
                     <div class="w-full h-full bg-gradient-to-tr from-blue-50 via-slate-50 to-blue-100 relative overflow-hidden bg-pan">
-                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#0A66C20a_1px,transparent_1px),linear-gradient(to_bottom,#0A66C20a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-[#0A66C2]/10 blur-[60px] rounded-full pointer-events-none"></div>
-                        <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 blur-[60px] rounded-full pointer-events-none"></div>
+                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#0A66C20a_1px,transparent_1px),linear-gradient(to_bottom,#0A66C20a_1px,transparent_1px)] bg-[size:24px_24px]" aria-hidden="true"></div>
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-[#0A66C2]/10 blur-[60px] rounded-full" aria-hidden="true"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 blur-[60px] rounded-full" aria-hidden="true"></div>
                     </div>
                 {% endif %}
-                <a href="{% url 'media_manager' %}" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-[#0A66C2] hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></a>
+                <!-- Cover edit button — z-20 is sufficient now that bento-card has no isolation -->
+                <a href="{% url 'media_manager' %}" class="absolute top-4 md:top-5 right-4 md:right-5 w-10 h-10 md:w-11 md:h-11 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-[#0A66C2] hover:scale-110 transition-all shadow-lg z-20" aria-label="{% trans 'Edit cover image' %}">
+                    <i data-lucide="image" class="w-4 h-4 md:w-5 md:h-5"></i>
+                </a>
             </div>
 
-            <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col">
-                <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
-                    <div class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-full aspect-square border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer" onclick="window.location.href='{% url 'media_manager' %}'">
+            <!-- Hero Body -->
+            <div class="px-6 sm:px-8 md:px-10 pb-8 md:pb-12 relative flex flex-col">
+
+                <!-- Avatar -->
+                <div class="relative w-max -mt-[4rem] md:-mt-[5rem] mb-4 md:mb-6 shrink-0 transition-transform hover:-translate-y-1 duration-300">
+                    <div class="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] md:w-[160px] md:h-[160px] rounded-full border-[5px] md:border-[7px] border-white bg-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/avatar cursor-pointer" onclick="window.location.href='{% url 'media_manager' %}'">
                         {% if user.avatar %}
-                            <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
-                                <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-md"></i>
+                            <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-500" alt="{{ user.full_name }}">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center" aria-hidden="true">
+                                <i data-lucide="camera" class="w-8 h-8 text-white drop-shadow-md"></i>
                             </div>
                         {% else %}
-                            <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-500 group-hover/avatar:bg-blue-50 group-hover/avatar:text-[#0A66C2] transition-colors duration-300 pointer-events-none">
-                                <i data-lucide="camera" class="w-10 h-10 md:w-12 md:h-12 mb-1 md:mb-2"></i>
-                                <span class="text-[11px] md:text-[12px] font-black uppercase tracking-widest">Upload</span>
+                            <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-500 group-hover/avatar:bg-blue-50 group-hover/avatar:text-[#0A66C2] transition-colors duration-300" aria-hidden="true">
+                                <i data-lucide="camera" class="w-10 h-10 mb-1"></i>
+                                <span class="text-[11px] font-black uppercase tracking-widest">Upload</span>
                             </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 md:gap-10 w-full shrink-0">
-                    <div class="flex-1 w-full">
-                        <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] md:text-[42px] font-black text-slate-900 tracking-tight leading-none mb-2 md:mb-3">{{ user.full_name|default:user.phone_number }}</h1>
+                <!-- Name, Title, Meta + CTA Buttons -->
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-5 md:gap-8 w-full">
+                    <div class="flex-1 w-full min-w-0">
+                        <h1 class="text-[clamp(1.6rem,3.5vw,2.2rem)] font-black text-slate-900 tracking-tight leading-none mb-2">{{ user.full_name|default:user.phone_number }}</h1>
                         {% if headlines.first or portfolio.field_of_interest %}
-                            <p class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-blue-500 font-extrabold text-[16px] sm:text-[18px] md:text-[22px]">
+                            <p class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-blue-500 font-extrabold text-[15px] sm:text-[17px] md:text-[19px] mb-0">
                                 {% if headlines.first %}{{ headlines.first.title }}{% else %}{{ portfolio.field_of_interest }}{% endif %}
                             </p>
                         {% endif %}
-
-                        <div class="flex flex-wrap items-center gap-3 md:gap-4 mt-6 md:mt-8">
-                            <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="map-pin" class="w-4 h-4 md:w-4.5 md:h-4.5 text-[#0A66C2]"></i> {{ portfolio.location|default:_("Location not set") }}</span>
+                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-5">
+                            <span class="flex items-center gap-1.5 text-[12.5px] md:text-[13.5px] font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#0A66C2] shrink-0"></i>
+                                {{ portfolio.location|default:_("Location not set") }}
+                            </span>
                             {% if portfolio.institution %}
-                            <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="building-2" class="w-4 h-4 md:w-4.5 md:h-4.5 text-slate-500"></i> {{ portfolio.institution }}</span>
+                            <span class="flex items-center gap-1.5 text-[12.5px] md:text-[13.5px] font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
+                                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                                {{ portfolio.institution }}
+                            </span>
                             {% endif %}
                             {% if portfolio.years_experience > 0 %}
-                            <span class="flex items-center gap-1.5 md:gap-2 text-[13px] md:text-[14px] font-bold text-slate-700 bg-white border border-slate-200 px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 md:w-4.5 md:h-4.5 text-slate-500"></i> {{ portfolio.years_experience }} {% trans "Yrs Exp" %}</span>
+                            <span class="flex items-center gap-1.5 text-[12.5px] md:text-[13.5px] font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
+                                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                                {{ portfolio.years_experience }} {% trans "Yrs Exp" %}
+                            </span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 mt-4 lg:mt-0 lg:pt-2">
+                    <!-- CTA Buttons — no z-index tricks needed now -->
+                    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto shrink-0 lg:pt-1">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
-                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none">
+                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 flex-1 sm:flex-none">
                                     <i data-lucide="building" class="w-4 h-4"></i> <span>{% trans "Manage Company" %}</span>
                                 </a>
                             {% else %}
-                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 shadow-emerald-500/20 flex-1 sm:flex-none">
+                                <a href="{% url 'company_create' %}" class="btn-action !bg-gradient-to-r !from-emerald-500 !to-teal-600 hover:!from-emerald-600 hover:!to-teal-700 flex-1 sm:flex-none">
                                     <i data-lucide="plus-circle" class="w-4 h-4"></i> <span>{% trans "Add Company" %}</span>
                                 </a>
                             {% endif %}
                         {% endif %}
-
-                        <a href="{% if portfolio.slug %}{% url 'public_profile' portfolio.slug %}{% else %}#{% endif %}" target="_blank" class="btn-action flex-1 sm:flex-none {% if not portfolio.slug %}opacity-50 cursor-not-allowed{% endif %}">
+                        <a href="{% if portfolio.slug %}{% url 'public_profile' portfolio.slug %}{% else %}#{% endif %}" target="_blank" class="btn-action flex-1 sm:flex-none {% if not portfolio.slug %}opacity-50 pointer-events-none{% endif %}">
                             <i data-lucide="external-link" class="w-4 h-4"></i> <span>{% trans "Public Profile" %}</span>
                         </a>
                         <a href="{% url 'profile_settings' %}" class="btn-secondary flex-1 sm:flex-none">
@@ -383,431 +459,423 @@
                     </div>
                 </div>
 
-                <!-- Professional Narrative (Bio) -->
-                <div id="hero-bio" class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative w-full" style="overflow: hidden;">
-                    <div class="relative z-10 flex flex-col h-full max-w-5xl">
-                        <div class="flex items-center justify-end mb-2 md:mb-4">
-                            <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors flex items-center gap-1.5 min-h-[44px] border border-transparent hover:border-blue-100 cursor-pointer relative z-50">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5 md:w-4 md:h-4"></i> <span>{% if portfolio.bio_narrative %}{% trans "Edit Story" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
-                            </button>
-                        </div>
-
-                        <div class="insight-banner">
-                            <p>{% trans "Write a professional summary detailing your background, focus, and future goals to build a complete profile." %}</p>
-                        </div>
-
-                        {% if not portfolio.bio_narrative %}
-                            <button onclick="openBioEditor()" class="w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 group/empty cursor-pointer relative z-50">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                                <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Click here to write your professional summary" %}</h4>
-                            </button>
-                        {% else %}
-                            <div class="relative flex-1" id="bio-container">
-                                <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 95px;">
-                                    <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-700 font-medium leading-[1.9] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
-                                    <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-14 md:h-20 bg-gradient-to-t from-slate-50 to-transparent transition-opacity duration-300 pointer-events-none"></div>
-                                </div>
-                                <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 md:mt-5 text-[#0A66C2] font-black text-[13px] md:text-[14px] hover:text-blue-800 flex items-center gap-1.5 min-h-[44px] transition-colors cursor-pointer relative z-50"><span id="bio-btn-text">{% trans "Read More" %}</span> <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i></button>
-                            </div>
-                        {% endif %}
+                <!-- Professional Bio -->
+                <div class="p-5 sm:p-6 md:p-8 bg-slate-50/60 rounded-2xl border border-slate-200/80 mt-6 md:mt-8 shadow-inner">
+                    <div class="flex items-center justify-end mb-3">
+                        <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 min-h-[40px] border border-transparent hover:border-blue-100 cursor-pointer">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            <span>{% if portfolio.bio_narrative %}{% trans "Edit Story" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
+                        </button>
                     </div>
+
+                    <div class="insight-banner">
+                        <p>{% trans "Write a professional summary detailing your background, focus, and future goals to build a complete profile." %}</p>
+                    </div>
+
+                    {% if not portfolio.bio_narrative %}
+                        <button onclick="openBioEditor()" class="empty-cta w-full">
+                            <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                            <span class="empty-cta-label">{% trans "Click here to write your professional summary" %}</span>
+                        </button>
+                    {% else %}
+                        <div id="bio-container">
+                            <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 95px;">
+                                <p class="text-[14.5px] sm:text-[15px] md:text-[16px] text-slate-700 font-medium leading-[1.85] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
+                                <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50/90 to-transparent transition-opacity duration-300 pointer-events-none" aria-hidden="true"></div>
+                            </div>
+                            <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 text-[#0A66C2] font-black text-[13px] hover:text-blue-800 flex items-center gap-1.5 min-h-[40px] transition-colors cursor-pointer">
+                                <span id="bio-btn-text">{% trans "Read More" %}</span>
+                                <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
+                            </button>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- MODULAR BENTO CARDS -->
-        <div class="flex flex-col gap-6 lg:gap-8 mb-6 lg:mb-12">
+        <!-- ══════════════════════════════════
+             MODULAR BENTO CARDS
+        ══════════════════════════════════ -->
+        <div class="flex flex-col gap-5 lg:gap-6 mb-6 lg:mb-8">
 
-            <!-- 0. Headlines (Full-Width Card) -->
-            <div id="section-headlines" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Headlines" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 0. Headlines ── -->
+            <div id="section-headlines" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Headlines" %}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Title" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Title" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Add your current professional titles (e.g., 'Software Engineer') to define your expertise." %}</p>
                 </div>
-                <div class="flex-1">
-                    {% if headlines %}
-                        <div class="space-y-3">
-                            {% for hl in headlines|slice:":3" %}
-                            <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:shadow-md flex items-center gap-4 transition-all cursor-default">
-                                <div class="overflow-hidden">
-                                    <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ hl.title }}</h4>
-                                    {% if hl.is_primary %}
-                                        <span class="inline-block mt-0.5 text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em]">{% trans "Primary" %}</span>
-                                    {% endif %}
-                                </div>
+                {% if headlines %}
+                    <div class="space-y-3">
+                        {% for hl in headlines|slice:":3" %}
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:shadow-md flex items-center gap-4 transition-all">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-[14px]">{{ hl.title }}</h4>
+                                {% if hl.is_primary %}
+                                    <span class="inline-block mt-0.5 text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em]">{% trans "Primary" %}</span>
+                                {% endif %}
                             </div>
-                            {% endfor %}
                         </div>
-                    {% else %}
-                        <a href="{% url 'headline_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add your title" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'headline_create' %}" class="empty-cta">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Add your title" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 1. Skills (Full-Width Card) -->
-            <div id="section-skills" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_skills' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 1. Skills ── -->
+            <div id="section-skills" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_skills' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'skill_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Skill" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Skill" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "List technical tools and methodologies. Comprehensive skills strengthen your profile." %}</p>
                 </div>
-                <div class="flex-1">
-                    {% if skills %}
-                        <div class="flex flex-wrap gap-2.5 md:gap-3">
-                            {% for skill in skills|slice:":10" %}
-                            <div class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[13px] md:text-[14px] font-bold text-slate-700 shadow-sm hover:border-[#0A66C2] hover:text-[#0A66C2] transition-all cursor-default">
-                                {{ skill.name }}
-                            </div>
-                            {% endfor %}
+                {% if skills %}
+                    <div class="flex flex-wrap gap-2 md:gap-2.5">
+                        {% for skill in skills|slice:":10" %}
+                        <div class="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-[13px] md:text-[13.5px] font-bold text-slate-700 shadow-sm hover:border-[#0A66C2] hover:text-[#0A66C2] transition-all">
+                            {{ skill.name }}
                         </div>
-                    {% else %}
-                        <a href="{% url 'skill_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "List your strengths" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'skill_create' %}" class="empty-cta">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "List your strengths" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 2. Credentials (Full-Width Card) -->
-            <div id="section-education" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.edu_title|default:"Credentials" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_credentials' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 2. Credentials ── -->
+            <div id="section-education" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.edu_title|default:"Credentials" }}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_credentials' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Credential" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Credential" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Add educational background, degrees, licenses, and completed certificates." %}</p>
                 </div>
-                <div class="flex-1 space-y-3">
-                    {% if credentials %}
+                {% if credentials %}
+                    <div class="space-y-3">
                         {% for cred in credentials|slice:":3" %}
-                        <div class="p-3.5 md:p-4 rounded-xl border border-slate-200/80 bg-white hover:shadow-md flex flex-col gap-1 transition-all cursor-default">
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:shadow-md flex flex-col gap-0.5 transition-all">
                             <h4 class="font-bold text-slate-800 text-[14px] truncate">{{ cred.title }}</h4>
                             <p class="text-slate-500 text-[12px] font-semibold truncate">{{ cred.issuer }}</p>
                         </div>
                         {% endfor %}
-                    {% else %}
-                        <a href="{% url 'credential_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add education" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'credential_create' %}" class="empty-cta">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Add education" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 3. Projects Grid (Full-Width Card) -->
-            <div id="section-projects" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_projects' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 3. Portfolio / Projects ── -->
+            <div id="section-projects" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_projects' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'project_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Project" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Project" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Upload examples of past work, case studies, business plans, or creative projects." %}</p>
                 </div>
-                <div class="flex-1">
-                    {% if projects %}
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            {% for project in projects|slice:":4" %}
-                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative group/img block border border-slate-200 hover:border-[#0A66C2] transition-colors shadow-sm bg-white z-50 pointer-events-auto">
-                                {% if project.gallery.first %}
-                                    <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                                        <span class="text-[13px] text-white font-bold line-clamp-2 leading-tight drop-shadow-md">{{ project.title }}</span>
-                                    </div>
-                                {% else %}
-                                    <div class="w-full h-full bg-slate-50 flex flex-col items-start justify-end p-4 group-hover/img:bg-blue-50/50 transition-colors border-t-[4px] border-[#0A66C2]">
-                                        <h4 class="font-bold text-slate-800 text-[14.5px] line-clamp-3 leading-snug">{{ project.title }}</h4>
-                                    </div>
-                                {% endif %}
-                            </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'project_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 mt-4 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Showcase past work" %}</h4>
+                {% if projects %}
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                        {% for project in projects|slice:":4" %}
+                        <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative group/img block border border-slate-200 hover:border-[#0A66C2] transition-all shadow-sm bg-white">
+                            {% if project.gallery.first %}
+                                <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105" alt="{{ project.title }}">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-end p-3" aria-hidden="true">
+                                    <span class="text-[12px] text-white font-bold line-clamp-2 leading-tight drop-shadow">{{ project.title }}</span>
+                                </div>
+                            {% else %}
+                                <div class="w-full h-full bg-slate-50 flex flex-col items-start justify-end p-4 group-hover/img:bg-blue-50/40 transition-colors border-t-[3px] border-[#0A66C2]">
+                                    <h4 class="font-bold text-slate-800 text-[13.5px] line-clamp-3 leading-snug">{{ project.title }}</h4>
+                                </div>
+                            {% endif %}
                         </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'project_create' %}" class="empty-cta mt-1">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Showcase past work" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 4. Experience (Full-Width Card) -->
-            <div id="section-experience" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.exp_title|default:"Experience" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_experiences' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 4. Experience ── -->
+            <div id="section-experience" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.exp_title|default:"Experience" }}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_experiences' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Experience" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Experience" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Add detailed career and volunteer history to provide a complete experience timeline." %}</p>
                 </div>
-                <div class="flex-1 mt-2">
-                    {% if experiences %}
-                        <div class="relative pl-5 md:pl-6 space-y-6 before:absolute before:inset-y-1 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200 before:pointer-events-none">
-                            {% for exp in experiences|slice:":3" %}
-                            <div class="relative group/item">
-                                <div class="absolute -left-[25px] md:-left-[29px] top-1.5 w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-white border-[3px] border-slate-300 group-hover/item:border-[#0A66C2] group-hover/item:scale-125 transition-all z-10 pointer-events-none"></div>
-                                <h4 class="font-bold text-slate-800 text-[14.5px] md:text-[15.5px] leading-tight mb-1 group-hover/item:text-[#0A66C2] transition-colors">{{ exp.role_title }}</h4>
-                                <p class="text-slate-500 text-[13px] font-medium">{{ exp.company_name }}</p>
-                            </div>
-                            {% endfor %}
+                {% if experiences %}
+                    <div class="relative pl-5 md:pl-6 space-y-5 before:absolute before:inset-y-1 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200">
+                        {% for exp in experiences|slice:":3" %}
+                        <div class="relative group/item">
+                            <div class="absolute -left-[25px] md:-left-[29px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-300 group-hover/item:border-[#0A66C2] group-hover/item:scale-125 transition-all" aria-hidden="true"></div>
+                            <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] leading-tight mb-0.5 group-hover/item:text-[#0A66C2] transition-colors">{{ exp.role_title }}</h4>
+                            <p class="text-slate-500 text-[12.5px] font-medium">{{ exp.company_name }}</p>
                         </div>
-                    {% else %}
-                        <a href="{% url 'experience_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 mt-4 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Add work experience" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'experience_create' %}" class="empty-cta mt-1">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Add work experience" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 5. My Goal & Vision (Full-Width Card) -->
-            <div id="section-vision" class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
-                <div class="absolute top-4 right-8 text-[120px] md:text-[160px] font-serif-pc leading-none text-slate-100/50 select-none pointer-events-none" aria-hidden="true">"</div>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 5. Goal & Vision ── -->
+            <div id="section-vision" class="bento-card p-6 md:p-8 flex flex-col bg-white/80">
+                <!-- Decorative quote mark — aria-hidden so pointer-events rule suppresses it correctly -->
+                <div class="absolute top-4 right-6 text-[100px] md:text-[130px] font-serif-pc leading-none text-slate-100/60 select-none" aria-hidden="true">"</div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Vision" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Vision" %}</span>
                         </a>
                     </div>
                 </div>
-                <div class="insight-banner relative z-10">
+                <div class="insight-banner">
                     <p>{% trans "State primary professional goals and long-term vision to show what you are building." %}</p>
                 </div>
-                <div class="flex-1 mt-4 relative z-10">
-                    {% if vision_blocks %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {% for vision in vision_blocks|slice:":2" %}
-                            <div class="p-6 bg-white border border-slate-200/80 rounded-2xl cursor-default hover:shadow-sm transition-all">
-                                <span class="inline-block px-3 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest rounded-md mb-3 shadow-sm">Vision</span>
-                                <h4 class="font-serif-pc font-bold text-slate-900 text-[20px] mb-2 truncate">{{ vision.title }}</h4>
-                                <p class="text-slate-600 text-[14px] line-clamp-4 leading-relaxed">{{ vision.content }}</p>
-                            </div>
-                            {% endfor %}
+                {% if vision_blocks %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        {% for vision in vision_blocks|slice:":2" %}
+                        <div class="p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-sm transition-all">
+                            <span class="inline-block px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest rounded mb-2.5 shadow-sm">Vision</span>
+                            <h4 class="font-serif-pc font-bold text-slate-900 text-[18px] mb-1.5 truncate">{{ vision.title }}</h4>
+                            <p class="text-slate-600 text-[13.5px] line-clamp-4 leading-relaxed">{{ vision.content }}</p>
                         </div>
-                    {% else %}
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Define your primary goal" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="empty-cta">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Define your primary goal" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 6. Industry Thoughts (Full-Width Card) -->
-            <div id="section-thoughts" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Industry Thoughts" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_essays' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 6. Industry Thoughts ── -->
+            <div id="section-thoughts" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Industry Thoughts" %}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_essays' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Essay" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Essay" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Publish short essays or insights about your industry to demonstrate knowledge." %}</p>
                 </div>
-                <div class="flex-1 mt-4">
-                    {% if essays %}
-                        <div class="space-y-4">
-                            {% for essay in essays|slice:":3" %}
-                            <div class="flex gap-4 p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-md transition-all cursor-default">
-                                {% if essay.media_proof %}
-                                    <div class="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100">
-                                        <img src="{{ essay.media_proof.url }}" class="w-full h-full object-cover">
-                                    </div>
-                                {% endif %}
-                                <div class="flex-1 overflow-hidden flex flex-col justify-center">
-                                    <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">{{ essay.created_at|date:"M d, Y" }}</span>
-                                    <h4 class="font-bold text-slate-900 text-[15px] sm:text-[16px] truncate mb-1.5">{{ essay.title }}</h4>
-                                    <p class="text-[13px] text-slate-500 line-clamp-2 leading-relaxed">{{ essay.content }}</p>
+                {% if essays %}
+                    <div class="space-y-3 mt-1">
+                        {% for essay in essays|slice:":3" %}
+                        <div class="flex gap-4 p-4 md:p-5 bg-white border border-slate-200/80 rounded-2xl hover:shadow-md transition-all">
+                            {% if essay.media_proof %}
+                                <div class="w-18 h-18 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-slate-100">
+                                    <img src="{{ essay.media_proof.url }}" class="w-full h-full object-cover" alt="">
                                 </div>
+                            {% endif %}
+                            <div class="flex-1 overflow-hidden flex flex-col justify-center">
+                                <span class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">{{ essay.created_at|date:"M d, Y" }}</span>
+                                <h4 class="font-bold text-slate-900 text-[14.5px] sm:text-[15.5px] truncate mb-1">{{ essay.title }}</h4>
+                                <p class="text-[13px] text-slate-500 line-clamp-2 leading-relaxed">{{ essay.content }}</p>
                             </div>
-                            {% endfor %}
                         </div>
-                    {% else %}
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Write your first industry insight" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'content_create' %}?type=ESSAY" class="empty-cta">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Write your first industry insight" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 7. Daily Progress (Full-Width Card) -->
-            <div id="section-progress" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Daily Progress" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+            <!-- ── 7. Daily Progress ── -->
+            <div id="section-progress" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Daily Progress" %}</h3>
+                    <div class="card-actions flex flex-row items-center gap-2 w-full sm:w-auto">
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-icon" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
                         <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Log" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Log daily progress, minor updates, or milestones to keep your profile active." %}</p>
                 </div>
-                <div class="flex-1 mt-4">
-                    {% if growth_logs %}
-                        <div class="relative pl-5 md:pl-6 space-y-6 before:absolute before:inset-y-2 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200 before:pointer-events-none">
-                            {% for log in growth_logs|slice:":4" %}
-                            <div class="relative group/item">
-                                <div class="absolute -left-[25px] md:-left-[29px] top-1.5 w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-white border-[3px] border-slate-300 group-hover/item:border-slate-500 group-hover/item:scale-125 transition-all z-10 pointer-events-none"></div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-[11.5px] font-black text-slate-400 uppercase tracking-widest">{{ log.created_at|date:"M d" }}</span>
-                                    <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">{{ log.get_category_display|default:"Log" }}</span>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-[14.5px] mb-1 group-hover/item:text-slate-900 transition-colors truncate">{{ log.title }}</h4>
-                                <p class="text-slate-500 text-[13px] font-medium line-clamp-2">{{ log.content }}</p>
+                {% if growth_logs %}
+                    <div class="relative pl-5 md:pl-6 space-y-5 mt-1 before:absolute before:inset-y-2 before:left-[7px] md:before:left-[9px] before:w-0.5 before:bg-slate-200">
+                        {% for log in growth_logs|slice:":4" %}
+                        <div class="relative group/item">
+                            <div class="absolute -left-[25px] md:-left-[29px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-300 group-hover/item:border-slate-500 group-hover/item:scale-125 transition-all" aria-hidden="true"></div>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">{{ log.created_at|date:"M d" }}</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">{{ log.get_category_display|default:"Log" }}</span>
                             </div>
-                            {% endfor %}
+                            <h4 class="font-bold text-slate-800 text-[14px] mb-0.5 group-hover/item:text-slate-900 transition-colors truncate">{{ log.title }}</h4>
+                            <p class="text-slate-500 text-[12.5px] font-medium line-clamp-2">{{ log.content }}</p>
                         </div>
-                    {% else %}
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Log your first daily win" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="empty-cta mt-1">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Log your first daily win" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
-            <!-- 8. Contact & Links (Full-Width Card) -->
-            <div id="section-contact" class="bento-card p-6 md:p-8 flex flex-col group relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contact & Network" %}</h3>
-                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50 pointer-events-auto">
+            <!-- ── 8. Contact & Network ── -->
+            <div id="section-contact" class="bento-card p-6 md:p-8 flex flex-col">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 w-full">
+                    <h3 class="font-heading text-[1.3rem] md:text-[1.45rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contact & Network" %}</h3>
+                    <div class="card-actions flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
                         <a href="{% url 'manage_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="settings-2" class="w-4 h-4" aria-hidden="true"></i>
                         </a>
-                        <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Social" %}</span>
+                        <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Social" %}</span>
                         </a>
-                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Contact" %}</span>
+                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+                            <span>{% trans "Add Contact" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="insight-banner">
                     <p>{% trans "Add your email, phone number, and social links so people can reach you." %}</p>
                 </div>
-                <div class="flex-1 mt-2">
-                    {% if user.contact_methods.all or user.social_links.all %}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-                            {% for contact in user.contact_methods.all|slice:":4" %}
-                            <div class="flex items-center gap-3.5 p-4 bg-white shadow-sm border border-slate-200/80 rounded-xl hover:shadow-md transition-all cursor-default">
-                                <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-600 border border-slate-100 shrink-0"><i data-lucide="mail" class="w-4.5 h-4.5"></i></div>
-                                <div class="overflow-hidden">
-                                    <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ contact.type }}</span>
-                                    <span class="block text-[14px] font-bold text-slate-800 truncate">{{ contact.value }}</span>
-                                </div>
+                {% if user.contact_methods.all or user.social_links.all %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mt-1">
+                        {% for contact in user.contact_methods.all|slice:":4" %}
+                        <div class="flex items-center gap-3 p-4 bg-white shadow-sm border border-slate-200/80 rounded-xl hover:shadow-md transition-all">
+                            <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-500 border border-slate-100 shrink-0">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
                             </div>
-                            {% endfor %}
-
-                            {% for social in user.social_links.all|slice:":6" %}
-                            <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3.5 p-4 bg-white shadow-sm border border-slate-200/80 rounded-xl hover:shadow-md transition-all group/social relative z-50 pointer-events-auto">
-                                <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-[#0A66C2] border border-slate-100 shrink-0 transition-colors"><i data-lucide="{{ social.icon_slug|default:'link' }}" class="w-4.5 h-4.5"></i></div>
-                                <div class="overflow-hidden">
-                                    <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ social.platform_name }}</span>
-                                    <span class="block text-[14px] font-bold text-slate-800 truncate group-hover/social:text-[#0A66C2] transition-colors">{% trans "Visit Profile" %}</span>
-                                </div>
-                            </a>
-                            {% endfor %}
+                            <div class="overflow-hidden">
+                                <span class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ contact.type }}</span>
+                                <span class="block text-[13.5px] font-bold text-slate-800 truncate">{{ contact.value }}</span>
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="flex gap-4 mt-4">
-                            <a href="{% url 'contact_create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-all p-5 flex items-center gap-3 relative z-50 pointer-events-auto">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-[#0A66C2] group-hover/empty:shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                                <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors">{% trans "Open doors by adding contact info" %}</h4>
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
+                        {% endfor %}
+                        {% for social in user.social_links.all|slice:":6" %}
+                        <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3 p-4 bg-white shadow-sm border border-slate-200/80 rounded-xl hover:shadow-md transition-all group/social">
+                            <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-[#0A66C2] border border-slate-100 shrink-0">
+                                <i data-lucide="{{ social.icon_slug|default:'link' }}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ social.platform_name }}</span>
+                                <span class="block text-[13.5px] font-bold text-slate-800 truncate group-hover/social:text-[#0A66C2] transition-colors">{% trans "Visit Profile" %}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'contact_create' %}" class="empty-cta mt-1">
+                        <span class="empty-cta-icon"><i data-lucide="plus" class="w-4 h-4"></i></span>
+                        <span class="empty-cta-label">{% trans "Open doors by adding contact info" %}</span>
+                    </a>
+                {% endif %}
             </div>
 
         </div>
 
-        <!-- MOVED MISSION & STRENGTH GRID TO BOTTOM -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-8 lg:mb-12 items-stretch" id="section-goal">
-            <!-- Premium Goal Card -->
-            <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col relative h-full">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 blur-[50px] rounded-full pointer-events-none" aria-hidden="true"></div>
-                <div class="relative z-10 flex flex-col h-full">
-                    <div class="mb-4 md:mb-5 flex justify-between items-start">
+        <!-- ══════════════════════════════════
+             GOAL + TRUST SCORE ROW
+        ══════════════════════════════════ -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-8 lg:mb-12 items-stretch" id="section-goal">
+
+            <!-- Goal Card -->
+            <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col">
+                <!-- Decorative blob — aria-hidden ensures it's pointer-blocked -->
+                <div class="absolute top-0 right-0 w-56 h-56 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 blur-[50px] rounded-full" aria-hidden="true"></div>
+                <div class="relative flex flex-col h-full">
+                    <div class="mb-4 flex justify-between items-start">
                         <div>
-                            <h3 class="text-[1.4rem] md:text-[1.8rem] font-black text-slate-900 tracking-tight leading-tight inline-block">{% trans "What are you looking for?" %}</h3>
-                            <div class="h-1 md:h-1.5 w-12 md:w-16 bg-gradient-to-r from-[#0A66C2] to-blue-500 rounded-full mt-2 md:mt-3"></div>
+                            <h3 class="text-[1.3rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight leading-tight">{% trans "What are you looking for?" %}</h3>
+                            <div class="h-1 w-12 bg-gradient-to-r from-[#0A66C2] to-blue-500 rounded-full mt-2"></div>
                         </div>
                         <div id="goal-loading" class="hidden text-[#0A66C2]">
-                            <i data-lucide="loader-2" class="w-5 h-5 md:w-6 md:h-6 animate-spin"></i>
+                            <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
                         </div>
                     </div>
-
                     <div class="insight-banner">
                         <p>{% trans "Select your current objective below to help the system match your portfolio with relevant opportunities." %}</p>
                     </div>
-
                     <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-4">
                         {% csrf_token %}
                         <div style="display:none;">
@@ -820,39 +888,43 @@
                             <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:'' }}</textarea>
                             <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
                         </div>
-
-                        <div class="relative group/select">
-                            <select name="current_search" onchange="autoSubmitGoal(this.form)" aria-label="{% trans 'Select your current goal' %}" class="premium-input pr-12 cursor-pointer relative z-50 pointer-events-auto">
-                                <option value="STARTUP" {% if portfolio.current_search == 'STARTUP' %}selected{% endif %}>{% trans "Looking for a Startup or Team" %}</option>
-                                <option value="PROJECT" {% if portfolio.current_search == 'PROJECT' %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
-                                <option value="MINDSET" {% if portfolio.current_search == 'MINDSET' %}selected{% endif %}>{% trans "Looking to meet people in my industry" %}</option>
-                                <option value="INTERN" {% if portfolio.current_search == 'INTERN' %}selected{% endif %}>{% trans "Looking for an Internship" %}</option>
+                        <div class="relative">
+                            <select name="current_search" onchange="autoSubmitGoal(this.form)" aria-label="{% trans 'Select your current goal' %}" class="premium-input pr-12 cursor-pointer">
+                                <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Looking for a Startup or Team" %}</option>
+                                <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
+                                <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Looking to meet people in my industry" %}</option>
+                                <option value="INTERN"    {% if portfolio.current_search == 'INTERN'    %}selected{% endif %}>{% trans "Looking for an Internship" %}</option>
                                 <option value="FULL_TIME" {% if portfolio.current_search == 'FULL_TIME' %}selected{% endif %}>{% trans "Looking for a Full-time Job" %}</option>
                                 <option value="PART_TIME" {% if portfolio.current_search == 'PART_TIME' %}selected{% endif %}>{% trans "Looking for a Part-time Job" %}</option>
-                                <option value="FUNDING" {% if portfolio.current_search == 'FUNDING' %}selected{% endif %}>{% trans "Looking for Funding or Investment" %}</option>
-                                <option value="LEARNING" {% if portfolio.current_search == 'LEARNING' %}selected{% endif %}>{% trans "Just focusing on Studying/Learning" %}</option>
+                                <option value="FUNDING"   {% if portfolio.current_search == 'FUNDING'   %}selected{% endif %}>{% trans "Looking for Funding or Investment" %}</option>
+                                <option value="LEARNING"  {% if portfolio.current_search == 'LEARNING'  %}selected{% endif %}>{% trans "Just focusing on Studying/Learning" %}</option>
                             </select>
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover/select:text-[#0A66C2] transition-colors z-20" aria-hidden="true">
-                                <i data-lucide="chevron-down" class="w-4 h-4 md:w-5 md:h-5"></i>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 pointer-events-none" aria-hidden="true">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Trust Score -->
-            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center h-full group cursor-default">
-                <div class="w-16 h-16 mx-auto bg-transparent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform pointer-events-none">
+            <!-- Trust Score Card -->
+            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center">
+                <div class="w-14 h-14 mx-auto flex items-center justify-center mb-3" aria-hidden="true">
                     <i data-lucide="shield-check" class="w-12 h-12 text-[#0A66C2] drop-shadow-sm"></i>
                 </div>
-                <span class="font-black text-[11px] md:text-[12px] tracking-[0.18em] uppercase text-slate-500 mb-2">{% trans "Trust Score" %}</span>
-                <span class="font-black text-5xl md:text-6xl text-slate-900 leading-none mb-6 font-heading">
-                     {% if portfolio.admin_rating == 5 %}100<span class="text-2xl text-slate-400">%</span>{% elif portfolio.admin_rating == 4 %}95<span class="text-2xl text-slate-400">%</span>{% elif portfolio.admin_rating == 3 %}75<span class="text-2xl text-slate-400">%</span>{% elif portfolio.admin_rating == 2 %}50<span class="text-2xl text-slate-400">%</span>{% elif portfolio.admin_rating == 1 %}25<span class="text-2xl text-slate-400">%</span>{% else %}10<span class="text-2xl text-slate-400">%</span>{% endif %}
+                <span class="font-black text-[11px] tracking-[0.18em] uppercase text-slate-500 mb-1">{% trans "Trust Score" %}</span>
+                <span class="font-black text-5xl md:text-6xl text-slate-900 leading-none mb-5 font-heading">
+                    {% if portfolio.admin_rating == 5 %}100<span class="text-2xl text-slate-400">%</span>
+                    {% elif portfolio.admin_rating == 4 %}95<span class="text-2xl text-slate-400">%</span>
+                    {% elif portfolio.admin_rating == 3 %}75<span class="text-2xl text-slate-400">%</span>
+                    {% elif portfolio.admin_rating == 2 %}50<span class="text-2xl text-slate-400">%</span>
+                    {% elif portfolio.admin_rating == 1 %}25<span class="text-2xl text-slate-400">%</span>
+                    {% else %}10<span class="text-2xl text-slate-400">%</span>{% endif %}
                 </span>
-                <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden relative shadow-inner mb-5">
-                    <div class="absolute top-0 bottom-0 left-0 bg-[#0A66C2] transition-all duration-1000 ease-out rounded-full" style="width: {% if portfolio.admin_rating == 5 %}100%{% elif portfolio.admin_rating == 4 %}95%{% elif portfolio.admin_rating == 3 %}75%{% elif portfolio.admin_rating == 2 %}50%{% elif portfolio.admin_rating == 1 %}25%{% else %}10%{% endif %};"></div>
+                <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner mb-4">
+                    <div class="h-full bg-[#0A66C2] transition-all duration-1000 ease-out rounded-full" style="width:{% if portfolio.admin_rating == 5 %}100%{% elif portfolio.admin_rating == 4 %}95%{% elif portfolio.admin_rating == 3 %}75%{% elif portfolio.admin_rating == 2 %}50%{% elif portfolio.admin_rating == 1 %}25%{% else %}10%{% endif %};"></div>
                 </div>
-                <p class="text-slate-600 text-[12.5px] font-semibold leading-relaxed bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                <p class="text-slate-600 text-[12px] font-semibold leading-relaxed bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
                     {% trans "Complete every section below to reach 100%. Fully detailed portfolios are prioritized by our platform." %}
                 </p>
             </div>
@@ -861,33 +933,28 @@
     </div>
 </main>
 
-<!-- ==============================================
-     MOBILE NAVIGATION DOCK
-     ============================================== -->
+<!-- ══════════════════════════════════
+     MOBILE BOTTOM NAV
+══════════════════════════════════ -->
 {% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
-
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
         <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
         <i data-lucide="user" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
         <span class="text-[11px] font-black whitespace-nowrap tracking-wide">My profile</span>
     </a>
-
     <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
     </a>
-
     <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
-
     <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
     </a>
-
     <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
         <div class="relative">
             <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
@@ -899,20 +966,25 @@
         </div>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
     </a>
-
 </nav>
 {% endif %}
 
-<!-- Bio Editor Canvas -->
+<!-- ══════════════════════════════════
+     BIO EDITOR MODAL
+══════════════════════════════════ -->
 <div id="bio-editor-backdrop" onclick="closeBioEditor()" class="fixed inset-0 bg-slate-900/40 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-md"></div>
-<div id="bio-editor-wrapper" class="fixed inset-0 z-[210] flex items-end justify-center md:items-center pointer-events-none opacity-0 transition-opacity duration-300 px-0 md:px-4 pb-0 md:pb-0">
-    <div id="bio-editor-modal" class="bg-white w-full md:max-w-3xl h-[85vh] md:h-[500px] rounded-t-[2.5rem] md:rounded-[2rem] shadow-2xl flex flex-col overflow-hidden transform translate-y-full md:translate-y-10 md:scale-95 transition-all duration-400 ease-out pointer-events-auto">
-        <div class="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-slate-100 bg-white/90 backdrop-blur-md sticky top-0 z-10">
-            <button onclick="closeBioEditor()" class="text-slate-500 font-bold text-[15px] flex items-center gap-2 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-colors min-h-[44px]"><i data-lucide="x" class="w-5 h-5"></i> {% trans "Cancel" %}</button>
-            <span class="font-heading font-black text-[14px] uppercase tracking-widest text-slate-500 hidden sm:block">{% trans "Professional Story" %}</span>
-            <button form="bio-edit-form" type="submit" id="submit-bio-btn" class="bg-[#0f172a] hover:bg-[#1e293b] text-white px-6 py-2 rounded-xl font-bold text-[14px] transition-all active:scale-[0.98] flex items-center gap-2 min-h-[44px] shadow-md">{% trans "Save Story" %}</button>
+<div id="bio-editor-wrapper" class="fixed inset-0 z-[210] flex items-end justify-center md:items-center pointer-events-none opacity-0 transition-opacity duration-300 px-0 md:px-4">
+    <div id="bio-editor-modal" class="bg-white w-full md:max-w-3xl h-[85vh] md:h-[500px] rounded-t-[2.5rem] md:rounded-[2rem] shadow-2xl flex flex-col overflow-hidden transform translate-y-full md:translate-y-10 md:scale-95 transition-all duration-300 ease-out pointer-events-auto">
+        <div class="flex items-center justify-between px-6 sm:px-8 py-4 border-b border-slate-100 bg-white/90 backdrop-blur-md">
+            <button onclick="closeBioEditor()" class="text-slate-500 font-bold text-[14px] flex items-center gap-2 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-colors min-h-[44px] cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i> {% trans "Cancel" %}
+            </button>
+            <span class="font-heading font-black text-[13px] uppercase tracking-widest text-slate-400 hidden sm:block">{% trans "Professional Story" %}</span>
+            <button form="bio-edit-form" type="submit" id="submit-bio-btn" class="bg-[#0f172a] hover:bg-[#1e293b] text-white px-5 py-2 rounded-xl font-bold text-[13.5px] transition-all active:scale-[0.98] flex items-center gap-2 min-h-[44px] shadow-md cursor-pointer">
+                {% trans "Save Story" %}
+            </button>
         </div>
-        <div class="flex-1 p-6 sm:p-10 overflow-y-auto custom-scroll bg-slate-50/50">
+        <div class="flex-1 p-5 sm:p-8 overflow-y-auto custom-scroll bg-slate-50/50">
             <form id="bio-edit-form" method="POST" action="{% url 'profile_settings' %}" onsubmit="handleBioSubmit(event)" class="max-w-3xl mx-auto h-full flex flex-col">
                 {% csrf_token %}
                 <div style="display:none;">
@@ -925,24 +997,28 @@
                     <input type="hidden" name="current_search" value="{{ portfolio.current_search|default:'LEARNING' }}">
                     <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
                 </div>
-                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input !h-full w-full flex-1 resize-none placeholder:text-slate-400" placeholder="{% trans 'Write a professional summary detailing your background, focus, and future goals to build a complete profile.' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
+                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input flex-1 resize-none placeholder:text-slate-400" style="height: 100%;" placeholder="{% trans 'Write a professional summary detailing your background, focus, and future goals to build a complete profile.' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Mobile Nav Drawer -->
+<!-- ══════════════════════════════════
+     MOBILE NAV DRAWER
+══════════════════════════════════ -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,env(safe-area-inset-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
-
-        <!-- ADDED: My Updates moved to Mobile Menu Drawer -->
-        <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="radio" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "My Updates" %}</button>
-
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="radio" class="w-4 h-4 text-[#0A66C2]"></i></div>
+            {% trans "My Updates" %}
+        </button>
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
-
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Portfolio Settings" %}</button>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Portfolio Settings" %}
+        </button>
         <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
             <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
             <span class="flex-1 flex justify-between items-center">
@@ -950,31 +1026,38 @@
                 <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
             </span>
         </button>
-        <a href="{% url 'logout' %}" class="w-full min-h-[44px] text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Log Out" %}</a>
+        <a href="{% url 'logout' %}" class="w-full min-h-[44px] p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2">
+            <div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
+            {% trans "Log Out" %}
+        </a>
     </div>
 </div>
 
-<!-- Language Drawer -->
+<!-- ══════════════════════════════════
+     LANGUAGE DRAWER
+══════════════════════════════════ -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 pointer-events-auto">
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,env(safe-area-inset-bottom))] prevent-select p-6 pointer-events-auto">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6 font-heading">{% trans "Select Language" %}</h3>
+    <h3 class="font-black text-[17px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            <span class="text-[14.5px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
         <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50/80 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            <span class="text-[14.5px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
     </form>
 </div>
 
-<!-- Clean Toast -->
-<div id="share-toast" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl transition-all duration-400 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
+<!-- ══════════════════════════════════
+     TOAST
+══════════════════════════════════ -->
+<div id="share-toast" class="fixed bottom-[100px] left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 translate-y-10 z-[300] font-bold text-[14px] flex items-center gap-3 w-max max-w-[90vw] pointer-events-none">
     <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
     <span id="toast-msg">{% trans "Success!" %}</span>
 </div>
@@ -982,119 +1065,103 @@
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
-    /* ==============================================
-       PEERLIST-STYLE UNIVERSAL LOADING BAR
-       ============================================== */
+    /* ── Page Loading Bar ── */
     document.addEventListener('DOMContentLoaded', () => {
         const loader = document.getElementById('global-page-loader');
         let loaderInterval;
 
         function startGlobalLoader() {
-            if(!loader) return;
+            if (!loader) return;
             loader.style.opacity = '1';
             loader.style.transitionDuration = '300ms';
             loader.style.width = '15%';
-
             let progress = 15;
             clearInterval(loaderInterval);
             loaderInterval = setInterval(() => {
-                progress += (Math.random() * 5 + 1); // jump by 1-6%
-                if(progress > 85) {
-                    progress = 85;
-                    clearInterval(loaderInterval); // hold at 85% until page naturally unloads
-                }
+                progress += (Math.random() * 5 + 1);
+                if (progress > 85) { progress = 85; clearInterval(loaderInterval); }
                 loader.style.transitionDuration = '200ms';
                 loader.style.width = progress + '%';
             }, 300);
         }
 
         function stopGlobalLoader() {
-            if(!loader) return;
+            if (!loader) return;
             clearInterval(loaderInterval);
             loader.style.transitionDuration = '200ms';
             loader.style.width = '100%';
             setTimeout(() => {
                 loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.transitionDuration = '0ms';
-                    loader.style.width = '0%';
-                }, 300);
+                setTimeout(() => { loader.style.transitionDuration = '0ms'; loader.style.width = '0%'; }, 300);
             }, 250);
         }
 
-        // Intercept standard link clicks
         document.body.addEventListener('click', (e) => {
             const link = e.target.closest('a');
-            if (link) {
-                const href = link.getAttribute('href');
-                const target = link.getAttribute('target');
-                const isJS = href && href.startsWith('javascript:');
-                const isHash = href && href.startsWith('#');
-                const isNewTab = target === '_blank';
-                const hasDownload = link.hasAttribute('download');
-
-                // Allow users to open in new tab with cmd/ctrl click without triggering loader
-                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
-
-                if (href && !isJS && !isHash && !isNewTab && !hasDownload && !isModifierPressed) {
-                    startGlobalLoader();
-                }
-            }
+            if (!link) return;
+            const href = link.getAttribute('href');
+            const isJS      = href && href.startsWith('javascript:');
+            const isHash    = href && href.startsWith('#');
+            const isNewTab  = link.getAttribute('target') === '_blank';
+            const hasDown   = link.hasAttribute('download');
+            const isMod     = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+            if (href && !isJS && !isHash && !isNewTab && !hasDown && !isMod) startGlobalLoader();
         });
 
-        // Intercept form submissions
         document.body.addEventListener('submit', (e) => {
             const form = e.target.closest('form');
-            if (form) {
-                const target = form.getAttribute('target');
-                if (target !== '_blank') {
-                    // Start loader only if form is valid
-                    if (form.checkValidity()) {
-                        startGlobalLoader();
-                    }
-                }
-            }
+            if (form && form.getAttribute('target') !== '_blank' && form.checkValidity()) startGlobalLoader();
         });
 
-        // Reset loader if user uses the browser 'Back' button (bfcache hit)
-        window.addEventListener('pageshow', (e) => {
-            if (e.persisted) {
-                stopGlobalLoader();
-            }
-        });
-    });
+        window.addEventListener('pageshow', (e) => { if (e.persisted) stopGlobalLoader(); });
 
-    document.addEventListener("DOMContentLoaded", () => {
         initBioExpansion();
     });
 
+    /* ── Bio ── */
     function initBioExpansion() {
-        const wrap = document.getElementById('bio-text-wrap'); const btn = document.getElementById('bio-expand-btn'); const fade = document.getElementById('bio-fade');
-        if (wrap && btn && fade && wrap.scrollHeight <= 95) { btn.style.display = 'none'; fade.style.display = 'none'; wrap.style.maxHeight = 'none'; }
-    }
-
-    function toggleBio() {
-        const wrap = document.getElementById('bio-text-wrap'); const btnText = document.getElementById('bio-btn-text'); const btnIcon = document.getElementById('bio-btn-icon'); const fade = document.getElementById('bio-fade');
-        if (!wrap) return;
-        if (wrap.classList.contains('bio-expanded')) {
-            wrap.style.maxHeight = '95px'; wrap.classList.remove('bio-expanded'); btnText.textContent = '{% trans "Read More" %}'; btnIcon.style.transform = 'rotate(0deg)'; fade.style.opacity = '1';
-        } else {
-            wrap.style.maxHeight = wrap.scrollHeight + 'px'; wrap.classList.add('bio-expanded'); btnText.textContent = '{% trans "Show less" %}'; btnIcon.style.transform = 'rotate(180deg)'; fade.style.opacity = '0';
+        const wrap = document.getElementById('bio-text-wrap');
+        const btn  = document.getElementById('bio-expand-btn');
+        const fade = document.getElementById('bio-fade');
+        if (wrap && btn && fade && wrap.scrollHeight <= 95) {
+            btn.style.display  = 'none';
+            fade.style.display = 'none';
+            wrap.style.maxHeight = 'none';
         }
     }
 
+    function toggleBio() {
+        const wrap    = document.getElementById('bio-text-wrap');
+        const btnText = document.getElementById('bio-btn-text');
+        const btnIcon = document.getElementById('bio-btn-icon');
+        const fade    = document.getElementById('bio-fade');
+        if (!wrap) return;
+        const expanded = wrap.classList.contains('bio-expanded');
+        if (expanded) {
+            wrap.style.maxHeight = '95px';
+            wrap.classList.remove('bio-expanded');
+            btnText.textContent  = '{% trans "Read More" %}';
+            btnIcon.style.transform = 'rotate(0deg)';
+            fade.style.opacity   = '1';
+        } else {
+            wrap.style.maxHeight = wrap.scrollHeight + 'px';
+            wrap.classList.add('bio-expanded');
+            btnText.textContent  = '{% trans "Show less" %}';
+            btnIcon.style.transform = 'rotate(180deg)';
+            fade.style.opacity   = '0';
+        }
+    }
+
+    /* ── Drawers ── */
     function closeAllDrawers() {
-        const navDw = document.getElementById('mobile-nav-drawer');
-        const navBd = document.getElementById('mobile-nav-backdrop');
-        const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
-
-        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
-
+        ['mobile-nav-drawer', 'mobile-lang-drawer'].forEach(id => {
+            const dw = document.getElementById(id);
+            if (dw) dw.classList.replace('drawer-open', 'drawer-closed');
+        });
+        ['mobile-nav-backdrop', 'mobile-lang-backdrop'].forEach(id => {
+            const bd = document.getElementById(id);
+            if (bd) { bd.classList.add('opacity-0', 'pointer-events-none'); bd.classList.remove('opacity-100'); }
+        });
         document.body.classList.remove('body-lock');
     }
 
@@ -1122,93 +1189,95 @@
         } else { closeAllDrawers(); }
     }
 
+    /* ── Bio Editor ── */
     function openBioEditor() {
         const backdrop = document.getElementById('bio-editor-backdrop');
-        const wrapper = document.getElementById('bio-editor-wrapper');
-        const modal = document.getElementById('bio-editor-modal');
-
+        const wrapper  = document.getElementById('bio-editor-wrapper');
+        const modal    = document.getElementById('bio-editor-modal');
         backdrop.classList.remove('opacity-0', 'pointer-events-none');
         wrapper.classList.remove('opacity-0', 'pointer-events-none');
-
         modal.classList.remove('translate-y-full', 'md:translate-y-10', 'md:scale-95');
         modal.classList.add('translate-y-0', 'md:scale-100');
-
         document.body.classList.add('body-lock');
         setTimeout(() => document.getElementById('bio_narrative_input')?.focus(), 300);
     }
 
     function closeBioEditor() {
         const backdrop = document.getElementById('bio-editor-backdrop');
-        const wrapper = document.getElementById('bio-editor-wrapper');
-        const modal = document.getElementById('bio-editor-modal');
-
+        const wrapper  = document.getElementById('bio-editor-wrapper');
+        const modal    = document.getElementById('bio-editor-modal');
         backdrop.classList.add('opacity-0', 'pointer-events-none');
         wrapper.classList.add('opacity-0', 'pointer-events-none');
-
         modal.classList.add('translate-y-full', 'md:translate-y-10', 'md:scale-95');
         modal.classList.remove('translate-y-0', 'md:scale-100');
-
         document.body.classList.remove('body-lock');
     }
 
+    /* ── Toast ── */
     let shareTimeout;
     function showToast(message) {
-        const toast = document.getElementById('share-toast'); const toastMsg = document.getElementById('toast-msg');
+        const toast    = document.getElementById('share-toast');
+        const toastMsg = document.getElementById('toast-msg');
         if (toastMsg && message) toastMsg.textContent = message;
-        clearTimeout(shareTimeout); toast.classList.remove('translate-y-10', 'opacity-0');
+        clearTimeout(shareTimeout);
+        toast.classList.remove('translate-y-10', 'opacity-0');
         if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
-        shareTimeout = setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); }, 3500);
+        shareTimeout = setTimeout(() => toast.classList.add('translate-y-10', 'opacity-0'), 3500);
     }
 
+    /* ── Goal Select ── */
     async function autoSubmitGoal(form) {
         const loader = document.getElementById('goal-loading');
-        if(loader) loader.classList.remove('hidden');
-
+        if (loader) loader.classList.remove('hidden');
         try {
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: new FormData(form),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
-
             if (response.ok) {
                 showToast('{% trans "Objective updated successfully!" %}');
-                const currentSearchVal = form.querySelector('[name="current_search"]')?.value;
-                if(currentSearchVal !== undefined) {
-                    document.querySelectorAll('[name="current_search"]').forEach(el => {
-                        if(el !== form.querySelector('[name="current_search"]')) el.value = currentSearchVal;
-                    });
-                }
-            } else { showToast('{% trans "Failed to update objective. Please check your settings." %}'); }
-        } catch (error) { showToast('{% trans "Network error. Please try again." %}'); }
-        finally { if(loader) loader.classList.add('hidden'); }
+            } else {
+                showToast('{% trans "Failed to update objective. Please check your settings." %}');
+            }
+        } catch (e) {
+            showToast('{% trans "Network error. Please try again." %}');
+        } finally {
+            if (loader) loader.classList.add('hidden');
+        }
     }
 
+    /* ── Bio Save ── */
     async function handleBioSubmit(event) {
         event.preventDefault();
         const form = event.target;
-        const btn = document.getElementById('submit-bio-btn');
-        const originalBtnText = btn.innerHTML;
-
-        btn.disabled = true;
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
+        const btn  = document.getElementById('submit-bio-btn');
+        const orig = btn.innerHTML;
+        btn.disabled  = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline-block mr-1"></i> {% trans "Saving..." %}';
         if (typeof lucide !== 'undefined') lucide.createIcons();
-
         try {
-            const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
             if (response.ok) {
                 showToast('{% trans "Professional Story updated successfully!" %}');
                 const newText = form.querySelector('[name="bio_narrative"]').value;
-                const uiTextContainer = document.querySelector('#bio-text-wrap p');
-                if (uiTextContainer) uiTextContainer.textContent = newText;
+                const container = document.querySelector('#bio-text-wrap p');
+                if (container) container.textContent = newText;
                 closeBioEditor();
                 initBioExpansion();
-                document.querySelectorAll('[name="bio_narrative"]').forEach(el => { if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = newText; });
-                if (!uiTextContainer) { setTimeout(() => window.location.reload(), 800); }
-            } else { alert('{% trans "Failed to save narrative. Please try again." %}'); }
-        } catch (error) { alert('{% trans "Network error." %}'); } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalBtnText;
+                if (!container) setTimeout(() => window.location.reload(), 800);
+            } else {
+                alert('{% trans "Failed to save narrative. Please try again." %}');
+            }
+        } catch (e) {
+            alert('{% trans "Network error." %}');
+        } finally {
+            btn.disabled  = false;
+            btn.innerHTML = orig;
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     }
