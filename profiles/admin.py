@@ -8,7 +8,7 @@ from django.utils.html import format_html
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
-
+from django.utils.safestring import mark_safe
 # Unfold Framework
 from unfold.admin import ModelAdmin, TabularInline, StackedInline
 from unfold.decorators import display
