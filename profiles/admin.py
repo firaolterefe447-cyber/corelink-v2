@@ -477,23 +477,55 @@ class LiveOpportunityAdmin(ModelAdmin):
 # 7. COMPANY SYSTEM ADMINS (UNCHANGED)
 # ==============================================================================
 
+# ==============================================================================
+# 7. COMPANY SYSTEM ADMINS
+# ==============================================================================
+# ==============================================================================
+# 7. COMPANY SYSTEM ADMINS
+# ==============================================================================
+
 @admin.register(Company)
 class CompanyAdmin(ModelAdmin):
-    list_display = ('brand_identity', 'sector_badge', 'location', 'looking_for', 'is_hiring', 'operating_since')
-    list_filter = ('is_hiring', 'looking_for', 'sector', 'operating_since')
+    # Removed the fields you didn't add to the model
+    list_display = (
+        'brand_identity', 'sector_badge', 'location',
+        'is_selected', 'is_banned_from_nexus',
+        'is_hiring'
+    )
+
+    list_filter = (
+        'is_banned_from_nexus', 'is_selected',
+        'is_hiring', 'looking_for', 'sector', 'operating_since'
+    )
+
     search_fields = ('name', 'slug', 'mission_stmt')
     readonly_fields = ('slug', 'created_at', 'updated_at')
-    list_editable = ('is_hiring', 'looking_for')
+
+    list_editable = (
+        'is_selected', 'is_banned_from_nexus',
+        'is_hiring'
+    )
 
     fieldsets = (
         (_("🏢 Corporate Headquarters"), {
             "fields": (("name", "slug"), ("sector", "operating_since"), "location"),
+            "classes": ("tab-content",)
         }),
         (_("🎨 Brand Assets"), {
             "fields": (("logo", "cover_image"), "mission_stmt"),
+            "classes": ("tab-content",)
         }),
         (_("🎯 Objectives & Hiring"), {
             "fields": (("looking_for", "is_hiring"),),
+            "classes": ("tab-content",)
+        }),
+        (_("🛡️ Feed Control & Moderation"), {
+            "fields": (
+                'is_selected',
+                'is_banned_from_nexus'
+            ),
+            "description": "Toggle visibility and pinning inside the public Company Nexus directory.",
+            "classes": ("collapse", "bg-red-50")
         }),
     )
 
@@ -518,8 +550,9 @@ class CompanyAdmin(ModelAdmin):
 
     @display(description=_("Sector"), ordering='sector')
     def sector_badge(self, obj):
-        return format_html('<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium border border-gray-200">{}</span>', obj.sector)
-
+        return format_html(
+            '<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium border border-gray-200">{}</span>',
+            obj.sector)
 @admin.register(CompanyNews)
 class CompanyNewsAdmin(ModelAdmin):
     list_display = ('title', 'company', 'is_published', 'published_date')

@@ -57,6 +57,18 @@ class Company(TimeStampedModel):
         default=Objective.BUILDING,
         verbose_name=_("Current Company Objective"),
     )
+    is_selected = models.BooleanField(
+        _("Admin Selected (Pinned)"),
+        default=False,
+        db_index=True,
+        help_text=_("Pin this company to the absolute top of the Company Nexus Feed."),
+    )
+    is_banned_from_nexus = models.BooleanField(
+        _("Banned from Nexus"),
+        default=False,
+        db_index=True,
+        help_text=_("Completely hide this company from the public Company Nexus directory (spam/inappropriate)."),
+    )
 
     class Meta:
         verbose_name = "Company"

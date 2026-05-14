@@ -339,13 +339,15 @@ def company_nexus(request):
     """
     The Business Hub / Company Discovery Feed.
     Prioritizes fully completed company profiles (Logos, Covers, Services).
+    Respects Admin Pinning (is_selected) and Banning (is_banned_from_nexus).
     """
     raw_query = request.GET.get('q', '').strip()
     sector_filter = request.GET.get('sector', 'ALL')
     objective_filter = request.GET.get('objective', 'ALL')
 
     # 1. Base Queryset & QUALITY ALGORITHM 🏆
-    base_companies = Company.objects.prefetch_related(
+    # 🚨 UPDATED: Filter out banned companies immediately
+    base_companies = Company.objects.filter(is_banned_from_nexus=False).prefetch_related(
         'services', 'members__user'
     ).annotate(
         # A. Count how many services they have built out
@@ -430,11 +432,12 @@ def company_nexus(request):
             )
         ).filter(
             Q(search_rank__gt=0.01) | Q(exact_boost__gt=0.0) | Q(name__icontains=raw_query)
-        ).order_by('-total_rank', '-created_at')
+        ).order_by('-is_selected', '-total_rank', '-created_at') # 🚨 UPDATED: Pinned search results at the top
 
     else:
         # Default sort: Prioritize the highest quality, most complete profiles first!
-        companies = base_companies.order_by('-total_company_quality', '-created_at')
+        # 🚨 UPDATED: Pinned companies absolutely first in the default feed
+        companies = base_companies.order_by('-is_selected', '-total_company_quality', '-created_at')
 
     # 3. Apply Hard Filters from UI Dropdowns
     if sector_filter and sector_filter != 'ALL':
@@ -471,8 +474,6 @@ def company_nexus(request):
         'unread_msg_count': unread_count,
         'active_tab': 'teams',  # Lets UI know to highlight the 'Companies' tab
     })
-
-
 # ==============================================================================
 # 📡 2. LIVE SIGNALS (THE GLOBAL POSTS FEED)
 # ==============================================================================
