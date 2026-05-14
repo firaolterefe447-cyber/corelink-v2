@@ -135,6 +135,32 @@ def _send_post_verification_welcome_email(user):
 
 
 # ==============================================================================
+# ROUTING HELPER
+# ==============================================================================
+
+def _route_user_to_dashboard(user):
+    """
+    Intelligent routing logic: 
+    Founders are sent straight to their Company Admin Dashboard upon login/registration.
+    Everyone else goes to the Unified Personal Dashboard.
+    """
+    if user.role == "FOUNDER":
+        # Check if the Founder has an active company attached
+        membership = user.company_memberships.filter(
+            is_active=True, role__in=['OWNER', 'ADMIN']
+        ).select_related('company').first()
+
+        if membership and membership.company:
+            return redirect('company_admin_dashboard', slug=membership.company.slug)
+        else:
+            # Failsafe: If they are a founder but missing a company, send them to create it
+            return redirect('company_create')
+
+    # Default fallback for Visionaries and Experts
+    return redirect('dashboard')
+
+
+# ==============================================================================
 # ONBOARDING CONTROLLERS (The Application Flow)
 # ==============================================================================
 
@@ -158,7 +184,7 @@ def unified_onboarding_view(request):
     for Visionary, Expert, and Founder all in one place.
     """
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return _route_user_to_dashboard(request.user)
 
     if request.method == "POST":
         # request.FILES is required because Expert needs a CV upload
@@ -177,7 +203,7 @@ def unified_onboarding_view(request):
                 messages.success(
                     request, "Welcome! Your account has been created successfully."
                 )
-                return redirect("dashboard")
+                return _route_user_to_dashboard(user)
 
             except Exception as e:
                 logger.error(f"Unified Onboarding Critical Failure: {str(e)}")
@@ -254,7 +280,7 @@ def login_view(request):
     Handles phone or email based authentication.
     """
     if request.user.is_authenticated:
-        return redirect("dashboard")
+        return _route_user_to_dashboard(request.user)
 
     if request.method == "POST":
         form = UserLoginForm(request.POST)
@@ -295,11 +321,11 @@ def login_view(request):
 
                 next_url = request.POST.get("next") or request.GET.get("next")
                 if next_url and url_has_allowed_host_and_scheme(
-                    url=next_url, allowed_hosts={request.get_host()}
+                        url=next_url, allowed_hosts={request.get_host()}
                 ):
                     return redirect(next_url)
 
-                return redirect("dashboard")
+                return _route_user_to_dashboard(user)
             else:
                 messages.error(request, "Invalid phone number/email or PIN.")
         else:
@@ -317,7 +343,7 @@ def register_email_view(request):
     """
     if request.user.is_email_verified and request.user.email:
         messages.info(request, "Your email is already verified.")
-        return redirect("dashboard")
+        return _route_user_to_dashboard(request.user)
 
     email_sent = request.session.get("verification_email_sent", False)
     pending_email = request.session.get("pending_email")
@@ -423,7 +449,7 @@ def register_email_view(request):
                         if user.role == "FOUNDER" and not user.is_verified:
                             return redirect("application_success")
 
-                        return redirect("dashboard")
+                        return _route_user_to_dashboard(user)
                     else:
                         request.session["otp_verify_attempts"] = attempts + 1
                         messages.error(request, "Invalid or expired verification code.")
@@ -496,7 +522,7 @@ def verify_email_token_view(request, token):
             if user.role == "FOUNDER" and not user.is_verified:
                 return redirect("application_success")
 
-            return redirect("dashboard")
+            return _route_user_to_dashboard(user)
 
         # If user is not logged in, we try to find the user by email
         try:
@@ -541,9 +567,9 @@ def email_verification_view(request):
 
             # If already verified, don't force OTP form again.
             if (
-                token_user.email_verified
-                and token_user.email
-                and token_email == token_user.email.lower()
+                    token_user.email_verified
+                    and token_user.email
+                    and token_email == token_user.email.lower()
             ):
                 login(
                     request,
@@ -552,16 +578,16 @@ def email_verification_view(request):
                 )
                 request.session.pop("pending_verify_user_id", None)
                 messages.success(request, "Your email is already verified.")
-                return redirect("dashboard")
+                return _route_user_to_dashboard(token_user)
 
             if (
-                token_user
-                and token_user.email
-                and token_email == token_user.email.lower()
-                and token_user.email_otp_code
-                and token_user.email_otp_expires_at
-                and token_user.email_otp_expires_at >= timezone.now()
-                and constant_time_compare(token_code, token_user.email_otp_code)
+                    token_user
+                    and token_user.email
+                    and token_email == token_user.email.lower()
+                    and token_user.email_otp_code
+                    and token_user.email_otp_expires_at
+                    and token_user.email_otp_expires_at >= timezone.now()
+                    and constant_time_compare(token_code, token_user.email_otp_code)
             ):
                 token_user.email_verified = True
                 token_user.email_otp_code = None
@@ -581,7 +607,7 @@ def email_verification_view(request):
                 )
                 request.session.pop("pending_verify_user_id", None)
                 messages.success(request, "Email verified successfully.")
-                return redirect("dashboard")
+                return _route_user_to_dashboard(token_user)
             messages.error(request, "Verification link is invalid or has expired.")
             return redirect("login")
         except signing.SignatureExpired:
@@ -608,7 +634,7 @@ def email_verification_view(request):
     if user.email_verified and user.email:
         request.session.pop("pending_verify_user_id", None)
         messages.success(request, "Your email is already verified.")
-        return redirect("dashboard")
+        return _route_user_to_dashboard(user)
 
     if request.method == "POST":
         action = request.POST.get("action")
@@ -618,9 +644,9 @@ def email_verification_view(request):
             if not email:
                 messages.error(request, "Please enter a valid email.")
             elif (
-                CustomUser.objects.filter(email__iexact=email)
-                .exclude(pk=user.pk)
-                .exists()
+                    CustomUser.objects.filter(email__iexact=email)
+                            .exclude(pk=user.pk)
+                            .exists()
             ):
                 messages.error(
                     request, "That email is already used by another account."
@@ -675,7 +701,7 @@ def email_verification_view(request):
 
                 request.session.pop("pending_verify_user_id", None)
                 messages.success(request, "Email verified successfully.")
-                return redirect("dashboard")
+                return _route_user_to_dashboard(user)
 
     return render(
         request,
@@ -805,7 +831,8 @@ def google_auth_callback_view(request):
         if not existing_user.email_verified:
             request.session["pending_verify_user_id"] = str(existing_user.id)
             return redirect("email_verification")
-        return redirect("dashboard")
+
+        return _route_user_to_dashboard(existing_user)
 
     try:
         created_user = CustomUser.objects.create(
@@ -841,7 +868,7 @@ def google_auth_callback_view(request):
 @require_http_methods(["GET", "POST"])
 def google_role_selection_view(request):
     if not request.user.google_sub:
-        return redirect("dashboard")
+        return _route_user_to_dashboard(request.user)
 
     if request.method == "POST":
         form = GoogleRoleSelectionForm(request.POST)
@@ -860,7 +887,7 @@ def google_role_selection_view(request):
 
             request.session.pop("needs_role_selection", None)
             messages.success(request, "Role updated successfully.")
-            return redirect("dashboard")
+            return _route_user_to_dashboard(request.user)
     else:
         form = GoogleRoleSelectionForm(initial={"role": request.user.role})
 
@@ -877,7 +904,7 @@ def create_password_view(request):
             update_session_auth_hash(request, user)
             request.session.pop("needs_role_selection", None)
             messages.success(request, "Password created successfully.")
-            return redirect("dashboard")
+            return _route_user_to_dashboard(request.user)
     else:
         form = SetPasswordForm(request.user)
 
