@@ -484,9 +484,12 @@ class LiveOpportunityAdmin(ModelAdmin):
 # 7. COMPANY SYSTEM ADMINS
 # ==============================================================================
 
+# ==============================================================================
+# 7. COMPANY SYSTEM ADMINS
+# ==============================================================================
+
 @admin.register(Company)
 class CompanyAdmin(ModelAdmin):
-    # Removed the fields you didn't add to the model
     list_display = (
         'brand_identity', 'sector_badge', 'location',
         'is_selected', 'is_banned_from_nexus',
@@ -538,14 +541,39 @@ class CompanyAdmin(ModelAdmin):
 
     @display(description=_("Company"), ordering='name')
     def brand_identity(self, obj):
-        if obj.logo:
-            return format_html(
-                '<div class="flex items-center"><img src="{}" class="w-8 h-8 rounded object-cover mr-2 shadow-sm"><span class="font-semibold text-gray-900">{}</span></div>',
-                obj.logo.url, obj.name
-            )
+        # 1. Fetch the correct Public Profile URL
+        try:
+            profile_url = obj.get_absolute_url()
+        except Exception:
+            profile_url = f"/company/{obj.slug}/"
+
+        # 2. Sleek, professional View Profile link with SVG icon
+        link_html = f'''
+            <div style="margin-top: 6px;">
+                <a href="{profile_url}" target="_blank" onclick="event.stopPropagation();" 
+                   style="display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; color: #4338ca; text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;">
+                    View Profile 
+                    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17l9.2-9.2M17 17V7H7"/>
+                    </svg>
+                </a>
+            </div>
+        '''
+
+        # 3. Fallback Logo if none exists
+        logo_url = obj.logo.url if obj.logo else f"https://ui-avatars.com/api/?name={obj.name}&background=EBF4FF&color=7F9CF5"
+
         return format_html(
-            '<div class="flex items-center"><span class="font-semibold text-gray-900">{}</span></div>',
-            obj.name
+            '''
+            <div style="display: flex; align-items: flex-start; gap: 10px; min-width: 180px;">
+                <img src="{}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; border: 1px solid #eee; flex-shrink: 0;" />
+                <div style="display: flex; flex-direction: column; overflow: hidden;">
+                    <span style="font-weight: 600; font-size: 13px; line-height: 1.2;">{}</span>
+                    {}
+                </div>
+            </div>
+            ''',
+            logo_url, obj.name, mark_safe(link_html)
         )
 
     @display(description=_("Sector"), ordering='sector')
