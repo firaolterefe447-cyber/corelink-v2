@@ -22,7 +22,7 @@
     <!-- Unified Premium Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Tailwind Configuration -->
     <script>
@@ -39,6 +39,22 @@
                             light: '#E6F0F9',
                             dark: '#004182'
                         }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -48,56 +64,56 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F4F7FA;
-            /* Premium Light Glass Background matching the Feed */
+            background-color: #F8FAFC;
+            /* Premium Soft Glow Background */
             background-image:
-                radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-                radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
-                radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+                radial-gradient(at 0% 0%, hsla(217,100%,94%,1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(210,100%,95%,1) 0, transparent 50%);
             background-attachment: fixed;
             color: #0F172A;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.03em; }
-
-        /* Structured Glass Bento Cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(226, 232, 240, 0.9);
-            border-radius: 1.5rem;
-            box-shadow: 0 12px 40px -16px rgba(15, 23, 42, 0.08);
-            transition: all 0.3s ease;
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.02em;
         }
 
-        .glass-card:hover {
-            box-shadow: 0 20px 40px -16px rgba(10, 102, 194, 0.12);
-            border-color: rgba(203, 213, 225, 1);
+        ::selection {
+            background-color: #0A66C2;
+            color: white;
         }
 
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-100 { animation-delay: 100ms; }
+        .animation-delay-200 { animation-delay: 200ms; }
+        .animation-delay-300 { animation-delay: 300ms; }
     </style>
 </head>
-<body x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+<body x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 50)">
 
     <!-- FLOATING TOP NAVIGATION -->
-    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-         :class="scrolled ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/90 shadow-sm py-3' : 'bg-transparent py-5'">
-        <div class="max-w-[1000px] mx-auto px-4 md:px-8 flex items-center justify-between">
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+         :class="scrolled ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm py-3' : 'bg-gradient-to-b from-slate-900/60 to-transparent py-4 sm:py-5'">
+        <div class="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between">
 
-            <div class="flex items-center gap-4">
-                <a href="{% url 'company_nexus' %}" class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-corelink hover:border-corelink/30 hover:shadow-md transition-all">
-                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            <div class="flex items-center gap-3 sm:gap-4">
+                <a href="{% url 'company_nexus' %}" class="group flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full transition-all duration-300"
+                   :class="scrolled ? 'bg-white border border-slate-200 shadow-sm hover:bg-corelink hover:border-corelink' : 'bg-black/20 backdrop-blur-md hover:bg-black/40 border border-white/10'">
+                    <i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-300" :class="scrolled ? 'text-slate-600 group-hover:text-white' : 'text-white'"></i>
                 </a>
-                <div class="font-heading font-black text-xl tracking-tight" :class="scrolled ? 'text-slate-900' : 'text-slate-900 drop-shadow-sm'">
+                <div class="font-heading font-black text-lg sm:text-xl tracking-tight transition-colors duration-300 truncate max-w-[200px] sm:max-w-none"
+                     :class="scrolled ? 'text-slate-900' : 'text-white drop-shadow-lg'">
                     {{ company.name }}
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="#contact" class="hidden md:flex items-center justify-center px-6 py-2.5 rounded-full font-bold text-[13px] bg-slate-900 text-white hover:bg-corelink transition-all active:scale-95 shadow-md">
+                <a href="#contact" class="flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold text-[13px] sm:text-[14px] transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
+                   :class="scrolled ? 'bg-slate-900 text-white hover:bg-corelink' : 'bg-white text-slate-900 hover:bg-slate-50'">
                     {% if company.is_hiring %}Join Team{% else %}Contact{% endif %}
                 </a>
             </div>
@@ -105,101 +121,129 @@
     </nav>
 
     <!-- HERO COVER SECTION -->
-    <div class="relative w-full h-[35vh] md:h-[45vh] bg-slate-900 overflow-hidden">
+    <div class="relative w-full h-[45vh] md:h-[50vh] bg-slate-900 overflow-hidden group">
         {% if company.cover_image %}
-            <img src="{{ company.cover_image.url }}" alt="{{ company.name }} Cover" class="w-full h-full object-cover opacity-80">
+            <img src="{{ company.cover_image.url }}" alt="{{ company.name }} Cover" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000 ease-out">
         {% else %}
-            <!-- Abstract Vibrant Fallback (Original corelink style) -->
-            <div class="w-full h-full bg-gradient-to-br from-[#0A66C2] via-indigo-600 to-purple-800 relative">
-                <div class="absolute -top-24 -right-12 w-64 h-64 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-70"></div>
-                <div class="absolute bottom-0 left-0 w-full h-full bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+            <!-- Abstract Vibrant Fallback -->
+            <div class="w-full h-full bg-gradient-to-br from-[#0A66C2] via-indigo-600 to-purple-800 relative group-hover:scale-105 transition-transform duration-1000 ease-out">
+                <div class="absolute -top-24 -right-12 w-96 h-96 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full mix-blend-overlay filter blur-[80px] opacity-70 animate-blob"></div>
+                <div class="absolute -bottom-24 -left-12 w-96 h-96 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full mix-blend-overlay filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:32px_32px]"></div>
             </div>
         {% endif %}
-        <!-- Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+        <!-- Rich Gradient Overlay integrating smoothly with background -->
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
     </div>
 
-    <!-- MAIN CONTENT CONTAINER (Centered, Single Column Flow for great padding) -->
-    <main class="max-w-[900px] mx-auto px-4 md:px-8 relative z-20 -mt-20 md:-mt-28 pb-24 space-y-8 md:space-y-10">
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-8 relative z-20 -mt-24 sm:-mt-28 md:-mt-32 pb-24 space-y-10 sm:space-y-12 md:space-y-16">
 
         <!-- PROFILE HEADER CARD -->
-        <div class="glass-card p-6 md:p-10 flex flex-col md:flex-row gap-6 md:gap-8 items-start relative">
-
-            <!-- Clean Original Logo -->
-            <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white border-4 border-white shadow-lg shrink-0 flex items-center justify-center overflow-hidden -mt-16 md:-mt-20 relative z-30">
+        <div class="bg-white/80 backdrop-blur-2xl border border-white shadow-2xl shadow-slate-200/50 rounded-[24px] p-5 sm:p-8 md:p-10 flex flex-col md:flex-row gap-5 sm:gap-8 md:gap-10 items-start relative animate-fade-in">
+            <!-- Sleek Logo -->
+            <div class="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-[2rem] bg-white border-4 border-white shadow-xl shadow-slate-200/60 shrink-0 flex items-center justify-center overflow-hidden -mt-16 sm:-mt-20 md:-mt-24 relative z-30 transition-transform hover:-translate-y-2 duration-500">
                 {% if company.logo %}
                     <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo" class="w-full h-full object-cover">
                 {% else %}
-                    <span class="font-heading font-black text-4xl text-corelink">{{ company.name|slice:":1"|upper }}</span>
+                    <span class="font-heading font-black text-4xl sm:text-5xl text-corelink">{{ company.name|slice:":1"|upper }}</span>
                 {% endif %}
             </div>
 
             <!-- Header Info -->
-            <div class="flex-1 w-full">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
+            <div class="flex-1 w-full pt-2 md:pt-0">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-5 mb-5">
                     <div>
-                        <h1 class="font-heading font-black text-3xl md:text-4xl text-slate-900 tracking-tight">{{ company.name }}</h1>
-                        <p class="text-corelink font-bold text-[14px] mt-1">{{ company.get_looking_for_display }}</p>
+                        <h1 class="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 tracking-tight mb-2 leading-tight">{{ company.name }}</h1>
+                        <p class="text-corelink font-bold text-[14px] sm:text-[15px]">{{ company.get_looking_for_display }}</p>
                     </div>
 
                     {% if company.is_hiring %}
-                    <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 text-[12px] font-black uppercase tracking-wider px-4 py-2 rounded-xl flex items-center gap-2 self-start md:self-auto">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Actively Hiring
+                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-[11px] sm:text-[12px] font-black uppercase tracking-wider px-3 py-2 sm:px-4 sm:py-2 rounded-xl flex items-center justify-center gap-2.5 self-start shadow-sm shadow-emerald-100/50 w-full md:w-auto">
+                        <span class="relative flex h-2.5 w-2.5">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                        Actively Hiring
                     </span>
                     {% endif %}
                 </div>
 
-                <div class="flex flex-wrap items-center gap-4 text-[14px] font-medium text-slate-500">
-                    {% if company.sector %}<span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-4 h-4 text-slate-400"></i> {{ company.sector }}</span>{% endif %}
-                    {% if company.location %}<span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> {{ company.location }}</span>{% endif %}
-                    {% if company.operating_since %}<span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i> Est. {{ company.operating_since }}</span>{% endif %}
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    {% if company.sector %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200 text-[12px] sm:text-[13px] font-semibold text-slate-700 backdrop-blur-sm">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-corelink"></i>
+                        {{ company.sector }}
+                    </span>
+                    {% endif %}
+                    {% if company.location %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200 text-[12px] sm:text-[13px] font-semibold text-slate-700 backdrop-blur-sm">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-corelink"></i>
+                        {{ company.location }}
+                    </span>
+                    {% endif %}
+                    {% if company.operating_since %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200 text-[12px] sm:text-[13px] font-semibold text-slate-700 backdrop-blur-sm">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-corelink"></i>
+                        Est. {{ company.operating_since }}
+                    </span>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <!-- About / Mission -->
         {% if company.mission_stmt %}
-        <section class="glass-card p-6 md:p-8">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="sparkles" class="w-5 h-5 text-corelink"></i>
-                <h2 class="font-heading font-black text-xl text-slate-900">About & Mission</h2>
+        <section class="animate-fade-in animation-delay-100">
+            <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                    <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-corelink"></i>
+                </div>
+                <h2 class="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight">About & Mission</h2>
             </div>
-            <p class="text-slate-600 font-medium text-[15px] md:text-[16px] leading-relaxed">
-                {{ company.mission_stmt|linebreaksbr }}
-            </p>
+            <div class="bg-white/60 backdrop-blur-xl border border-white shadow-xl shadow-slate-200/40 rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10 relative overflow-hidden group">
+                <i data-lucide="quote" class="absolute -bottom-6 -right-6 w-32 h-32 sm:w-40 sm:h-40 text-slate-900/[0.02] rotate-12 group-hover:scale-110 transition-transform duration-700"></i>
+                <p class="text-slate-600 font-medium text-[15px] sm:text-[16px] md:text-[18px] leading-relaxed relative z-10">
+                    {{ company.mission_stmt|linebreaksbr }}
+                </p>
+            </div>
         </section>
         {% endif %}
 
-        <!-- Services & Products -->
+        <!-- Services & Products (Entirely Clickable) -->
         {% if company.services.exists %}
-        <section>
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i data-lucide="package" class="w-5 h-5 text-slate-700"></i>
-                <h2 class="font-heading font-black text-2xl text-slate-900">Products & Services</h2>
+        <section class="animate-fade-in animation-delay-200">
+            <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                    <i data-lucide="package" class="w-4 h-4 sm:w-5 sm:h-5 text-corelink"></i>
+                </div>
+                <h2 class="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight">Products & Services</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 {% for service in company.services.all %}
-                <div class="glass-card overflow-hidden flex flex-col group relative">
+                <a href="{% url 'public_service_detail' pk=service.id %}" class="group bg-white rounded-[20px] sm:rounded-[24px] border border-slate-200 hover:border-corelink/30 shadow-sm hover:shadow-xl hover:shadow-corelink/10 transition-all duration-300 overflow-hidden flex flex-col active:scale-[0.98]">
                     {% if service.gallery.exists %}
-                        <div class="h-48 w-full bg-slate-100 overflow-hidden relative">
-                            <img src="{{ service.gallery.first.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="h-44 sm:h-56 w-full bg-slate-100 overflow-hidden relative">
+                            <img src="{{ service.gallery.first.image.url }}" alt="{{ service.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             {% if service.gallery.count > 1 %}
-                                <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                                <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white/90 backdrop-blur-sm text-slate-900 text-[11px] sm:text-[12px] font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm">
                                     +{{ service.gallery.count|add:"-1" }} Photos
                                 </div>
                             {% endif %}
                         </div>
                     {% endif %}
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="font-heading font-black text-lg text-slate-900 mb-2">{{ service.name }}</h3>
-                        <p class="text-slate-500 text-[14px] leading-relaxed line-clamp-3 flex-1">
+                    <div class="p-5 sm:p-6 md:p-8 flex-1 flex flex-col">
+                        <h3 class="font-heading font-bold text-lg sm:text-xl text-slate-900 mb-2 sm:mb-3 group-hover:text-corelink transition-colors">{{ service.name }}</h3>
+                        <p class="text-slate-600 text-[14px] sm:text-[15px] leading-relaxed line-clamp-3 flex-1">
                             {{ service.description }}
                         </p>
-                        <a href="{% url 'public_service_detail' pk=service.id %}" class="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-corelink hover:text-slate-900 transition-colors">
-                            Explore Details <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
+                        <div class="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-slate-100 flex items-center gap-2 text-[13px] sm:text-[14px] font-bold text-corelink">
+                            Explore Details
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </section>
@@ -207,23 +251,36 @@
 
         <!-- Updates / News -->
         {% if company.news_articles.exists %}
-        <section>
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i data-lucide="zap" class="w-5 h-5 text-slate-700"></i>
-                <h2 class="font-heading font-black text-2xl text-slate-900">Latest Updates</h2>
+        <section class="animate-fade-in animation-delay-300">
+            <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                    <i data-lucide="zap" class="w-4 h-4 sm:w-5 sm:h-5 text-corelink"></i>
+                </div>
+                <h2 class="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight">Latest Updates</h2>
             </div>
-            <div class="space-y-4">
+            <div class="space-y-4 sm:space-y-5">
                 {% for article in company.news_articles.all %}
-                <a href="{% url 'news_detail' article.slug %}" class="glass-card p-4 md:p-5 flex flex-col sm:flex-row gap-5 group hover:-translate-y-1 transition-all">
-                    {% if article.cover_image %}
-                    <div class="w-full sm:w-40 h-40 sm:h-auto rounded-xl overflow-hidden shrink-0">
-                        <img src="{{ article.cover_image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    {% endif %}
-                    <div class="flex flex-col justify-center">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-corelink mb-2">{{ article.published_date|date:"M d, Y" }}</span>
-                        <h3 class="font-heading font-black text-lg text-slate-900 mb-2 group-hover:text-corelink transition-colors">{{ article.title }}</h3>
-                        <p class="text-slate-500 text-[14px] line-clamp-2">{{ article.excerpt|default:article.content|truncatechars:100 }}</p>
+                <a href="{% url 'news_detail' article.slug %}" class="group block bg-white rounded-[20px] sm:rounded-[24px] border border-slate-200 hover:border-corelink/30 shadow-sm hover:shadow-xl hover:shadow-corelink/5 transition-all duration-300 p-4 sm:p-5 md:p-6 active:scale-[0.98]">
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                        {% if article.cover_image %}
+                        <div class="w-full sm:w-48 md:w-56 h-40 sm:h-auto rounded-[12px] sm:rounded-[16px] overflow-hidden shrink-0 relative">
+                            <img src="{{ article.cover_image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-[12px] sm:rounded-[16px]"></div>
+                        </div>
+                        {% endif %}
+                        <div class="flex flex-col justify-center flex-1 py-1">
+                            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                                <span class="inline-flex items-center px-2 py-1 sm:px-2.5 sm:py-1 rounded-md bg-corelink/10 text-corelink text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+                                    News
+                                </span>
+                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-500 flex items-center gap-1.5">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                                    {{ article.published_date|date:"M d, Y" }}
+                                </span>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg sm:text-xl text-slate-900 mb-2 group-hover:text-corelink transition-colors leading-snug">{{ article.title }}</h3>
+                            <p class="text-slate-600 text-[14px] sm:text-[15px] line-clamp-2 sm:line-clamp-3 leading-relaxed">{{ article.excerpt|default:article.content|truncatechars:150 }}</p>
+                        </div>
                     </div>
                 </a>
                 {% endfor %}
@@ -233,42 +290,56 @@
 
         <!-- History / Timeline -->
         {% if company.milestones.exists %}
-        <section class="glass-card p-6 md:p-8">
-            <div class="flex items-center gap-2 mb-8">
-                <i data-lucide="history" class="w-5 h-5 text-slate-700"></i>
-                <h2 class="font-heading font-black text-xl text-slate-900">Company History</h2>
-            </div>
-            <div class="relative border-l-2 border-slate-200 ml-3 space-y-8">
-                {% for m in company.milestones.all %}
-                <div class="relative pl-8">
-                    <div class="absolute -left-[9px] top-1 w-4 h-4 bg-white border-4 border-corelink rounded-full"></div>
-                    <span class="block text-corelink font-black text-[14px] mb-1">{{ m.year }}</span>
-                    <h4 class="font-heading font-black text-lg text-slate-900">{{ m.title }}</h4>
-                    <p class="text-slate-500 text-[14px] mt-1">{{ m.description }}</p>
+        <section class="animate-fade-in animation-delay-300">
+            <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                    <i data-lucide="history" class="w-4 h-4 sm:w-5 sm:h-5 text-corelink"></i>
                 </div>
-                {% endfor %}
+                <h2 class="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight">Company History</h2>
+            </div>
+            <div class="bg-white/60 backdrop-blur-xl border border-white shadow-xl shadow-slate-200/40 rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10">
+                <div class="relative ml-2 sm:ml-3 md:ml-4">
+                    <div class="absolute top-2 bottom-2 left-0 w-px bg-gradient-to-b from-corelink via-slate-300 to-transparent"></div>
+                    <div class="space-y-8 sm:space-y-10">
+                        {% for m in company.milestones.all %}
+                        <div class="relative pl-7 sm:pl-8 md:pl-10 group">
+                            <div class="absolute -left-[5px] top-1.5 w-3 h-3 bg-white border-2 border-corelink rounded-full group-hover:scale-125 group-hover:bg-corelink transition-all duration-300 shadow-[0_0_0_4px_rgba(10,102,194,0.1)]"></div>
+                            <span class="inline-block text-corelink font-bold text-[12px] sm:text-[13px] mb-1.5 sm:mb-2 bg-corelink/10 px-2 py-1 sm:px-2.5 sm:py-1 rounded-md uppercase tracking-wider">{{ m.year }}</span>
+                            <h4 class="font-heading font-bold text-lg sm:text-xl text-slate-900 mb-1.5 sm:mb-2">{{ m.title }}</h4>
+                            <p class="text-slate-600 text-[14px] sm:text-[15px] leading-relaxed">{{ m.description }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </section>
         {% endif %}
 
         <!-- Leadership / Team -->
         {% if company.members.exists %}
-        <section>
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i data-lucide="users" class="w-5 h-5 text-slate-700"></i>
-                <h2 class="font-heading font-black text-2xl text-slate-900">Key Leadership</h2>
+        <section class="animate-fade-in animation-delay-300">
+            <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                    <i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5 text-corelink"></i>
+                </div>
+                <h2 class="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-slate-900 tracking-tight">Key Leadership</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {% for member in company.members.all %}
-                <div class="glass-card p-4 flex items-center gap-4">
-                    {% if member.user.avatar %}
-                        <img src="{{ member.user.avatar.url }}" class="w-12 h-12 rounded-full object-cover">
-                    {% else %}
-                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 font-black flex items-center justify-center text-lg">{{ member.user.full_name|slice:":1" }}</div>
-                    {% endif %}
-                    <div>
-                        <h4 class="font-bold text-slate-900 text-[15px]">{{ member.user.full_name }}</h4>
-                        <p class="text-[13px] text-slate-500">{{ member.job_title }}</p>
+                <div class="group bg-white/80 backdrop-blur-md rounded-[16px] sm:rounded-[20px] border border-white hover:border-corelink/30 p-4 sm:p-5 flex items-center gap-4 transition-all duration-300 shadow-md shadow-slate-200/40 hover:shadow-xl hover:-translate-y-1">
+                    <div class="relative shrink-0">
+                        {% if member.user.avatar %}
+                            <img src="{{ member.user.avatar.url }}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-slate-100 group-hover:ring-corelink/30 transition-all">
+                        {% else %}
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold flex items-center justify-center text-lg sm:text-xl ring-2 ring-slate-100 group-hover:ring-corelink/30 transition-all">
+                                {{ member.user.full_name|slice:":1" }}
+                            </div>
+                        {% endif %}
+                        <!-- Removed green dot as requested -->
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-900 text-[15px] sm:text-[16px] truncate group-hover:text-corelink transition-colors">{{ member.user.full_name }}</h4>
+                        <p class="text-[12px] sm:text-[13px] text-slate-500 font-medium truncate mt-0.5">{{ member.job_title }}</p>
                     </div>
                 </div>
                 {% endfor %}
@@ -276,66 +347,110 @@
         </section>
         {% endif %}
 
-        <!-- CONTACT SECTION (Beautiful dark gradient replica) -->
-        <section id="contact" class="pt-8">
-            <div class="max-w-[650px] mx-auto w-full rounded-[20px] p-6 md:p-10 bg-gradient-to-br from-[#0e1628] via-[#1b2b5a] to-[#45429c] shadow-2xl border border-white/10">
 
-                <h3 class="font-heading font-black text-[22px] md:text-[26px] text-white mb-8 flex items-center gap-3">
-                    <i data-lucide="message-square" class="w-6 h-6 text-white"></i> Get in Touch
+        <!-- ==========================================
+             SEPARATED AMAZING CONTACT AND SOCIAL SECTIONS
+             ========================================== -->
+
+        <div class="pt-6 sm:pt-8 grid gap-6 sm:gap-8 {% if company.socials.exists %}grid-cols-1 lg:grid-cols-2{% else %}grid-cols-1 max-w-[650px] mx-auto{% endif %} animate-fade-in animation-delay-300">
+
+            <!-- 1. DIRECT CONTACT SECTION (Premium Midnight Gradient) -->
+            <section id="contact" class="flex flex-col rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10 bg-gradient-to-br from-[#0B1120] via-[#151f38] to-[#1e1b4b] shadow-2xl relative overflow-hidden h-full group border border-white/5">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 right-0 -mt-16 -mr-16 w-56 h-56 bg-blue-500/10 rounded-full blur-[60px] group-hover:bg-blue-500/20 transition-colors duration-700"></div>
+                <div class="absolute bottom-0 left-0 -mb-16 -ml-16 w-56 h-56 bg-purple-500/10 rounded-full blur-[60px] group-hover:bg-purple-500/20 transition-colors duration-700"></div>
+
+                <h3 class="font-heading font-bold text-xl sm:text-2xl text-white mb-6 sm:mb-8 flex items-center gap-3 relative z-10">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
+                        <i data-lucide="message-square" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-300"></i>
+                    </div>
+                    Get in Touch
                 </h3>
 
-                <!-- Contact Rows -->
-                <div class="space-y-4">
+                <div class="space-y-3 sm:space-y-4 flex-1 relative z-10">
                     {% if company.location %}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="map-pin" class="w-5 h-5 text-blue-200"></i>
+                    <div class="group/item flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all backdrop-blur-sm">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 group-hover/item:bg-white/10 transition-colors mt-0.5">
+                            <i data-lucide="map-pin" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-200"></i>
                         </div>
-                        <span class="text-[15px] font-semibold text-white">{{ company.location }}</span>
+                        <div class="flex flex-col flex-1 min-w-0 pt-0.5 sm:pt-1">
+                            <span class="text-[11px] sm:text-[12px] font-bold text-blue-300/70 uppercase tracking-wider mb-0.5">Location</span>
+                            <span class="text-[14px] sm:text-[15px] font-medium text-white/90 leading-snug break-words">{{ company.location }}</span>
+                        </div>
                     </div>
                     {% endif %}
 
                     {% for contact in company.contacts.all %}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="phone" class="w-5 h-5 text-blue-200"></i>
+                    <div class="group/item flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all backdrop-blur-sm">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 group-hover/item:bg-white/10 transition-colors mt-0.5">
+                            <i data-lucide="phone" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-200"></i>
                         </div>
-                        <span class="text-[15px] font-semibold text-white">{{ contact.value }}</span>
+                        <div class="flex flex-col flex-1 min-w-0 pt-0.5 sm:pt-1">
+                            <span class="text-[11px] sm:text-[12px] font-bold text-blue-300/70 uppercase tracking-wider mb-0.5">{{ contact.label }}</span>
+                            <span class="text-[14px] sm:text-[16px] font-semibold text-white tracking-wide break-words">{{ contact.value }}</span>
+                        </div>
                     </div>
                     {% endfor %}
 
-                    <!-- Fixed Email: Will completely hide if empty or if user wrote 'None' -->
                     {% if company.members.exists and company.members.first.user.email and company.members.first.user.email|lower != 'none' %}
-                    <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.08] transition-colors">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                            <i data-lucide="mail" class="w-5 h-5 text-blue-200"></i>
+                    <a href="mailto:{{ company.members.first.user.email }}" class="group/item flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all backdrop-blur-sm active:scale-[0.98]">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5 group-hover/item:bg-white/10 transition-colors mt-0.5">
+                            <i data-lucide="mail" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-200"></i>
                         </div>
-                        <a href="mailto:{{ company.members.first.user.email }}" class="text-[15px] font-semibold text-white hover:text-blue-300 transition-colors">{{ company.members.first.user.email }}</a>
-                    </div>
+                        <div class="flex flex-col flex-1 min-w-0 pt-0.5 sm:pt-1">
+                            <span class="text-[11px] sm:text-[12px] font-bold text-blue-300/70 uppercase tracking-wider mb-0.5">Primary Email</span>
+                            <!-- Removed truncate, added break-all -->
+                            <span class="text-[14px] sm:text-[15px] font-medium text-white group-hover/item:text-blue-200 transition-colors break-all">{{ company.members.first.user.email }}</span>
+                        </div>
+                    </a>
                     {% endif %}
                 </div>
+            </section>
 
-                <!-- Socials Section -->
-                {% if company.socials.exists %}
-                <div class="mt-8 pt-6 border-t border-white/10">
-                    <p class="text-[11px] font-bold uppercase tracking-widest text-slate-300 mb-4">Connect With Us</p>
-                    <div class="flex flex-wrap gap-3">
-                        {% for social in company.socials.all %}
-                        <a href="{{ social.url }}" target="_blank" class="px-5 py-2.5 bg-white/[0.08] hover:bg-white/[0.15] border border-white/10 rounded-xl text-[14px] font-semibold text-white transition-all">
-                            {{ social.platform }}
-                        </a>
-                        {% endfor %}
+
+            <!-- 2. SOCIAL MEDIA LINKS SECTION (Vibrant Premium Gradient) -->
+            {% if company.socials.exists %}
+            <section id="socials" class="flex flex-col rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 shadow-2xl shadow-indigo-600/20 border border-white/10 h-full relative overflow-hidden group">
+                <!-- Abstract Glass Shapes -->
+                <div class="absolute -top-32 -right-32 w-80 h-80 bg-fuchsia-400/30 rounded-full blur-[80px] mix-blend-screen group-hover:scale-110 transition-transform duration-1000"></div>
+                <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-cyan-400/30 rounded-full blur-[80px] mix-blend-screen group-hover:scale-110 transition-transform duration-1000"></div>
+
+                <h3 class="font-heading font-bold text-xl sm:text-2xl text-white mb-3 sm:mb-4 flex items-center gap-3 relative z-10">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/20 flex items-center justify-center border border-white/20 backdrop-blur-md shadow-inner">
+                        <i data-lucide="share-2" class="w-4 h-4 sm:w-5 sm:h-5 text-white"></i>
                     </div>
+                    Social Networks
+                </h3>
+
+                <p class="text-[14px] sm:text-[15px] text-white/90 font-medium mb-6 sm:mb-8 leading-relaxed relative z-10">Follow us across our platforms to stay up to date with our latest announcements and insights.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 mt-auto relative z-10">
+                    {% for social in company.socials.all %}
+                    <a href="{{ social.url }}" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/20 bg-white/10 hover:bg-white/20 transition-all duration-300 shadow-sm hover:shadow-lg backdrop-blur-md active:scale-[0.98]">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white/10 border border-white/20 group-hover:bg-white flex items-center justify-center shrink-0 transition-colors duration-300">
+                            <i data-lucide="link-2" class="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-indigo-600 transition-colors duration-300"></i>
+                        </div>
+                        <!-- Full visibility for platform name -->
+                        <span class="text-[14px] sm:text-[15px] font-bold text-white flex-1 break-words leading-tight">
+                            {{ social.platform }}
+                        </span>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/0 group-hover:bg-white/20 flex items-center justify-center transition-all duration-300 shrink-0">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
-                {% endif %}
-            </div>
-        </section>
+            </section>
+            {% endif %}
+
+        </div>
+        <!-- ========================================== -->
 
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-slate-200/80 bg-white/50 backdrop-blur-md py-8 text-center mt-auto">
-        <p class="text-[13px] font-bold text-slate-400 uppercase tracking-wider">&copy; {% now "Y" %} {{ company.name }}. Powered by Corelink.</p>
+    <footer class="border-t border-slate-200/80 bg-white/40 backdrop-blur-md py-6 sm:py-8 text-center mt-auto">
+        <p class="text-[11px] sm:text-[13px] font-bold text-slate-400 uppercase tracking-wider">&copy; {% now "Y" %} {{ company.name }}. Powered by Corelink.</p>
     </footer>
 
     <!-- Scripts -->
