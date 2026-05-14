@@ -3,57 +3,59 @@
 
 {% block navbar %}
 <!-- ==============================================
-     LEFT SIDEBAR NAVIGATION (PC)
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM LIGHT UX
      ============================================== -->
-<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/95 backdrop-blur-3xl border-r border-slate-200/60 z-[100] shadow-[1px_0_0_0_rgba(15,23,42,0.06)] overflow-y-auto custom-scroll">
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
 
+        <!-- Top Section: Logo & Links -->
         <div class="flex-1">
             <!-- Typographic Logo -->
             <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
-                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
-                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase relative">
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase relative">
                     link
-                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
                 </span>
             </div>
 
             <!-- Desktop Navigation Links -->
             <nav class="flex flex-col gap-1.5">
-                <a href="{% url 'dashboard' %}" class="nav-link-active flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] bg-blue-50 text-[#0A66C2] font-bold transition-all border border-blue-100 text-[14px]" aria-current="page">
-                    <div class="nav-icon-active w-8 h-8 rounded-xl bg-[#0A66C2] flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-white"></i></div>
+                <!-- ACTIVE: My profile (Light Blue Glow) -->
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-all shadow-sm text-[14px]" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     My profile
                 </a>
 
-                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] hover:bg-slate-50 text-slate-500 hover:text-slate-900 font-medium transition-all text-[14px] group">
-                    <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-slate-200 flex items-center justify-center transition-all"><i data-lucide="bell-ring" class="w-4 h-4 text-slate-500 group-hover:text-slate-700"></i></div>
+                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-all text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="bell-ring" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "My Updates" %}
                 </a>
 
-                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] hover:bg-slate-50 text-slate-500 hover:text-slate-900 font-medium transition-all text-[14px] group">
-                    <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-slate-200 flex items-center justify-center transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-500 group-hover:text-slate-700"></i></div>
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-all text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Discover" %}
                 </a>
 
-                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] hover:bg-slate-50 text-slate-500 hover:text-slate-900 font-medium transition-all text-[14px] group">
-                    <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-slate-200 flex items-center justify-center transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-500 group-hover:text-slate-700"></i></div>
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-all text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Updates" %}
                 </a>
 
-                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] hover:bg-slate-50 text-slate-500 hover:text-slate-900 font-medium transition-all text-[14px] group">
-                    <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-slate-200 flex items-center justify-center transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-500 group-hover:text-slate-700"></i></div>
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-all text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Opportunities" %}
                 </a>
 
-                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3 rounded-[1.1rem] hover:bg-slate-50 text-slate-500 hover:text-slate-900 font-medium transition-all text-[14px] group">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-slate-200 flex items-center justify-center transition-all">
-                            <i data-lucide="mail" class="w-4 h-4 text-slate-500 group-hover:text-slate-700"></i>
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-all text-[14px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
                         </div>
                         {% trans "Inbox" %}
                     </div>
                     {% if unread_msg_count > 0 %}
-                        <span class="flex items-center justify-center min-w-[20px] h-[20px] px-1.5 bg-rose-500 text-white text-[10px] font-black rounded-full">
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
                             {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
                         </span>
                     {% endif %}
@@ -61,17 +63,18 @@
             </nav>
         </div>
 
-        <div class="pt-5 border-t border-slate-100 flex flex-col gap-1 mt-auto">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] text-[13.5px] font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors w-full text-left">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-4.5 h-4.5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] text-[13.5px] font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-4.5 h-4.5"></i>
                 <span>{% trans "Settings" %}</span>
             </a>
-            <a href="{% url 'logout' %}" class="flex items-center gap-3.5 px-4 py-3 rounded-[1.1rem] text-[13.5px] font-medium text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-1">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-4.5 h-4.5"></i>
                 <span>{% trans "Logout" %}</span>
             </a>
         </div>
@@ -79,21 +82,21 @@
     </div>
 </aside>
 
-<!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/97 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select">
+<!-- MOBILE TOP BAR - PREMIUM -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/88 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95">
-        <i data-lucide="menu" class="w-5 h-5 stroke-[2]"></i>
+    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.8rem] flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-5 h-5"></i>
     </button>
 </div>
 {% endblock navbar %}
 
 {% block content %}
 <!-- TOP LOADING BAR -->
-<div id="global-page-loader" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
+<div id="global-page-loader" class="fixed top-0 left-0 h-[4px] bg-gradient-to-r from-blue-400 via-[#0A66C2] to-blue-600 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -402,7 +405,7 @@
     .anim-smooth-appear { animation: smoothAppear 0.5s var(--ease-magic) forwards; }
 
     /* ── Drawers ── */
-    .drawer-open  { transform: translateY(0); box-shadow: 0 -20px 60px rgba(0,0,0,0.12); }
+    .drawer-open  { transform: translateY(0); box-shadow: 0 -24px 60px rgba(0,0,0,0.15); }
     .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 
@@ -512,7 +515,7 @@
                         </div>
                     </div>
 
-                    <!-- CTA Buttons — FIXED: always clickable links -->
+                    <!-- CTA Buttons -->
                     <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto shrink-0 lg:pt-1">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
@@ -1000,37 +1003,43 @@
 </main>
 
 <!-- ══════════════════════════════════
-     MOBILE BOTTOM NAV
+     MOBILE BOTTOM NAV - PREMIUM
 ══════════════════════════════════ -->
 {% if not is_inspector and request.user.is_authenticated %}
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/97 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[72px] pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_rgba(0,0,0,0.06)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
-        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
-        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[10px] font-bold whitespace-nowrap">My profile</span>
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+
+    <!-- ACTIVE STATE: My profile -->
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full shadow-[0_0_12px_rgba(10,102,194,0.8)]"></div>
+        <i data-lucide="user" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">My profile</span>
     </a>
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="compass" class="w-5 h-5 stroke-[2]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Discover" %}</span>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
     </a>
-    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="zap" class="w-5 h-5 stroke-[2]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Updates" %}</span>
+
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Opportunities" %}</span>
+
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
     </a>
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
         <div class="relative">
-            <i data-lucide="mail" class="w-5 h-5 stroke-[2]"></i>
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
             {% if unread_msg_count > 0 %}
-                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[15px] h-[15px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white">
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white animate-pulse">
                     {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
                 </span>
             {% endif %}
         </div>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Inbox" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
     </a>
 </nav>
 {% endif %}
@@ -1070,51 +1079,80 @@
 </div>
 
 <!-- ══════════════════════════════════
-     MOBILE NAV DRAWER
+     MOBILE NAV DRAWER - PREMIUM
 ══════════════════════════════════ -->
-<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/50 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2rem] shadow-2xl z-[120] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5 border-t border-slate-100">
-    <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
-    <div class="space-y-1 w-full custom-scroll overflow-y-auto">
-        <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full min-h-[48px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[14.5px] font-semibold text-slate-800 flex items-center gap-3.5">
-            <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0"><i data-lucide="bell-ring" class="w-4 h-4 text-[#0A66C2]"></i></div>
-            {% trans "My Updates" %}
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <!-- ACTIVE: My profile -->
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center shadow-sm"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div>
+            My profile
+        </a>
+
+        <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Discover" %}
+        </a>
+
+        <!-- Added Discover Teams here like the feed page -->
+        <a href="{% url 'team_nexus' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="users" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Discover Teams" %}
+        </a>
+
+        <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Updates" %}
+        </a>
+        <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Opportunities" %}
+        </a>
+        <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div>
+            {% trans "Inbox" %}
+        </a>
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Settings" %}
         </button>
-        <div class="h-px bg-slate-100 my-2 mx-1"></div>
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[48px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[14.5px] font-semibold text-slate-800 flex items-center gap-3.5">
-            <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div>
-            {% trans "Portfolio Settings" %}
-        </button>
-        <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[48px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[14.5px] font-semibold text-slate-800 flex items-center gap-3.5">
-            <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
+
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
             <span class="flex-1 flex justify-between items-center">
                 {% trans "Language" %}
                 <small class="text-[10.5px] font-black uppercase bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
             </span>
         </button>
-        <a href="{% url 'logout' %}" class="w-full min-h-[48px] p-4 bg-rose-50 hover:bg-rose-100 rounded-xl font-semibold text-rose-600 text-[14.5px] flex items-center gap-3.5 transition-colors mt-2">
-            <div class="w-8 h-8 rounded-xl bg-white border border-rose-100 flex items-center justify-center shrink-0"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
-            {% trans "Log Out" %}
+
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2">
+            <div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
+            {% trans "Logout" %}
         </a>
     </div>
 </div>
 
 <!-- ══════════════════════════════════
-     LANGUAGE DRAWER
+     LANGUAGE DRAWER - UPGRADED
 ══════════════════════════════════ -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/50 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[320px] bg-white rounded-t-[2rem] md:rounded-t-2xl md:border md:border-slate-200 shadow-2xl z-[140] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5 pointer-events-auto">
-    <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5 md:hidden"></div>
-    <h3 class="font-black text-[16px] text-slate-900 tracking-tight text-center mb-4 font-heading">{% trans "Select Language" %}</h3>
-    <form action="{% url 'set_language' %}" method="post" class="space-y-2 w-full">
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[320px] bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] md:rounded-t-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-400 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-6 pointer-events-auto">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[48px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border-2 border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[14px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-semibold{% endif %}">{% trans "English" %}</span>
+        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[48px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-2 border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[14px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-semibold{% endif %}">{% trans "አማርኛ" %}</span>
+        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
     </form>
@@ -1278,6 +1316,23 @@
         modal.classList.remove('translate-y-0', 'md:scale-100');
         document.body.classList.remove('body-lock');
     }
+
+    /* Hide Bottom Nav on Input Focus (Mobile) */
+    document.addEventListener("DOMContentLoaded", function() {
+        const bottomNav = document.getElementById('mobile-bottom-nav');
+        if (bottomNav) {
+            document.addEventListener('focusin', (e) => {
+                if (window.innerWidth < 768 && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'none';
+                }
+            });
+            document.addEventListener('focusout', (e) => {
+                if (window.innerWidth < 768 && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                    bottomNav.style.display = 'flex';
+                }
+            });
+        }
+    });
 
     /* ── Toast ── */
     let shareTimeout;
