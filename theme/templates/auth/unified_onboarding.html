@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -343,33 +341,46 @@
                     <h2 class="step-title">{% trans "The basics" %}</h2>
                     <p class="step-subtitle">{% trans "Let's start with your core details." %}</p>
 
-                    <div class="fields-grid">
-                        <div class="field-group">
-                            <label class="form-label">{% trans "First Name" %}</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors }}</span>{% endif %}
+                    <div class="space-y" id="step2-grid">
+
+                        <!-- Marker where dynamic fields will jump -->
+                        <span id="step2-marker" style="display:none;"></span>
+
+                        <!-- Registering Person Information block (By default sits in Step 2) -->
+                        <div id="registering-person-fields" class="fields-grid">
+                            <div class="field-group">
+                                <label class="form-label">{% trans "First Name" %}</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors }}</span>{% endif %}
+                            </div>
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Last Name" %}</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
+                            </div>
+
+                            <div class="field-group col-span-2">
+                                <label class="form-label">{% trans "Email Address" %}</label>
+                                {{ form.email }}
+                                {% if form.email.help_text %}
+                                    <div class="info-banner" style="margin-top: 0.5rem;">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span>{{ form.email.help_text }}</span>
+                                    </div>
+                                {% endif %}
+                                {% if form.email.errors %}<span class="field-error">{{ form.email.errors }}</span>{% endif %}
+                            </div>
+
+                            <div class="field-group col-span-2">
+                                <label class="form-label">{% trans "Phone Number" %}</label>
+                                {{ form.phone_number }}
+                                <span class="field-hint" style="display: block; margin-top: 6px; color: var(--text-secondary); font-size: 13px;">
+                                    {% trans "Note: Please provide your personal phone number for account security and verification." %}
+                                </span>
+                                {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors }}</span>{% endif %}
+                            </div>
                         </div>
-                        <div class="field-group">
-                            <label class="form-label">{% trans "Last Name" %}</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Email Address" %}</label>
-                            {{ form.email }}
-                            {% if form.email.help_text %}
-                                <div class="info-banner">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    <span>{{ form.email.help_text }}</span>
-                                </div>
-                            {% endif %}
-                            {% if form.email.errors %}<span class="field-error">{{ form.email.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Phone Number" %}</label>
-                            {{ form.phone_number }}
-                            {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors }}</span>{% endif %}
-                        </div>
+
                     </div>
 
                     <div class="btn-row">
@@ -409,11 +420,15 @@
                         </div>
 
                         <div id="path-company" class="space-y" style="display:none">
-                            <div class="field-group">
+                            <span id="step3-marker" style="display:none;"></span>
+
+                            <!-- Company Name block (By default sits in Step 3) -->
+                            <div id="company-field" class="field-group">
                                 <label class="form-label">{% trans "Company / Startup Name" %}</label>
                                 {{ form.company_name }}
                                 {% if form.company_name.errors %}<span class="field-error">{{ form.company_name.errors }}</span>{% endif %}
                             </div>
+
                             <div class="fields-grid">
                                 <div class="field-group">
                                     <label class="form-label">{% trans "Your Role" %}</label>
@@ -442,7 +457,8 @@
                     <h2 class="step-title">{% trans "Final details" %}</h2>
                     <p class="step-subtitle">{% trans "Tell us about yourself and secure your account." %}</p>
 
-                    <div class="space-y">
+                    <div class="space-y" id="step4-container">
+
                         <div id="path-individual-bio" class="field-group">
                             <label class="form-label">{% trans "About Me / Your Goals" %}</label>
                             {{ form.bio_narrative }}
@@ -458,6 +474,14 @@
                         </div>
 
                         <div class="divider"></div>
+
+                        <!-- Header for Founder's Personal Details (Hidden by default) -->
+                        <div id="founder-names-header" style="display:none; margin-bottom: -0.5rem;">
+                            <h3 style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin: 0;">{% trans "Registering Person Details" %}</h3>
+                        </div>
+                        <span id="step4-marker" style="display:none;"></span>
+
+                        <div class="divider" id="founder-divider" style="display:none;"></div>
 
                         <div class="security-block">
                             <div class="security-block-header">
@@ -569,13 +593,49 @@
         return true;
     };
 
+    /* ── DYNAMIC LAYOUT MANAGEMENT (ROLE SWITCHING) ── */
+    function applyRoleLayout(selectedRole) {
+        if (!selectedRole) return;
+        const isFounder = selectedRole === 'FOUNDER';
+
+        // Visibility Toggles
+        document.getElementById('path-individual').style.display     = isFounder ? 'none' : '';
+        document.getElementById('path-company').style.display        = isFounder ? ''     : 'none';
+        document.getElementById('path-individual-bio').style.display = isFounder ? 'none' : '';
+        document.getElementById('path-company-bio').style.display    = isFounder ? ''     : 'none';
+
+        // Moveable Blocks
+        const registeringPersonFields = document.getElementById('registering-person-fields');
+        const companyField = document.getElementById('company-field');
+
+        // Target Destinations & Markers
+        const step2Grid = document.getElementById('step2-grid');
+        const step2Marker = document.getElementById('step2-marker');
+        const pathCompany = document.getElementById('path-company');
+        const step3Marker = document.getElementById('step3-marker');
+        const step4Container = document.getElementById('step4-container');
+        const step4Marker = document.getElementById('step4-marker');
+        const founderNamesHeader = document.getElementById('founder-names-header');
+        const founderDivider = document.getElementById('founder-divider');
+
+        if (isFounder) {
+            // Business Path: Company info in Step 2, Full Personal Contact info in Step 4
+            step2Grid.insertBefore(companyField, step2Marker);
+            step4Container.insertBefore(registeringPersonFields, step4Marker);
+            founderNamesHeader.style.display = 'block';
+            founderDivider.style.display = 'block';
+        } else {
+            // Individual Path: Full Personal info in Step 2, Company info hidden in Step 3
+            step2Grid.insertBefore(registeringPersonFields, step2Marker);
+            pathCompany.insertBefore(companyField, step3Marker);
+            founderNamesHeader.style.display = 'none';
+            founderDivider.style.display = 'none';
+        }
+    }
+
     window.setRole = function (role) {
         document.getElementById('{{ form.selected_role.id_for_label }}').value = role;
-        const isFounder = role === 'FOUNDER';
-        document.getElementById('path-individual').style.display     = isFounder ? 'none'  : '';
-        document.getElementById('path-company').style.display        = isFounder ? ''      : 'none';
-        document.getElementById('path-individual-bio').style.display = isFounder ? 'none'  : '';
-        document.getElementById('path-company-bio').style.display    = isFounder ? ''      : 'none';
+        applyRoleLayout(role);
         nextStep(2);
     };
 
@@ -584,22 +644,19 @@
 
         // 1. Check if there are form errors from a previous submission
         const firstErr = document.querySelector('.field-error');
+        const roleInput = document.getElementById('{{ form.selected_role.id_for_label }}');
+        const currentRole = roleInput ? roleInput.value : '';
 
         if (firstErr) {
-            // Restore state based on the hidden input value
-            const role = document.getElementById('{{ form.selected_role.id_for_label }}').value;
-            const isFounder = role === 'FOUNDER';
-            document.getElementById('path-individual').style.display     = isFounder ? 'none' : '';
-            document.getElementById('path-company').style.display        = isFounder ? ''     : 'none';
-            document.getElementById('path-individual-bio').style.display = isFounder ? 'none' : '';
-            document.getElementById('path-company-bio').style.display    = isFounder ? ''     : 'none';
+            // Restore dynamic field layouts based on the hidden input role
+            applyRoleLayout(currentRole);
 
             // Jump directly to the step containing the error
             const errStep = firstErr.closest('.form-step');
             if (errStep) showStep(parseInt(errStep.id.split('-')[1]));
         }
         else {
-            // 2. If NO errors (Fresh Load), check URL parameters for auto-routing!
+            // 2. Fresh Load - Check URL parameters for auto-routing
             const urlParams = new URLSearchParams(window.location.search);
             const userType = urlParams.get('type');
 
@@ -608,6 +665,10 @@
             }
             else if (userType === 'company' || userType === 'business') {
                 setRole('FOUNDER'); // Auto-select Company and jump to step 2
+            }
+            else {
+                // Prepare layout natively without jumping to Step 2
+                applyRoleLayout('EXPERT');
             }
         }
 
