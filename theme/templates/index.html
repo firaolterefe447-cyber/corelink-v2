@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
@@ -29,20 +27,20 @@
      ========================================================================== */
   #page-loader {
     position: fixed; top: 0; left: 0; height: 3.5px;
-    background: linear-gradient(to right, #0A66C2, #3b82f6, #06b6d4, #10b981);
-    background-size: 200% 100%; z-index: 99999;
+    background: linear-gradient(to right, #0A66C2, #3b82f6, #10b981, #059669);
+    background-size: 200% 100%; z-index: 999999;
     transition: width 0.3s ease, opacity 0.4s ease;
     width: 0%; opacity: 1; pointer-events: none;
-    box-shadow: 0 0 10px rgba(10, 102, 194, 0.6);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     animation: loader-gradient 2s linear infinite;
   }
   @keyframes loader-gradient { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
   /* ==========================================================================
-     PREMIUM NAVBAR & MOBILE MENU
+     PREMIUM NAVBAR & DESKTOP MENU
      ========================================================================== */
   .nav {
-    position: sticky; top: 0; z-index: 100;
+    position: sticky; top: 0; z-index: 9000;
     background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
     border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;
     padding: 0 32px; height: 72px;
@@ -71,17 +69,106 @@
   .btn-primary { font-size: 13.5px; font-weight: 700; color: #fff; background: #0A66C2; border: none; padding: 10px 24px; border-radius: 999px; cursor: pointer; text-decoration: none; transition: background 0.2s; box-shadow: 0 4px 12px rgba(10,102,194,0.2); }
   .btn-primary:hover { background: #0052a3; box-shadow: 0 6px 16px rgba(10,102,194,0.3); }
 
-  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; }
-  .mobile-menu { display: none; flex-direction: column; background: #fff; border-bottom: 1px solid #e2e8f0; position: absolute; top: 72px; left: 0; width: 100%; padding: 20px 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-  .mobile-menu a { padding: 14px 0; font-size: 15px; font-weight: 700; color: #0f172a; text-decoration: none; border-bottom: 1px solid #f1f5f9; }
-  .mobile-menu .m-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
-
   .lang-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
   .lang-btn:hover { border-color: #cbd5e1; }
-  .lang-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 200; }
+  .lang-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
   .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #475569; background: none; border: none; border-radius: 6px; cursor: pointer; }
   .lang-option:hover { background: #f8fafc; color: #0A66C2; }
   .lang-option.active { background: #eff6ff; color: #0A66C2; }
+
+  /* ==========================================================================
+     AMAZING DEEP EMERALD MOBILE DRAWER MENU
+     ========================================================================== */
+  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; outline: none; }
+
+  .mobile-backdrop {
+    position: fixed; inset: 0; background: rgba(2, 44, 34, 0.75); backdrop-filter: blur(8px); z-index: 99990;
+  }
+  .mobile-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 88%; max-width: 400px;
+    background: #022c22; /* Solid Deep Forest Green to prevent gaps */
+    z-index: 99995; display: flex; flex-direction: column;
+    box-shadow: -20px 0 60px rgba(2, 44, 34, 0.8);
+  }
+
+  .m-drawer-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 24px;
+    border-bottom: 1px solid rgba(52, 211, 153, 0.15); background: #022c22;
+  }
+  .m-drawer-header .logo { color: #fff; }
+  .m-drawer-header .logo span { color: #34d399; } /* Vibrant Emerald Link */
+
+  .m-drawer-close {
+    background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2);
+    width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #34d399; cursor: pointer; transition: all 0.3s ease; outline: none;
+  }
+  .m-drawer-close:hover { background: #10b981; color: #fff; border-color: #10b981; transform: rotate(90deg); }
+
+  .m-drawer-body {
+    padding: 32px 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 32px;
+    background: #022c22; /* Solid background prevents hero showing through */
+  }
+
+  /* Premium App-Like Links */
+  .m-nav-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; text-decoration: none; color: #f8fafc;
+    transition: all 0.3s ease; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .m-icon-box {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: rgba(52, 211, 153, 0.12); color: #34d399;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; border: 1px solid rgba(52, 211, 153, 0.2);
+  }
+  .m-nav-link span { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; transition: color 0.3s ease; }
+  .m-chevron { color: #047857; transition: all 0.3s ease; }
+
+  .m-nav-link:hover .m-icon-box { background: #10b981; color: #fff; transform: scale(1.08) rotate(-5deg); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+  .m-nav-link:hover .m-chevron { color: #34d399; transform: translateX(4px); }
+  .m-nav-link:hover span { color: #34d399; }
+
+  /* Language Section */
+  .m-lang-section { margin-top: auto; padding-top: 12px; }
+  .m-lang-title { font-size: 11.5px; font-weight: 900; color: #047857; text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; display: block; }
+  .m-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .m-lang-btn {
+    padding: 14px; border-radius: 14px; font-size: 13.5px; font-weight: 800; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color: #94a3b8;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .m-lang-btn.active {
+    border-color: #10b981; background: rgba(16, 185, 129, 0.15); color: #34d399;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+  }
+
+  /* Footer Actions */
+  .m-drawer-footer {
+    padding: 24px; border-top: 1px solid rgba(52, 211, 153, 0.15); background: #012019;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .m-btn-ghost {
+    display: block; text-align: center; padding: 18px; border-radius: 999px; font-size: 15.5px; font-weight: 800;
+    color: #fff; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1);
+    text-decoration: none; transition: all 0.3s ease;
+  }
+  .m-btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: #34d399; color: #34d399; }
+
+  .m-btn-primary {
+    display: block; text-align: center; padding: 18px; border-radius: 999px; font-size: 15.5px; font-weight: 900;
+    color: #fff; background: linear-gradient(135deg, #10b981, #059669); border: none; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); transition: all 0.3s ease;
+  }
+  .m-btn-primary:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); transform: translateY(-2px); filter: brightness(1.1); }
+
+  /* Alpine transition helper classes */
+  .transition-opacity-transform { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .transition-opacity { transition: opacity 0.3s ease; }
+  .opacity-0 { opacity: 0; }
+  .opacity-100 { opacity: 1; }
+  .translate-x-full { transform: translateX(100%); }
+  .translate-x-0 { transform: translateX(0); }
 
   /* ==========================================================================
      HERO SECTION
@@ -101,7 +188,6 @@
     padding: 6px 16px; border-radius: 999px; margin-bottom: 24px; position: relative; box-shadow: 0 2px 8px rgba(10,102,194,0.08);
   }
 
-  /* Upgraded Hero Title Styling */
   .hero h1 {
     font-size: clamp(2.2rem, 5vw, 4rem);
     font-weight: 900;
@@ -143,41 +229,17 @@
   .hero-cta-ghost { background: #fff; color: #0f172a; font-size: 15px; font-weight: 700; text-decoration: none; border: 1px solid #e2e8f0; padding: 18px 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; width: auto; }
   .hero-cta-ghost:hover { border-color: #0A66C2; color: #0A66C2; background: #f8fafc; }
 
-  /* AMAZING TRANSFORMATION BANNER */
   .hero-transformation-wrapper {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 64px;
-    padding: 14px 28px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 999px;
-    box-shadow: 0 10px 30px rgba(10, 102, 194, 0.08);
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex; align-items: center; justify-content: center; margin-top: 64px; padding: 14px 28px;
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 999px; box-shadow: 0 10px 30px rgba(10, 102, 194, 0.08);
+    position: relative; transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .hero-transformation-wrapper:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(10, 102, 194, 0.12);
-  }
-  .hero-transformation-wrapper p {
-    font-size: 14px;
-    font-weight: 700;
-    color: #475569;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    margin: 0;
-  }
-  .hero-transformation-wrapper .gradient-text {
-    background: linear-gradient(135deg, #0A66C2, #10b981);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 900;
-  }
+  .hero-transformation-wrapper:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(10, 102, 194, 0.12); }
+  .hero-transformation-wrapper p { font-size: 14px; font-weight: 700; color: #475569; letter-spacing: 0.02em; text-transform: uppercase; margin: 0; }
+  .hero-transformation-wrapper .gradient-text { background: linear-gradient(135deg, #0A66C2, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
 
   /* ==========================================================================
-     EDITORIAL IMPACT SECTION (Focus on Local Discovery & Deep Profiles)
+     EDITORIAL IMPACT SECTION
      ========================================================================== */
   .impact-section { padding: 120px 32px; background: #fff; overflow: hidden; }
   .impact-header { text-align: center; max-width: 700px; margin: 0 auto 100px; }
@@ -193,8 +255,7 @@
   .impact-number {
     font-size: 160px; font-weight: 900; line-height: 0.8;
     color: transparent; -webkit-text-stroke: 2px #e2e8f0;
-    position: absolute; top: -60px; left: -40px; z-index: 1;
-    user-select: none;
+    position: absolute; top: -60px; left: -40px; z-index: 1; user-select: none;
   }
   .impact-row:nth-child(even) .impact-number { left: auto; right: -40px; }
 
@@ -268,74 +329,139 @@
   }
 </style>
 
-<!-- NAVBAR -->
-<nav class="nav" x-data="{ mobileMenuOpen: false }">
-  <a href="/" class="logo">core<span>link</span></a>
+<!-- ALPINE WRAPPER FOR NAV & DRAWER (FIXES RENDER BUGS) -->
+<div x-data="{ mobileMenuOpen: false }">
 
-  <div class="nav-desktop">
-    <div class="nav-links">
-      <a class="nav-link" href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
-      <a class="nav-link" href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
-      <a class="nav-link" href="#">{% trans "Teams & Groups" %}</a>
-    </div>
-    <div class="nav-btns">
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <a href="/" class="logo">core<span>link</span></a>
 
-      <div x-data="{ open: false }" class="relative">
-        <button @click="open = !open" @click.outside="open = false" class="lang-btn">
-          <span>{{ current_lang.name_local|title|default:"English" }}</span>
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <div x-show="open" style="display: none;" class="lang-dropdown">
-          <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-            {% for language in languages %}
-              {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-              <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">
-                {{ language.name_local|title }}
-              </button>
-              {% endif %}
-            {% endfor %}
-          </form>
-        </div>
+    <!-- Desktop Navigation -->
+    <div class="nav-desktop">
+      <div class="nav-links">
+        <a class="nav-link" href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
+        <a class="nav-link" href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
+        <a class="nav-link" href="#">{% trans "Teams & Groups" %}</a>
       </div>
-
-      <a href="{% url 'login' %}" class="btn-ghost">{% trans "Log In" %}</a>
-      <a href="{% url 'unified_onboarding' %}" class="btn-primary">{% trans "Join CoreLink" %}</a>
-    </div>
-  </div>
-
-  <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
-    <svg x-show="!mobileMenuOpen" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-    <svg x-show="mobileMenuOpen" style="display:none;" width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-  </button>
-
-  <div class="mobile-menu" x-show="mobileMenuOpen" style="display:none;">
-    <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
-    <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
-    <a href="#">{% trans "Teams & Groups" %}</a>
-
-    <div style="padding: 16px 0; border-bottom: 1px solid #f1f5f9; margin-top:8px;">
-      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; display: block;">{% trans "Language" %}</span>
-      <form action="{% url 'set_language' %}" method="post" style="display:flex; gap:8px; flex-wrap:wrap;">
-        {% csrf_token %}
-        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-        {% for language in languages %}
-          {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-          <button type="submit" name="language" value="{{ language.code }}" style="font-size:13px; font-weight:700; padding:8px 14px; border-radius:8px; border:1px solid {% if language.code == LANGUAGE_CODE %}#0A66C2{% else %}#e2e8f0{% endif %}; background:{% if language.code == LANGUAGE_CODE %}#eff6ff{% else %}#fff{% endif %}; color:{% if language.code == LANGUAGE_CODE %}#0A66C2{% else %}#64748b{% endif %};">
-            {{ language.name_local|title }}
+      <div class="nav-btns">
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" @click.outside="open = false" class="lang-btn">
+            <span>{{ current_lang.name_local|title|default:"English" }}</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
-          {% endif %}
-        {% endfor %}
-      </form>
+          <div x-show="open" style="display: none;" class="lang-dropdown">
+            <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ request.get_full_path }}">
+              {% for language in languages %}
+                {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+                <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                  {{ language.name_local|title }}
+                </button>
+                {% endif %}
+              {% endfor %}
+            </form>
+          </div>
+        </div>
+        <a href="{% url 'login' %}" class="btn-ghost">{% trans "Log In" %}</a>
+        <a href="{% url 'unified_onboarding' %}" class="btn-primary">{% trans "Join CoreLink" %}</a>
+      </div>
     </div>
 
-    <div class="m-btns">
-      <a href="{% url 'login' %}" class="btn-ghost" style="text-align: center;">{% trans "Log In" %}</a>
-      <a href="{% url 'unified_onboarding' %}" class="btn-primary" style="text-align: center;">{% trans "Join CoreLink" %}</a>
-    </div>
+    <!-- Mobile Hamburger Button -->
+    <button class="mobile-menu-btn" @click="mobileMenuOpen = true">
+      <svg width="30" height="30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu Backdrop -->
+  <div x-show="mobileMenuOpen" style="display:none;"
+       x-transition:enter="transition-opacity"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="transition-opacity"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="mobile-backdrop" @click="mobileMenuOpen = false"></div>
+
+  <!-- Mobile Drawer Menu (PREMIUM DEEP EMERALD) -->
+  <div x-show="mobileMenuOpen" style="display:none;"
+       x-transition:enter="transition-opacity-transform"
+       x-transition:enter-start="translate-x-full"
+       x-transition:enter-end="translate-x-0"
+       x-transition:leave="transition-opacity-transform"
+       x-transition:leave-start="translate-x-0"
+       x-transition:leave-end="translate-x-full"
+       class="mobile-drawer">
+
+       <!-- Drawer Header -->
+       <div class="m-drawer-header">
+          <a href="/" class="logo">core<span>link</span></a>
+          <button class="m-drawer-close" @click="mobileMenuOpen = false">
+              <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+       </div>
+
+       <!-- Drawer Body -->
+       <div class="m-drawer-body">
+           <!-- Links with Custom Emerald Icon Boxes -->
+           <div style="display: flex; flex-direction: column; gap: 8px;">
+               <a href="{% url 'nexus_feed' %}" class="m-nav-link group">
+                  <div style="display:flex; align-items:center; gap:16px;">
+                     <div class="m-icon-box">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                     </div>
+                     <span>{% trans "Discover Talent" %}</span>
+                  </div>
+                  <svg class="m-chevron" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+               </a>
+
+               <a href="{% url 'company_nexus' %}" class="m-nav-link group">
+                  <div style="display:flex; align-items:center; gap:16px;">
+                     <div class="m-icon-box">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                     </div>
+                     <span>{% trans "Discover Companies" %}</span>
+                  </div>
+                  <svg class="m-chevron" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+               </a>
+
+               <a href="#" class="m-nav-link group">
+                  <div style="display:flex; align-items:center; gap:16px;">
+                     <div class="m-icon-box">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                     </div>
+                     <span>{% trans "Teams & Groups" %}</span>
+                  </div>
+                  <svg class="m-chevron" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+               </a>
+           </div>
+
+           <!-- Language Selection -->
+           <div class="m-lang-section">
+              <span class="m-lang-title">{% trans "Select Language" %}</span>
+              <form action="{% url 'set_language' %}" method="post" class="m-lang-grid">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                {% for language in languages %}
+                  {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+                  <button type="submit" name="language" value="{{ language.code }}" class="m-lang-btn {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                    {{ language.name_local|title }}
+                  </button>
+                  {% endif %}
+                {% endfor %}
+              </form>
+           </div>
+       </div>
+
+       <!-- Drawer Footer Actions -->
+       <div class="m-drawer-footer">
+           <a href="{% url 'login' %}" class="m-btn-ghost">{% trans "Log In" %}</a>
+           <a href="{% url 'unified_onboarding' %}" class="m-btn-primary">{% trans "Join CoreLink" %}</a>
+       </div>
   </div>
-</nav>
+</div>
+<!-- END ALPINE WRAPPER -->
 
 <!-- HERO -->
 <section class="hero">
