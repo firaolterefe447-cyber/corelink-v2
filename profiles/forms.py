@@ -8,7 +8,6 @@ import logging
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
-from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import date
@@ -20,9 +19,8 @@ logger = logging.getLogger(__name__)
 # ==============================================================================
 try:
     from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMethod
-    from accounts.models import Country, City, Institution, FieldOfInterest, CurrentStatus
 except ImportError:
-    Country = City = Institution = FieldOfInterest = CurrentStatus = None
+    pass
 
 from profiles.models.new_unified_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject, RightNowPost, RightNowMedia,
@@ -82,33 +80,6 @@ class TailwindFormMixin:
             existing_classes = widget.attrs.get('class', '')
             widget.attrs['class'] = f"{existing_classes} {base_css} {extra_css}".strip()
 
-class DBRestrictedChoiceFieldsMixin:
-    restricted_db_fields = ()
-    restricted_model = None
-    restricted_source_models = {}
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.restricted_model: return
-        for field_name in self.restricted_db_fields:
-            field = self.fields.get(field_name)
-            if not field: continue
-            current_value = self.instance and getattr(self.instance, field_name, None)
-            cache_key = f"form_choices_{self.restricted_model.__name__}_{field_name}"
-            db_values = cache.get_or_set(cache_key, lambda fn=field_name: self._get_distinct_profile_values(fn), timeout=3600)
-            choices_list = list(db_values)
-            if current_value and current_value not in choices_list: choices_list.insert(0, current_value)
-            choices = [('', _("Select an option"))] + [(val, val) for val in choices_list]
-            self.fields[field_name] = forms.TypedChoiceField(choices=choices, required=field.required, coerce=str, empty_value='', label=field.label, help_text=field.help_text, widget=forms.Select(attrs=field.widget.attrs))
-
-    def _get_distinct_profile_values(self, field_name):
-        source_model = self.restricted_source_models.get(field_name)
-        if source_model:
-            queryset = source_model.objects
-            if any(field.name == 'is_verified' for field in source_model._meta.fields): queryset = queryset.filter(is_verified=True)
-            return list(queryset.exclude(name__isnull=True).exclude(name='').values_list('name', flat=True).distinct().order_by('name')[:1000])
-        return list(self.restricted_model.objects.exclude(**{f"{field_name}__isnull": True}).exclude(**{field_name: ''}).values_list(field_name, flat=True).distinct().order_by(field_name)[:1000])
-
 
 # ==============================================================================
 # 2. THE UNIFIED FORMS (HUMAN & INCLUSIVE UX COPY)
@@ -133,9 +104,10 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'location': _("E.g., Addis Ababa, London, San Francisco, or Remote."),
+            'location': _("E.g., Addis Ababa, London, San Francisco, or Remote. Type your primary location."),
             'institution': _("Where do you currently work, study, or practice?"),
             'field_of_interest': _("E.g., Agriculture, Healthcare, Education, Engineering, or Business."),
+            'years_experience': _("Total number of years you have been active in your field."),
             'bio_narrative': _("Provide a detailed professional biography. Tell us about your background, your current work, and your future goals."),
             'cv_file': _("Upload your 1-page CV or Resume. This helps others understand your full professional background."),
         }
@@ -177,6 +149,7 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
 
         help_texts = {
             'name': _("Add a specific skill or strength (e.g., Patient Care, Logistics Management, Python, Financial Modeling, Graphic Design)."),
+            'proficiency_level': _("Rate your current ability with this skill."),
             'status': _("Indicate whether you are currently learning this, or if you already use it professionally."),
             'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch', or 'Used for daily patient reporting')."),
         }
@@ -203,7 +176,9 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
 
         help_texts = {
             'title': _("The name of the project, research paper, business plan, or campaign."),
+            'context': _("Select the category that best fits this work."),
             'role': _("Your specific position during this work (e.g., Project Manager, Research Assistant, Lead Technician)."),
+            'link': _("A URL where people can view this project live or read the published work."),
             'problem_statement': _("Explain the main objective or the problem you were trying to solve."),
             'solution_narrative': _("Describe the steps you took and the final outcome or impact of the work."),
         }
@@ -225,11 +200,19 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
             'company_name': _("Organization Name"),
             'role_title': _("Your Title"),
             'location_type': _("Location Setup"),
+            'start_date': _("Start Date"),
+            'end_date': _("End Date"),
             'is_current': _("I currently work here"),
             'description': _("Role Description"),
         }
 
         help_texts = {
+            'company_name': _("The official name of the business, hospital, or organization."),
+            'role_title': _("Your official job title (e.g., Senior Analyst, Medical Officer)."),
+            'location_type': _("Indicate if this role was performed on-site, remotely, or in a hybrid format."),
+            'start_date': _("The month and year you started this role."),
+            'end_date': _("Leave this blank if you check 'I currently work here'."),
+            'is_current': _("Check this box if this is your active job."),
             'description': _("Highlight your key responsibilities and professional achievements. Using bullet points makes it easier to read."),
         }
 
@@ -252,6 +235,7 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
         fields = ['credential_type', 'title', 'issuer', 'issue_date', 'url_link', 'file_upload']
 
         labels = {
+            'credential_type': _("Type of Credential"),
             'title': _("Degree or Certificate Name"),
             'issuer': _("Issuing Organization"),
             'issue_date': _("Date Received"),
@@ -260,8 +244,10 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
+            'credential_type': _("Select whether this is a formal degree, a professional certification, or a license."),
             'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or Project Management Professional."),
             'issuer': _("The university, licensing board, or training organization."),
+            'issue_date': _("The exact or approximate date this credential was awarded."),
             'url_link': _("An optional web link to verify the credential digitally."),
             'file_upload': _("Upload a clear copy of your degree or certificate to improve your profile verification."),
         }
@@ -293,8 +279,11 @@ class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
 
         help_texts = {
             'title': _("E.g., 'Completed a major supply chain project', 'Published a new research paper', or 'Looking for a business partner'."),
+            'current_search': _("What is your primary goal right now?"),
+            'collaboration_status': _("Are you currently open to new opportunities, hiring, or seeking partners?"),
             'body_narrative': _("Provide the details of your current work or learning focus. Clear updates help others understand how to collaborate with you."),
             'external_link': _("Include a link to an article, document, or website related to your update."),
+            'is_published': _("Uncheck this if you want to save this as a draft instead of publishing it immediately."),
         }
 
         widgets = {
@@ -319,6 +308,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
 
         if current_type == 'GROWTH_LOG':
             self.fields['title'].label = _("Entry Title")
+            self.fields['title'].help_text = _("Give your log a quick title (e.g., 'Week 1 of Project Deployment').")
             self.fields['content'].label = _("Notes & Observations")
             self.fields['content'].help_text = _("A place to document your daily progress, challenges overcome, or important notes.")
             if 'visibility' in self.fields:
@@ -329,6 +319,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Vision or Goal")
+            self.fields['title'].help_text = _("What is your ultimate objective? (e.g., 'Launch a Tech Startup in 5 Years').")
             self.fields['content'].label = _("Detailed Plan")
             self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
             if 'visibility' in self.fields:
@@ -339,6 +330,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Article Title")
+            self.fields['title'].help_text = _("An engaging headline for your article or thought-leadership post.")
             self.fields['content'].label = _("Article Content")
             self.fields['content'].help_text = _("Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
             if 'visibility' in self.fields:
@@ -362,8 +354,10 @@ class LiveOpportunityForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
+            'request_type': _("Categorize the type of opportunity you are posting."),
             'title': _("E.g., Seeking an Agricultural Consultant, Looking for a Study Partner, Available for Accounting Consultation."),
             'details': _("Provide clear details regarding expectations, timelines, and the type of collaboration you are seeking."),
+            'expires_at': _("When should this opportunity be automatically removed from the live feed?"),
         }
 
         widgets = {
@@ -377,8 +371,14 @@ class ProfileHeadlineForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ProfileHeadline
         fields = ['title', 'is_primary']
-        labels = {'title': _("Your Professional Headline")}
-        help_texts = {'title': _("A short description of your primary role (e.g., 'Hospital Administrator', 'Civil Engineer', 'Retail Manager').")}
+        labels = {
+            'title': _("Your Professional Headline"),
+            'is_primary': _("Set as Primary Headline"),
+        }
+        help_texts = {
+            'title': _("A short description of your primary role (e.g., 'Hospital Administrator', 'Civil Engineer', 'Retail Manager')."),
+            'is_primary': _("Check this to display this headline prominently at the top of your profile."),
+        }
         widgets = {'title': forms.TextInput(attrs={'placeholder': 'e.g., Operations Manager'})}
 
 
@@ -386,18 +386,27 @@ class JobPreferenceForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = UnifiedJobPreference
         fields = ['role_title', 'work_arrangement', 'commitment_type', 'description']
-        labels = {'role_title': _("Target Role"), 'description': _("What are you looking for?")}
+
+        labels = {
+            'role_title': _("Target Role"),
+            'work_arrangement': _("Preferred Setup"),
+            'commitment_type': _("Commitment Level"),
+            'description': _("What are you looking for?")
+        }
+
+        help_texts = {
+            'role_title': _("The specific job title you are aiming for (e.g., 'Senior Accountant' or 'Lead Developer')."),
+            'work_arrangement': _("Do you prefer working remotely, on-site at an office, or hybrid?"),
+            'commitment_type': _("Are you seeking full-time, part-time, or contract-based opportunities?"),
+            'description': _("Describe the type of work environment, team culture, or industry challenges you want to tackle."),
+        }
 
 
 # ==============================================================================
 # 4. COMPANY & ADMIN FORMS (UNIVERSAL & PROFESSIONAL)
 # ==============================================================================
 
-class CompanyProfileUpdateForm(DBRestrictedChoiceFieldsMixin, TailwindFormMixin, forms.ModelForm):
-    restricted_model = Company
-    restricted_db_fields = ('sector', 'location')
-    restricted_source_models = {'location': City}
-
+class CompanyProfileUpdateForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = Company
         fields = ['name', 'sector', 'location', 'operating_since', 'mission_stmt', 'is_hiring', 'looking_for']
@@ -414,8 +423,8 @@ class CompanyProfileUpdateForm(DBRestrictedChoiceFieldsMixin, TailwindFormMixin,
 
         help_texts = {
             'name': _("The official registered or trading name of your business or organization."),
-            'sector': _("E.g., Agriculture, Manufacturing, Healthcare, Retail, Education, or Finance."),
-            'location': _("The city and country where your primary operations or headquarters are located."),
+            'sector': _("E.g., Agriculture, Manufacturing, Healthcare, Retail. Type the industry that best describes your core business."),
+            'location': _("E.g., Addis Ababa, Nairobi, London, or Remote. Type the city and country where your primary operations are based."),
             'operating_since': _("The year the business was officially founded or established."),
             'mission_stmt': _("Describe your business, the services you provide, and the customers you serve. Share your history and what makes your company unique."),
             'is_hiring': _("Check this box if your company currently has open job positions."),
@@ -423,6 +432,8 @@ class CompanyProfileUpdateForm(DBRestrictedChoiceFieldsMixin, TailwindFormMixin,
         }
 
         widgets = {
+            'sector': forms.TextInput(attrs={'placeholder': 'e.g. Healthcare Technology'}),
+            'location': forms.TextInput(attrs={'placeholder': 'e.g. Addis Ababa, Ethiopia'}),
             'mission_stmt': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Our organization was founded to provide...'}),
             'operating_since': forms.NumberInput(attrs={'placeholder': 'e.g. 2015'}),
         }
@@ -510,22 +521,116 @@ class AddCompanyMemberForm(TailwindFormMixin, forms.Form):
 # ==============================================================================
 
 class IdentityMediaForm(forms.ModelForm):
-    class Meta: model = CustomUser; fields = ['avatar', 'cover_image']
+    class Meta:
+        model = CustomUser
+        fields = ['avatar', 'cover_image']
+
+        labels = {
+            'avatar': _("Profile Photo"),
+            'cover_image': _("Cover Image"),
+        }
+
+        help_texts = {
+            'avatar': _("Upload a clear, professional headshot. This is the first thing people see when they visit your profile."),
+            'cover_image': _("Upload a wide background banner for your profile. This helps customize your page's visual appearance."),
+        }
+
 
 class SocialLinkForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = UniversalSocialLink; fields = ['platform_name', 'url', 'icon_slug']; widgets = {'icon_slug': forms.TextInput(attrs={'class': 'hidden'})}
+    class Meta:
+        model = UniversalSocialLink
+        fields = ['platform_name', 'url', 'icon_slug']
+
+        labels = {
+            'platform_name': _("Platform Name"),
+            'url': _("Profile URL"),
+        }
+
+        help_texts = {
+            'platform_name': _("E.g., LinkedIn, Twitter, GitHub, or Personal Website."),
+            'url': _("Paste the full web address to your profile (e.g., https://linkedin.com/in/username)."),
+        }
+
+        widgets = {'icon_slug': forms.TextInput(attrs={'class': 'hidden'})}
+
 
 class ContactMethodForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = UniversalContactMethod; fields = ['type', 'value']
+    class Meta:
+        model = UniversalContactMethod
+        fields = ['type', 'value']
+
+        labels = {
+            'type': _("Contact Type"),
+            'value': _("Contact Detail"),
+        }
+
+        help_texts = {
+            'type': _("Select the type of contact method (e.g., Email, Phone Number, WhatsApp)."),
+            'value': _("Enter the actual email address, phone number, or username."),
+        }
+
 
 class CompanySocialLinkForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = CompanySocialLink; fields = ['platform', 'url', 'order']
+    class Meta:
+        model = CompanySocialLink
+        fields = ['platform', 'url', 'order']
+
+        labels = {
+            'platform': _("Platform"),
+            'url': _("Profile URL"),
+            'order': _("Display Order"),
+        }
+
+        help_texts = {
+            'platform': _("The social media network (e.g., LinkedIn, Facebook, X/Twitter)."),
+            'url': _("The direct web link to your company's official page."),
+            'order': _("Set the sequence in which this link appears. Lower numbers show up first."),
+        }
+
 
 class CompanyContactMethodForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = CompanyContactMethod; fields = ['label', 'value']
+    class Meta:
+        model = CompanyContactMethod
+        fields = ['label', 'value']
+
+        labels = {
+            'label': _("Contact Label"),
+            'value': _("Contact Details"),
+        }
+
+        help_texts = {
+            'label': _("A clear name for this contact method (e.g., 'Sales Desk', 'Support Email', 'Main Office')."),
+            'value': _("The actual phone number, email address, or physical address clients should use."),
+        }
+
 
 class ProjectGalleryImageForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = ProjectGallery; fields = ['image', 'caption']
+    class Meta:
+        model = ProjectGallery
+        fields = ['image', 'caption']
+
+        labels = {
+            'image': _("Upload Image"),
+            'caption': _("Image Caption"),
+        }
+
+        help_texts = {
+            'image': _("Upload a high-quality image demonstrating your project or work."),
+            'caption': _("A brief description of what this image shows (e.g., 'Final Dashboard UI' or 'Field Operation Day 1')."),
+        }
+
 
 class ServiceGalleryImageForm(TailwindFormMixin, forms.ModelForm):
-    class Meta: model = ServiceGalleryImage; fields = ['image', 'caption']
+    class Meta:
+        model = ServiceGalleryImage
+        fields = ['image', 'caption']
+
+        labels = {
+            'image': _("Upload Image"),
+            'caption': _("Image Caption"),
+        }
+
+        help_texts = {
+            'image': _("Upload a clear photo representing this product or service."),
+            'caption': _("A brief description highlighting what customers are looking at."),
+        }

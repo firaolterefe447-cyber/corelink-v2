@@ -2,87 +2,244 @@
 {% load static i18n %}
 
 {% block navbar %}
-<div class="fixed top-8 left-0 right-0 z-[60] flex justify-center pointer-events-none px-4">
-    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-lg rounded-full">
-        <a href="{% url 'company_admin_dashboard' company.slug %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Dashboard" %}
-        </a>
-    </div>
+<!-- Sleek Floating Back Button -->
+<div class="fixed top-6 left-4 md:top-8 md:left-8 z-[100] pointer-events-none">
+    <a href="{% url 'company_admin_dashboard' company.slug %}" class="pointer-events-auto flex items-center gap-2.5 px-5 py-2.5 md:px-6 md:py-3 bg-white/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_12px_30px_-8px_rgba(15,23,42,0.12)] rounded-[1.2rem] text-[13.5px] md:text-[14px] font-bold text-slate-600 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all hover:-translate-y-0.5 active:scale-95 group">
+        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
+        <span>{% trans "Back to Hub" %}</span>
+    </a>
 </div>
 {% endblock %}
 
 {% block content %}
-<div class="pt-32 pb-20 px-4 max-w-4xl mx-auto min-h-screen">
+<!-- Universal Page Loader -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-500 via-emerald-400 to-teal-400 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(16,185,129,0.7), 0 0 4px rgba(16,185,129,0.4);"></div>
 
-    <!-- Header -->
-    <div class="mb-10">
-        <h1 class="text-3xl font-black text-slate-900 tracking-tight">{% trans "Network & Contacts" %}</h1>
-        <p class="text-slate-500 font-medium mt-1">{% trans "Manage how clients and partners can reach your company." %}</p>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F4F7FA;
+        background-image:
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+    /* Bento Cards */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 2rem;
+        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        position: relative;
+        z-index: 10;
+        transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
+    }
+    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
+    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
+
+    /* High-contrast Emerald Add Button */
+    .btn-add-solid {
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        height: 48px; padding: 0 1.5rem; border-radius: 1rem; background: #10B981; color: #ffffff;
+        font-size: 14px; font-weight: 900; letter-spacing: 0.02em; border: none;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
+        box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.5);
+    }
+    .btn-add-solid:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(16, 185, 129, 0.6); }
+    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.4); }
+
+    /* Smaller version for inline section headers */
+    .btn-add-sm {
+        height: 40px; padding: 0 1.25rem; border-radius: 0.85rem; font-size: 13px;
+    }
+
+    /* Animations */
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+</style>
+
+<div class="min-h-screen relative z-10 pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-[1000px] mx-auto anim-smooth-appear">
+
+    <!-- PAGE HEADER -->
+    <div class="mb-10 md:mb-12 pl-2">
+        <h1 class="text-[clamp(2rem,4vw,2.8rem)] font-black text-slate-900 tracking-tight leading-none mb-3 font-heading">{% trans "Network & Contacts" %}</h1>
+        <p class="text-[14.5px] md:text-[15.5px] text-slate-500 font-medium leading-relaxed max-w-2xl">
+            {% trans "Manage how clients, investors, and partners can reach" %} <strong class="text-slate-800">{{ company.name }}</strong>. {% trans "Keep your communication channels and digital footprint up to date." %}
+        </p>
     </div>
 
-    <!-- Contact Methods Section -->
+    <!-- 1. DIRECT CONTACTS SECTION -->
     <div class="mb-12">
-        <div class="flex justify-between items-end mb-4 px-2">
-            <h2 class="text-xl font-bold text-slate-800">{% trans "Direct Contacts" %}</h2>
-            <a href="{% url 'contact_create' %}" class="text-sm px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
-                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Contact" %}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5 px-2">
+            <h2 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Direct Contacts" %}</h2>
+            <a href="{% url 'contact_create' %}" class="btn-add-solid btn-add-sm w-full sm:w-auto">
+                <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                <span class="pointer-events-none">{% trans "Add Contact" %}</span>
             </a>
         </div>
 
-        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-2">
+        <div class="bento-card p-4 md:p-6 flex flex-col gap-3">
             {% for contact in contacts %}
-            <div class="p-4 border-b border-slate-100 last:border-0 flex justify-between items-center hover:bg-slate-50 transition-colors rounded-xl group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center shrink-0">
-                        <i data-lucide="phone-call" class="w-5 h-5"></i>
+            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-[0_12px_30px_-12px_rgba(16,185,129,0.25)] transition-all duration-400 ease-out z-10 hover:z-20">
+
+                <div class="flex items-center gap-4 flex-1 overflow-hidden">
+                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                        <i data-lucide="phone" class="w-5 h-5"></i>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ contact.label }}</p>
-                        <p class="font-bold text-slate-800">{{ contact.value }}</p>
+                    <div class="overflow-hidden">
+                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{{ contact.label }}</p>
+                        <p class="font-bold text-slate-900 text-[15.5px] truncate">{{ contact.value }}</p>
                     </div>
                 </div>
-                <div class="flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a href="{% url 'contact_edit' contact.pk %}" class="p-2 text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
-                    <a href="{% url 'contact_delete' contact.pk %}" class="p-2 text-slate-400 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-slate-100">
+                    <a href="{% url 'contact_edit' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-blue-300 hover:text-[#0A66C2] hover:shadow-md transition-all" title="Edit Contact">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                    </a>
+                    <a href="{% url 'contact_delete' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="Delete Contact">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </a>
                 </div>
             </div>
             {% empty %}
-            <div class="p-8 text-center text-slate-500 text-sm">{% trans "No contact methods added yet." %}</div>
+            <div class="p-10 text-center flex flex-col items-center">
+                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400">
+                    <i data-lucide="book-user" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-[17px] font-bold text-slate-700 mb-1">{% trans "No Contacts Listed" %}</h3>
+                <p class="text-[13.5px] text-slate-500">{% trans "Provide phone numbers, emails, or physical addresses." %}</p>
+            </div>
             {% endfor %}
         </div>
     </div>
 
-    <!-- Social Links Section -->
-    <div>
-        <div class="flex justify-between items-end mb-4 px-2">
-            <h2 class="text-xl font-bold text-slate-800">{% trans "Social Media" %}</h2>
-            <a href="{% url 'social_create' %}" class="text-sm px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
-                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Social" %}
+    <!-- 2. SOCIAL MEDIA SECTION -->
+    <div class="mb-10">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5 px-2">
+            <h2 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Social Media" %}</h2>
+            <a href="{% url 'social_create' %}" class="btn-add-solid btn-add-sm w-full sm:w-auto">
+                <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                <span class="pointer-events-none">{% trans "Add Social Link" %}</span>
             </a>
         </div>
 
-        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-2">
+        <div class="bento-card p-4 md:p-6 flex flex-col gap-3">
             {% for social in socials %}
-            <div class="p-4 border-b border-slate-100 last:border-0 flex justify-between items-center hover:bg-slate-50 transition-colors rounded-xl group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-pink-50 text-pink-600 rounded-lg flex items-center justify-center shrink-0">
+            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-[0_12px_30px_-12px_rgba(16,185,129,0.25)] transition-all duration-400 ease-out z-10 hover:z-20">
+
+                <div class="flex items-center gap-4 flex-1 overflow-hidden">
+                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
                         <i data-lucide="link-2" class="w-5 h-5"></i>
                     </div>
-                    <div>
-                        <p class="font-bold text-slate-800 capitalize">{{ social.platform }}</p>
-                        <a href="{{ social.url }}" target="_blank" class="text-sm text-blue-500 hover:underline line-clamp-1">{{ social.url }}</a>
+                    <div class="overflow-hidden pr-2">
+                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{{ social.platform }}</p>
+                        <a href="{{ social.url }}" target="_blank" class="font-bold text-slate-800 text-[14.5px] truncate hover:text-[#0A66C2] transition-colors block">{{ social.url }}</a>
                     </div>
                 </div>
-                <div class="flex gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a href="{% url 'social_edit' social.pk %}" class="p-2 text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
-                    <a href="{% url 'social_delete' social.pk %}" class="p-2 text-slate-400 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-slate-100">
+                    <a href="{% url 'social_edit' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-blue-300 hover:text-[#0A66C2] hover:shadow-md transition-all" title="Edit Link">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                    </a>
+                    <a href="{% url 'social_delete' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="Delete Link">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </a>
                 </div>
             </div>
             {% empty %}
-            <div class="p-8 text-center text-slate-500 text-sm">{% trans "No social links added yet." %}</div>
+            <div class="p-10 text-center flex flex-col items-center">
+                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400">
+                    <i data-lucide="share-2" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-[17px] font-bold text-slate-700 mb-1">{% trans "No Social Links Added" %}</h3>
+                <p class="text-[13.5px] text-slate-500">{% trans "Connect your website, LinkedIn, Twitter, or other profiles." %}</p>
+            </div>
             {% endfor %}
         </div>
     </div>
+
 </div>
-<script>document.addEventListener("DOMContentLoaded", () => lucide.createIcons());</script>
-{% endblock %}
+
+<script>
+    // Initialize Icons
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    // Reused Global Loader Script to maintain UX consistency
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('global-page-loader');
+        let loaderInterval;
+
+        function startGlobalLoader() {
+            if(!loader) return;
+            loader.style.opacity = '1';
+            loader.style.transitionDuration = '300ms';
+            loader.style.width = '15%';
+
+            let progress = 15;
+            clearInterval(loaderInterval);
+            loaderInterval = setInterval(() => {
+                progress += (Math.random() * 5 + 1);
+                if(progress > 85) {
+                    progress = 85;
+                    clearInterval(loaderInterval);
+                }
+                loader.style.transitionDuration = '200ms';
+                loader.style.width = progress + '%';
+            }, 300);
+        }
+
+        function stopGlobalLoader() {
+            if(!loader) return;
+            clearInterval(loaderInterval);
+            loader.style.transitionDuration = '200ms';
+            loader.style.width = '100%';
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.transitionDuration = '0ms';
+                    loader.style.width = '0%';
+                }, 300);
+            }, 250);
+        }
+
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                const target = link.getAttribute('target');
+                const isJS = href && href.startsWith('javascript:');
+                const isHash = href && href.startsWith('#');
+                const isNewTab = target === '_blank';
+                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+
+                if (href && !isJS && !isHash && !isNewTab && !isModifierPressed) {
+                    startGlobalLoader();
+                }
+            }
+        });
+
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) stopGlobalLoader();
+        });
+    });
+</script>
+{% endblock content %}
