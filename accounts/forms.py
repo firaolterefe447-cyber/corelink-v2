@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.forms import PasswordChangeForm
 
 # --- MODEL IMPORTS ---
 from .models import (
@@ -16,7 +17,12 @@ from .models import (
 )
 
 # --- PROFILE IMPORTS (UPDATED FOR UNIFIED ARCHITECTURE) ---
-from profiles.models import UserProfile, ProfileHeadline
+from profiles.models import (
+    UserProfile,
+    ProfileHeadline,
+    Company,
+    CompanyMember
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,10 +92,10 @@ class TailwindFormMixin:
             if isinstance(widget, forms.EmailInput) or "email" in field_name:
                 extra_classes = f" pl-11 py-3 bg-[url('data:image/svg+xml,{ICONS['mail']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.2rem]"
             elif (
-                isinstance(widget, forms.URLInput)
-                or "url" in field_name
-                or "link" in field_name
-                or "website" in field_name
+                    isinstance(widget, forms.URLInput)
+                    or "url" in field_name
+                    or "link" in field_name
+                    or "website" in field_name
             ):
                 extra_classes = f" pl-11 py-3 bg-[url('data:image/svg+xml,{ICONS['link']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.2rem]"
             elif isinstance(widget, forms.DateInput) or "date" in field_name:
@@ -111,16 +117,25 @@ class TailwindFormMixin:
 
 
 def normalize_eth_phone(phone: str) -> str:
-    """Centralized logic to clean Ethiopian phone numbers."""
+    """Centralized logic to clean phone numbers. Auto-formats Ethiopian numbers, supports international."""
     if not phone:
         return ""
     phone = phone.replace(" ", "").replace("-", "").strip()
 
+    # Local Ethiopian formats
     if phone.startswith("0") and len(phone) == 10:
         return f"+251{phone[1:]}"
-    elif len(phone) == 9:
+    elif len(phone) == 9 and not phone.startswith("+"):
         return f"+251{phone}"
     elif phone.startswith("251") and len(phone) == 12:
+        return f"+{phone}"
+
+    # If it already starts with '+', it's an international number, leave it alone
+    if phone.startswith("+"):
+        return phone
+
+    # If a user entered an international number without a '+', append it
+    if phone.isdigit() and len(phone) >= 10:
         return f"+{phone}"
 
     return phone
@@ -136,7 +151,7 @@ class UserLoginForm(TailwindFormMixin, forms.Form):
         label=_("Phone Number or Email"),
         widget=forms.TextInput(
             attrs={
-                "placeholder": "e.g. 09... or email@example.com",
+                "placeholder": "e.g. 09..., +86... or email@example.com",
                 "autofocus": "true",
             }
         ),
@@ -154,9 +169,11 @@ class UserLoginForm(TailwindFormMixin, forms.Form):
         else:
             # Assume phone
             phone = normalize_eth_phone(identifier)
-            if not phone.startswith("+251") or len(phone) != 13:
+
+            # Allow international formats during login
+            if not (phone.startswith("+") and phone[1:].isdigit() and 7 <= len(phone[1:]) <= 15):
                 raise ValidationError(
-                    _("Invalid Phone Format. Please use 09..., 07... or +251...")
+                    _("Invalid Phone Format. Please use 09..., 07... or include country code (e.g., +86...).")
                 )
             return phone
 
@@ -283,7 +300,7 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
     )
     phone_number = forms.CharField(
         label=_("Phone Number"),
-        widget=forms.TextInput(attrs={"placeholder": "09... or 07..."}),
+        widget=forms.TextInput(attrs={"placeholder": "09... or +86..."}),
     )
     email = forms.EmailField(
         label=_("Email Address"),
@@ -297,8 +314,11 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
 
     def clean_phone_number(self):
         phone = normalize_eth_phone(self.cleaned_data.get("phone_number", ""))
-        if not phone.startswith("+251") or len(phone) != 13:
-            raise ValidationError(_("Invalid Format. Use 09..., 07..., or +251..."))
+
+        # Validate E.164 format: Starts with '+' followed by 7 to 15 digits
+        if not (phone.startswith("+") and phone[1:].isdigit() and 7 <= len(phone[1:]) <= 15):
+            raise ValidationError(_("Invalid Format. Use 09..., 07..., or include your country code (e.g., +86...)."))
+
         if CustomUser.objects.filter(phone_number=phone).exists():
             raise ValidationError(
                 _("This phone number is already registered. Please login.")
@@ -336,40 +356,6 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.is_active = True
         user.save()
         return user
-
-
-from django import forms
-from django.utils.translation import gettext_lazy as _
-
-# Import your models (BaseRegistrationForm, Institution, UniversalContactMethod, UserProfile, ProfileHeadline, ApplicationRequest, etc.)
-
-from django import forms
-from django.utils.translation import gettext_lazy as _
-
-# Import your models here
-
-
-from django import forms
-from django.db import transaction
-from django.utils.translation import gettext_lazy as _
-
-from django import forms
-from django.db import transaction
-from django.utils.translation import gettext_lazy as _
-
-# --- IMPORT NEW DB ARCHITECTURE ---
-from .models import (
-    CustomUser,
-    UniversalContactMethod,
-    ApplicationRequest,
-    Institution,
-)
-from profiles.models import (
-    UserProfile,
-    ProfileHeadline,
-    Company,
-    CompanyMember
-)
 
 
 class UnifiedOnboardingForm(BaseRegistrationForm):
@@ -588,6 +574,7 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
 
             return user
 
+
 # ==============================================================================
 # 4. OTHER / ADMIN FORMS
 # ==============================================================================
@@ -644,9 +631,6 @@ class CustomUserAdminCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-
-
-from django.contrib.auth.forms import PasswordChangeForm
 
 
 class CoreLinkPasswordChangeForm(PasswordChangeForm):
