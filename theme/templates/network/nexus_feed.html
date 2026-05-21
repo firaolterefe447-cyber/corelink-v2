@@ -273,7 +273,7 @@
                 <div class="glass-card group">
 
                     <!-- Cover -->
-                    <div class="h-32 md:h-36 w-full rounded-t-[1rem] md:rounded-t-[1.25rem] bg-slate-50 relative overflow-hidden border-b border-slate-200/50 shrink-0">
+                    <div class="h-28 sm:h-32 md:h-36 w-full rounded-t-[1rem] md:rounded-t-[1.25rem] bg-slate-50 relative overflow-hidden border-b border-slate-200/50 shrink-0">
                         {% if person.cover_image %}
                             <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover" loading="lazy">
                         {% else %}
@@ -284,14 +284,15 @@
                         {% endif %}
                     </div>
 
-                    <div class="px-6 md:px-8 pb-6 md:pb-8 flex-1 flex flex-col relative z-10">
+                    <!-- PADDINGS ADJUSTED FOR MOBILE -->
+                    <div class="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 flex-1 flex flex-col relative z-10">
 
-                        <!-- Avatar — removed group-hover:-translate-y-1 -->
-                        <div class="-mt-12 md:-mt-14 mb-5 flex justify-between items-end">
+                        <!-- Avatar — Adjusted margins for mobile -->
+                        <div class="-mt-10 sm:-mt-12 md:-mt-14 mb-4 sm:mb-5 flex justify-between items-end">
                             {% if person.avatar %}
-                                <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-[6rem] h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full object-cover bg-white border-[5px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 relative z-20" loading="lazy">
+                                <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-[5.5rem] h-[5.5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full object-cover bg-white border-[4px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 relative z-20" loading="lazy">
                             {% else %}
-                                <div class="w-[6rem] h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full bg-blue-50 border-[5px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center font-black text-[#0A66C2] text-3xl relative z-20">
+                                <div class="w-[5.5rem] h-[5.5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full bg-blue-50 border-[4px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center font-black text-[#0A66C2] text-3xl relative z-20">
                                     {{ person.full_name|default:"U"|slice:":1" }}
                                 </div>
                             {% endif %}
@@ -318,7 +319,7 @@
 
                         <!-- Skills -->
                         {% if person.portfolio.skills.all %}
-                            <div class="flex flex-wrap gap-2 mb-6">
+                            <div class="flex flex-wrap gap-2 mb-5 md:mb-6">
                                 {% for skill in person.portfolio.skills.all|slice:":4" %}
                                     <span class="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-lg text-[11px] md:text-[11.5px] font-black text-slate-600 uppercase tracking-wider cursor-default">
                                         {{ skill.name }}
@@ -332,9 +333,9 @@
                             </div>
                         {% endif %}
 
-                        <!-- Bio — removed group-hover color change on container -->
-                        <div class="mb-8 flex-grow">
-                            <div class="bg-slate-50/50 rounded-xl p-5 border border-slate-200/60 relative h-full"
+                        <!-- Bio -->
+                        <div class="mb-6 md:mb-8 flex-grow">
+                            <div class="bg-slate-50/50 rounded-xl p-4 sm:p-5 border border-slate-200/60 relative h-full"
                                  title="{{ person.portfolio.bio_narrative }}">
                                 <i data-lucide="quote" class="absolute -top-3 -left-3 w-7 h-7 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100 shadow-sm"></i>
                                 <p class="text-[13.5px] md:text-[14px] text-slate-600 font-medium leading-relaxed line-clamp-3 relative z-10 pt-1">
@@ -343,18 +344,22 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons — removed scale on icon hover -->
-                        <div class="flex items-center gap-3 mt-auto pt-2">
-                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex-1 bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-[#0A66C2] font-bold text-[12.5px] md:text-[13px] uppercase tracking-wide py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95">
-                                <i data-lucide="layout-grid" class="w-4 h-4"></i> <span class="whitespace-nowrap">{% trans "View Portfolio" %}</span>
+                        <!-- NEW COMPACT & MODERN ACTION BUTTONS -->
+                        <div class="flex items-center gap-2.5 sm:gap-3 mt-auto pt-2">
+                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[13.5px] py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                                <span class="whitespace-nowrap">{% trans "View Profile" %}</span>
                             </a>
+
                             {% if request.user.is_authenticated %}
-                                <a href="{% url 'chat_with' person.id %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-bold text-[12.5px] md:text-[13px] uppercase tracking-wide py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95">
-                                    <i data-lucide="message-circle" class="w-4 h-4"></i> <span>{% trans "Message" %}</span>
+                                <a href="{% url 'chat_with' person.id %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13.5px] py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90"></i>
+                                    <span>{% trans "Message" %}</span>
                                 </a>
                             {% else %}
-                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0052A3] text-white font-bold text-[12.5px] md:text-[13px] uppercase tracking-wide py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95">
-                                    <i data-lucide="message-circle" class="w-4 h-4"></i> <span>{% trans "Message" %}</span>
+                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13.5px] py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90"></i>
+                                    <span>{% trans "Message" %}</span>
                                 </button>
                             {% endif %}
                         </div>
