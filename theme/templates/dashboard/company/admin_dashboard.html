@@ -108,7 +108,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -240,27 +240,6 @@
         border-radius: 50%;
         pointer-events: none;
     }
-    /* Wordmark in Bottom Left */
-    .cover-placeholder-forest .wordmark {
-        position: absolute;
-        bottom: 16px;
-        left: 20px;
-        display: flex;
-        align-items: center;
-        z-index: 10;
-        pointer-events: none;
-    }
-    .cover-placeholder-forest .wordmark-text {
-        font-family: var(--font-heading);
-        font-weight: 800;
-        font-size: 11px;
-        letter-spacing: 0.05em;
-        color: rgba(52, 211, 153, 0.75); /* emerald */
-    }
-    @media (min-width: 768px) {
-        .cover-placeholder-forest .wordmark { bottom: 20px; left: 28px; }
-        .cover-placeholder-forest .wordmark-text { font-size: 12px; }
-    }
 
     /* Animations & Utils */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -285,12 +264,19 @@
                 {% if company.cover_image %}
                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" alt="Cover">
                 {% else %}
-                    <!-- Smooth Forest Glow Fallback -->
+                    <!-- Smooth Forest Glow Fallback with Instructional Text Top-Left -->
                     <div class="cover-placeholder-forest">
                         <div class="glow-tr"></div>
                         <div class="glow-bl"></div>
-                        <div class="wordmark">
-                            <span class="wordmark-text">FOREST GLOW</span>
+
+                        <!-- Instructional Text carefully positioned Top-Left to NEVER overlap the logo -->
+                        <div class="absolute top-4 left-6 sm:left-10 md:top-6 md:left-12 z-10 flex items-center gap-2.5 text-emerald-500/80 pointer-events-none">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                                <i data-lucide="image-plus" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-heading font-black text-[10px] md:text-[11px] tracking-[0.1em] uppercase leading-tight max-w-[150px] md:max-w-none">
+                                {% trans "Upload company logo & cover image" %}
+                            </span>
                         </div>
                     </div>
                 {% endif %}
