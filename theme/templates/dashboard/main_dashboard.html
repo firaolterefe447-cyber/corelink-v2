@@ -182,30 +182,28 @@
     }
     .pointer-events-none { pointer-events: none !important; }
 
-    /* ── Manage icon button ── */
-    .btn-manage-icon {
+    /* ── Manage Text Button (Sleek Modern Standard) ── */
+    .btn-manage-text {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        width: 44px; height: 44px; border-radius: 0.85rem; background: transparent;
-        border: 1.5px solid rgba(226, 232, 240, 0.9); color: #64748b;
-        display: inline-flex; align-items: center; justify-content: center;
+        height: 40px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
+        color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
         transition: all 0.3s var(--ease-magic); flex-shrink: 0; text-decoration: none;
+        font-size: 13px; font-weight: 800; border: 1.5px solid transparent;
     }
-    @media (min-width: 768px) { .btn-manage-icon { width: 46px; height: 46px; border-radius: 1rem; } }
-    .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15,23,42,0.05); }
-    .btn-manage-icon:active { transform: scale(0.92); }
+    .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+    .btn-manage-text:active { transform: scale(0.95); }
 
     /* ── Primary solid button ── */
     .btn-add-solid {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 44px; padding: 0 1.25rem; border-radius: 0.85rem;
+        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem;
         background: #0A66C2; color: #ffffff;
-        font-size: 13.5px; font-weight: 900; letter-spacing: 0.02em; border: none;
+        font-size: 13px; font-weight: 800; border: none;
         display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
         transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 6px 16px -4px rgba(10,102,194,0.4);
+        box-shadow: 0 4px 12px -4px rgba(10,102,194,0.4);
     }
-    @media (min-width: 768px) { .btn-add-solid { height: 46px; padding: 0 1.5rem; border-radius: 1rem; font-size: 14px; } }
-    .btn-add-solid:hover { background: #0856A8; transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(10,102,194,0.5); }
+    .btn-add-solid:hover { background: #0856A8; transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(10,102,194,0.5); }
     .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10,102,194,0.4); }
 
     /* ── Action / Secondary buttons ── */
@@ -314,24 +312,29 @@
         color: rgba(255, 255, 255, 0.65);
     }
 
-    /* ── Avatar — circular ── */
+    /* ── Avatar — Circular Anchor ── */
     .avatar-circle {
+        display: flex; align-items: center; justify-content: center;
         width: 120px; height: 120px;
         border-radius: 50%;
         border: 5px solid #ffffff;
         background: #f1f5f9;
         box-shadow: 0 10px 36px rgba(0,0,0,0.13);
         overflow: hidden;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer;
-        position: relative;
+        position: relative !important;
+        z-index: 9999 !important; /* GUARANTEED TOP LAYER */
+        cursor: pointer !important;
+        pointer-events: auto !important; /* GUARANTEED CLICKABLE */
         transition: transform 0.4s var(--ease-magic);
         flex-shrink: 0;
-        z-index: 50; /* Guarantees highest local visibility */
+        text-decoration: none;
     }
     @media (min-width: 640px) { .avatar-circle { width: 136px; height: 136px; border-width: 5px; } }
     @media (min-width: 768px) { .avatar-circle { width: 160px; height: 160px; border-width: 6px; } }
     .avatar-circle:hover { transform: translateY(-4px); }
+
+    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-magic); pointer-events: none; }
+    .avatar-circle:hover img { transform: scale(1.05); }
 
     .avatar-overlay {
         position: absolute; inset: 0;
@@ -411,10 +414,10 @@
             <!-- ── Hero Body (Higher z-index than Cover to ensure perfect overlap without clipping) ── -->
             <div class="px-5 sm:px-8 md:px-12 pb-10 md:pb-14 relative flex flex-col h-full" style="z-index:20;">
 
-                <!-- Avatar — circular, pulled up over cover, now fully visible and perfectly clickable -->
-                <div class="-mt-[3.5rem] md:-mt-[4.5rem] mb-5 md:mb-7 w-max relative" style="z-index:30;">
-                    <!-- Direct div onclick for maximum device reliability -->
-                    <div onclick="window.location.href='{% url 'media_manager' %}'" class="avatar-circle" title="{% trans 'Change profile photo' %}" style="pointer-events: auto !important;">
+                <!-- Avatar — circular, pulled up over cover, strictly isolated as an Anchor tag -->
+                <div class="-mt-[3.5rem] md:-mt-[4.5rem] mb-5 md:mb-7 w-max relative" style="z-index: 1000;">
+                    <!-- Direct A Tag ensures native click routing without DOM blockage -->
+                    <a href="{% url 'media_manager' %}" class="avatar-circle" title="{% trans 'Change profile photo' %}">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.full_name }}">
                             <div class="avatar-overlay">
@@ -426,7 +429,7 @@
                                 <span>NO<br>PROFILE</span>
                             </div>
                         {% endif %}
-                    </div>
+                    </a>
                 </div>
 
                 <!-- ── Name + headline + meta + CTA row ── -->
@@ -546,7 +549,7 @@
         </div>
 
         <!-- ══════════════════════════════════
-             MODULAR BENTO CARDS
+             MODULAR BENTO CARDS (Clean Manage Layout)
         ══════════════════════════════════ -->
         <div class="flex flex-col gap-6 lg:gap-8 mb-6 lg:mb-12">
 
@@ -555,8 +558,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Headlines" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -596,8 +601,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_skills' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_skills' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'skill_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -629,8 +636,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.edu_title|default:"Credentials" }}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_credentials' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_credentials' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -665,8 +674,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.exp_title|default:"Experience" }}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_experiences' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_experiences' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -702,8 +713,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_projects' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_projects' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'project_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -746,8 +759,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "My Goal & Vision" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -783,8 +798,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Industry Thoughts" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_essays' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_essays' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="pen-tool" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -825,8 +842,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Daily Progress" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4" style="pointer-events:none;"></i>
@@ -865,14 +884,16 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contact & Network" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto" style="position:relative; z-index:20;">
-                        <a href="{% url 'manage_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4 h-4" style="pointer-events:none;"></i>
+                        <!-- Clean Text Manage Button -->
+                        <a href="{% url 'manage_network' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5" style="pointer-events:none;"></i>
+                            <span>{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="link" class="w-4 h-4" style="pointer-events:none;"></i>
                             <span style="pointer-events:none;">{% trans "Add Social" %}</span>
                         </a>
-                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none" style="background:#1e293b; box-shadow: 0 6px 16px -4px rgba(15,23,42,0.3);">
+                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none" style="background:#1e293b; box-shadow: 0 4px 12px -4px rgba(15,23,42,0.3);">
                             <i data-lucide="phone" class="w-4 h-4" style="pointer-events:none;"></i>
                             <span style="pointer-events:none;">{% trans "Add Contact" %}</span>
                         </a>
