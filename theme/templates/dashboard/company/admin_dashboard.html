@@ -108,7 +108,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -168,26 +168,26 @@
     .bento-card a[href], .bento-card button, .bento-card select, .bento-card input, .group\/empty { position: relative !important; z-index: 50 !important; pointer-events: auto !important; cursor: pointer !important; }
     .pointer-events-none { pointer-events: none !important; }
 
-    /* Clean Square Manage Button */
-    .btn-manage-icon {
+    /* ── Manage Text Button (Sleek Modern Standard) ── */
+    .btn-manage-text {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        width: 44px; height: 44px; border-radius: 0.85rem; background: transparent; border: 1.5px solid rgba(226, 232, 240, 0.9);
-        color: #64748b; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s var(--ease-magic); flex-shrink: 0;
+        height: 40px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
+        color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic); flex-shrink: 0; text-decoration: none;
+        font-size: 13px; font-weight: 800; border: 1.5px solid transparent;
     }
-    @media (min-width: 768px) { .btn-manage-icon { width: 46px; height: 46px; border-radius: 1rem; } }
-    .btn-manage-icon:hover { background: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05); }
-    .btn-manage-icon:active { transform: scale(0.92); }
+    .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+    .btn-manage-text:active { transform: scale(0.95); }
 
-    /* High-contrast Emerald Add Button (Wide on Mobile) */
+    /* High-contrast Emerald Add Button */
     .btn-add-solid {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 44px; padding: 0 1.25rem; border-radius: 0.85rem; background: #10B981; color: #ffffff;
-        font-size: 13.5px; font-weight: 900; letter-spacing: 0.02em; border: none;
+        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem; background: #10B981; color: #ffffff;
+        font-size: 13px; font-weight: 800; border: none;
         display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
     }
-    @media (min-width: 768px) { .btn-add-solid { height: 46px; padding: 0 1.5rem; border-radius: 1rem; font-size: 14px; } }
-    .btn-add-solid:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.5); }
+    .btn-add-solid:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.5); }
     .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.4); }
 
     .btn-action, .btn-secondary {
@@ -204,6 +204,64 @@
     .btn-secondary:hover { border-color: #10B981; color: #10B981; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
     .btn-secondary:active { transform: scale(0.96); }
 
+    /* ── Cover Radius Wrapper (Zero white bleed) ── */
+    .cover-container-radius {
+        border-top-left-radius: calc(2rem - 1px);
+        border-top-right-radius: calc(2rem - 1px);
+    }
+    @media (min-width: 768px) {
+        .cover-container-radius {
+            border-top-left-radius: calc(2.5rem - 1px);
+            border-top-right-radius: calc(2.5rem - 1px);
+        }
+    }
+
+    /* ── Cover placeholder — Smooth Forest Glow ── */
+    .cover-placeholder-forest {
+        display: block;
+        width: 100%; height: 100%;
+        background-color: #061e14; /* Deep forest dark */
+        position: relative;
+        overflow: hidden;
+    }
+    .cover-placeholder-forest .glow-tr {
+        position: absolute;
+        top: -30%; right: -20%;
+        width: 80%; height: 160%;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 60%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .cover-placeholder-forest .glow-bl {
+        position: absolute;
+        bottom: -30%; left: -20%;
+        width: 70%; height: 140%;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    /* Wordmark in Bottom Left */
+    .cover-placeholder-forest .wordmark {
+        position: absolute;
+        bottom: 16px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        z-index: 10;
+        pointer-events: none;
+    }
+    .cover-placeholder-forest .wordmark-text {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: rgba(52, 211, 153, 0.75); /* emerald */
+    }
+    @media (min-width: 768px) {
+        .cover-placeholder-forest .wordmark { bottom: 20px; left: 28px; }
+        .cover-placeholder-forest .wordmark-text { font-size: 12px; }
+    }
+
     /* Animations & Utils */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
@@ -216,59 +274,58 @@
     <div class="max-w-[1200px] mx-auto w-full relative z-10">
 
         <!-- COMPANY HERO (FULL WIDTH) -->
-        <div class="bento-card md:rounded-[3rem] relative flex flex-col w-full mb-6 lg:mb-10" id="company-hero">
-            <!-- Solid Premium Green Fallback Cover OR Immersive Fallback -->
-            <div class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 bg-slate-50 overflow-hidden rounded-t-[1.7rem] md:rounded-t-[3rem] group/cover">
+        <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-10" id="company-hero">
+
+            <!-- ── Cover Image (Clean edge, deeply integrated clickable zone) ── -->
+            <div onclick="window.location.href='{% url 'company_media_manage' company.slug %}'"
+                 class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 overflow-hidden cover-container-radius cursor-pointer group"
+                 style="z-index:10;"
+                 title="{% trans 'Change cover photo' %}">
+
                 {% if company.cover_image %}
-                    <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center">
+                    <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" alt="Cover">
                 {% else %}
-                    <!-- IMMERSIVE AMAZING FALLBACK DESIGN -->
-                    <div class="w-full h-full relative overflow-hidden bg-[#0A0F1C] flex flex-col items-center justify-center">
-                        <!-- Ambient Glow Effects -->
-                        <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
-                            <div class="absolute -top-[50%] -left-[20%] w-[70%] h-[150%] rounded-[100%] bg-gradient-to-br from-[#0A66C2]/40 to-transparent blur-[80px]"></div>
-                            <div class="absolute -bottom-[50%] -right-[20%] w-[70%] h-[150%] rounded-[100%] bg-gradient-to-tl from-[#10B981]/30 to-transparent blur-[80px]"></div>
-                        </div>
-
-                        <!-- Subtle Grid Pattern -->
-                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWMG0tMzkuNSA0MGg0MHYtNDAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] pointer-events-none opacity-60"></div>
-
-                        <!-- Typography Container -->
-                        <div class="relative z-10 flex flex-col items-center px-4 mb-14 sm:mb-12 md:-mt-12 md:mb-0 w-full">
-                            <!-- Main Title -->
-                            <h2 class="font-heading font-black flex items-center justify-center flex-wrap gap-x-3 gap-y-1 text-white text-[26px] sm:text-[34px] md:text-[44px] tracking-tight leading-none drop-shadow-xl text-center">
-                                <div class="flex items-center">
-                                    <span class="lowercase">core</span>
-                                    <span class="lowercase text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-emerald-400">link</span>
-                                </div>
-                                <span class="uppercase tracking-wide text-slate-100">Ethiopia</span>
-                            </h2>
-
-                            <!-- Subtitle line -->
-                            <div class="flex items-center gap-3 md:gap-5 mt-3 md:mt-4 opacity-90">
-                                <div class="h-[1.5px] w-8 sm:w-16 bg-gradient-to-r from-transparent via-[#0A66C2] to-emerald-500 rounded-full"></div>
-                                <span class="text-[11px] sm:text-[13px] md:text-[15px] font-black uppercase tracking-[0.3em] sm:tracking-[0.5em] text-emerald-300 drop-shadow-md">Business Hub</span>
-                                <div class="h-[1.5px] w-8 sm:w-16 bg-gradient-to-l from-transparent via-[#0A66C2] to-emerald-500 rounded-full"></div>
-                            </div>
+                    <!-- Smooth Forest Glow Fallback -->
+                    <div class="cover-placeholder-forest">
+                        <div class="glow-tr"></div>
+                        <div class="glow-bl"></div>
+                        <div class="wordmark">
+                            <span class="wordmark-text">FOREST GLOW</span>
                         </div>
                     </div>
                 {% endif %}
-                <a href="{% url 'company_media_manage' company.slug %}" class="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-700 hover:bg-white hover:text-emerald-600 hover:scale-110 transition-all shadow-lg prevent-select z-50"><i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i></a>
+
+                <!-- Visual Edit Button -->
+                <div class="absolute top-4 right-4 md:top-6 md:right-6 z-[100]
+                            w-10 h-10 md:w-12 md:h-12
+                            bg-white/90 backdrop-blur-md rounded-full
+                            flex items-center justify-center
+                            text-slate-600 group-hover:text-emerald-600 group-hover:bg-white
+                            shadow-lg transition-all group-hover:scale-110 pointer-events-none">
+                    <i data-lucide="image" class="w-4.5 h-4.5 md:w-5 md:h-5"></i>
+                </div>
             </div>
 
+            <!-- ── Hero Body (Higher z-index than Cover to ensure perfect overlap without clipping) ── -->
             <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col h-full">
-                <div class="relative w-max -mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 shrink-0 transition-transform hover:-translate-y-2 duration-500">
-                    <!-- Clean Square Logo Wrapper -->
-                    <a href="{% url 'company_media_manage' company.slug %}" class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group/logo cursor-pointer block">
+
+                <!-- Logo — Boxed, pulled up over cover, strictly isolated as an Anchor tag -->
+                <div class="-mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 w-max relative" style="z-index: 1000;">
+                    <!-- Direct A Tag ensures native click routing without DOM blockage -->
+                    <a href="{% url 'company_media_manage' company.slug %}"
+                       class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group cursor-pointer block hover:-translate-y-2 transition-transform duration-500"
+                       style="pointer-events: auto !important;"
+                       title="{% trans 'Change company logo' %}">
+
                         {% if company.logo %}
-                            <img src="{{ company.logo.url }}" class="w-full h-full object-contain bg-white group-hover/logo:scale-105 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover/logo:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
+                            <img src="{{ company.logo.url }}" class="w-full h-full object-contain bg-white group-hover:scale-105 transition-transform duration-500 pointer-events-none">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20 pointer-events-none">
                                 <i data-lucide="camera" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-md"></i>
                             </div>
                         {% else %}
-                            <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-400 group-hover/logo:bg-emerald-50 group-hover/logo:text-emerald-600 transition-colors duration-300 pointer-events-none p-3 text-center">
+                            <div class="w-full h-full bg-slate-50 flex flex-col items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors duration-300 pointer-events-none p-3 text-center">
                                 <i data-lucide="image-plus" class="w-8 h-8 md:w-10 md:h-10 mb-2"></i>
-                                <span class="text-[10px] md:text-[11px] font-black uppercase tracking-widest leading-tight">Upload<br>Company Logo</span>
+                                <span class="text-[10px] md:text-[11px] font-black uppercase tracking-widest leading-tight">NO<br>LOGO</span>
                             </div>
                         {% endif %}
                     </a>
@@ -304,7 +361,7 @@
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center uppercase tracking-widest">{% trans "Mission Statement" %}</h3>
                         <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5 inline"></i> {% trans "Edit" %}
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 inline pointer-events-none"></i> <span class="pointer-events-none">{% trans "Edit" %}</span>
                         </a>
                     </div>
 
@@ -332,11 +389,12 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Products & Services" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_services' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <a href="{% url 'manage_services' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'service_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Service" %}</span>
                         </a>
                     </div>
@@ -370,11 +428,12 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Business History" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_milestones' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <a href="{% url 'manage_milestones' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'milestone_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Milestone" %}</span>
                         </a>
                     </div>
@@ -409,11 +468,12 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Business Updates" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_news_list' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <a href="{% url 'manage_news_list' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'news_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="pen-tool" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="pen-tool" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Update" %}</span>
                         </a>
                     </div>
@@ -459,11 +519,12 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Contacts" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_company_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <a href="{% url 'manage_company_network' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'company_contact_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
-                            <i data-lucide="phone" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="phone" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Contact" %}</span>
                         </a>
                     </div>
@@ -503,11 +564,12 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Social Links" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'manage_company_network' %}" class="btn-manage-icon shrink-0" title="{% trans 'Manage' %}">
-                            <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <a href="{% url 'manage_company_network' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage' %}">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
                         <a href="{% url 'company_social_create' %}" class="btn-add-solid flex-1 sm:flex-none px-2 sm:px-4">
-                            <i data-lucide="link" class="w-4.5 h-4.5 pointer-events-none"></i>
+                            <i data-lucide="link" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Link" %}</span>
                         </a>
                     </div>
@@ -630,11 +692,12 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                 <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Core Team" %}</h3>
                 <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                    <button class="btn-manage-icon shrink-0" disabled>
-                        <i data-lucide="settings-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                    <button class="btn-manage-text shrink-0 opacity-50 cursor-not-allowed" disabled>
+                        <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                        <span class="pointer-events-none">{% trans "Manage" %}</span>
                     </button>
                     <button class="btn-add-solid flex-1 sm:flex-none opacity-50 cursor-not-allowed">
-                        <i data-lucide="user-plus" class="w-4.5 h-4.5 pointer-events-none"></i>
+                        <i data-lucide="user-plus" class="w-4 h-4 pointer-events-none"></i>
                         <span class="pointer-events-none">{% trans "Add Member" %}</span>
                     </button>
                 </div>
