@@ -2,41 +2,8 @@
 {% load static i18n %}
 
 {% block navbar %}
-<!-- ==============================================
-     MODERN TOP GLOBAL NAVBAR (PC - Floating Glass)
-     ============================================== -->
-<div class="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none animate-fade-down">
-    <nav class="pointer-events-auto bg-white/85 backdrop-blur-[24px] border border-slate-200/90 shadow-[0_12px_40px_-12px_rgba(10,102,194,0.15)] rounded-full px-6 py-3 flex items-center justify-between w-full max-w-[1280px] transition-all duration-500 hover:shadow-[0_20px_50px_-10px_rgba(10,102,194,0.2)] hover:bg-white/95 group">
-        <!-- Logo -->
-        <div class="flex items-center gap-1 shrink-0 pr-6 cursor-pointer focus-visible:outline-none" onclick="window.location.href='{% url 'dashboard' %}'">
-            <span class="font-heading font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
-            <span class="font-heading font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
-        </div>
-
-        <!-- Desktop Navigation Links -->
-        <div class="flex items-center gap-2 text-[13.5px] font-bold text-slate-500">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-blue-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="user" class="w-4 h-4"></i> My profile
-            </a>
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-blue-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="compass" class="w-4 h-4"></i> {% trans "Discover" %}
-            </a>
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-blue-50 hover:text-[#0A66C2] transition-all">
-                <i data-lucide="zap" class="w-4 h-4"></i> {% trans "Updates" %}
-            </a>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0 pl-6 border-l border-slate-200">
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i> {% trans "Settings" %}
-            </a>
-        </div>
-    </nav>
-</div>
-
-<!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/85 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+<!-- MOBILE TOP BAR (Matched to Dashboard) -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'dashboard' %}'">
         <span class="font-heading font-black text-[24px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
         <span class="font-heading font-black text-[24px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
@@ -55,14 +22,13 @@
         --font-body: 'Inter', sans-serif;
         --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     body {
         font-family: var(--font-body);
-        background-color: #F4F7FA;
-        /* Premium Light Glass Background */
+        background-color: #F0F4F8;
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
-            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+            radial-gradient(circle at 0% 0%, rgba(219,234,254,0.5) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241,245,249,0.6) 0%, transparent 50%);
         background-attachment: fixed;
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
@@ -70,55 +36,72 @@
 
     .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    /* Premium Glass Card */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.88);
-        -webkit-backdrop-filter: blur(20px);
-        backdrop-filter: blur(20px);
+    /* EXACT Dashboard Bento Card Style */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 2rem;
-        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
         position: relative;
         overflow: hidden;
     }
 
-    /* Force-override Django/Tailwind Form Inputs to match Glassmorphism exactly */
-    .django-form input:not([type="checkbox"]):not([type="file"]),
+    /* ========================================== */
+    /* PREMIUM INPUTS & DROPDOWNS                 */
+    /* ========================================== */
+    .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]),
     .django-form select,
     .django-form textarea {
         width: 100% !important;
         border: 1.5px solid rgba(226, 232, 240, 0.9) !important;
-        border-radius: 1.25rem !important;
-        background: rgba(255, 255, 255, 0.8) !important;
-        transition: all 0.25s var(--ease-magic) !important;
+        border-radius: 0.75rem !important;
+        background: #ffffff !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
         color: #0f172a !important;
-        font-size: 14.5px !important;
+        font-size: 14px !important;
         font-weight: 600 !important;
-        padding: 1rem 1.2rem !important;
+        padding: 0.95rem 1rem !important;
         outline: none !important;
         box-shadow: none !important;
         appearance: none;
     }
+
+    /* Beautiful Standard Dropdown Styling */
     .django-form select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
         background-position: right 1rem center !important;
         background-repeat: no-repeat !important;
         background-size: 1.2em !important;
         padding-right: 3rem !important;
+        cursor: pointer;
     }
-    .django-form input:not([type="checkbox"]):not([type="file"]):focus,
+
+    .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]):focus,
     .django-form select:focus,
     .django-form textarea:focus {
-        background: #ffffff !important;
         border-color: rgba(10, 102, 194, 0.45) !important;
-        box-shadow: 0 10px 28px -14px rgba(10, 102, 194, 0.35) !important;
+        box-shadow: 0 0 0 3px rgba(10,102,194,0.08) !important;
     }
+
     .django-form textarea { min-height: 140px !important; resize: vertical !important; line-height: 1.6 !important; }
     .django-form input[type="checkbox"] { width: 1.2rem; height: 1.2rem; border-radius: 0.3rem; accent-color: #0A66C2; cursor: pointer; }
 
-    /* Animations */
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+    /* Dashboard Button Styles */
+    .btn-add-solid {
+        height: 44px; padding: 0 1.5rem; border-radius: 0.75rem; background: #0A66C2; color: #ffffff;
+        font-size: 13.5px; font-weight: 800; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: background 0.2s ease; cursor: pointer; box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3);
+    }
+    .btn-add-solid:hover { background: #0856A8; }
+    .btn-add-solid:active { transform: scale(0.97); }
+
+    .btn-secondary {
+        height: 44px; padding: 0 1.5rem; border-radius: 0.75rem; background: white; border: 1.5px solid rgba(226,232,240,0.9); color: #475569;
+        font-size: 13.5px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; cursor: pointer; text-decoration: none;
+    }
+    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #EFF6FF; }
+    .btn-secondary:active { transform: scale(0.97); }
 
     /* Layout canvas spacing */
     .app-canvas {
@@ -130,16 +113,19 @@
         flex-direction: column;
     }
     @media (min-width: 768px) { .app-canvas { padding-top: 8rem; } }
+
+    /* Hide Advanced Fields smoothly */
+    .advanced-field-wrapper { display: none; opacity: 0; transition: opacity 0.3s ease; }
+    .advanced-field-wrapper.show { display: block; opacity: 1; }
 </style>
 
-<main class="app-canvas anim-smooth-appear">
-    <!-- Center the form in a readable column -->
+<main class="app-canvas">
     <div class="max-w-2xl mx-auto w-full">
 
         <!-- Standalone Header with ONLY Back Navigation -->
         <div class="flex items-center justify-between mb-8 md:mb-10 px-2">
-            <a href="javascript:history.back()" class="w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm active:scale-95 group shrink-0">
-                <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
+            <a href="javascript:history.back()" class="w-11 h-11 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-colors shadow-sm active:scale-95 shrink-0">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
 
             <div class="text-center flex-1 px-4">
@@ -165,14 +151,11 @@
                 <p class="text-[13.5px] text-slate-500 font-semibold tracking-wide">{% trans "Update your professional profile details." %}</p>
             </div>
 
-            <div class="w-11 h-11 shrink-0"></div> <!-- Spacer for perfect centering -->
+            <div class="w-11 h-11 shrink-0"></div>
         </div>
 
-        <!-- Main Form Glass Card -->
-        <div class="glass-card relative group">
-            <!-- Subtle ambient glow inside the card -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 blur-[60px] rounded-full pointer-events-none"></div>
-
+        <!-- Clean Bento Form Card -->
+        <div class="bento-card">
             <form method="post" enctype="multipart/form-data" id="main-form" class="p-6 md:p-10 space-y-7 relative z-10 django-form">
                 {% csrf_token %}
 
@@ -182,17 +165,17 @@
 
                         <!-- Checkbox Layout -->
                         {% if field.field.widget.input_type == 'checkbox' %}
-                            <label class="flex items-start gap-4 cursor-pointer p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all group/check">
+                            <label class="flex items-start gap-4 cursor-pointer p-5 bg-slate-50/50 border border-slate-200/80 rounded-[1rem] hover:bg-white hover:border-blue-200 transition-colors">
                                 <div class="pt-0.5">{{ field }}</div>
                                 <div>
-                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-[#0A66C2] transition-colors">{{ field.label }}</span>
+                                    <span class="block text-[14.5px] font-bold text-slate-800">{{ field.label }}</span>
                                     {% if field.help_text %}
                                         <span class="block text-[13px] text-slate-500 font-medium mt-1">{{ field.help_text|safe }}</span>
                                     {% endif %}
                                 </div>
                             </label>
 
-                        <!-- Standard Input Layout -->
+                        <!-- Standard Input / Dropdown Layout -->
                         {% else %}
                             <label class="block text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-2" for="{{ field.id_for_label }}">
                                 {{ field.label }}
@@ -201,24 +184,19 @@
                                 {% endif %}
                             </label>
 
-                            <!-- The input itself -->
                             <div class="relative w-full group/input">
                                 {{ field }}
                             </div>
 
                             <!-- Help Text UI -->
                             {% if field.help_text %}
-                                <div class="mt-2.5 flex items-start gap-2.5 bg-blue-50/50 p-3.5 rounded-xl border border-blue-100/50">
-                                    <i data-lucide="lightbulb" class="w-4 h-4 shrink-0 mt-0.5 text-[#0A66C2]"></i>
-                                    <p class="text-[12.5px] font-semibold text-slate-600 leading-relaxed">{{ field.help_text|safe }}</p>
-                                </div>
+                                <p class="text-[12.5px] font-semibold text-slate-500 mt-2.5 px-1">{{ field.help_text|safe }}</p>
                             {% endif %}
-
                         {% endif %}
 
                         <!-- Errors UI -->
                         {% if field.errors %}
-                            <div class="bg-rose-50 border border-rose-100 rounded-xl p-3.5 mt-2 flex items-start gap-2.5 anim-smooth-appear">
+                            <div class="bg-rose-50 border border-rose-100 rounded-xl p-3.5 mt-2 flex items-start gap-2.5">
                                 <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
                                 <div class="text-[13px] font-bold text-rose-700">
                                     {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
@@ -231,9 +209,7 @@
                     {% endif %}
                 {% endfor %}
 
-                <!-- ========================================== -->
-                <!-- AMAZING MULTI-IMAGE UPLOADER GALLERY       -->
-                <!-- ========================================== -->
+                <!-- MULTI-IMAGE UPLOADER GALLERY -->
                 {% if 'project' in request.resolver_match.url_name %}
                     <div class="pt-6 border-t border-slate-200/80">
                         <div class="mb-5">
@@ -243,29 +219,24 @@
                             <p class="text-[13px] text-slate-500 font-medium mt-1.5">{% trans "Upload multiple images or documents showcasing this item." %}</p>
                         </div>
 
-                        <!-- Hidden Native Input -->
                         <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
 
-                        <!-- Visual Gallery Grid -->
                         <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 transition-all">
-
-                            <!-- EXISTING IMAGES -->
                             {% if form.instance.pk and form.instance.gallery.all %}
                                 {% for media in form.instance.gallery.all %}
-                                <div class="relative group aspect-square rounded-[1.25rem] overflow-hidden border border-slate-200 transition-all duration-300 shadow-sm bg-white" id="existing-wrapper-{{ media.pk }}">
-                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-all duration-300 group-hover:scale-105" id="existing-img-{{ media.pk }}">
+                                <div class="relative group aspect-square rounded-[1rem] overflow-hidden border border-slate-200 bg-slate-50" id="existing-wrapper-{{ media.pk }}">
+                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" id="existing-img-{{ media.pk }}">
                                     <div class="absolute inset-0 bg-rose-500/10 opacity-0 transition-opacity duration-300 pointer-events-none" id="existing-overlay-{{ media.pk }}"></div>
                                     <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
-                                    <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 text-slate-600 hover:text-white rounded-xl flex items-center justify-center shadow-md backdrop-blur-md transition-all z-10" id="btn-{{ media.pk }}">
+                                    <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 text-slate-600 hover:text-white rounded-lg flex items-center justify-center shadow-sm transition-colors z-10" id="btn-{{ media.pk }}">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </div>
                                 {% endfor %}
                             {% endif %}
 
-                            <!-- ADD MORE BUTTON -->
-                            <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[1.25rem] border-2 border-dashed border-slate-300 hover:border-[#0A66C2] bg-white/50 hover:bg-blue-50/50 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-[#0A66C2] transition-all cursor-pointer shadow-sm group">
-                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 pointer-events-none transition-transform group-hover:scale-110">
+                            <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[1rem] border-2 border-dashed border-slate-300 hover:border-[#0A66C2] bg-white hover:bg-blue-50/50 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-[#0A66C2] transition-colors cursor-pointer group">
+                                <div class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center group-hover:bg-white border border-slate-100 transition-colors pointer-events-none">
                                     <i data-lucide="plus" class="w-5 h-5"></i>
                                 </div>
                                 <span class="text-[11px] font-black uppercase tracking-[0.15em] pointer-events-none">{% trans "Add Media" %}</span>
@@ -273,14 +244,13 @@
                         </div>
                     </div>
                 {% endif %}
-                <!-- ========================================== -->
 
                 <!-- Submit Area -->
                 <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-8 border-t border-slate-200/80 mt-10">
-                    <a href="javascript:history.back()" class="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[13px] font-bold uppercase tracking-wide rounded-xl shadow-sm transition-all text-center flex items-center justify-center gap-2 order-2 sm:order-1 active:scale-95">
+                    <a href="javascript:history.back()" class="btn-secondary w-full sm:w-auto order-2 sm:order-1">
                         {% trans "Cancel" %}
                     </a>
-                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white text-[13px] font-bold uppercase tracking-[0.1em] rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2 active:scale-95">
+                    <button type="submit" id="submit-btn" class="btn-add-solid w-full sm:w-auto order-1 sm:order-2">
                         <i data-lucide="save" id="submit-icon" class="w-4.5 h-4.5"></i> <span id="submit-text">{% trans "Save Entry" %}</span>
                     </button>
                 </div>
@@ -293,96 +263,179 @@
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        // ==========================================
-        // 1. AUTO-FOCUS MAGIC (UX Improvement)
-        // ==========================================
-        setTimeout(() => {
-            const firstInput = document.querySelector('form input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]), form textarea');
-            if (firstInput) {
-                firstInput.focus();
-            }
-        }, 300);
+        // =========================================================================
+        // 1. FORCE DROPDOWNS: Convert Django radio buttons to standard Dropdowns
+        // =========================================================================
+        const allRadios = document.querySelectorAll('.django-form input[type="radio"]');
+        if (allRadios.length > 0) {
+            const radioGroups = {};
 
-        // ==========================================
-        // 2. SUBMIT LOADING STATE (Prevents Double Clicks)
-        // ==========================================
+            // Group the radio buttons by their field name
+            allRadios.forEach(radio => {
+                if (!radioGroups[radio.name]) radioGroups[radio.name] = [];
+                radioGroups[radio.name].push(radio);
+            });
+
+            // Loop through each group and create a standard <select> dropdown
+            Object.keys(radioGroups).forEach(name => {
+                const radios = radioGroups[name];
+                const firstRadio = radios[0];
+
+                // Find the wrapper holding these radio buttons
+                const container = firstRadio.closest('.group\\/input') || firstRadio.parentElement;
+
+                // Create the clean dropdown element
+                const select = document.createElement('select');
+                select.name = name;
+                select.id = 'id_' + name;
+
+                // Add options to the dropdown based on the radio buttons
+                radios.forEach(radio => {
+                    const option = document.createElement('option');
+                    option.value = radio.value;
+
+                    // Safely grab the text next to the radio button
+                    const label = radio.closest('label');
+                    if (label) {
+                        const clone = label.cloneNode(true);
+                        const inputInClone = clone.querySelector('input');
+                        if (inputInClone) inputInClone.remove();
+                        option.textContent = clone.textContent.trim();
+                    } else {
+                        option.textContent = radio.value || '---------';
+                    }
+
+                    // If the radio was checked, make the dropdown option selected
+                    if (radio.checked) option.selected = true;
+
+                    select.appendChild(option);
+                });
+
+                // Clear out the ugly radio buttons and insert our beautiful dropdown!
+                container.innerHTML = '';
+                container.appendChild(select);
+            });
+        }
+        // =========================================================================
+
+        // 2. AUTO-FOCUS
+        setTimeout(() => {
+            const firstInput = document.querySelector('form input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]), form select, form textarea');
+            if (firstInput) firstInput.focus();
+        }, 100);
+
+        // 3. SUBMIT BUTTON STATE
         const mainForm = document.getElementById('main-form');
         if (mainForm) {
             mainForm.addEventListener('submit', function() {
                 const btn = document.getElementById('submit-btn');
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
-
                 btn.disabled = true;
-                btn.classList.add('opacity-80', 'cursor-not-allowed', 'scale-95');
+                btn.style.opacity = '0.8';
+                btn.style.cursor = 'not-allowed';
                 text.innerText = '{% trans "Saving..." %}';
-
                 icon.setAttribute('data-lucide', 'loader-2');
                 icon.classList.add('animate-spin');
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             });
         }
 
-        // ==========================================
-        // 3. DYNAMIC DATE LOGIC (For Experience)
-        // ==========================================
+        // 4. DATE LOGIC
         const isCurrentCheckbox = document.getElementById('id_is_current');
         const endDateInput = document.getElementById('id_end_date');
-
         if (isCurrentCheckbox && endDateInput) {
             function toggleEndDate() {
                 if (isCurrentCheckbox.checked) {
                     endDateInput.value = '';
                     endDateInput.readOnly = true;
-                    endDateInput.classList.add('opacity-50', 'bg-slate-100', 'cursor-not-allowed');
+                    endDateInput.style.opacity = '0.5';
+                    endDateInput.style.backgroundColor = '#f8fafc';
+                    endDateInput.style.pointerEvents = 'none';
                 } else {
                     endDateInput.readOnly = false;
-                    endDateInput.classList.remove('opacity-50', 'bg-slate-100', 'cursor-not-allowed');
+                    endDateInput.style.opacity = '1';
+                    endDateInput.style.backgroundColor = '#ffffff';
+                    endDateInput.style.pointerEvents = 'auto';
                 }
             }
-            toggleEndDate(); // Run on load
-            isCurrentCheckbox.addEventListener('change', toggleEndDate); // Run on click
+            toggleEndDate();
+            isCurrentCheckbox.addEventListener('change', toggleEndDate);
         }
 
-        // ==========================================
-        // 4. MULTI-IMAGE GALLERY LOGIC (For Projects)
-        // ==========================================
+        // 5. PROGRESSIVE DISCLOSURE
+        function setupSmartUX() {
+            const advancedInputs = document.querySelectorAll('.advanced-field');
+            if (advancedInputs.length > 0) {
+                let firstAdvancedWrapper = null;
+
+                advancedInputs.forEach(input => {
+                    const wrapper = input.closest('.form-group');
+                    if (wrapper) {
+                        wrapper.classList.add('advanced-field-wrapper');
+                        if (!firstAdvancedWrapper) firstAdvancedWrapper = wrapper;
+                    }
+                });
+
+                if (firstAdvancedWrapper) {
+                    const toggleContainer = document.createElement('div');
+                    toggleContainer.className = "py-3 border-t border-slate-100 mt-2 mb-2 flex flex-col items-start gap-1";
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.type = "button";
+                    toggleBtn.className = "text-[#0A66C2] text-[13.5px] font-bold flex items-center gap-1.5 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors";
+                    toggleBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Add Deep Narrative (Optional)';
+
+                    let isOpen = false;
+                    toggleBtn.onclick = function() {
+                        isOpen = !isOpen;
+                        document.querySelectorAll('.advanced-field-wrapper').forEach(w => {
+                            if (isOpen) w.classList.add('show'); else w.classList.remove('show');
+                        });
+                        toggleBtn.innerHTML = isOpen
+                            ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Hide Narrative Fields'
+                            : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Add Deep Narrative (Optional)';
+                    };
+
+                    toggleContainer.appendChild(toggleBtn);
+                    firstAdvancedWrapper.parentNode.insertBefore(toggleContainer, firstAdvancedWrapper);
+                }
+            }
+        }
+        setupSmartUX();
+
+        // 6. GALLERY MULTI-UPLOAD
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
         const addMoreBtn = document.getElementById('add-more-btn');
 
         if (fileInput && galleryGrid && addMoreBtn) {
-            let queuedFiles =[];
-
+            let queuedFiles = [];
             fileInput.addEventListener('change', function(e) {
                 const newFiles = Array.from(e.target.files);
                 newFiles.forEach(file => {
-                    const isDuplicate = queuedFiles.some(f => f.name === file.name && f.size === file.size);
-                    if (!isDuplicate) { queuedFiles.push(file); }
+                    if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) queuedFiles.push(file);
                 });
                 updateGalleryUI();
             });
 
             function updateGalleryUI() {
                 document.querySelectorAll('.queued-image-preview').forEach(el => el.remove());
-
                 queuedFiles.forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const div = document.createElement('div');
-                        div.className = 'queued-image-preview img-pop relative group aspect-square rounded-[1.25rem] overflow-hidden border-2 border-[#0A66C2] shadow-sm bg-white';
+                        div.className = 'queued-image-preview relative group aspect-square rounded-[1rem] overflow-hidden border-2 border-[#0A66C2] shadow-sm bg-white';
                         div.innerHTML = `
                             <img src="${e.target.result}" class="w-full h-full object-cover">
-                            <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 hover:text-white text-slate-600 rounded-xl flex items-center justify-center shadow-md backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-1.5 right-1.5 w-7 h-7 bg-white/90 hover:bg-rose-500 hover:text-white text-slate-600 rounded-lg flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
-                            <div class="absolute bottom-2 left-2 bg-[#0A66C2] text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg shadow-sm">NEW</div>
                         `;
                         galleryGrid.insertBefore(div, addMoreBtn);
                     };
                     reader.readAsDataURL(file);
                 });
-
                 const dataTransfer = new DataTransfer();
                 queuedFiles.forEach(file => dataTransfer.items.add(file));
                 fileInput.files = dataTransfer.files;
@@ -395,25 +448,20 @@
 
             window.toggleDeleteExisting = function(mediaPk) {
                 const checkbox = document.getElementById(`delete-${mediaPk}`);
-                const wrapper = document.getElementById(`existing-wrapper-${mediaPk}`);
                 const img = document.getElementById(`existing-img-${mediaPk}`);
-                const overlay = document.getElementById(`existing-overlay-${mediaPk}`);
                 const btn = document.getElementById(`btn-${mediaPk}`);
 
                 checkbox.checked = !checkbox.checked;
-
                 if (checkbox.checked) {
-                    img.classList.add('opacity-50', 'grayscale');
-                    overlay.classList.replace('opacity-0', 'opacity-100');
-                    wrapper.classList.replace('border-slate-200', 'border-rose-300');
+                    img.style.opacity = '0.3';
+                    img.style.filter = 'grayscale(100%)';
                     btn.classList.replace('hover:bg-rose-500', 'hover:bg-slate-500');
-                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`;
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`;
                 } else {
-                    img.classList.remove('opacity-50', 'grayscale');
-                    overlay.classList.replace('opacity-100', 'opacity-0');
-                    wrapper.classList.replace('border-rose-300', 'border-slate-200');
+                    img.style.opacity = '1';
+                    img.style.filter = 'none';
                     btn.classList.replace('hover:bg-slate-500', 'hover:bg-rose-500');
-                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`;
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`;
                 }
             };
         }

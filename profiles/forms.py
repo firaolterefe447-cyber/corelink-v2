@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from datetime import date
+from datetime import date, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -65,11 +65,16 @@ class TailwindFormMixin:
                 extra_css = f" pl-11 py-3.5 bg-[url('data:image/svg+xml,{self.ICONS['link']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.25rem]"
             elif isinstance(widget, forms.DateInput) or 'date' in field_name:
                 extra_css = f" pl-11 py-3.5 bg-[url('data:image/svg+xml,{self.ICONS['calendar']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.25rem]"
-                widget.attrs['type'] = 'date'
+                # Use month picker safely
+                if widget.attrs.get('type') != 'datetime-local' and widget.attrs.get('type') != 'month':
+                    widget.attrs['type'] = 'date'
             elif isinstance(widget, forms.Select):
                 extra_css = " px-4 py-3.5 appearance-none pr-12 cursor-pointer"
+            elif isinstance(widget, forms.RadioSelect):
+                base_css = "flex flex-wrap gap-2 radio-pill-group"
+                extra_css = ""
             elif isinstance(widget, forms.Textarea):
-                extra_css = " px-4 py-4 min-h-[120px] leading-relaxed resize-y"
+                extra_css = " px-4 py-4 min-h-[100px] leading-relaxed resize-y"
             elif isinstance(widget, forms.CheckboxInput):
                 base_css = "w-5 h-5 text-[#2563EB] bg-white border-slate-300 rounded focus:ring-[#2563EB] focus:ring-2 cursor-pointer transition-all shrink-0 mt-0.5"
                 extra_css = ""
@@ -96,11 +101,11 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
 
         labels = {
             'location': _("Where are you based?"),
-            'institution': _("Current Company, Hospital, or University"),
-            'field_of_interest': _("Primary Industry or Field"),
+            'institution': _("Current Organization / School"),
+            'field_of_interest': _("Primary Field or Industry"),
             'years_experience': _("Years of Experience"),
             'bio_narrative': _("Your Professional Story"),
-            'cv_file': _("Upload Resume or CV (PDF)"),
+            'cv_file': _("Upload CV (PDF)"),
         }
 
         help_texts = {
@@ -108,15 +113,15 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
             'institution': _("Where do you currently work, study, or practice?"),
             'field_of_interest': _("E.g., Agriculture, Healthcare, Education, Engineering, or Business."),
             'years_experience': _("Total number of years you have been active in your field."),
-            'bio_narrative': _("Provide a detailed professional biography. Tell us about your background, your current work, and your future goals."),
+            'bio_narrative': _("Tell us where you started, what you're doing now, and where you want to go. (Markdown supported)"),
             'cv_file': _("Upload your 1-page CV or Resume. This helps others understand your full professional background."),
         }
 
         widgets = {
             'location': forms.TextInput(attrs={'placeholder': _('e.g. Nairobi, Kenya')}),
-            'institution': forms.TextInput(attrs={'placeholder': _('e.g. Black Lion Hospital, Safaricom, or Addis Ababa University')}),
-            'field_of_interest': forms.TextInput(attrs={'placeholder': _('e.g. Healthcare Administration or Civil Engineering')}),
-            'bio_narrative': forms.Textarea(attrs={'placeholder': _('I began my career in...')}),
+            'institution': forms.TextInput(attrs={'placeholder': _('e.g. Safaricom or Addis Ababa University')}),
+            'field_of_interest': forms.TextInput(attrs={'placeholder': _('e.g. Healthcare Administration')}),
+            'bio_narrative': forms.Textarea(attrs={'placeholder': _('My journey began when...'), 'class': 'markdown-editor'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -141,22 +146,24 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
         fields = ['name', 'proficiency_level', 'status', 'context']
 
         labels = {
-            'name': _("Skill Name"),
-            'proficiency_level': _("Your Level"),
+            'name': _("Skill / Tool Name"),
+            'proficiency_level': _("Proficiency"),
             'status': _("Current Status"),
-            'context': _("How do you use this skill?"),
+            'context': _("How did you use this? (Optional)"),
         }
 
         help_texts = {
-            'name': _("Add a specific skill or strength (e.g., Patient Care, Logistics Management, Python, Financial Modeling, Graphic Design)."),
+            'name': _("Add a specific skill or strength (e.g., Patient Care, Logistics Management, Python)."),
             'proficiency_level': _("Rate your current ability with this skill."),
             'status': _("Indicate whether you are currently learning this, or if you already use it professionally."),
-            'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch', or 'Used for daily patient reporting')."),
+            'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch')."),
         }
 
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 3}),
+            'proficiency_level': forms.RadioSelect(),
+            'status': forms.RadioSelect(),
+            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 3, 'class': 'advanced-field'}),
         }
 
 
@@ -166,32 +173,35 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         fields = ['title', 'context', 'role', 'link', 'problem_statement', 'solution_narrative']
 
         labels = {
-            'title': _("Title of Work"),
-            'context': _("Category"),
+            'title': _("Project Title"),
+            'context': _("Project Type"),
             'role': _("Your Role"),
-            'link': _("Live Link, Publication, or Document"),
-            'problem_statement': _("The Goal or Challenge"),
+            'link': _("Live Link or Document"),
+            'problem_statement': _("Project Overview"),
             'solution_narrative': _("Your Approach & Results"),
         }
 
         help_texts = {
             'title': _("The name of the project, research paper, business plan, or campaign."),
             'context': _("Select the category that best fits this work."),
-            'role': _("Your specific position during this work (e.g., Project Manager, Research Assistant, Lead Technician)."),
+            'role': _("Your specific position during this work (e.g., Project Manager, Research Assistant)."),
             'link': _("A URL where people can view this project live or read the published work."),
-            'problem_statement': _("Explain the main objective or the problem you were trying to solve."),
+            'problem_statement': _("What is this project about? Describe its purpose and what it does."),
             'solution_narrative': _("Describe the steps you took and the final outcome or impact of the work."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study or Store Expansion Project'}),
+            'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study'}),
             'role': forms.TextInput(attrs={'placeholder': 'e.g., Operations Lead'}),
-            'problem_statement': forms.Textarea(attrs={'placeholder': 'We needed to find a way to...', 'rows': 3}),
-            'solution_narrative': forms.Textarea(attrs={'placeholder': 'I organized a system that resulted in...', 'rows': 4}),
+            'problem_statement': forms.Textarea(attrs={'placeholder': 'This project was designed to...', 'rows': 3, 'class': 'advanced-field'}),
+            'solution_narrative': forms.Textarea(attrs={'placeholder': 'I organized a system that resulted in...', 'rows': 5, 'class': 'advanced-field markdown-editor'}),
         }
 
-
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
+    # Fix for both old users (exact dates) and new users (month dates)
+    start_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}))
+    end_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}), required=False)
+
     class Meta:
         model = WorkExperience
         fields = ['company_name', 'role_title', 'location_type', 'start_date', 'end_date', 'is_current', 'description']
@@ -210,26 +220,36 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
             'company_name': _("The official name of the business, hospital, or organization."),
             'role_title': _("Your official job title (e.g., Senior Analyst, Medical Officer)."),
             'location_type': _("Indicate if this role was performed on-site, remotely, or in a hybrid format."),
-            'start_date': _("The month and year you started this role."),
-            'end_date': _("Leave this blank if you check 'I currently work here'."),
-            'is_current': _("Check this box if this is your active job."),
             'description': _("Highlight your key responsibilities and professional achievements. Using bullet points makes it easier to read."),
         }
 
         widgets = {
-            'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank, United Nations'}),
+            'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank'}),
             'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Logistics Officer or Clinic Supervisor'}),
+            'location_type': forms.RadioSelect(),
             'description': forms.Textarea(attrs={'placeholder': '• Coordinated daily operations\n• Managed a team of 15 staff members', 'rows': 4}),
         }
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data.get('is_current'): cleaned_data['end_date'] = None
-        elif not cleaned_data.get('end_date'): self.add_error('end_date', _("Please provide an end date, or check 'I currently work here'."))
+
+        # Ensure YYYY-MM gets parsed cleanly into a Date field on the backend
+        for date_field in ['start_date', 'end_date']:
+            val = cleaned_data.get(date_field)
+            if val and isinstance(val, str) and len(val) == 7:
+                cleaned_data[date_field] = datetime.strptime(val, '%Y-%m').date()
+
+        if cleaned_data.get('is_current'):
+            cleaned_data['end_date'] = None
+        elif not cleaned_data.get('end_date'):
+            self.add_error('end_date', _("Please provide an end date, or check 'I currently work here'."))
         return cleaned_data
 
 
 class CredentialForm(TailwindFormMixin, forms.ModelForm):
+    # Fix for both old users (exact dates) and new users (month dates)
+    issue_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}), required=False)
+
     class Meta:
         model = Credential
         fields = ['credential_type', 'title', 'issuer', 'issue_date', 'url_link', 'file_upload']
@@ -247,19 +267,22 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
             'credential_type': _("Select whether this is a formal degree, a professional certification, or a license."),
             'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or Project Management Professional."),
             'issuer': _("The university, licensing board, or training organization."),
-            'issue_date': _("The exact or approximate date this credential was awarded."),
             'url_link': _("An optional web link to verify the credential digitally."),
             'file_upload': _("Upload a clear copy of your degree or certificate to improve your profile verification."),
         }
 
         widgets = {
+            'credential_type': forms.RadioSelect(),
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Master of Business Administration (MBA)'}),
             'issuer': forms.TextInput(attrs={'placeholder': 'e.g., Addis Ababa University'}),
         }
 
     def clean_issue_date(self):
         issue_date = self.cleaned_data.get('issue_date')
-        if issue_date and issue_date > date.today(): raise forms.ValidationError(_("Date cannot be in the future."))
+        if isinstance(issue_date, str) and len(issue_date) == 7:
+            issue_date = datetime.strptime(issue_date, '%Y-%m').date()
+        if issue_date and issue_date > date.today():
+            raise forms.ValidationError(_("Date cannot be in the future."))
         return issue_date
 
 
@@ -283,11 +306,12 @@ class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
             'collaboration_status': _("Are you currently open to new opportunities, hiring, or seeking partners?"),
             'body_narrative': _("Provide the details of your current work or learning focus. Clear updates help others understand how to collaborate with you."),
             'external_link': _("Include a link to an article, document, or website related to your update."),
-            'is_published': _("Uncheck this if you want to save this as a draft instead of publishing it immediately."),
         }
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'What are you currently focusing on?'}),
+            'current_search': forms.RadioSelect(),
+            'collaboration_status': forms.RadioSelect(),
             'body_narrative': forms.Textarea(attrs={'placeholder': 'I have recently been working on...', 'rows': 4}),
         }
 
@@ -305,14 +329,14 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
 
         if 'visibility' in self.fields:
             self.fields['visibility'].label = _("Visibility Status")
+            self.fields['visibility'].widget = forms.RadioSelect()
 
         if current_type == 'GROWTH_LOG':
             self.fields['title'].label = _("Entry Title")
             self.fields['title'].help_text = _("Give your log a quick title (e.g., 'Week 1 of Project Deployment').")
             self.fields['content'].label = _("Notes & Observations")
             self.fields['content'].help_text = _("A place to document your daily progress, challenges overcome, or important notes.")
-            if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this log private for your own records, or share it on your profile.")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Today I learned...'})
 
         elif current_type == 'VISION_BLOCK':
             self.fields.pop('category', None)
@@ -322,8 +346,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields['title'].help_text = _("What is your ultimate objective? (e.g., 'Launch a Tech Startup in 5 Years').")
             self.fields['content'].label = _("Detailed Plan")
             self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
-            if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this private to stay focused, or publish it to connect with others who share similar goals.")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'In five years, I intend to...'})
 
         elif current_type == 'ESSAY':
             self.fields.pop('category', None)
@@ -333,8 +356,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields['title'].help_text = _("An engaging headline for your article or thought-leadership post.")
             self.fields['content'].label = _("Article Content")
             self.fields['content'].help_text = _("Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
-            if 'visibility' in self.fields:
-                self.fields['visibility'].help_text = _("Keep this as a private draft while writing, or publish it to your profile.")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor min-h-[300px]', 'placeholder': 'Start writing...'})
 
         if current_type:
             self.fields['post_type'].widget = forms.HiddenInput()
@@ -361,6 +383,7 @@ class LiveOpportunityForm(TailwindFormMixin, forms.ModelForm):
         }
 
         widgets = {
+            'request_type': forms.RadioSelect(),
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Looking for a Logistics Expert'}),
             'details': forms.Textarea(attrs={'placeholder': 'I am currently organizing a project and require someone who can...', 'rows': 4}),
             'expires_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -438,6 +461,7 @@ class CompanyProfileUpdateForm(TailwindFormMixin, forms.ModelForm):
             'operating_since': forms.NumberInput(attrs={'placeholder': 'e.g. 2015'}),
         }
 
+
 class CompanyNewsForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = CompanyNews
@@ -459,8 +483,9 @@ class CompanyNewsForm(TailwindFormMixin, forms.ModelForm):
 
         widgets = {
             'excerpt': forms.Textarea(attrs={'rows': 2, 'placeholder': 'A brief overview of the announcement...'}),
-            'content': forms.Textarea(attrs={'rows': 8, 'placeholder': 'Provide the full details here...'}),
+            'content': forms.Textarea(attrs={'rows': 8, 'placeholder': 'Provide the full details here...', 'class': 'markdown-editor'}),
         }
+
 
 class CompanyServiceForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
@@ -483,6 +508,7 @@ class CompanyServiceForm(TailwindFormMixin, forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'This service is designed to help customers...'}),
         }
 
+
 class CompanyMilestoneForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = CompanyMilestone
@@ -504,6 +530,7 @@ class CompanyMilestoneForm(TailwindFormMixin, forms.ModelForm):
             'year': forms.NumberInput(attrs={'placeholder': 'e.g. 2022'}),
             'description': forms.Textarea(attrs={'rows': 3, 'placeholder': 'This milestone allowed the organization to...'}),
         }
+
 
 class AddCompanyMemberForm(TailwindFormMixin, forms.Form):
     user_identifier = forms.CharField(label=_("Search User"), widget=forms.TextInput(attrs={'placeholder': 'Enter Email or Phone number...'}))
