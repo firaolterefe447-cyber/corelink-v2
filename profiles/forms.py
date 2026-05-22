@@ -39,7 +39,7 @@ from profiles.models import (
 class TailwindFormMixin:
     """Injects Tailwind CSS classes securely. Icons cached at class level."""
     ICONS = {
-        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
+        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
         'link': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' /%3E%3C/svg%3E",
         'calendar': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E",
         'chevron': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E",
@@ -141,61 +141,60 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
 
 
 class SkillForm(TailwindFormMixin, forms.ModelForm):
+    # Overriding the choices purely in the form so we don't have to touch the database
+    PROFICIENCY_CHOICES = [
+        ('JUNIOR', ' Beginner / Still Learning'),
+        ('SENIOR', 'Proficient / Use it actively'),
+        ('MASTER', ' Expert / Can mentor others'),
+    ]
+    proficiency_level = forms.ChoiceField(choices=PROFICIENCY_CHOICES, widget=forms.RadioSelect())
+
     class Meta:
         model = Skill
-        fields = ['name', 'proficiency_level', 'status', 'context']
+        fields = ['name', 'proficiency_level', 'context']
 
         labels = {
             'name': _("Skill / Tool Name"),
-            'proficiency_level': _("Proficiency"),
-            'status': _("Current Status"),
+            'proficiency_level': _("Proficiency Level"),
             'context': _("How did you use this? (Optional)"),
         }
 
         help_texts = {
-            'name': _("Add a specific skill or strength (e.g., Patient Care, Logistics Management, Python)."),
-            'proficiency_level': _("Rate your current ability with this skill."),
-            'status': _("Indicate whether you are currently learning this, or if you already use it professionally."),
+            'name': _("Add a specific skill or tool (e.g., Patient Care, Logistics, Python)."),
             'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch')."),
         }
 
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'proficiency_level': forms.RadioSelect(),
-            'status': forms.RadioSelect(),
-            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 3, 'class': 'advanced-field'}),
+            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 2, 'class': 'advanced-field'}),
         }
 
 
 class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = PortfolioProject
-        fields = ['title', 'context', 'role', 'link', 'problem_statement', 'solution_narrative']
+        fields = ['title', 'role', 'link', 'main_description']
 
         labels = {
             'title': _("Project Title"),
-            'context': _("Project Type"),
             'role': _("Your Role"),
-            'link': _("Live Link or Document"),
-            'problem_statement': _("Project Overview"),
-            'solution_narrative': _("Your Approach & Results"),
+            'link': _("Live Link or Document (Optional)"),
+            'main_description': _("Project Description"),
         }
 
         help_texts = {
             'title': _("The name of the project, research paper, business plan, or campaign."),
-            'context': _("Select the category that best fits this work."),
-            'role': _("Your specific position during this work (e.g., Project Manager, Research Assistant)."),
+            'role': _("Your specific position (e.g., Project Manager, Lead Researcher)."),
             'link': _("A URL where people can view this project live or read the published work."),
-            'problem_statement': _("What is this project about? Describe its purpose and what it does."),
-            'solution_narrative': _("Describe the steps you took and the final outcome or impact of the work."),
+            'main_description': _("Describe what this project is, what problem it solves, and what you achieved."),
         }
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study'}),
             'role': forms.TextInput(attrs={'placeholder': 'e.g., Operations Lead'}),
-            'problem_statement': forms.Textarea(attrs={'placeholder': 'This project was designed to...', 'rows': 3, 'class': 'advanced-field'}),
-            'solution_narrative': forms.Textarea(attrs={'placeholder': 'I organized a system that resulted in...', 'rows': 5, 'class': 'advanced-field markdown-editor'}),
+            'main_description': forms.Textarea(attrs={'placeholder': 'Describe your approach and results...', 'rows': 5, 'class': 'markdown-editor'}),
         }
+
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
     # Fix for both old users (exact dates) and new users (month dates)
@@ -247,34 +246,38 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
 
 
 class CredentialForm(TailwindFormMixin, forms.ModelForm):
-    # Fix for both old users (exact dates) and new users (month dates)
-    issue_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}), required=False)
+    issue_date = forms.DateField(
+        input_formats=['%Y-%m', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}),
+        required=False
+    )
 
     class Meta:
         model = Credential
-        fields = ['credential_type', 'title', 'issuer', 'issue_date', 'url_link', 'file_upload']
+        # Using exact database fields, but we will make them look beautiful in the UI
+        fields = ['title', 'issuer', 'issue_date', 'reflection', 'url_link', 'file_upload']
 
         labels = {
-            'credential_type': _("Type of Credential"),
             'title': _("Degree or Certificate Name"),
             'issuer': _("Issuing Organization"),
             'issue_date': _("Date Received"),
-            'url_link': _("Verification Link"),
+            # Re-labeling the DB field 'reflection' to 'Description' for a clean UX!
+            'reflection': _("Description / What did you learn?"),
+            'url_link': _("Verification Link (Optional)"),
             'file_upload': _("Upload Certificate (PDF/Image)"),
         }
 
         help_texts = {
-            'credential_type': _("Select whether this is a formal degree, a professional certification, or a license."),
-            'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or Project Management Professional."),
-            'issuer': _("The university, licensing board, or training organization."),
-            'url_link': _("An optional web link to verify the credential digitally."),
+            'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or AWS Cloud Practitioner."),
+            'issuer': _("The university, licensing board, or training platform."),
+            'reflection': _("Optional. Share what this credential covered or your biggest takeaways."),
             'file_upload': _("Upload a clear copy of your degree or certificate to improve your profile verification."),
         }
 
         widgets = {
-            'credential_type': forms.RadioSelect(),
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Master of Business Administration (MBA)'}),
             'issuer': forms.TextInput(attrs={'placeholder': 'e.g., Addis Ababa University'}),
+            'reflection': forms.Textarea(attrs={'placeholder': 'This certification covered...', 'rows': 3, 'class': 'advanced-field'}),
         }
 
     def clean_issue_date(self):
@@ -284,6 +287,24 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
         if issue_date and issue_date > date.today():
             raise forms.ValidationError(_("Date cannot be in the future."))
         return issue_date
+    def clean(self):
+        cleaned_data = super().clean()
+        is_in_progress = cleaned_data.get('is_in_progress')
+        issue_date = cleaned_data.get('issue_date')
+
+        # Ensure YYYY-MM parsing
+        if isinstance(issue_date, str) and len(issue_date) == 7:
+            issue_date = datetime.strptime(issue_date, '%Y-%m').date()
+            cleaned_data['issue_date'] = issue_date
+
+        if issue_date and issue_date > date.today():
+            self.add_error('issue_date', _("Date cannot be in the future."))
+
+        # Smart validation: If they aren't studying for it right now, they MUST provide a date
+        if not is_in_progress and not issue_date:
+            self.add_error('issue_date', _("Please provide an issue date, or check 'I am currently studying for this'."))
+
+        return cleaned_data
 
 
 class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
