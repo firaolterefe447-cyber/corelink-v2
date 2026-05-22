@@ -331,8 +331,8 @@ class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'What are you currently focusing on?'}),
-            'current_search': forms.RadioSelect(),
-            'collaboration_status': forms.RadioSelect(),
+            'current_search': forms.Select(attrs={'class': 'w-full'}),
+            'collaboration_status': forms.Select(attrs={'class': 'w-full'}),
             'body_narrative': forms.Textarea(attrs={'placeholder': 'I have recently been working on...', 'rows': 4}),
         }
 
