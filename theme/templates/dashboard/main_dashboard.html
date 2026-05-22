@@ -136,21 +136,10 @@
         border-radius: 1rem;
         box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
         position: relative;
-        z-index: 10;
         transition: border-color 0.2s ease;
     }
     @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
     .bento-card:hover { border-color: rgba(203, 213, 225, 1); }
-
-    .btn-action,
-    .btn-add-solid, .btn-manage-text, .premium-input, .avatar-circle,
-    .bento-card a[href], .bento-card button {
-        position: relative !important;
-        z-index: 5000 !important;
-        cursor: pointer !important;
-        pointer-events: auto !important;
-    }
-    .pointer-events-none { pointer-events: none !important; }
 
     .premium-input {
         width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.75rem;
@@ -159,74 +148,67 @@
     }
     .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
 
-    /* NEW MODERN PROFILE BUTTONS */
-    .btn-profile-primary {
+    /* MODERN PROFILE BUTTONS (Fixed for perfect clicks) */
+    .btn-profile-primary, .btn-profile-secondary {
         height: 44px;
         padding: 0 1.25rem;
-        border-radius: 0.75rem; /* Matches the bento card radius */
-        background: linear-gradient(135deg, #0A66C2, #0856A8);
-        color: #ffffff;
+        border-radius: 0.75rem;
         font-size: 14.5px;
         font-weight: 700;
-        border: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
-        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: all 0.2s ease-out;
         text-decoration: none;
-        box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
         white-space: nowrap;
         cursor: pointer;
-        z-index: 5000 !important;
+    }
+
+    .btn-profile-primary {
+        background: linear-gradient(135deg, #0A66C2, #0856A8);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
     }
     .btn-profile-primary:hover {
         box-shadow: 0 6px 16px rgba(10, 102, 194, 0.35);
         transform: translateY(-2px);
     }
     .btn-profile-primary:active {
-        transform: scale(0.97) translateY(0);
+        /* Removed translation/scaling completely so bounding box never moves. Used inset shadow instead. */
+        transform: translateY(0);
+        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
     }
 
     .btn-profile-secondary {
-        height: 44px;
-        padding: 0 1.25rem;
-        border-radius: 0.75rem; /* Matches the bento card radius */
-        background: #F8FAFC; /* Soft clean gray */
+        background: #F8FAFC;
         border: 1px solid #E2E8F0;
         color: #475569;
-        font-size: 14.5px;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-        text-decoration: none;
-        white-space: nowrap;
-        cursor: pointer;
-        z-index: 5000 !important;
     }
     .btn-profile-secondary:hover {
         background: #ffffff;
-        color: #0F172A; /* Darkens text on hover */
+        color: #0F172A;
         border-color: #CBD5E1;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
         transform: translateY(-2px);
     }
     .btn-profile-secondary:active {
-        transform: scale(0.97) translateY(0);
+        /* Same fix: inset shadow instead of movement */
+        transform: translateY(0);
+        box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08);
+        background: #f1f5f9;
     }
 
-    /* BUTTONS */
+    /* ACTION TEXT BUTTONS */
     .btn-manage-text {
         height: 40px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
         color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
         transition: background 0.2s ease, color 0.2s ease; flex-shrink: 0; text-decoration: none;
         font-size: 13px; font-weight: 800; border: 1.5px solid transparent;
+        cursor: pointer;
     }
     .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
-    .btn-manage-text:active { transform: scale(0.97); }
 
     .btn-add-solid {
         height: 40px; padding: 0 1.15rem; border-radius: 0.75rem;
@@ -235,9 +217,9 @@
         display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
         transition: background 0.2s ease; text-decoration: none; white-space: nowrap;
         box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3);
+        cursor: pointer;
     }
     .btn-add-solid:hover { background: #0856A8; }
-    .btn-add-solid:active { transform: scale(0.97); }
 
     .cover-container-radius {
         border-top-left-radius: calc(1rem - 1px);
@@ -248,26 +230,25 @@
     }
 
     .cover-placeholder-01 {
-        display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden;
+        display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
     }
-    .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; pointer-events: none; }
-    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; pointer-events: none; }
+    .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
 
-    /* AVATAR */
+    /* AVATAR CIRCLE (Cleaned up, no hacks) */
     .avatar-circle {
         display: flex; align-items: center; justify-content: center;
         width: 124px; height: 124px;
         border-radius: 50%; background: #ffffff;
         box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
-        overflow: hidden; position: relative; z-index: 10000; cursor: pointer; pointer-events: auto;
-        transition: box-shadow 0.2s ease; flex-shrink: 0; text-decoration: none; margin: 4px;
+        overflow: hidden; position: relative; cursor: pointer;
+        transition: box-shadow 0.2s ease; flex-shrink: 0; text-decoration: none;
     }
     @media (min-width: 640px) { .avatar-circle { width: 144px; height: 144px; } }
     @media (min-width: 768px) {
         .avatar-circle {
             width: 168px; height: 168px;
             box-shadow: 0 0 0 6px #ffffff, 0 2px 12px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
-            margin: 6px;
         }
     }
     .avatar-circle:hover { box-shadow: 0 0 0 6px #ffffff, 0 4px 16px rgba(10, 102, 194, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); }
@@ -276,14 +257,9 @@
     .avatar-overlay {
         position: absolute; inset: 0; background: rgba(15,23,42,0.5);
         opacity: 0; transition: opacity 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        border-radius: 50%; pointer-events: none;
+        border-radius: 50%;
     }
     .avatar-circle:hover .avatar-overlay { opacity: 1; }
-
-    .avatar-empty {
-        width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); color: #94a3b8; pointer-events: none;
-    }
 
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.4s ease forwards; }
@@ -293,15 +269,14 @@
 </style>
 
 <main class="app-canvas anim-smooth-appear">
-    <div class="max-w-[1200px] mx-auto w-full relative z-10">
+    <div class="max-w-[1200px] mx-auto w-full relative">
 
         <!-- PROFILE HERO CARD -->
-        <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-8" id="profile-hero">
+        <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-8 bg-white" id="profile-hero">
 
             <!-- Cover Image -->
             <div onclick="window.location.href='{% url 'media_manager' %}'"
-                 class="relative h-[140px] sm:h-[180px] md:h-[240px] w-full shrink-0 overflow-hidden cover-container-radius cursor-pointer group pointer-events-auto"
-                 style="z-index:10;"
+                 class="relative h-[140px] sm:h-[180px] md:h-[240px] w-full shrink-0 overflow-hidden cover-container-radius cursor-pointer group"
                  title="{% trans 'Change cover photo' %}">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]" alt="Cover">
@@ -311,47 +286,41 @@
                         <div class="glow-right"></div>
                     </div>
                 {% endif %}
-                <div class="absolute top-4 right-4 md:top-5 md:right-5 z-[100]
-                            w-10 h-10 md:w-11 md:h-11
-                            bg-white/90 backdrop-blur-md rounded-full
-                            flex items-center justify-center
-                            text-slate-600 group-hover:text-[#0A66C2] group-hover:bg-white
-                            shadow-md transition-colors pointer-events-none">
+                <div class="absolute top-4 right-4 md:top-5 md:right-5 w-10 h-10 md:w-11 md:h-11 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-600 group-hover:text-[#0A66C2] group-hover:bg-white shadow-md transition-colors pointer-events-none">
                     <i data-lucide="image" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </div>
             </div>
 
-            <!-- Hero Body -->
-            <div class="px-5 sm:px-8 md:px-12 pb-10 md:pb-14 relative flex flex-col h-full" style="z-index:20;">
+            <!-- Hero Body Container -->
+            <div class="px-5 sm:px-8 md:px-12 pb-10 md:pb-14 flex flex-col relative z-20">
 
-                <!-- Avatar -->
-                <div class="-mt-[4rem] md:-mt-[5.5rem] mb-5 md:mb-7 relative sm:ml-2 md:ml-4 w-max flex-shrink-0" style="z-index: 10000; pointer-events: auto;">
+                <!-- Avatar Link Block (Cleaned up DOM) -->
+                <div class="relative -mt-[4rem] md:-mt-[5.5rem] mb-5 md:mb-7 z-30 inline-flex sm:ml-2 md:ml-4">
                     <a href="{% url 'media_manager' %}" class="avatar-circle group" title="{% trans 'Change profile photo' %}">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.full_name }}">
-                            <div class="avatar-overlay">
+                            <div class="avatar-overlay pointer-events-none">
                                 <i data-lucide="camera" class="w-7 h-7 md:w-9 md:h-9 text-white mb-1.5"></i>
                                 <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Edit" %}</span>
                             </div>
                         {% else %}
-                            <div class="avatar-empty relative w-full h-full flex items-center justify-center">
-                                <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="user" class="w-10 h-10 md:w-14 md:h-14 text-slate-300 stroke-[1.5]"></i>
-                                    <span class="text-[9px] md:text-[10px] font-black tracking-[0.1em] mt-1 text-slate-400">NO PROFILE</span>
-                                </div>
-                                <div class="avatar-overlay">
-                                    <i data-lucide="camera" class="w-7 h-7 md:w-9 md:h-9 text-white mb-1.5"></i>
-                                    <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Add Photo" %}</span>
-                                </div>
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-400 group-hover:from-slate-200 group-hover:to-slate-300 transition-colors pointer-events-none">
+                                <i data-lucide="user" class="w-10 h-10 md:w-14 md:h-14 stroke-[1.5]"></i>
+                                <span class="text-[9px] md:text-[10px] font-black tracking-[0.1em] mt-1">NO PHOTO</span>
+                            </div>
+                            <div class="avatar-overlay pointer-events-none">
+                                <i data-lucide="camera" class="w-7 h-7 md:w-9 md:h-9 text-white mb-1.5"></i>
+                                <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Add Photo" %}</span>
                             </div>
                         {% endif %}
                     </a>
                 </div>
 
-                <!-- Name + headline + meta + CTA -->
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 md:gap-8 w-full relative z-[30]">
+                <!-- Text & Buttons Row -->
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full relative z-30">
 
-                    <div class="flex-1 min-w-0 relative z-[10]">
+                    <!-- Info Column -->
+                    <div class="flex-1 min-w-0 pr-0 lg:pr-8">
                         <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-none mb-1 break-words w-full">
                             {{ user.full_name|default:user.phone_number }}
                         </h1>
@@ -382,50 +351,48 @@
                         </div>
                     </div>
 
-                    <!-- Modern CTAs -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto flex-shrink-0 lg:pt-1 relative z-[5000]" style="pointer-events: auto;">
+                    <!-- Actions Column (Wrapped to prevent any layout overlap) -->
+                    <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
-                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary w-full sm:w-auto justify-center pointer-events-auto">
-                                    <i data-lucide="building" class="w-4 h-4"></i>
-                                    <span>{% trans "Manage Company" %}</span>
+                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary w-full sm:w-auto">
+                                    <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
+                                    <span class="pointer-events-none">{% trans "Manage Company" %}</span>
                                 </a>
                             {% else %}
-                                <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto justify-center pointer-events-auto">
-                                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                                    <span>{% trans "Add Company" %}</span>
+                                <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto">
+                                    <i data-lucide="plus-circle" class="w-4 h-4 pointer-events-none"></i>
+                                    <span class="pointer-events-none">{% trans "Add Company" %}</span>
                                 </a>
                             {% endif %}
                         {% endif %}
 
                         {% if portfolio.slug %}
-                            <a href="{% url 'public_profile' portfolio.slug %}" target="_blank" class="btn-profile-primary w-full sm:w-auto justify-center pointer-events-auto">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                                <span>{% trans "Public Profile" %}</span>
+                            <a href="{% url 'public_profile' portfolio.slug %}" target="_blank" class="btn-profile-primary w-full sm:w-auto">
+                                <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i>
+                                <span class="pointer-events-none">{% trans "Public Profile" %}</span>
                             </a>
                         {% else %}
-                            <a href="{% url 'profile_settings' %}" class="btn-profile-primary w-full sm:w-auto justify-center pointer-events-auto" title="{% trans 'Complete your profile to get a public link' %}">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                                <span>{% trans "Public Profile" %}</span>
-                                <span style="font-size:10px; background:rgba(255,255,255,0.2); padding:2px 7px; border-radius:5px; font-weight:600; margin-left:4px;">{% trans "Setup" %}</span>
+                            <a href="{% url 'profile_settings' %}" class="btn-profile-primary w-full sm:w-auto" title="{% trans 'Complete your profile to get a public link' %}">
+                                <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i>
+                                <span class="pointer-events-none">{% trans "Public Profile" %}</span>
+                                <span class="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-semibold ml-1 pointer-events-none">{% trans "Setup" %}</span>
                             </a>
                         {% endif %}
 
-                        <a href="{% url 'profile_settings' %}" class="btn-profile-secondary w-full sm:w-auto justify-center pointer-events-auto">
-                            <!-- Removed Gear icon, changed text -->
-                            <span>{% trans "Profile Settings" %}</span>
+                        <a href="{% url 'profile_settings' %}" class="btn-profile-secondary w-full sm:w-auto">
+                            <span class="pointer-events-none">{% trans "Profile Settings" %}</span>
                         </a>
                     </div>
                 </div>
 
                 <!-- Professional Bio -->
-                <div class="p-6 sm:p-8 md:p-10 bg-slate-50/60 rounded-[1rem] md:rounded-[1.25rem] border border-slate-200/80 text-left mt-8 md:mt-10 w-full relative z-[20]">
+                <div class="p-6 sm:p-8 md:p-10 bg-slate-50/60 rounded-[1rem] md:rounded-[1.25rem] border border-slate-200/80 text-left mt-8 md:mt-10 w-full relative z-20">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-bold text-slate-700 text-[13px] md:text-[14px] uppercase tracking-widest cursor-default">{% trans "About Me" %}</h3>
-                        <button onclick="openBioEditor()"
-                                class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-[5000] cursor-pointer inline-flex items-center gap-1.5 pointer-events-auto">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                            <span>{% if portfolio.bio_narrative %}{% trans "Edit" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
+                        <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% if portfolio.bio_narrative %}{% trans "Edit" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
                         </button>
                     </div>
 
@@ -433,25 +400,21 @@
                         <p class="text-[13px] text-slate-400 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
                             {% trans "Write a professional summary detailing your background, focus, and future goals. A well-crafted story helps people understand not just what you do, but who you are." %}
                         </p>
-                        <button onclick="openBioEditor()"
-                                class="w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left relative z-[5000] cursor-pointer group/empty pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-blue-100 group-hover/empty:text-blue-600 transition-colors">
+                        <button onclick="openBioEditor()" class="w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer group/empty">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-blue-100 group-hover/empty:text-blue-600 transition-colors pointer-events-none">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                             </div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover/empty:text-blue-600 transition-colors">{% trans "Write your professional summary" %}</h4>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover/empty:text-blue-600 transition-colors pointer-events-none">{% trans "Write your professional summary" %}</h4>
                         </button>
                     {% else %}
-                        <div id="bio-container" class="relative z-[10]">
-                            <div id="bio-text-wrap"
-                                 class="relative overflow-hidden transition-all duration-300 ease-in-out bg-white p-5 rounded-xl border border-slate-200/60 cursor-default md:!max-h-none"
-                                 style="max-height: 120px;">
+                        <div id="bio-container" class="relative">
+                            <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-300 ease-in-out bg-white p-5 rounded-xl border border-slate-200/60 cursor-default md:!max-h-none" style="max-height: 120px;">
                                 <p class="text-[14.5px] sm:text-[15.5px] md:text-[16.5px] text-slate-800 font-medium leading-[1.9] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
                                 <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none md:hidden" aria-hidden="true"></div>
                             </div>
-                            <button id="bio-expand-btn" onclick="toggleBio()"
-                                    class="mt-3 text-[#0A66C2] font-extrabold text-[13.5px] hover:text-[#0856A8] flex items-center gap-1.5 cursor-pointer relative z-[5000] transition-colors md:hidden pointer-events-auto">
-                                <span id="bio-btn-text">{% trans "Read More" %}</span>
-                                <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
+                            <button id="bio-expand-btn" onclick="toggleBio()" class="mt-3 text-[#0A66C2] font-extrabold text-[13.5px] hover:text-[#0856A8] flex items-center gap-1.5 cursor-pointer transition-colors md:hidden">
+                                <span id="bio-btn-text" class="pointer-events-none">{% trans "Read More" %}</span>
+                                <i id="bio-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300 pointer-events-none"></i>
                             </button>
                         </div>
                     {% endif %}
@@ -463,17 +426,17 @@
         <div class="flex flex-col gap-5 lg:gap-6 mb-6 lg:mb-10">
 
             <!-- 1. Skills -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_skills' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_skills' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'skill_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add Skill" %}</span>
+                        <a href="{% url 'skill_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Skill" %}</span>
                         </a>
                     </div>
                 </div>
@@ -488,26 +451,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'skill_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "List your strengths" %}</h4>
+                        <a href="{% url 'skill_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "List your strengths" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 2. Credentials -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.edu_title|default:"Credentials" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_credentials' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_credentials' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add" %}</span>
+                        <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add" %}</span>
                         </a>
                     </div>
                 </div>
@@ -525,26 +488,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'credential_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Add education & certificates" %}</h4>
+                        <a href="{% url 'credential_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add education & certificates" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 3. Daily Progress -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Daily Progress" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add Log" %}</span>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
                         </a>
                     </div>
                 </div>
@@ -566,26 +529,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Log your first daily win" %}</h4>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Log your first daily win" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 4. Portfolio & Work -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_projects' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_projects' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'project_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add Project" %}</span>
+                        <a href="{% url 'project_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Project" %}</span>
                         </a>
                     </div>
                 </div>
@@ -596,14 +559,14 @@
                     {% if projects %}
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {% for project in projects|slice:":4" %}
-                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/img pointer-events-auto">
+                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/img cursor-pointer">
                                 {% if project.gallery.first %}
-                                    <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover" alt="{{ project.title }}">
+                                    <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}">
                                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-end p-4 pointer-events-none" aria-hidden="true">
                                         <span class="text-[13px] text-white font-bold line-clamp-2 leading-snug">{{ project.title }}</span>
                                     </div>
                                 {% else %}
-                                    <div class="w-full h-full bg-slate-50 flex flex-col items-start justify-end p-4 hover:bg-blue-50/50 transition-colors border-t-4 border-[#0A66C2]">
+                                    <div class="w-full h-full bg-slate-50 flex flex-col items-start justify-end p-4 hover:bg-blue-50/50 transition-colors border-t-4 border-[#0A66C2] pointer-events-none">
                                         <h4 class="font-bold text-slate-800 text-[14px] line-clamp-3 leading-snug">{{ project.title }}</h4>
                                     </div>
                                 {% endif %}
@@ -611,26 +574,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'project_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center pointer-events-auto">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="image" class="w-6 h-6"></i></div>
-                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-blue-600 transition-colors">{% trans "Showcase past work" %}</h4>
+                        <a href="{% url 'project_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="image" class="w-6 h-6"></i></div>
+                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Showcase past work" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 5. Experience -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.exp_title|default:"Experience" }}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_experiences' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_experiences' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add" %}</span>
+                        <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add" %}</span>
                         </a>
                     </div>
                 </div>
@@ -649,26 +612,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'experience_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Add work experience" %}</h4>
+                        <a href="{% url 'experience_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add work experience" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 6. Headlines -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Headlines" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add Title" %}</span>
+                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Title" %}</span>
                         </a>
                     </div>
                 </div>
@@ -691,26 +654,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Add your professional title" %}</h4>
+                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 7. Goal & Vision -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "My Goal & Vision" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>{% trans "Add Vision" %}</span>
+                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Vision" %}</span>
                         </a>
                     </div>
                 </div>
@@ -729,26 +692,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Define your primary goal" %}</h4>
+                        <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Define your primary goal" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 8. Industry Thoughts -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Industry Thoughts" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_essays' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_essays' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                            <span>{% trans "Add Essay" %}</span>
+                        <a href="{% url 'content_create' %}?type=ESSAY" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="pen-tool" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Essay" %}</span>
                         </a>
                     </div>
                 </div>
@@ -772,30 +735,30 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'content_create' %}?type=ESSAY" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center pointer-events-auto">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="file-text" class="w-6 h-6"></i></div>
-                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-blue-600 transition-colors">{% trans "Write your first insight" %}</h4>
+                        <a href="{% url 'content_create' %}?type=ESSAY" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Write your first insight" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- 9. Contact & Network -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Contact & Network" %}</h3>
-                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-50">
-                        <a href="{% url 'manage_network' %}" class="btn-manage-text pointer-events-auto">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
-                            <span>{% trans "Manage" %}</span>
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_network' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto">
-                            <i data-lucide="link" class="w-4 h-4"></i>
-                            <span>{% trans "Add Social" %}</span>
+                        <a href="{% url 'social_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="link" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Social" %}</span>
                         </a>
-                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none pointer-events-auto" style="background:#1e293b; box-shadow: 0 2px 6px -2px rgba(15,23,42,0.2);">
-                            <i data-lucide="phone" class="w-4 h-4"></i>
-                            <span>{% trans "Add Contact" %}</span>
+                        <a href="{% url 'contact_create' %}" class="btn-add-solid flex-1 sm:flex-none" style="background:#1e293b; box-shadow: 0 2px 6px -2px rgba(15,23,42,0.2);">
+                            <i data-lucide="phone" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Contact" %}</span>
                         </a>
                     </div>
                 </div>
@@ -815,9 +778,9 @@
                             </div>
                             {% endfor %}
                             {% for social in user.social_links.all|slice:":6" %}
-                            <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3.5 p-4 bg-white border border-slate-200/80 rounded-xl hover:border-[#0A66C2] transition-colors group/social pointer-events-auto">
-                                <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-[#0A66C2] border border-slate-100 shrink-0 group-hover/social:bg-blue-50 transition-colors"><i data-lucide="{{ social.icon_slug|default:'link' }}" class="w-4 h-4"></i></div>
-                                <div class="overflow-hidden flex-1">
+                            <a href="{{ social.url }}" target="_blank" class="flex items-center gap-3.5 p-4 bg-white border border-slate-200/80 rounded-xl hover:border-[#0A66C2] transition-colors group/social cursor-pointer">
+                                <div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-[#0A66C2] border border-slate-100 shrink-0 group-hover/social:bg-blue-50 transition-colors pointer-events-none"><i data-lucide="{{ social.icon_slug|default:'link' }}" class="w-4 h-4"></i></div>
+                                <div class="overflow-hidden flex-1 pointer-events-none">
                                     <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ social.platform_name }}</span>
                                     <span class="block text-[14px] font-bold text-slate-800 truncate group-hover/social:text-[#0A66C2] transition-colors">{% trans "Visit Profile" %}</span>
                                 </div>
@@ -825,9 +788,9 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'contact_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 pointer-events-auto">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors">{% trans "Add contact info so people can reach you" %}</h4>
+                        <a href="{% url 'contact_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add contact info so people can reach you" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -853,7 +816,7 @@
                     <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10 cursor-default">
                         {% trans "Select your current objective to match your portfolio with relevant opportunities. This signals to recruiters, founders, and partners exactly how they can collaborate with you." %}
                     </p>
-                    <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-5 relative z-50 pointer-events-auto">
+                    <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-5 relative z-50">
                         {% csrf_token %}
                         <div style="display:none;">
                             <input type="hidden" name="full_name" value="{{ user.full_name|default:user.phone_number|escape }}">
@@ -868,7 +831,7 @@
                         <div class="relative w-full group">
                             <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1 cursor-default">{% trans "CURRENT OBJECTIVE" %}</label>
                             <div class="relative">
-                                <select name="current_search" onchange="autoSubmitGoal(this.form)" aria-label="{% trans 'Select your current goal' %}" class="premium-input cursor-pointer text-slate-700 hover:border-[#0A66C2] transition-colors w-full bg-white block pointer-events-auto" style="padding-right:3.5rem; appearance:none; position:relative !important; z-index:5000 !important;">
+                                <select name="current_search" onchange="autoSubmitGoal(this.form)" aria-label="{% trans 'Select your current goal' %}" class="premium-input cursor-pointer text-slate-700 hover:border-[#0A66C2] transition-colors w-full bg-white block" style="padding-right:3.5rem; appearance:none;">
                                     <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Looking for a Startup or Team" %}</option>
                                     <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
                                     <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Looking to meet people in my industry" %}</option>
@@ -953,15 +916,15 @@
 <div id="bio-editor-wrapper" class="fixed inset-0 z-[210] flex items-end justify-center md:items-center pointer-events-none opacity-0 transition-opacity duration-300 px-0 md:px-4">
     <div id="bio-editor-modal" class="bg-white w-full md:max-w-2xl h-[82vh] md:h-[480px] rounded-t-[1.25rem] md:rounded-[1rem] shadow-2xl flex flex-col overflow-hidden transform translate-y-full md:translate-y-8 md:scale-95 transition-all duration-300 ease-out border border-slate-200">
         <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100">
-            <button onclick="closeBioEditor()" class="text-slate-500 font-semibold text-[13.5px] flex items-center gap-2 hover:bg-slate-100 px-3 py-2 rounded-lg transition-colors min-h-[40px] cursor-pointer pointer-events-auto">
+            <button onclick="closeBioEditor()" class="text-slate-500 font-semibold text-[13.5px] flex items-center gap-2 hover:bg-slate-100 px-3 py-2 rounded-lg transition-colors min-h-[40px] cursor-pointer">
                 <i data-lucide="x" class="w-4 h-4"></i> <span>{% trans "Cancel" %}</span>
             </button>
             <span class="font-heading font-black text-[12px] uppercase tracking-widest text-slate-400 hidden sm:block">{% trans "About Me" %}</span>
-            <button form="bio-edit-form" type="submit" id="submit-bio-btn" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white px-4 py-2 rounded-lg font-bold text-[13px] transition-colors active:scale-[0.98] flex items-center gap-2 min-h-[40px] cursor-pointer pointer-events-auto">
+            <button form="bio-edit-form" type="submit" id="submit-bio-btn" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white px-4 py-2 rounded-lg font-bold text-[13px] transition-colors active:scale-[0.98] flex items-center gap-2 min-h-[40px] cursor-pointer">
                 <span>{% trans "Save Story" %}</span>
             </button>
         </div>
-        <div class="flex-1 p-5 sm:p-6 overflow-y-auto custom-scroll bg-slate-50/40 pointer-events-auto">
+        <div class="flex-1 p-5 sm:p-6 overflow-y-auto custom-scroll bg-slate-50/40">
             <form id="bio-edit-form" method="POST" action="{% url 'profile_settings' %}" onsubmit="handleBioSubmit(event)" class="max-w-2xl mx-auto h-full flex flex-col">
                 {% csrf_token %}
                 <div style="display:none;">
@@ -974,7 +937,7 @@
                     <input type="hidden" name="current_search" value="{{ portfolio.current_search|default:'LEARNING' }}">
                     <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
                 </div>
-                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input flex-1 resize-none placeholder:text-slate-400 placeholder:font-normal pointer-events-auto" style="min-height: 200px;" placeholder="{% trans 'Write a professional summary detailing your background, focus, and future goals...' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
+                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input flex-1 resize-none placeholder:text-slate-400 placeholder:font-normal" style="min-height: 200px;" placeholder="{% trans 'Write a professional summary detailing your background, focus, and future goals...' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
             </form>
         </div>
     </div>
