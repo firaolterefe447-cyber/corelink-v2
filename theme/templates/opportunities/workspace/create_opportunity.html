@@ -3,623 +3,574 @@
 
 {% block head_meta %}
     <!-- 1. Primary Meta Tags -->
-    <title>Post an Opportunity | CoreLink Ethiopia</title>
-    <meta name="title" content="Post an Opportunity on CoreLink Ethiopia">
+    <title>Post an Opportunity | CoreLink</title>
+    <meta name="title" content="Post an Opportunity on CoreLink">
     <meta name="description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
 
     <!-- 2. Open Graph / Facebook / Telegram -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://corelink.et{{ request.path }}">
     <meta property="og:site_name" content="CoreLink Ethiopia">
-    <meta property="og:title" content="Post an Opportunity on CoreLink Ethiopia">
+    <meta property="og:title" content="Post an Opportunity on CoreLink">
     <meta property="og:description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
-    <!-- MUST be exactly 1200x630px, under 5MB, absolute URL -->
     <meta property="og:image" content="https://corelink.et/static/img/corelink-job-share-default.jpg">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
-    <!-- 3. Twitter (Telegram reads this to make the image MASSIVE) -->
+    <!-- 3. Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:domain" content="corelink.et">
     <meta name="twitter:url" content="https://corelink.et{{ request.path }}">
-    <meta name="twitter:title" content="Post an Opportunity on CoreLink Ethiopia 🇪🇹">
+    <meta name="twitter:title" content="Post an Opportunity on CoreLink 🇪🇹">
     <meta name="twitter:description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
-    <!-- MATCHED EXACTLY WITH OG:IMAGE -->
     <meta name="twitter:image" content="https://corelink.et/static/img/corelink-job-share-default.jpg">
 {% endblock %}
 
 {% block navbar %}
 <!-- ==============================================
-     FUTURISTIC FLOATING DOCK (PC View)
+     LEFT SIDEBAR NAVIGATION (PC)
      ============================================== -->
-<aside class="hidden md:flex fixed top-1/2 -translate-y-1/2 left-6 w-20 hover:w-64 h-[80vh] bg-white/80 backdrop-blur-3xl border border-slate-200/60 z-[100] flex-col py-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-500 group overflow-hidden">
-
-    <!-- Identity -->
-    <div class="px-6 mb-8 flex items-center prevent-select shrink-0">
-        <div class="w-8 h-8 rounded-xl bg-[#4F46E5] flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20">
-            <span class="font-black text-white text-[16px] leading-none mt-0.5">C</span>
-        </div>
-        <span class="ml-4 font-black text-slate-900 text-[19px] tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap nav-heading">CoreLink</span>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="flex-1 px-3 space-y-3 overflow-y-auto overflow-x-hidden custom-scroll pb-4">
-        {% if request.user.is_authenticated and not is_inspector %}
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="user" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Portfolio" %}</span>
-            </a>
-
-            <!-- ACTIVE: Workspace (Posting originates here) -->
-            <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 p-3 rounded-xl bg-indigo-50 text-[#4F46E5] transition-all border border-indigo-100/50 shadow-sm" aria-current="page">
-                <i data-lucide="layers" class="w-6 h-6 shrink-0 fill-indigo-100 text-[#4F46E5]"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Workspace" %}</span>
-            </a>
-
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="compass" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Discover" %}</span>
-            </a>
-
-            <a href="{% url 'team_nexus' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="users" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Teams" %}</span>
-            </a>
-
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="briefcase" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Opportunities" %}</span>
-            </a>
-
-            <a href="/workspace/messages/" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <div class="relative shrink-0">
-                    <i data-lucide="mail" class="w-6 h-6"></i>
-                    <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full border border-white hidden"></div>
-                </div>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Inbox" %}</span>
-            </a>
-        {% elif is_inspector %}
-            <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="arrow-left" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Pool Browser" %}</span>
-            </a>
-        {% else %}
-            <!-- Guest Navigation inside Dock -->
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-                <i data-lucide="arrow-left" class="w-6 h-6 shrink-0"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Back to Jobs" %}</span>
-            </a>
-            <div class="flex items-center gap-4 p-3 rounded-xl bg-indigo-50 text-[#4F46E5] transition-all border border-indigo-100/50 shadow-sm" aria-current="page">
-                <i data-lucide="plus-circle" class="w-6 h-6 shrink-0 fill-indigo-100 text-[#4F46E5]"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Post Job" %}</span>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+        <div class="flex-1">
+            <!-- Typographic Logo -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}/{% endif %}'">
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
             </div>
-            <a href="{% url 'unified_onboarding' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-indigo-50 hover:text-[#4F46E5] transition-all mt-4 border border-dashed border-slate-300 group/join">
-                <i data-lucide="rocket" class="w-6 h-6 shrink-0 group-hover/join:text-[#4F46E5]"></i>
-                <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Join CoreLink" %}</span>
-            </a>
-        {% endif %}
-    </nav>
 
-    <!-- Bottom Actions -->
-    <div class="px-3 mt-auto pt-4 border-t border-slate-100 space-y-1 shrink-0">
-        {% if request.user.is_authenticated and not is_inspector %}
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all">
-                <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
-                <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Profile Settings" %}</span>
-            </a>
-        {% endif %}
-        <button onclick="toggleMobileLangDrawer()" class="w-full flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all text-left">
-            <i data-lucide="globe" class="w-5 h-5 shrink-0"></i>
-            <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap flex items-center justify-between flex-1">{% trans "Language" %} <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small></span>
-        </button>
-        {% if request.user.is_authenticated and not is_inspector %}
-            <a href="{% url 'logout' %}" class="flex items-center gap-4 p-3 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-all mt-1 group/logout">
-                <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
-                <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Logout" %}</span>
-            </a>
-        {% endif %}
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                {% if request.user.is_authenticated and not is_inspector %}
+                    <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                        {% trans "Personal Profile" %}
+                    </a>
+
+                    <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="radio" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                        {% trans "My Updates" %}
+                    </a>
+
+                    <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                        {% trans "Discover" %}
+                    </a>
+
+                    <!-- ACTIVE: Opportunities -->
+                    <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
+                        <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-emerald-600"></i></div>
+                        {% trans "Opportunities" %}
+                    </a>
+
+                    <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                                <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                            </div>
+                            {% trans "Inbox" %}
+                        </div>
+                        {% if unread_msg_count > 0 %}
+                            <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                                {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                            </span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <!-- GUEST NAVIGATION -->
+                    <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                        {% trans "Back to Jobs" %}
+                    </a>
+                    <a href="#" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
+                        <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="plus" class="w-4 h-4 text-emerald-600"></i></div>
+                        {% trans "Post Job" %}
+                    </a>
+                    <div class="h-px bg-slate-200/60 my-2 mx-4"></div>
+                    <a href="{% url 'unified_onboarding' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-slate-900 text-white font-bold transition-all shadow-md text-[15px] group hover:bg-black hover:-translate-y-0.5">
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shadow-sm transition-all"><i data-lucide="rocket" class="w-4 h-4 text-white"></i></div>
+                        {% trans "Join CoreLink" %}
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            {% if request.user.is_authenticated and not is_inspector %}
+                <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>{% trans "Settings" %}</span>
+                </a>
+                <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <span>{% trans "Logout" %}</span>
+                </a>
+            {% endif %}
+        </div>
     </div>
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-5 h-[max(4rem,calc(4rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[26px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
-            <span class="text-slate-900">Core</span><span class="text-[#4F46E5]">Link</span>
-        </div>
-        <div class="px-2 py-[3px] rounded-md bg-indigo-50 border border-indigo-100 shadow-sm flex items-center justify-center mb-[3px]">
-            <span class="text-[8px] font-black uppercase tracking-[0.18em] text-[#4F46E5] ml-[0.1em]">ETHIOPIA</span>
-        </div>
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
-        <i data-lucide="menu" class="w-5 h-5 relative z-10"></i>
-    </button>
+    <div class="flex items-center gap-3">
+        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+            <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+        </button>
+    </div>
 </div>
 {% endblock navbar %}
 
 {% block content %}
+<!-- PEERLIST-STYLE UNIVERSAL TOP LOADING BAR -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-500 via-emerald-400 to-teal-400 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(16,185,129,0.7), 0 0 4px rgba(16,185,129,0.4);"></div>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-        --primary-blue: #4F46E5;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
+    * { -webkit-tap-highlight-color: transparent; }
 
     body {
         font-family: var(--font-body);
-        background-color: #F8FAFC;
+        background-color: #F4F7FA;
         background-image:
-            radial-gradient(circle at 10% 0%, rgba(224, 236, 255, 0.9) 0%, transparent 45%),
-            radial-gradient(circle at 90% 20%, rgba(237, 233, 254, 0.7) 0%, transparent 45%),
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
             radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
         background-attachment: fixed;
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
-        -webkit-tap-highlight-color: transparent;
+        overflow-x: hidden;
     }
 
-    h1, h2, h3, h4, h5, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.02em; }
-
-    /* UTILITY CLASSES FOR DRAWERS AND SCROLLING */
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
     .custom-scroll::-webkit-scrollbar { display: none; }
     .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* FIX: DRAWER ANIMATIONS */
+    /* Layout Padding matching My Company */
+    .app-canvas { width: 100%; position: relative; z-index: 10; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; max-width: 1600px; margin: 0 auto; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
+
+    /* Modular Bento Cards */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 2rem;
+        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        position: relative;
+        z-index: 10;
+        transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
+    }
+    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
+    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
+
+    /* Inputs */
+    .premium-input { width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 1rem; background: #ffffff; transition: all 0.25s var(--ease-magic); color: #0f172a; font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none; }
+    .premium-input:focus { border-color: rgba(16, 185, 129, 0.45); box-shadow: 0 10px 28px -14px rgba(16, 185, 129, 0.35); }
+    .premium-input::placeholder { color: #94A3B8; font-weight: 500; }
+    textarea.premium-input { min-height: 180px; resize: vertical; line-height: 1.6; }
+    select.premium-input { padding-right: 2.5rem; cursor: pointer; }
+
+    /* Buttons */
+    .btn-action, .btn-secondary {
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        min-height: 48px; border-radius: 9999px; display: inline-flex !important; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); white-space: nowrap; text-decoration: none;
+    }
+    .btn-action { background: #10B981; color: white; font-weight: 800; font-size: 14px; padding: 0.75rem 2rem; letter-spacing: 0.05em; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(16, 185, 129, 0.4); background: #059669; }
+    .btn-action:active { transform: scale(0.96); }
+
+    /* Animations */
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+    @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-slide-up-form { animation: slideUpFade 0.6s var(--ease-magic) forwards; will-change: transform, opacity; }
+
+    /* Drawers */
     .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
-    .drawer-closed { transform: translateY(100%); box-shadow: none !important; }
+    .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 
-    /* HARDWARE ACCELERATED ANIMATIONS */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in-up { animation: fadeInUp 0.7s var(--ease-spring) forwards; will-change: transform, opacity; }
-
-    @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-slide-up-form { animation: slideUpFade 0.6s var(--ease-spring) forwards; will-change: transform, opacity; }
-
-    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 80px); }
-
-    /* Ultra Premium Glass Canvas */
-    .canvas-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: clamp(1.25rem, 4vw, 2.5rem);
-        box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.08), inset 0 2px 0 0 rgba(255, 255, 255, 0.8);
+    /* Custom Radio Cards */
+    .radio-card-input:checked + .radio-card-content {
+        border-color: #10B981; background-color: rgba(16,185,129,0.05); box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
     }
-
-    /* THE MASSIVE GRID CARDS */
-    .job-card {
-        background: #FFFFFF;
-        border: 2px solid #E2E8F0;
-        border-radius: 1.25rem;
-        transition: all 0.3s var(--ease-smooth);
-        user-select: none;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 1.25rem;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-    @media (min-width: 640px) {
-        .job-card { padding: 1.5rem; border-radius: 1.5rem; }
-    }
-    .job-card:hover {
-        border-color: var(--primary-blue);
-        box-shadow: 0 12px 24px -8px rgba(79, 70, 229, 0.2);
-        transform: translateY(-4px);
-    }
-    .job-card:active { transform: translateY(0) scale(0.98); }
-
-    input[type="radio"]:checked + .job-card {
-        border-color: var(--primary-blue);
-        background-color: #EEF2FF;
-        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-    }
-
-    /* Segmented Controls */
-    .segmented-control {
-        display: flex; background: #F8FAFC; border-radius: 1.25rem; padding: 0.5rem; width: 100%; border: 2px solid #E2E8F0;
-    }
-    .segmented-control label {
-        flex: 1; text-align: center; cursor: pointer; padding: 0.75rem 0.5rem;
-        font-size: 14px; font-weight: 700; color: #64748B; border-radius: 0.875rem;
-        transition: all 0.3s var(--ease-smooth);
-        display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    }
-    @media (min-width: 640px) {
-        .segmented-control label { padding: 1rem 0.5rem; font-size: 15px; }
-    }
-    .segmented-control input[type="radio"]:checked + label {
-        background: #FFFFFF; color: #0F172A; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #E2E8F0;
-    }
-
-    /* Magic Inputs */
-    .magic-input {
-        width: 100%; background-color: #FFFFFF; border: 2px solid #E2E8F0; border-radius: 1rem;
-        padding: 1rem 1.25rem; font-size: 15px; font-weight: 600; color: #0F172A;
-        outline: none; transition: all 0.3s var(--ease-smooth);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.01);
-    }
-    @media (min-width: 640px) {
-        .magic-input { padding: 1.25rem 1.5rem; font-size: 16px; border-radius: 1.25rem; }
-    }
-    .magic-input:focus {
-        background-color: #FFFFFF; border-color: var(--primary-blue);
-        box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2), 0 0 0 4px rgba(79, 70, 229, 0.15);
-    }
-    .magic-input::placeholder { color: #94A3B8; font-weight: 500; }
-
-    select.magic-input { cursor: pointer; appearance: none; padding-right: 3.5rem !important; }
-    textarea.magic-input { min-height: 180px; resize: vertical; line-height: 1.6; }
-    @media (min-width: 640px) { textarea.magic-input { min-height: 200px; } }
-
-    .magic-label { display: block; font-size: 16px; font-weight: 800; color: #0F172A; margin-bottom: 0.25rem; }
-    @media (min-width: 640px) { .magic-label { font-size: 17px; } }
-    .help-text { display: block; font-size: 13.5px; font-weight: 500; color: #64748B; margin-bottom: 0.75rem; line-height: 1.5; }
-
-    .magic-checkbox { width: 1.5rem; height: 1.5rem; border-radius: 0.5rem; border: 2px solid #CBD5E1; cursor: pointer; }
 </style>
 
-<!-- Adjust top padding to account for top bar on mobile and spacing on PC -->
-<main class="relative z-10 pt-[5.5rem] md:pt-16 pb-safe px-3 sm:px-6 w-full min-h-[100dvh]">
-    <div class="max-w-[900px] mx-auto animate-fade-in-up md:ml-[140px] xl:mx-auto">
+<main class="app-canvas anim-smooth-appear">
+    <div class="max-w-[800px] mx-auto w-full relative z-10">
 
-        <!-- Mobile Header Back Link (Only visible on small screens to match other pages) -->
-        <div class="md:hidden flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4 ml-1">
-            <i data-lucide="layers" class="w-3.5 h-3.5"></i> {% trans "Workspace" %} <span class="text-slate-300">/</span> <span class="text-[#4F46E5]">{% trans "Post" %}</span>
-        </div>
-
-        <div class="canvas-card w-full flex flex-col overflow-hidden relative">
-
-            <!-- Desktop Escape Hatch / Close Button -->
-            <div class="hidden md:flex justify-end pt-5 pr-5 absolute top-0 right-0 z-20">
-                <a href="{% if user.is_authenticated %}{% url 'opportunities:workspace_list' %}{% else %}{% url 'opportunities:feed' %}{% endif %}" class="w-10 h-10 items-center justify-center rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all shrink-0 bg-white/50 backdrop-blur-md border border-slate-200 shadow-sm active:scale-95 flex">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </a>
+        <!-- Header / Title Area -->
+        <div class="flex items-center justify-between mb-8 md:mb-10">
+            <div>
+                <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">
+                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> {% trans "Opportunities" %} <span class="text-slate-300">/</span> <span class="text-emerald-600">{% trans "Post" %}</span>
+                </div>
+                <h1 class="font-heading text-[2rem] md:text-[2.5rem] font-black text-slate-900 tracking-tight leading-none">{% if form.instance.pk and form.title.value %}{% trans "Edit Opportunity" %}{% else %}{% trans "Post an Opportunity" %}{% endif %}</h1>
             </div>
 
-            <form id="opportunity-canvas" method="POST" enctype="multipart/form-data" class="flex flex-col mt-2 sm:mt-8">
-                {% csrf_token %}
+            <a href="{% if user.is_authenticated %}{% url 'opportunities:workspace_list' %}{% else %}{% url 'opportunities:feed' %}{% endif %}" class="w-10 h-10 md:w-12 md:h-12 bg-white border border-slate-200/80 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-sm shrink-0">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </a>
+        </div>
 
-                <div class="p-4 sm:p-8 md:p-12">
+        <form id="opportunity-canvas" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6 md:gap-8 relative pb-20">
+            {% csrf_token %}
 
-                    {% if form.errors %}
-                    <div class="border-2 border-rose-200 bg-rose-50 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-8 shadow-sm">
-                        <i data-lucide="alert-octagon" class="w-6 h-6 sm:w-7 sm:h-7 text-rose-500 shrink-0 mt-0.5"></i>
-                        <div>
-                            <h3 class="text-rose-900 font-extrabold text-[15px] sm:text-[16px] mb-2">{% trans "We need to fix a few things before posting:" %}</h3>
-                            <ul class="text-[14px] text-rose-700 space-y-1 font-medium list-disc list-inside">
-                                {% for field, errors in form.errors.items %}
-                                    {% for error in errors %}<li><strong>{{ field|title }}:</strong> {{ error }}</li>{% endfor %}
-                                {% endfor %}
-                            </ul>
-                        </div>
+            <!-- FORM ERRORS -->
+            {% if form.errors %}
+            <div class="bento-card p-6 bg-rose-50/50 border-rose-200 shadow-sm flex flex-col sm:flex-row items-start gap-4 mb-2">
+                <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0"><i data-lucide="alert-octagon" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-rose-900 font-extrabold text-[15px] mb-2">{% trans "We need to fix a few things before posting:" %}</h3>
+                    <ul class="text-[13.5px] text-rose-700 space-y-1 font-medium list-disc list-inside">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}<li><strong>{{ field|title }}:</strong> {{ error }}</li>{% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ======================================================= -->
+            <!-- GUEST INJECTIONS (Upsell & Contact Info)                -->
+            <!-- ======================================================= -->
+            {% if not user.is_authenticated %}
+            <div class="bento-card p-6 md:p-8 bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border-blue-100 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
+                <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center relative z-10">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-[1rem] bg-white flex items-center justify-center shrink-0 shadow-sm border border-blue-100 text-[#0A66C2]">
+                        <i data-lucide="rocket" class="w-6 h-6 md:w-7 md:h-7"></i>
                     </div>
-                    {% endif %}
-
-                    <!-- ======================================================= -->
-                    <!-- GUEST INJECTIONS (Upsell & Contact Info)                -->
-                    <!-- ======================================================= -->
-                    {% if not user.is_authenticated %}
-                    <div class="bg-indigo-50 border border-indigo-100 rounded-[1.25rem] sm:rounded-[1.5rem] p-5 sm:p-8 mb-8 flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center shadow-sm relative overflow-hidden">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-indigo-50 relative z-10">
-                            <i data-lucide="rocket" class="w-6 h-6 sm:w-7 sm:h-7 text-[#4F46E5]"></i>
-                        </div>
-                        <div class="relative z-10">
-                            <h4 class="font-extrabold text-[16px] sm:text-[18px] text-slate-900 mb-1 nav-heading">{% trans "Posting as a Guest" %}</h4>
-                            <p class="text-slate-600 text-[13.5px] sm:text-[14.5px] font-medium leading-snug">
-                                {% trans "Your post will redirect candidates to your external link. Want candidates to submit Proof-of-Work Portfolios directly to you?" %}
-                                <a href="{% url 'unified_onboarding' %}" class="font-bold text-[#4F46E5] hover:underline">{% trans "Create a Free Account" %}</a>.
-                            </p>
-                        </div>
+                    <div>
+                        <h4 class="font-heading font-black text-[18px] md:text-[20px] text-slate-900 mb-1 leading-tight">{% trans "Posting as a Guest" %}</h4>
+                        <p class="text-[13.5px] md:text-[14.5px] text-slate-600 font-medium leading-relaxed">
+                            {% trans "Your post will redirect candidates to your external link. Want to receive portfolios directly and manage applicants?" %}
+                            <a href="{% url 'unified_onboarding' %}" class="font-bold text-[#0A66C2] hover:text-blue-700 underline underline-offset-2">{% trans "Create a Free Account" %}</a>.
+                        </p>
                     </div>
+                </div>
+            </div>
 
-                    <!-- GUEST CONTACT FIELD -->
-                    <div class="mb-8 p-5 sm:p-6 bg-white border border-slate-200/80 shadow-sm rounded-[1.25rem] sm:rounded-[1.5rem]">
-                        <label class="magic-label text-[16px] sm:text-[18px]">{% trans "Your Contact Info" %} <span class="text-rose-500">*</span></label>
-                        <p class="help-text mb-3">{% trans "How should we contact you when your post goes live? (e.g. @TelegramHandle or Email). This will not be public." %}</p>
-                        {{ form.submitter_contact }}
-                    </div>
-                    {% endif %}
+            <!-- GUEST CONTACT FIELD -->
+            <div class="bento-card p-6 md:p-8">
+                <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Your Contact Info" %} <span class="text-rose-500">*</span></label>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-4 md:pr-10">{% trans "How should we contact you when your post goes live? (e.g. @TelegramHandle or Email). This will not be public." %}</p>
+                {{ form.submitter_contact }}
+            </div>
+            {% endif %}
 
-                    <!-- ======================================================= -->
-                    <!-- SECTION 1: THE MASSIVE GRID PICKER                      -->
-                    <!-- ======================================================= -->
-                    <section id="category-selection-area">
-                        <div class="flex items-center gap-4 mb-4 sm:mb-6">
-                            <span class="text-[13px] sm:text-[14px] font-extrabold text-slate-400 uppercase tracking-widest">Step 01</span>
-                            <div class="h-px bg-slate-200/60 flex-1"></div>
+            <!-- ======================================================= -->
+            <!-- STEP 1: CATEGORY SELECTION                              -->
+            <!-- ======================================================= -->
+            <section id="category-selection-area" class="bento-card p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-5 md:mb-6">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[13px]">1</div>
+                    <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "What are you looking for?" %}</h3>
+                </div>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10">{% trans "Select the type that best fits your needs. This determines how the opportunity is displayed to candidates." %}</p>
+
+                <!-- STATE A: THE GRID -->
+                <div id="type-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {% for value, name in form.job_type.field.choices %}
+                    <label class="cursor-pointer block relative h-full group">
+                        <input type="radio" name="job_type" value="{{ value }}" class="hidden peer radio-card-input" onchange="handleTypeSelection('{{ value }}')">
+                        <div class="radio-card-content p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-emerald-300 hover:shadow-md transition-all h-full flex flex-col items-start relative z-20">
+                            <div class="icon-wrapper w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 peer-checked:bg-emerald-100 peer-checked:text-emerald-600 border border-slate-100" data-type="{{ value }}">
+                                <i data-lucide="circle" class="w-5 h-5"></i>
+                            </div>
+                            <span class="block text-[14.5px] font-bold text-slate-800 mb-1 leading-tight group-hover:text-emerald-700 transition-colors">{{ name }}</span>
+                            <span class="block text-[12.5px] text-slate-500 font-medium config-subtitle leading-snug" data-type="{{ value }}"></span>
                         </div>
-                        <h3 class="text-[22px] sm:text-[24px] font-extrabold text-slate-900 nav-heading tracking-tight mb-2">{% trans "What are you looking for?" %}</h3>
-                        <p class="help-text mb-6 sm:mb-8">{% trans "Select the type that best fits your needs. This determines how it looks to candidates." %}</p>
-
-                        <!-- STATE A: THE GRID (1 col mobile, 2 sm, 3 md) -->
-                        <div id="type-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 pb-4">
-                            {% for value, name in form.job_type.field.choices %}
-                            <label class="cursor-pointer block relative h-full group">
-                                <input type="radio" name="job_type" value="{{ value }}" class="hidden" onchange="handleTypeSelection('{{ value }}')">
-                                <div class="job-card">
-                                    <div class="icon-wrapper w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[1rem] bg-slate-100 flex items-center justify-center text-slate-500 mb-4 sm:mb-5 transition-all duration-300 group-hover:scale-110" data-type="{{ value }}">
-                                        <i data-lucide="circle" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                                    </div>
-                                    <span class="block text-[15px] sm:text-[16px] font-extrabold text-slate-900 mb-1 sm:mb-2 leading-tight">{{ name }}</span>
-                                    <span class="block text-[13px] sm:text-[13.5px] text-slate-500 font-medium config-subtitle leading-snug" data-type="{{ value }}"></span>
-                                </div>
-                            </label>
-                            {% endfor %}
-                        </div>
-
-                        <!-- STATE B: THE SLEEK COLLAPSED SUMMARY -->
-                        <div id="type-summary" class="hidden flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 bg-white border-2 border-indigo-100 rounded-[1.25rem] sm:rounded-[1.5rem] shadow-sm mb-4 gap-4">
-                            <div class="flex items-center gap-4 sm:gap-5">
-                                <div id="summary-icon-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[1.25rem] bg-indigo-50 text-[#4F46E5] flex items-center justify-center shrink-0 border border-indigo-100">
-                                    <i data-lucide="check-circle" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[11px] sm:text-[12px] font-black text-slate-400 uppercase tracking-widest mb-1">Selected Type</p>
-                                    <h4 id="summary-title" class="text-[16px] sm:text-[18px] font-extrabold text-slate-900 leading-tight">...</h4>
-                                </div>
-                            </div>
-                            <button type="button" onclick="resetGrid()" class="w-full sm:w-auto px-5 py-2.5 sm:px-6 sm:py-3 bg-slate-50 rounded-xl text-[13.5px] sm:text-[14px] font-bold text-slate-700 border border-slate-200 hover:bg-white hover:border-[#4F46E5] hover:text-[#4F46E5] hover:shadow-sm transition-all active:scale-95 shrink-0 flex items-center justify-center gap-2">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Change" %}
-                            </button>
-                        </div>
-                    </section>
-
-                    <!-- ======================================================= -->
-                    <!-- THE REST OF THE FORM (Magical Slide Up)                 -->
-                    <!-- ======================================================= -->
-                    <div id="rest-of-form" class="hidden opacity-0 space-y-12 sm:space-y-16 mt-12 sm:mt-16">
-
-                        <!-- SECTION 2: APPLICATION ROUTING -->
-                        <section>
-                            <div class="flex items-center gap-4 mb-4 sm:mb-6">
-                                <span class="text-[13px] sm:text-[14px] font-extrabold text-slate-400 uppercase tracking-widest">Step 02</span>
-                                <div class="h-px bg-slate-200/60 flex-1"></div>
-                            </div>
-                            <h3 class="text-[22px] sm:text-[24px] font-extrabold text-slate-900 nav-heading tracking-tight mb-2">{% trans "How would you like to receive applications?" %}</h3>
-
-                            <div class="max-w-2xl">
-                                {% if user.is_authenticated %}
-                                    <p class="help-text mb-6 sm:mb-8">{% trans "Choose whether candidates apply directly through their verified CoreLink profiles, or if you want to route them to your own external form." %}</p>
-                                    <div class="segmented-control mb-6 sm:mb-8 flex-col sm:flex-row gap-2 sm:gap-0">
-                                        <input type="radio" name="ui_mode" id="mode_internal" value="internal" class="hidden" onchange="toggleExternalMode(false)" {% if not form.is_external.value %}checked{% endif %}>
-                                        <label for="mode_internal"><i data-lucide="inbox" class="w-4 h-4 sm:w-5 sm:h-5"></i> {% trans "Apply on Platform (Recommended)" %}</label>
-
-                                        <input type="radio" name="ui_mode" id="mode_external" value="external" class="hidden" onchange="toggleExternalMode(true)" {% if form.is_external.value %}checked{% endif %}>
-                                        <label for="mode_external"><i data-lucide="external-link" class="w-4 h-4 sm:w-5 sm:h-5"></i> {% trans "External Link" %}</label>
-                                    </div>
-                                    <input type="checkbox" name="is_external" id="id_is_external" class="hidden" {% if form.is_external.value %}checked{% endif %}>
-                                {% else %}
-                                    <p class="help-text mb-5 sm:mb-6 text-[14px] sm:text-[15px] text-[#4F46E5] font-semibold bg-indigo-50 p-3 sm:p-4 rounded-xl border border-indigo-100">
-                                        <i data-lucide="info" class="w-4 h-4 sm:w-5 sm:h-5 inline-block mr-1 -mt-0.5"></i> {% trans "As a guest, candidates will be securely routed to your external link below to apply." %}
-                                    </p>
-                                    <input type="checkbox" name="is_external" id="id_is_external" class="hidden" checked>
-                                {% endif %}
-
-                                <!-- External Fields Expansion -->
-                                <div id="external-fields-container" class="hidden bg-white shadow-sm border border-slate-200/80 rounded-[1.25rem] sm:rounded-[1.5rem] p-5 sm:p-8 mt-2 transition-all">
-                                    <div class="mb-6 sm:mb-8">
-                                        <label class="magic-label text-slate-900">{% trans "Destination URL" %} <span class="text-rose-500">*</span></label>
-                                        <p class="help-text mb-3">{% trans "Paste the exact link where candidates should go to apply (e.g. Google Form, your website). Make sure it includes https://" %}</p>
-                                        <input type="url" name="external_url" id="id_external_url" value="{{ form.external_url.value|default:'' }}" class="magic-input" placeholder="https://forms.google.com/..." {% if not user.is_authenticated %}required{% endif %}>
-                                    </div>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-                                        <div>
-                                            <label class="magic-label text-slate-900">{% trans "Company Name" %} {% if user.is_authenticated %}<span class="text-slate-400 font-normal ml-1">({% trans "Optional" %})</span>{% else %}<span class="text-rose-500">*</span>{% endif %}</label>
-                                            <p class="help-text mb-2">{% trans "The name of the organization hiring for this role." %}</p>
-                                            <input type="text" name="external_company_name" value="{{ form.external_company_name.value|default:'' }}" class="magic-input" placeholder="e.g. Acme Corp" {% if not user.is_authenticated %}required{% endif %}>
-                                        </div>
-                                        <div>
-                                            <label class="magic-label text-slate-900">{% trans "Company Logo" %} <span class="text-slate-400 font-normal ml-1">({% trans "Optional" %})</span></label>
-                                            <p class="help-text mb-2">{% trans "Upload a square image (PNG or JPG) to display." %}</p>
-                                            <input type="file" name="external_company_logo" class="magic-input !p-2 sm:!p-3 text-[13px] sm:text-[14px] cursor-pointer file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:bg-indigo-50 file:text-[#4F46E5] hover:file:bg-indigo-100 transition-all">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- SECTION 3: THE DETAILS -->
-                        <section>
-                            <div class="flex items-center gap-4 mb-4 sm:mb-6">
-                                <span class="text-[13px] sm:text-[14px] font-extrabold text-slate-400 uppercase tracking-widest">Step 03</span>
-                                <div class="h-px bg-slate-200/60 flex-1"></div>
-                            </div>
-                            <h3 class="text-[22px] sm:text-[24px] font-extrabold text-slate-900 nav-heading tracking-tight mb-6 sm:mb-8">{% trans "Tell us about the role" %}</h3>
-
-                            <div class="grid grid-cols-1 gap-8 sm:gap-10">
-
-                                {% if user.is_authenticated %}
-                                <div>
-                                    <label class="magic-label">{% trans "Posting As" %}</label>
-                                    <p class="help-text mb-2">{% trans "Are you posting this personally, or linking it to your verified company profile?" %}</p>
-                                    <div class="relative group max-w-md">
-                                        {{ form.post_as }}
-                                        <div class="absolute inset-y-0 right-0 pr-4 sm:pr-5 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400"></i></div>
-                                    </div>
-                                </div>
-                                {% endif %}
-
-                                <div>
-                                    <label id="label-title" class="magic-label">{% trans "What is the title?" %} <span class="text-rose-500">*</span></label>
-                                    <p class="help-text mb-3">{% trans "Be specific. Clear titles like 'Senior Frontend Engineer' perform 3x better than vague ones." %}</p>
-                                    <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="magic-input text-[16px] sm:text-lg font-bold" placeholder="e.g. Senior Frontend Engineer" required>
-                                </div>
-
-                                <div id="section-level" class="transition-all duration-300">
-                                    <label class="magic-label">{% trans "Experience Level" %}</label>
-                                    <p class="help-text mb-2">{% trans "Select the required seniority or experience level expected." %}</p>
-                                    <div class="relative group max-w-md">
-                                        {{ form.level }}
-                                        <div class="absolute inset-y-0 right-0 pr-4 sm:pr-5 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400"></i></div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label id="label-description" class="magic-label">{% trans "Tell the full story" %} <span class="text-rose-500">*</span></label>
-                                    <p class="help-text mb-3 max-w-3xl">{% trans "What will they build? Why should they join? Top talent values authenticity and transparency over corporate jargon." %}</p>
-                                    <textarea id="input-description" name="description" class="magic-input" required>{{ form.description.value|default:'' }}</textarea>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- SECTION 4: LOGISTICS -->
-                        <section>
-                            <div class="flex items-center gap-4 mb-4 sm:mb-6">
-                                <span class="text-[13px] sm:text-[14px] font-extrabold text-slate-400 uppercase tracking-widest">Step 04</span>
-                                <div class="h-px bg-slate-200/60 flex-1"></div>
-                            </div>
-                            <h3 class="text-[22px] sm:text-[24px] font-extrabold text-slate-900 nav-heading tracking-tight mb-6 sm:mb-8">{% trans "Logistics & Compensation" %}</h3>
-
-                            <div class="grid grid-cols-1 gap-8 sm:gap-10">
-                                <div id="section-location" class="transition-all duration-300">
-                                    <div class="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3 sm:gap-4">
-                                        <div>
-                                            <label class="magic-label">{% trans "Where will they work?" %}</label>
-                                            <p class="help-text mb-0">{% trans "Specify the city and country. If fully remote, write 'Anywhere' or leave blank." %}</p>
-                                        </div>
-                                        <label class="flex items-center gap-2 sm:gap-3 text-[14px] sm:text-[15px] font-extrabold cursor-pointer text-[#4F46E5] hover:bg-indigo-50 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-[1rem] border border-indigo-200/60 bg-white shadow-sm w-full sm:w-max justify-center sm:justify-start transition-all">
-                                            <input type="checkbox" name="is_remote" class="magic-checkbox" {% if form.is_remote.value %}checked{% endif %}> {% trans "Remote Allowed" %}
-                                        </label>
-                                    </div>
-                                    <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="magic-input mt-1" placeholder="e.g. Addis Ababa, Ethiopia">
-                                </div>
-
-                                <div id="section-compensation" class="transition-all duration-300">
-                                    <label id="label-compensation" class="magic-label">{% trans "What's the reward?" %}</label>
-                                    <p class="help-text mb-2">{% trans "Roles with clear compensation get 4x more high-quality applicants." %}</p>
-                                    <input type="text" name="compensation_text" value="{{ form.compensation_text.value|default:'' }}" class="magic-input" placeholder="e.g. 50,000 ETB/month, or 10% Equity">
-                                </div>
-
-                                <div id="section-salary" class="transition-all duration-300">
-                                    <label class="magic-label">{% trans "Exact Salary Range" %} <span class="text-slate-400 font-normal ml-1">({% trans "Optional" %})</span></label>
-                                    <p class="help-text mb-3">{% trans "Provide the minimum and maximum monthly base pay in ETB." %}</p>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px] sm:text-[16px]">ETB</span></div>
-                                            <input type="number" step="0.01" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="magic-input pl-14 sm:pl-16" placeholder="Min (e.g. 20000)">
-                                        </div>
-                                        <div class="relative">
-                                            <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px] sm:text-[16px]">ETB</span></div>
-                                            <input type="number" step="0.01" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="magic-input pl-14 sm:pl-16" placeholder="Max (e.g. 40000)">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-2 sm:pt-4">
-                                    <label class="magic-label mb-1">{% trans "Application Deadline" %}</label>
-                                    <p class="help-text mb-4 sm:mb-6">{% trans "When should this opportunity stop accepting candidates?" %}</p>
-
-                                    <div class="segmented-control max-w-2xl mb-4 sm:mb-6 flex-col sm:flex-row gap-2 sm:gap-0">
-                                        <input type="radio" name="ui_deadline_type" id="dl_open" value="open" class="hidden"><label for="dl_open">{% trans "Open-Ended" %}</label>
-                                        <input type="radio" name="ui_deadline_type" id="dl_date" value="date" class="hidden"><label for="dl_date">{% trans "Specific Date" %}</label>
-                                        <input type="radio" name="ui_deadline_type" id="dl_text" value="text" class="hidden"><label for="dl_text">{% trans "Custom Text" %}</label>
-                                    </div>
-
-                                    <input type="checkbox" name="is_open_ended" id="id_is_open_ended" class="hidden" {% if form.is_open_ended.value %}checked{% endif %}>
-
-                                    <div id="wrapper_deadline_date" class="hidden max-w-2xl">
-                                        <p class="help-text mb-2">{% trans "Select the exact calendar date it expires." %}</p>
-                                        <input type="date" name="deadline_date" id="id_deadline_date" value="{{ form.deadline_date.value|date:'Y-m-d'|default:'' }}" class="magic-input text-slate-600">
-                                    </div>
-
-                                    <div id="wrapper_deadline_text" class="hidden max-w-2xl">
-                                        <p class="help-text mb-2">{% trans "Write a custom timeline constraint." %}</p>
-                                        <input type="text" name="deadline_text" id="id_deadline_text" value="{{ form.deadline_text.value|default:'' }}" class="magic-input" placeholder="e.g. 'Rolling basis', 'Apply ASAP'">
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div> <!-- End of Rest of Form -->
+                    </label>
+                    {% endfor %}
                 </div>
 
+                <!-- STATE B: SLEEK COLLAPSED SUMMARY -->
+                <div id="type-summary" class="hidden flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl gap-4">
+                    <div class="flex items-center gap-4">
+                        <div id="summary-icon-box" class="w-12 h-12 rounded-[1rem] bg-white text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 shadow-sm">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{% trans "Selected Type" %}</p>
+                            <h4 id="summary-title" class="text-[16px] font-extrabold text-slate-900 leading-tight">...</h4>
+                        </div>
+                    </div>
+                    <button type="button" onclick="resetGrid()" class="w-full sm:w-auto px-4 py-2.5 bg-white rounded-xl text-[13px] font-bold text-slate-600 border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 hover:shadow-sm transition-all active:scale-95 shrink-0 flex items-center justify-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Change" %}
+                    </button>
+                </div>
+            </section>
+
+            <!-- ======================================================= -->
+            <!-- THE REST OF THE FORM (Magical Slide Up)                 -->
+            <!-- ======================================================= -->
+            <div id="rest-of-form" class="hidden opacity-0 flex-col gap-6 md:gap-8">
+
+                <!-- STEP 2: APPLICATION ROUTING -->
+                <section class="bento-card p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-5 md:mb-6">
+                        <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[13px]">2</div>
+                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "How to apply?" %}</h3>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                        <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">{% trans "Choose whether candidates apply directly through their CoreLink profiles, or if you want to route them to an external form." %}</p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="ui_mode" id="mode_internal" value="internal" class="hidden peer radio-card-input" onchange="toggleExternalMode(false)" {% if not form.is_external.value %}checked{% endif %}>
+                                <div class="radio-card-content p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-emerald-300 transition-all flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 peer-checked:bg-emerald-100 peer-checked:text-emerald-600"><i data-lucide="inbox" class="w-4 h-4"></i></div>
+                                    <span class="text-[14px] font-bold text-slate-700 peer-checked:text-emerald-700">{% trans "Apply on Platform" %}</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="ui_mode" id="mode_external" value="external" class="hidden peer radio-card-input" onchange="toggleExternalMode(true)" {% if form.is_external.value %}checked{% endif %}>
+                                <div class="radio-card-content p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-emerald-300 transition-all flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 peer-checked:bg-emerald-100 peer-checked:text-emerald-600"><i data-lucide="external-link" class="w-4 h-4"></i></div>
+                                    <span class="text-[14px] font-bold text-slate-700 peer-checked:text-emerald-700">{% trans "External Link" %}</span>
+                                </div>
+                            </label>
+                        </div>
+                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" {% if form.is_external.value %}checked{% endif %}>
+                    {% else %}
+                        <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 flex gap-3 items-start mb-6">
+                            <i data-lucide="info" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <p class="text-[13.5px] text-emerald-800 font-semibold leading-relaxed">
+                                {% trans "As a guest, candidates will be securely routed to your external link below to apply." %}
+                            </p>
+                        </div>
+                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" checked>
+                    {% endif %}
+
+                    <!-- External Fields Expansion -->
+                    <div id="external-fields-container" class="hidden bg-slate-50 border border-slate-200/60 rounded-2xl p-5 md:p-6 mt-2 transition-all">
+                        <div class="mb-5">
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Destination URL" %} <span class="text-rose-500">*</span></label>
+                            <p class="text-[12.5px] text-slate-500 font-medium mb-2">{% trans "Paste the exact link where candidates should go (e.g. Google Form). Must include https://" %}</p>
+                            <input type="url" name="external_url" id="id_external_url" value="{{ form.external_url.value|default:'' }}" class="premium-input bg-white" placeholder="https://forms.google.com/..." {% if not user.is_authenticated %}required{% endif %}>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Company Name" %} {% if user.is_authenticated %}<span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span>{% else %}<span class="text-rose-500">*</span>{% endif %}</label>
+                                <input type="text" name="external_company_name" value="{{ form.external_company_name.value|default:'' }}" class="premium-input bg-white" placeholder="e.g. Acme Corp" {% if not user.is_authenticated %}required{% endif %}>
+                            </div>
+                            <div>
+                                <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Company Logo" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                                <input type="file" name="external_company_logo" class="premium-input bg-white !p-2 text-[13px] cursor-pointer file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 3: DETAILS -->
+                <section class="bento-card p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-5 md:mb-6">
+                        <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[13px]">3</div>
+                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "Tell us about the role" %}</h3>
+                    </div>
+
+                    <div class="flex flex-col gap-6 md:gap-8">
+                        {% if user.is_authenticated %}
+                        <div>
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Posting As" %}</label>
+                            <p class="text-[13px] text-slate-500 font-medium mb-2">{% trans "Are you posting this personally, or linking it to your verified company profile?" %}</p>
+                            <div class="relative group max-w-md">
+                                {{ form.post_as }}
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i></div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <label id="label-title" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "What is the title?" %} <span class="text-rose-500">*</span></label>
+                            <p class="text-[13px] text-slate-500 font-medium mb-2">{% trans "Be specific. Clear titles like 'Senior Frontend Engineer' perform 3x better than vague ones." %}</p>
+                            <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="premium-input text-[16px] font-bold" placeholder="e.g. Senior Frontend Engineer" required>
+                        </div>
+
+                        <div id="section-level" class="transition-all duration-300">
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Experience Level" %}</label>
+                            <div class="relative group max-w-md">
+                                {{ form.level }}
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label id="label-description" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Tell the full story" %} <span class="text-rose-500">*</span></label>
+                            <p class="text-[13px] text-slate-500 font-medium mb-2 max-w-3xl">{% trans "What will they build? Why should they join? Top talent values authenticity." %}</p>
+                            <textarea id="input-description" name="description" class="premium-input" required>{{ form.description.value|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 4: LOGISTICS -->
+                <section class="bento-card p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-5 md:mb-6">
+                        <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[13px]">4</div>
+                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "Logistics & Compensation" %}</h3>
+                    </div>
+
+                    <div class="flex flex-col gap-6 md:gap-8">
+                        <div id="section-location" class="transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row sm:items-start justify-between mb-2 gap-3">
+                                <div>
+                                    <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Where will they work?" %}</label>
+                                    <p class="text-[13px] text-slate-500 font-medium">{% trans "City and country, or 'Anywhere'." %}</p>
+                                </div>
+                                <label class="flex items-center justify-center gap-2 text-[13px] font-bold cursor-pointer text-emerald-600 hover:bg-emerald-50 px-4 py-2.5 rounded-xl border border-emerald-200/60 bg-white shadow-sm transition-all">
+                                    <input type="checkbox" name="is_remote" class="w-4 h-4 rounded text-emerald-500 border-slate-300 focus:ring-emerald-500" {% if form.is_remote.value %}checked{% endif %}> {% trans "Remote Allowed" %}
+                                </label>
+                            </div>
+                            <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="premium-input" placeholder="e.g. Addis Ababa, Ethiopia">
+                        </div>
+
+                        <div id="section-compensation" class="transition-all duration-300">
+                            <label id="label-compensation" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "What's the reward?" %}</label>
+                            <input type="text" name="compensation_text" value="{{ form.compensation_text.value|default:'' }}" class="premium-input" placeholder="e.g. 50,000 ETB/month, or 10% Equity">
+                        </div>
+
+                        <div id="section-salary" class="transition-all duration-300">
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Exact Salary Range" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px]">ETB</span></div>
+                                    <input type="number" step="0.01" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="premium-input pl-14" placeholder="Min">
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px]">ETB</span></div>
+                                    <input type="number" step="0.01" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="premium-input pl-14" placeholder="Max">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "Application Deadline" %}</label>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ui_deadline_type" id="dl_open" value="open" class="hidden peer radio-card-input">
+                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-emerald-700 transition-all">{% trans "Open-Ended" %}</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ui_deadline_type" id="dl_date" value="date" class="hidden peer radio-card-input">
+                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-emerald-700 transition-all">{% trans "Specific Date" %}</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ui_deadline_type" id="dl_text" value="text" class="hidden peer radio-card-input">
+                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-emerald-700 transition-all">{% trans "Custom Text" %}</div>
+                                </label>
+                            </div>
+
+                            <input type="checkbox" name="is_open_ended" id="id_is_open_ended" class="hidden" {% if form.is_open_ended.value %}checked{% endif %}>
+
+                            <div id="wrapper_deadline_date" class="hidden">
+                                <input type="date" name="deadline_date" id="id_deadline_date" value="{{ form.deadline_date.value|date:'Y-m-d'|default:'' }}" class="premium-input text-slate-600">
+                            </div>
+
+                            <div id="wrapper_deadline_text" class="hidden">
+                                <input type="text" name="deadline_text" id="id_deadline_text" value="{{ form.deadline_text.value|default:'' }}" class="premium-input" placeholder="e.g. 'Rolling basis', 'Apply ASAP'">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- PUBLISH BUTTON AREA -->
-                <div id="publish-area" class="hidden bg-slate-900 border-t border-slate-800 p-6 sm:p-10 flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 rounded-b-[clamp(1.25rem,4vw,2.5rem)] mt-0 opacity-0 transition-opacity duration-700">
+                <div id="publish-area" class="bento-card p-6 md:p-8 !bg-slate-900 border-none mt-2 flex flex-col sm:flex-row items-center justify-between gap-6 opacity-0 transition-opacity duration-700">
                     <div class="text-center sm:text-left text-white w-full sm:w-auto">
-                        <h4 class="text-[18px] sm:text-[20px] font-extrabold nav-heading tracking-tight mb-2">{% trans "Ready to go live?" %}</h4>
-                        <p class="text-[14px] sm:text-[15px] text-slate-400 font-medium max-w-md mx-auto sm:mx-0">
+                        <h4 class="font-heading text-[1.25rem] font-black tracking-tight mb-1">{% trans "Ready to go live?" %}</h4>
+                        <p class="text-[13px] text-slate-400 font-medium">
                             {% if form.instance.pk and form.title.value %}
-                                {% trans "Your edits will be saved and reflected immediately across CoreLink." %}
+                                {% trans "Your edits will be saved and reflected immediately." %}
                             {% else %}
-                                {% trans "Our team reviews all posts to ensure highest quality. It usually takes less than 2 hours to go live." %}
+                                {% trans "Our team reviews all posts. It usually takes less than 2 hours." %}
                             {% endif %}
                         </p>
                     </div>
-                    <button type="submit" class="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-xl sm:rounded-[1.25rem] text-[15px] sm:text-[16px] font-extrabold bg-[#4F46E5] text-white shadow-[0_8px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_15px_30px_rgba(79,70,229,0.4)] hover:-translate-y-1 transition-all var(--ease-spring) flex justify-center items-center gap-3 active:scale-95 shrink-0 border border-indigo-400/20">
-                        <i data-lucide="rocket" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                        {% if form.instance.pk and form.title.value %}
-                            {% trans "Save Changes" %}
-                        {% else %}
-                            {% trans "Submit for Review" %}
-                        {% endif %}
+                    <button type="submit" class="w-full sm:w-auto btn-action !px-8 !py-3.5 flex items-center justify-center gap-2 text-[15px] shadow-[0_8px_20px_rgba(16,185,129,0.3)]">
+                        <i data-lucide="rocket" class="w-4 h-4"></i>
+                        <span class="pointer-events-none">
+                        {% if form.instance.pk and form.title.value %}{% trans "Save Changes" %}{% else %}{% trans "Submit for Review" %}{% endif %}
+                        </span>
                     </button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </main>
 
 <!-- ==============================================
-     MOBILE BOTTOM NAVIGATION & DRAWERS
+     MOBILE NAVIGATION DOCK
      ============================================== -->
 {% if not is_inspector %}
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-t border-slate-200 flex items-center justify-around h-[65px] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] prevent-select">
-
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
     {% if request.user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-            <i data-lucide="user" class="w-6 h-6 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Profile" %}</span>
+        <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+            <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Profile" %}</span>
         </a>
-
-        <!-- Workspace Active state -->
-        <a href="{% url 'collaboration_hub' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#4F46E5] relative">
-            <div class="absolute top-0 w-10 h-0.5 bg-[#4F46E5] rounded-b-full shadow-[0_0_8px_rgba(79,70,229,0.6)]"></div>
-            <i data-lucide="layers" class="w-6 h-6 fill-indigo-50 stroke-[1.5]"></i>
-            <span class="text-[10px] font-extrabold whitespace-nowrap">{% trans "Workspace" %}</span>
+        <a href="{% url 'collaboration_hub' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+            <i data-lucide="radio" class="w-6 h-6 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
         </a>
-
-        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-            <i data-lucide="compass" class="w-6 h-6 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Discover" %}</span>
+        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+            <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
         </a>
-
-        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-            <i data-lucide="briefcase" class="w-6 h-6 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Opportunities" %}</span>
+        <!-- Active: Opportunities -->
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-emerald-600 relative">
+            <div class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-full shadow-[0_0_12px_rgba(16,185,129,0.8)]"></div>
+            <i data-lucide="briefcase" class="w-6 h-6 fill-emerald-50 stroke-[2.5]"></i>
+            <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Jobs" %}</span>
         </a>
-
-        <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
-            <div class="relative"><i data-lucide="mail" class="w-6 h-6 stroke-[1.5]"></i></div>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Inbox" %}</span>
+        <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+            <div class="relative">
+                <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white animate-pulse">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>
+                {% endif %}
+            </div>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
         </a>
     {% else %}
-        <!-- Guest Bottom Nav -->
-        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#4F46E5] relative">
-            <div class="absolute top-0 w-10 h-0.5 bg-[#4F46E5] rounded-b-full shadow-[0_0_8px_rgba(79,70,229,0.6)]"></div>
-            <i data-lucide="briefcase" class="w-6 h-6 fill-indigo-50 stroke-[1.5]"></i>
-            <span class="text-[10px] font-extrabold whitespace-nowrap">{% trans "Jobs" %}</span>
+        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+            <i data-lucide="arrow-left" class="w-6 h-6 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Back" %}</span>
         </a>
-        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-            <i data-lucide="users" class="w-6 h-6 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Network" %}</span>
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-emerald-600 relative">
+            <div class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-full shadow-[0_0_12px_rgba(16,185,129,0.8)]"></div>
+            <i data-lucide="plus" class="w-6 h-6 fill-emerald-50 stroke-[2.5]"></i>
+            <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Post" %}</span>
         </a>
-        <a href="{% url 'unified_onboarding' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-            <i data-lucide="user-plus" class="w-6 h-6 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Join" %}</span>
+        <a href="{% url 'unified_onboarding' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+            <i data-lucide="rocket" class="w-6 h-6 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Join" %}</span>
         </a>
     {% endif %}
 </nav>
@@ -629,38 +580,37 @@
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
 <div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
         {% if request.user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-[#4F46E5]"></i></div> {% trans "Go to My Profile" %}</a>
+            <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Personal Profile" %}</button>
             <div class="h-px bg-slate-100 my-3 mx-2"></div>
-            <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
         {% endif %}
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+        <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
             <span class="flex-1 flex justify-between items-center">
                 {% trans "Language" %}
-                <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
             </span>
         </button>
         {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+            <a href="{% url 'logout' %}" class="w-full min-h-[44px] text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Log Out" %}</a>
         {% endif %}
     </div>
 </div>
 
 <!-- Language Drawer -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 pointer-events-auto">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6 font-heading">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-indigo-50 border border-indigo-100 text-[#4F46E5] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-emerald-50/80 border border-emerald-100 text-emerald-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-indigo-50 border border-indigo-100 text-[#4F46E5] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-emerald-50/80 border border-emerald-100 text-emerald-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
@@ -668,62 +618,56 @@
 </div>
 
 <script>
+    /* UNIVERSAL LOADER */
+    let loaderInterval;
+    function startGlobalLoader() {
+        const loader = document.getElementById('global-page-loader');
+        if(!loader) return;
+        loader.style.opacity = '1'; loader.style.transitionDuration = '300ms'; loader.style.width = '15%';
+        let progress = 15; clearInterval(loaderInterval);
+        loaderInterval = setInterval(() => { progress += (Math.random() * 5 + 1); if(progress > 85) { progress = 85; clearInterval(loaderInterval); } loader.style.transitionDuration = '200ms'; loader.style.width = progress + '%'; }, 300);
+    }
+    function stopGlobalLoader() {
+        const loader = document.getElementById('global-page-loader');
+        if(!loader) return;
+        clearInterval(loaderInterval); loader.style.transitionDuration = '200ms'; loader.style.width = '100%';
+        setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => { loader.style.transitionDuration = '0ms'; loader.style.width = '0%'; }, 300); }, 250);
+    }
+
     // Drawer Logic
     function closeAllDrawers() {
-        const navDw = document.getElementById('mobile-nav-drawer');
-        const navBd = document.getElementById('mobile-nav-backdrop');
-        const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
-
-        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
-
+        ['mobile-nav', 'mobile-lang'].forEach(id => {
+            const dw = document.getElementById(`${id}-drawer`); const bd = document.getElementById(`${id}-backdrop`);
+            if(dw) dw.classList.replace('drawer-open', 'drawer-closed');
+            if(bd) { bd.classList.add('opacity-0', 'pointer-events-none'); bd.classList.remove('opacity-100'); }
+        });
         document.body.classList.remove('body-lock');
     }
-
-    function toggleMobileNavDrawer() {
-        const dw = document.getElementById('mobile-nav-drawer');
-        const bd = document.getElementById('mobile-nav-backdrop');
+    function toggleMobileNavDrawer() { toggleDrawer('mobile-nav'); }
+    function toggleMobileLangDrawer() { toggleDrawer('mobile-lang'); }
+    function toggleDrawer(id) {
+        const dw = document.getElementById(`${id}-drawer`); const bd = document.getElementById(`${id}-backdrop`);
         if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
+            closeAllDrawers(); bd.classList.replace('opacity-0', 'opacity-100'); bd.classList.remove('pointer-events-none'); dw.classList.replace('drawer-closed', 'drawer-open'); document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
     }
 
-    function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
-    }
-
-    // 🎨 Dynamic Configuration to match the 9 Types beautifully
+    // 🎨 Dynamic Configuration using the modern Emerald/Teal/Blue palette
     const OP_TYPE_CONFIG = {
         'FULL_TIME': {
-            name: "Full-Time Role", icon: "briefcase", subtitle: "Standard 40h/week", color: "text-[#4F46E5]", bg: "bg-indigo-50",
+            name: "Full-Time Role", icon: "briefcase", subtitle: "Standard 40h/week", color: "text-[#0A66C2]", bg: "bg-blue-50",
             show:['section-location', 'section-level', 'section-salary', 'section-compensation'],
             labels: { title: "What is the name of this role?", description: "Tell the full story about this role", compensation: "What's the main compensation or perk?" },
             placeholders: { description: "Describe the day-to-day responsibilities, the team they'll work with, and what success looks like in year one. Top talent values transparency...", compensation: "e.g. 50,000 ETB + Health Insurance" }
         },
         'PART_TIME': {
-            name: "Part-Time Role", icon: "clock", subtitle: "Flexible hours", color: "text-teal-600", bg: "bg-teal-50",
+            name: "Part-Time Role", icon: "clock", subtitle: "Flexible hours", color: "text-emerald-600", bg: "bg-emerald-50",
             show:['section-location', 'section-level', 'section-salary', 'section-compensation'],
             labels: { title: "What is the name of this role?", description: "Describe the part-time responsibilities", compensation: "What is the pay or perk?" },
             placeholders: { description: "How many hours per week? What will their main focus be? Provide a clear breakdown of expectations...", compensation: "e.g. 15,000 ETB for 20 hours/week" }
         },
         'CONTRACT': {
-            name: "Freelance / Contract", icon: "file-signature", subtitle: "Project-based work", color: "text-purple-600", bg: "bg-purple-50",
+            name: "Freelance / Contract", icon: "file-signature", subtitle: "Project-based work", color: "text-indigo-600", bg: "bg-indigo-50",
             show:['section-location', 'section-level', 'section-compensation'],
             labels: { title: "What is the contract title?", description: "Detail the exact scope of work", compensation: "What is the project budget or rate?" },
             placeholders: { description: "Describe the project scope, expected deliverables, and the exact timeline for completion. Clarity here saves time later...", compensation: "e.g. 100,000 ETB total or 500 ETB/hour" }
@@ -735,31 +679,31 @@
             placeholders: { description: "Provide a very clear, step-by-step description of the task, the final deliverable, and when you absolutely need it by...", compensation: "e.g. 2,000 ETB upon completion" }
         },
         'CHALLENGE': {
-            name: "Business Challenge", icon: "terminal", subtitle: "Solve for a prize", color: "text-blue-600", bg: "bg-blue-50",
+            name: "Business Challenge", icon: "terminal", subtitle: "Solve for a prize", color: "text-rose-600", bg: "bg-rose-50",
             show:['section-compensation'],
             labels: { title: "What is the name of this challenge?", description: "Explain the problem you need solved", compensation: "What is the prize for the winner?" },
             placeholders: { description: "Give full context of the business problem. What are the rules? How will the winner be judged? Attach any helpful context...", compensation: "e.g. 10,000 ETB to the best solution" }
         },
         'COFOUNDER': {
-            name: "Co-Founder", icon: "rocket", subtitle: "Find your partner", color: "text-rose-600", bg: "bg-rose-50",
+            name: "Co-Founder", icon: "rocket", subtitle: "Find your partner", color: "text-purple-600", bg: "bg-purple-50",
             show:['section-location', 'section-compensation'],
             labels: { title: "What role are you looking to fill?", description: "Share your startup vision honestly", compensation: "What equity are you offering?" },
             placeholders: { description: "Tell the story of your startup. What is the problem? Do you have traction? Most importantly, what are you bringing to the table, and what do you need them to do? Be genuine...", compensation: "e.g. 20% - 40% Equity based on commitment" }
         },
         'ADVISORY': {
-            name: "Advisory Board", icon: "compass", subtitle: "Mentorship & Guidance", color: "text-amber-700", bg: "bg-[#F3EFE6]",
+            name: "Advisory Board", icon: "compass", subtitle: "Mentorship & Guidance", color: "text-slate-700", bg: "bg-slate-100",
             show:['section-location', 'section-level', 'section-compensation'],
             labels: { title: "What specific expertise do you need?", description: "Why do you need an advisor right now?", compensation: "What are you offering in return?" },
             placeholders: { description: "Describe your current roadblocks. Are you struggling with marketing, fundraising, or technical architecture? Explain exactly how an advisor can help you scale...", compensation: "e.g. 1% Advisory Shares, or Unpaid Mentorship" }
         },
         'VOLUNTEER': {
-            name: "Volunteer", icon: "heart-handshake", subtitle: "Social impact roles", color: "text-pink-600", bg: "bg-pink-50",
+            name: "Volunteer", icon: "heart-handshake", subtitle: "Social impact roles", color: "text-teal-600", bg: "bg-teal-50",
             show:['section-location', 'section-level'],
             labels: { title: "What is the volunteer role?", description: "Explain the cause and impact" },
             placeholders: { description: "What is your organization's mission? What will the volunteer be doing day-to-day, and what impact will their work have on the community?..." }
         },
         'INTERNSHIP': {
-            name: "Internship", icon: "graduation-cap", subtitle: "Entry level growth", color: "text-emerald-600", bg: "bg-emerald-50",
+            name: "Internship", icon: "graduation-cap", subtitle: "Entry level growth", color: "text-emerald-500", bg: "bg-emerald-50",
             show:['section-location', 'section-level', 'section-compensation'],
             labels: { title: "What is the internship title?", description: "What will they learn and actually do?", compensation: "Is there a stipend or allowance?" },
             placeholders: { description: "An internship is about learning. What skills will you teach them? What real projects will they touch? Describe the mentorship environment...", compensation: "e.g. 5,000 ETB/month transport allowance, or Unpaid" }
@@ -773,14 +717,13 @@
         document.getElementById('type-grid').style.display = 'none';
         const summary = document.getElementById('type-summary');
         summary.classList.remove('hidden');
-        summary.classList.add('flex', 'animate-fade-in-down');
+        summary.classList.add('flex', 'anim-smooth-appear');
 
-        // Update Summary UI with dynamic colors
+        // Update Summary UI
         document.getElementById('summary-title').innerText = config.name;
         const iconBox = document.getElementById('summary-icon-box');
-        iconBox.className = `w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[1.25rem] flex items-center justify-center shrink-0 border ${config.bg} ${config.color}`;
-        iconBox.innerHTML = `<i data-lucide="${config.icon}" class="w-5 h-5 sm:w-6 sm:h-6"></i>`;
-        lucide.createIcons();
+        iconBox.innerHTML = `<i data-lucide="${config.icon}" class="w-5 h-5"></i>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
         // Toggle Dynamic Fields
         const allDynamicSections =['section-location', 'section-level', 'section-salary', 'section-compensation'];
@@ -789,7 +732,7 @@
             if (!el) return;
             if (config.show && config.show.includes(sectionId)) {
                 el.style.display = 'block';
-                el.classList.add('animate-fade-in-up');
+                el.classList.add('anim-smooth-appear');
             } else {
                 el.style.display = 'none';
             }
@@ -811,36 +754,30 @@
         const publishArea = document.getElementById('publish-area');
 
         restOfForm.classList.remove('hidden');
-        publishArea.classList.remove('hidden');
-        publishArea.classList.add('flex');
+        restOfForm.classList.add('flex');
 
         void restOfForm.offsetWidth;
         restOfForm.classList.add('animate-slide-up-form');
         publishArea.classList.add('opacity-100');
 
-        // Scroll slightly down for UX focus
-        setTimeout(() => {
-            window.scrollBy({ top: window.innerWidth < 640 ? 100 : 150, behavior: 'smooth' });
-        }, 100);
+        setTimeout(() => { window.scrollBy({ top: 150, behavior: 'smooth' }); }, 100);
     }
 
     function resetGrid() {
-        document.getElementById('rest-of-form').classList.add('hidden');
-        document.getElementById('rest-of-form').classList.remove('animate-slide-up-form');
-        document.getElementById('publish-area').classList.add('hidden');
-        document.getElementById('publish-area').classList.remove('flex', 'opacity-100');
+        const restOfForm = document.getElementById('rest-of-form');
+        restOfForm.classList.add('hidden');
+        restOfForm.classList.remove('flex', 'animate-slide-up-form');
+        document.getElementById('publish-area').classList.remove('opacity-100');
 
-        document.getElementById('type-summary').classList.add('hidden');
-        document.getElementById('type-summary').classList.remove('flex');
+        const summary = document.getElementById('type-summary');
+        summary.classList.add('hidden');
+        summary.classList.remove('flex', 'anim-smooth-appear');
 
-        // Restore Grid
         const grid = document.getElementById('type-grid');
         grid.style.display = '';
-        grid.classList.add('animate-fade-in-up');
+        grid.classList.add('anim-smooth-appear');
 
-        document.querySelectorAll('input[name="job_type"]').forEach(r => {
-            r.checked = false;
-        });
+        document.querySelectorAll('input[name="job_type"]').forEach(r => { r.checked = false; });
     }
 
     function toggleExternalMode(isExternal) {
@@ -870,21 +807,35 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        // Upgrade all selects to Magic Selects
-        document.querySelectorAll('select:not(.magic-input)').forEach(s => s.classList.add('magic-input'));
+        // Form & Link Loaders
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.startsWith('javascript:') && !link.href.startsWith('#') && link.target !== '_blank' && !e.ctrlKey && !e.metaKey) {
+                startGlobalLoader();
+            }
+        });
+        document.body.addEventListener('submit', (e) => {
+            if (e.target.closest('form') && e.target.closest('form').checkValidity()) { startGlobalLoader(); }
+        });
+        window.addEventListener('pageshow', (e) => { if (e.persisted) { stopGlobalLoader(); } });
+
+        // Add standard classes to Django selects
+        document.querySelectorAll('select:not(.premium-input)').forEach(s => s.classList.add('premium-input', 'bg-white'));
+        document.querySelectorAll('input[type="text"]:not(.premium-input), input[type="url"]:not(.premium-input)').forEach(s => {
+            if(!s.classList.contains('radio-card-input')) s.classList.add('premium-input');
+        });
 
         // Inject dynamic icons into the Grid
         document.querySelectorAll('.icon-wrapper').forEach(container => {
             const type = container.getAttribute('data-type');
             if (OP_TYPE_CONFIG[type]) {
-                container.innerHTML = `<i data-lucide="${OP_TYPE_CONFIG[type].icon}" class="w-6 h-6 sm:w-7 sm:h-7"></i>`;
-                // Add hover colors
+                container.innerHTML = `<i data-lucide="${OP_TYPE_CONFIG[type].icon}" class="w-5 h-5"></i>`;
                 container.parentElement.parentElement.addEventListener('mouseenter', () => {
-                    container.className = `icon-wrapper w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[1rem] flex items-center justify-center mb-4 sm:mb-5 transition-all duration-300 scale-110 ${OP_TYPE_CONFIG[type].bg} ${OP_TYPE_CONFIG[type].color}`;
+                    container.className = `icon-wrapper w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300 scale-110 ${OP_TYPE_CONFIG[type].bg} ${OP_TYPE_CONFIG[type].color}`;
                 });
                 container.parentElement.parentElement.addEventListener('mouseleave', () => {
                     if (!container.parentElement.previousElementSibling.checked) {
-                        container.className = `icon-wrapper w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[1rem] bg-slate-100 flex items-center justify-center text-slate-500 mb-4 sm:mb-5 transition-all duration-300`;
+                        container.className = `icon-wrapper w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-50 text-slate-500 border border-slate-100 flex items-center justify-center mb-4 transition-all duration-300`;
                     }
                 });
             }
@@ -896,7 +847,7 @@
 
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        // 🚀 PROGRESSIVE DISCLOSURE INIT
+        // Progressive Disclosure Init
         const hasErrors = {% if form.errors %}true{% else %}false{% endif %};
         const existingTitleInput = document.getElementById('id_title');
         const hasData = existingTitleInput && existingTitleInput.value.trim() !== '';
@@ -909,7 +860,6 @@
             else handleTypeSelection('FULL_TIME');
         }
 
-        // JS logic natively handles both logged-in users and guests flawlessly!
         toggleExternalMode(document.getElementById('id_is_external').checked);
 
         const initDate = document.getElementById('id_deadline_date').value;

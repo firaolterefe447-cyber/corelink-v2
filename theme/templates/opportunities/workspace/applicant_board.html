@@ -7,291 +7,313 @@
 
 {% block navbar %}
 <!-- ==============================================
-     FUTURISTIC FLOATING DOCK (PC View)
+     LEFT SIDEBAR NAVIGATION (PC)
      ============================================== -->
-<aside class="hidden md:flex fixed top-1/2 -translate-y-1/2 left-6 w-20 hover:w-64 h-[80vh] bg-white/80 backdrop-blur-3xl border border-slate-200/60 z-[100] flex-col py-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-500 group overflow-hidden">
-
-    <!-- Identity -->
-    <div class="px-6 mb-8 flex items-center prevent-select shrink-0">
-        <div class="w-8 h-8 rounded-xl bg-[#4F46E5] flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/20">
-            <span class="font-black text-white text-[16px] leading-none mt-0.5">C</span>
-        </div>
-        <span class="ml-4 font-black text-slate-900 text-[19px] tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap nav-heading">CoreLink</span>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="flex-1 px-3 space-y-3 overflow-y-auto overflow-x-hidden custom-scroll pb-4">
-        <a href="{% url 'dashboard' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-            <i data-lucide="user" class="w-6 h-6 shrink-0"></i>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Portfolio" %}</span>
-        </a>
-
-        <!-- Active: Workspace (as Opportunities Posted is managed here) -->
-        <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 p-3 rounded-xl bg-indigo-50 text-[#4F46E5] transition-all border border-indigo-100/50 shadow-sm" aria-current="page">
-            <i data-lucide="layers" class="w-6 h-6 shrink-0 fill-indigo-100 text-[#4F46E5]"></i>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Workspace" %}</span>
-        </a>
-
-        <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-            <i data-lucide="compass" class="w-6 h-6 shrink-0"></i>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Discover" %}</span>
-        </a>
-
-        <a href="{% url 'team_nexus' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-            <i data-lucide="users" class="w-6 h-6 shrink-0"></i>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Teams" %}</span>
-        </a>
-
-        <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-            <i data-lucide="briefcase" class="w-6 h-6 shrink-0"></i>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Opportunities" %}</span>
-        </a>
-
-        <a href="/workspace/messages/" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-[#4F46E5] transition-all">
-            <div class="relative shrink-0">
-                <i data-lucide="mail" class="w-6 h-6"></i>
-                <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full border border-white hidden"></div>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto custom-scroll">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+        <div class="flex-1">
+            <!-- Typographic Logo -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
             </div>
-            <span class="font-bold text-[14.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "My Inbox" %}</span>
-        </a>
-    </nav>
 
-    <!-- Bottom Actions -->
-    <div class="px-3 mt-auto pt-4 border-t border-slate-100 space-y-1 shrink-0">
-        <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all">
-            <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
-            <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Profile Settings" %}</span>
-        </a>
-        <button onclick="toggleMobileLangDrawer()" class="w-full flex items-center gap-4 p-3 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all text-left">
-            <i data-lucide="globe" class="w-5 h-5 shrink-0"></i>
-            <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap flex items-center justify-between flex-1">{% trans "Language" %} <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small></span>
-        </button>
-        <a href="{% url 'logout' %}" class="flex items-center gap-4 p-3 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-all mt-1 group/logout">
-            <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
-            <span class="font-bold text-[13.5px] opacity-0 group-hover:opacity-100 whitespace-nowrap">{% trans "Logout" %}</span>
-        </a>
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Personal Profile" %}
+                </a>
+
+                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="radio" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "My Updates" %}
+                </a>
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <!-- ACTIVE: Opportunities -->
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span>{% trans "Settings" %}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
     </div>
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-5 h-[max(4rem,calc(4rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-    <div class="flex items-end gap-2.5 cursor-pointer pb-0.5" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <div class="text-[26px] font-black tracking-[-0.05em] flex items-center leading-none drop-shadow-sm">
-            <span class="text-slate-900">Core</span><span class="text-[#4F46E5]">Link</span>
-        </div>
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
-        <i data-lucide="menu" class="w-5 h-5 relative z-10"></i>
-    </button>
+    <div class="flex items-center gap-3">
+        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+            <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
+        </button>
+    </div>
 </div>
 {% endblock navbar %}
 
 {% block content %}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<!-- PEERLIST-STYLE UNIVERSAL TOP LOADING BAR -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-500 via-emerald-400 to-teal-400 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(16,185,129,0.7), 0 0 4px rgba(16,185,129,0.4);"></div>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --app-bg: #F8FAFC;
-        --primary-blue: #4F46E5;
-        --primary-blue-hover: #4338CA;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; }
-    h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); letter-spacing: -0.02em; }
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F4F7FA;
+        background-image:
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
     .custom-scroll::-webkit-scrollbar { display: none; }
-    .custom-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .app-canvas { max-width: 1400px; margin: 0 auto; padding: calc(5rem + env(safe-area-inset-top)) 1.25rem calc(5.5rem + env(safe-area-inset-bottom)) 1.25rem; }
-    @media (min-width: 768px) { .app-canvas { padding: 4rem 2.5rem 4rem 140px; } }
+    /* Canvas Layout */
+    .app-canvas { width: 100%; position: relative; z-index: 10; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; max-width: 1600px; margin: 0 auto; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
 
-    .bento-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02); transition: all 0.3s ease; }
-    .bento-card:hover { box-shadow: 0 12px 30px rgba(79, 70, 229, 0.06); border-color: #CBD5E1; }
-
-    .btn-action {
-        background-color: var(--primary-blue);
-        color: white;
-        font-weight: 800;
-        padding: 0.7rem 1.4rem;
-        border-radius: 0.6rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-        white-space: nowrap;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
+    /* Modular Bento Cards */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 2rem;
+        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        position: relative;
+        z-index: 10;
+        transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
     }
-    .btn-action:hover { background-color: var(--primary-blue-hover); transform: translateY(-1px); }
-    .btn-action:active { transform: scale(0.98); }
+    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
+    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
+
+    /* Buttons */
+    .btn-manage-text {
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        height: 38px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
+        color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all 0.3s var(--ease-magic); flex-shrink: 0; text-decoration: none;
+        font-size: 13px; font-weight: 800; border: 1.5px solid transparent; white-space: nowrap;
+    }
+    .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+    .btn-manage-text:active { transform: scale(0.95); }
 
     .btn-secondary {
-        background: #ffffff;
-        border: 1px solid #CBD5E1;
-        color: #475569;
-        font-weight: 700;
-        padding: 0.7rem 1.4rem;
-        border-radius: 0.6rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-        white-space: nowrap;
-        font-size: 13px;
+        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
+        min-height: 44px; border-radius: 9999px; display: inline-flex !important; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.3s var(--ease-magic); white-space: nowrap; text-decoration: none;
+        background: white; border: 1px solid rgba(226, 232, 240, 0.9); color: #475569; font-size: 13px; font-weight: 800; padding: 0.5rem 1.25rem;
     }
-    .btn-secondary:hover { border-color: #94A3B8; color: #1E293B; background: #F8FAFC; }
-    .btn-secondary:active { transform: scale(0.98); }
+    .btn-secondary:hover { border-color: #10B981; color: #10B981; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
+    .btn-secondary:active { transform: scale(0.96); }
 
-    .animate-up { animation: fadeInUp 0.4s ease-out forwards; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* Animations */
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
 
+    /* Drawers */
     .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
     .drawer-closed { transform: translateY(100%); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
-<main class="app-canvas animate-up">
+<main class="app-canvas anim-smooth-appear">
+    <div class="max-w-[1200px] mx-auto w-full relative z-10">
 
-    <!-- HEADER SECTION -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 lg:mb-10 w-full border-b border-slate-200/80 pb-6">
-        <div class="flex items-center gap-4">
-            <a href="{% url 'collaboration_hub' %}" class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-[#4F46E5] hover:bg-indigo-50 hover:border-indigo-200 shadow-sm transition-all active:scale-95 shrink-0">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            </a>
-            <div>
-                <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
-                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> {% trans "Pipeline Management" %} <span class="text-slate-300">/</span> <span class="text-[#4F46E5]">{% trans "Review Board" %}</span>
-                </div>
-                <h1 class="text-[clamp(1.6rem,4vw,2.2rem)] font-black text-slate-900 tracking-tight leading-none truncate max-w-[300px] sm:max-w-md lg:max-w-xl">
-                    {{ job.title }}
-                </h1>
-            </div>
-        </div>
-
-        <!-- Stats Module -->
-        <div class="flex flex-col items-center justify-center bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm shrink-0 min-w-[130px]">
-            <div class="text-[28px] font-black text-[#4F46E5] leading-none mb-0.5">{{ total_linked }}</div>
-            <div class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">{% trans "Applicants" %}</div>
-        </div>
-    </div>
-
-    <!-- ============================================== -->
-    <!-- APPLICANT BOARD GRID                           -->
-    <!-- ============================================== -->
-    <div class="animate-up" style="animation-delay: 0.1s;">
-        {% if applications %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {% for app in applications %}
-            <div class="bento-card p-5 relative group flex flex-col hover:-translate-y-1">
-
-                <!-- Top Info & Badges -->
-                <div class="flex items-start justify-between gap-3 mb-4">
-                    <div class="flex items-center gap-3">
-                        <!-- Smart Avatar Logic -->
-                        {% if app.applicant.get_avatar_url %}
-                            <img src="{{ app.applicant.get_avatar_url }}" alt="{{ app.applicant.display_name }}" class="w-12 h-12 rounded-full object-cover border border-slate-200 shadow-sm shrink-0">
-                        {% else %}
-                            <div class="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] font-black text-[18px] flex items-center justify-center shadow-sm shrink-0 uppercase">
-                                {{ app.applicant.display_name|first }}
-                            </div>
-                        {% endif %}
-
-                        <div>
-                            <h6 class="font-extrabold text-[15px] text-slate-900 leading-tight mb-0.5 truncate max-w-[120px]" title="{{ app.applicant.display_name }}">
-                                {{ app.applicant.display_name }}
-                            </h6>
-                            <a href="{{ app.applicant.get_absolute_url }}" target="_blank" class="text-[11.5px] font-bold text-[#4F46E5] hover:text-indigo-800 flex items-center gap-1 transition-colors">
-                                {% trans "Profile" %} <i data-lucide="external-link" class="w-3 h-3"></i>
-                            </a>
-                        </div>
+        <!-- HEADER SECTION -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8 lg:mb-12">
+            <div class="flex items-center gap-4">
+                <!-- Back to Workspace/Pipeline List -->
+                <a href="{% url 'opportunities:workspace_list' %}" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 shadow-sm transition-all active:scale-95 shrink-0">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <div>
+                    <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                        <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> {% trans "Pipeline" %} <span class="text-slate-300">/</span> <span class="text-emerald-600">{% trans "Board" %}</span>
                     </div>
-
-                    <!-- Status Icon -->
-                    <div>
-                        {% if app.status == 'SHORTLISTED' %}
-                            <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm flex items-center justify-center" title="Shortlisted">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                        {% elif app.status == 'REJECTED' %}
-                            <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-200 flex items-center justify-center" title="Passed">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </div>
-                        {% else %}
-                            <div class="w-8 h-8 rounded-full bg-indigo-50 text-[#4F46E5] border border-indigo-100 shadow-sm flex items-center justify-center" title="Pending">
-                                <i data-lucide="clock" class="w-4 h-4"></i>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Pitch & Attachments -->
-                <div class="flex-1 flex flex-col gap-3 mb-5">
-                    {% if app.cover_note %}
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 relative">
-                            <i data-lucide="quote" class="w-4 h-4 text-slate-300 absolute top-3 left-3"></i>
-                            <p class="text-[12.5px] text-slate-600 font-medium italic leading-relaxed pl-6 line-clamp-3 hover:line-clamp-none cursor-pointer transition-all">
-                                "{{ app.cover_note }}"
-                            </p>
-                        </div>
-                    {% else %}
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-center h-full min-h-[80px]">
-                            <span class="text-[12px] font-medium text-slate-400 italic">{% trans "No cover note." %}</span>
-                        </div>
-                    {% endif %}
-
-                    {% if app.attached_project %}
-                        <a href="{{ app.attached_project.get_absolute_url }}" target="_blank" class="mt-auto bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3 transition-colors group/proj">
-                            <div class="w-8 h-8 bg-white rounded-md border border-indigo-100 flex items-center justify-center text-[#4F46E5] shadow-sm shrink-0">
-                                <i data-lucide="box" class="w-4 h-4"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">{% trans "Proof of Work" %}</p>
-                                <p class="text-[12.5px] font-bold text-slate-800 truncate">{{ app.attached_project.title }}</p>
-                            </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-300 group-hover/proj:translate-x-1 transition-transform"></i>
-                        </a>
-                    {% endif %}
-                </div>
-
-                <!-- Actions Bottom Row -->
-                <div class="mt-auto pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
-                    <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
-                        {% csrf_token %}
-                        <input type="hidden" name="status" value="REJECTED">
-                        <button type="submit" class="w-full py-2.5 flex items-center justify-center gap-1.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg transition-all shadow-sm active:scale-95 text-[12.5px] font-bold" {% if app.status == 'REJECTED' %}disabled opacity-50 cursor-not-allowed{% endif %}>
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i> {% trans "Pass" %}
-                        </button>
-                    </form>
-
-                    <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
-                        {% csrf_token %}
-                        <input type="hidden" name="status" value="SHORTLISTED">
-                        <button type="submit" class="w-full py-2.5 flex items-center justify-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg transition-all shadow-sm active:scale-95 text-[12.5px] font-bold" {% if app.status == 'SHORTLISTED' %}disabled opacity-50 cursor-not-allowed{% endif %}>
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i> {% trans "Shortlist" %}
-                        </button>
-                    </form>
+                    <h1 class="font-heading text-[1.75rem] md:text-[2.25rem] font-black text-slate-900 tracking-tight leading-none truncate max-w-[280px] sm:max-w-md lg:max-w-2xl">
+                        {{ job.title }}
+                    </h1>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <!-- Empty State -->
-        <div class="bento-card py-20 px-6 text-center max-w-xl mx-auto border-dashed mt-8 flex flex-col items-center justify-center bg-slate-50/50">
-            <div class="w-16 h-16 bg-white border border-slate-200 shadow-sm rounded-full flex items-center justify-center mb-5 text-slate-300">
-                <i data-lucide="inbox" class="w-8 h-8"></i>
-            </div>
-            <h3 class="text-[18px] font-extrabold text-slate-900 mb-2">{% trans "No applicants yet" %}</h3>
-            <p class="text-[14px] text-slate-500 font-medium max-w-sm mx-auto leading-relaxed">{% trans "Share your job post link with your network to start receiving applications. They will seamlessly appear here." %}</p>
-            <div class="mt-8 flex justify-center">
-                <button onclick="copyExactProfileLink('{% url 'opportunities:detail' job.slug|default:job.pk %}')" class="btn-action">
-                    <i data-lucide="link" class="w-4 h-4"></i> {% trans "Copy Job Link" %}
+
+            <div class="flex items-center gap-3 shrink-0">
+                <button onclick="copyExactProfileLink('{% url 'opportunities:detail' job.slug|default:job.pk %}')" class="btn-secondary">
+                    <i data-lucide="link" class="w-4 h-4 pointer-events-none"></i>
+                    <span class="pointer-events-none">{% trans "Copy Link" %}</span>
                 </button>
+                <div class="flex flex-col items-center justify-center bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 shadow-sm shrink-0 min-w-[100px] md:min-w-[120px]">
+                    <div class="text-[22px] md:text-[26px] font-black text-emerald-600 leading-none mb-0.5">{{ total_linked }}</div>
+                    <div class="text-[9px] md:text-[10px] font-black text-emerald-600/70 uppercase tracking-widest">{% trans "Applicants" %}</div>
+                </div>
             </div>
         </div>
-        {% endif %}
+
+        <!-- ============================================== -->
+        <!-- APPLICANT BOARD GRID                           -->
+        <!-- ============================================== -->
+        <div class="flex flex-col gap-6">
+            {% if applications %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                    {% for app in applications %}
+                    <div class="bento-card p-6 flex flex-col group/app">
+
+                        <!-- Top: Avatar & Identity -->
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="flex items-center gap-3 w-full min-w-0 pr-3">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200/80 shadow-sm overflow-hidden shrink-0 flex items-center justify-center">
+                                    {% if app.applicant.get_avatar_url %}
+                                        <img src="{{ app.applicant.get_avatar_url }}" alt="{{ app.applicant.display_name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <span class="font-black text-[18px] text-slate-400 uppercase">{{ app.applicant.display_name|first }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-bold text-[16px] text-slate-900 leading-tight truncate" title="{{ app.applicant.display_name }}">{{ app.applicant.display_name }}</h4>
+                                    <a href="{% url 'profiles:view' app.applicant.username %}" target="_blank" class="text-[12px] font-extrabold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mt-0.5 transition-colors w-max relative z-50">
+                                        {% trans "View Profile" %} <i data-lucide="external-link" class="w-3 h-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- Status Badge -->
+                            <div class="shrink-0">
+                                {% if app.status == 'SHORTLISTED' %}
+                                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm" title="Shortlisted"><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
+                                {% elif app.status == 'REJECTED' %}
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-200/60 flex items-center justify-center" title="Passed"><i data-lucide="x" class="w-4 h-4"></i></div>
+                                {% elif app.status == 'ACCEPTED' %}
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] border border-blue-100 flex items-center justify-center shadow-sm" title="Accepted"><i data-lucide="check-check" class="w-4 h-4"></i></div>
+                                {% else %}
+                                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 border border-amber-100 flex items-center justify-center shadow-sm" title="Pending"><i data-lucide="clock" class="w-4 h-4"></i></div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Middle: Pitch & Portfolio -->
+                        <div class="flex-1 flex flex-col gap-3 mb-6">
+                            {% if app.cover_note %}
+                                <div class="bg-slate-50/80 border border-slate-200/60 rounded-2xl p-4 relative group/note">
+                                    <i data-lucide="quote" class="w-4 h-4 text-slate-300 absolute top-4 left-4"></i>
+                                    <p class="text-[13px] text-slate-600 font-medium leading-relaxed pl-7 line-clamp-3 group-hover/note:line-clamp-none transition-all cursor-default">
+                                        "{{ app.cover_note }}"
+                                    </p>
+                                </div>
+                            {% else %}
+                                <div class="bg-slate-50/50 border border-slate-200/50 rounded-2xl p-4 flex items-center justify-center h-full min-h-[80px]">
+                                    <span class="text-[12.5px] font-medium text-slate-400 italic">{% trans "No cover note provided." %}</span>
+                                </div>
+                            {% endif %}
+
+                            {% if app.attached_project %}
+                                <a href="{{ app.attached_project.get_absolute_url }}" target="_blank" class="mt-auto bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-sm rounded-xl p-3 flex items-center gap-3 transition-all relative z-50 group/proj">
+                                    <div class="w-9 h-9 bg-emerald-50 rounded-lg border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                                        <i data-lucide="box" class="w-4.5 h-4.5"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{% trans "Proof of Work" %}</p>
+                                        <p class="text-[13px] font-bold text-slate-800 truncate">{{ app.attached_project.title }}</p>
+                                    </div>
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover/proj:translate-x-1 group-hover/proj:text-emerald-500 transition-all"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Bottom: Actions -->
+                        <div class="mt-auto pt-5 border-t border-slate-100/80 grid grid-cols-2 gap-3 relative z-50">
+                            <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="REJECTED">
+                                <button type="submit" class="btn-manage-text w-full !h-10 !bg-rose-50 hover:!bg-rose-100 !text-rose-600 border-rose-100/50" {% if app.status == 'REJECTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
+                                    <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Pass" %}</span>
+                                </button>
+                            </form>
+                            <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="SHORTLISTED">
+                                <button type="submit" class="btn-manage-text w-full !h-10 !bg-emerald-50 hover:!bg-emerald-100 !text-emerald-700 border-emerald-100/50" {% if app.status == 'SHORTLISTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
+                                    <i data-lucide="check" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Shortlist" %}</span>
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="group/empty block w-full rounded-3xl border-2 border-dashed border-slate-200 bg-white p-10 md:p-16 flex flex-col items-center justify-center gap-4 text-center cursor-default hover:border-emerald-200 hover:bg-slate-50 transition-all">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center transition-all group-hover/empty:bg-emerald-50 group-hover/empty:text-emerald-600 shadow-sm">
+                        <i data-lucide="inbox" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[18px] font-black text-slate-900 mb-2">{% trans "No applicants yet" %}</h3>
+                        <p class="text-[14px] text-slate-500 font-medium max-w-sm mx-auto leading-relaxed">{% trans "Share your job post link with your network to start receiving applications. They will seamlessly appear here." %}</p>
+                    </div>
+                    <button onclick="copyExactProfileLink('{% url 'opportunities:detail' job.slug|default:job.pk %}')" class="btn-secondary mt-2 border-slate-300">
+                        <i data-lucide="link" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Copy Job Link" %}</span>
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
     </div>
 </main>
 
@@ -299,32 +321,33 @@
      MOBILE BOTTOM NAVIGATION & DRAWERS
      ============================================== -->
 {% if not is_inspector %}
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-[100] flex items-center justify-around h-[65px] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] prevent-select">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="user" class="w-6 h-6 stroke-[1.5]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Profile" %}</span>
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Profile" %}</span>
     </a>
-
-    <!-- Workspace Active state -->
-    <a href="{% url 'collaboration_hub' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#4F46E5] relative">
-        <div class="absolute top-0 w-10 h-0.5 bg-[#4F46E5] rounded-b-full shadow-[0_0_8px_rgba(79,70,229,0.6)]"></div>
-        <i data-lucide="layers" class="w-6 h-6 fill-indigo-50 stroke-[1.5]"></i>
-        <span class="text-[10px] font-extrabold whitespace-nowrap">{% trans "Workspace" %}</span>
+    <a href="{% url 'collaboration_hub' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="radio" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
-
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="compass" class="w-6 h-6 stroke-[1.5]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Discover" %}</span>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
     </a>
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
-        <i data-lucide="briefcase" class="w-6 h-6 stroke-[1.5]"></i>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Opportunities" %}</span>
+    <!-- Active: Opportunities Pipeline -->
+    <a href="#" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-emerald-600 relative">
+        <div class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-full shadow-[0_0_12px_rgba(16,185,129,0.8)]"></div>
+        <i data-lucide="briefcase" class="w-6 h-6 fill-emerald-50 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Pipeline" %}</span>
     </a>
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
         <div class="relative">
-            <i data-lucide="mail" class="w-6 h-6 stroke-[1.5]"></i>
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white animate-pulse">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>
+            {% endif %}
         </div>
-        <span class="text-[10px] font-semibold whitespace-nowrap">{% trans "Inbox" %}</span>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
     </a>
 </nav>
 {% endif %}
@@ -333,34 +356,34 @@
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
 <div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-[#4F46E5]"></i></div> {% trans "Go to My Profile" %}</a>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Personal Profile" %}</button>
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
+        <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
             <span class="flex-1 flex justify-between items-center">
                 {% trans "Language" %}
-                <small class="text-[10px] font-black uppercase bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
             </span>
         </button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+        <a href="{% url 'logout' %}" class="w-full min-h-[44px] text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Log Out" %}</a>
     </div>
 </div>
 
 <!-- Language Drawer -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 pointer-events-auto">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6 font-heading">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-indigo-50 border border-indigo-100 text-[#4F46E5] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-emerald-50/80 border border-emerald-100 text-emerald-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-indigo-50 border border-indigo-100 text-[#4F46E5] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-emerald-50/80 border border-emerald-100 text-emerald-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
@@ -373,12 +396,49 @@
     <span id="toast-msg">{% trans "Link Copied!" %}</span>
 </div>
 
-<!-- ==============================================
-     JAVASCRIPT LOGIC
-     ============================================== -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    /* UNIVERSAL LOADER */
+    let loaderInterval;
+    function startGlobalLoader() {
+        const loader = document.getElementById('global-page-loader');
+        if(!loader) return;
+        loader.style.opacity = '1'; loader.style.transitionDuration = '300ms'; loader.style.width = '15%';
+        let progress = 15; clearInterval(loaderInterval);
+        loaderInterval = setInterval(() => { progress += (Math.random() * 5 + 1); if(progress > 85) { progress = 85; clearInterval(loaderInterval); } loader.style.transitionDuration = '200ms'; loader.style.width = progress + '%'; }, 300);
+    }
+    function stopGlobalLoader() {
+        const loader = document.getElementById('global-page-loader');
+        if(!loader) return;
+        clearInterval(loaderInterval); loader.style.transitionDuration = '200ms'; loader.style.width = '100%';
+        setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => { loader.style.transitionDuration = '0ms'; loader.style.width = '0%'; }, 300); }, 250);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                const target = link.getAttribute('target');
+                const isJS = href && href.startsWith('javascript:');
+                const isHash = href && href.startsWith('#');
+                const isNewTab = target === '_blank';
+                const hasDownload = link.hasAttribute('download');
+                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+
+                if (href && !isJS && !isHash && !isNewTab && !hasDownload && !isModifierPressed) {
+                    startGlobalLoader();
+                }
+            }
+        });
+
+        document.body.addEventListener('submit', (e) => {
+            const form = e.target.closest('form');
+            if (form && form.target !== '_blank' && form.checkValidity()) { startGlobalLoader(); }
+        });
+
+        window.addEventListener('pageshow', (e) => { if (e.persisted) { stopGlobalLoader(); } });
     });
 
     let shareToastTimeout;
@@ -438,4 +498,4 @@
         } else { closeAllDrawers(); }
     }
 </script>
-{% endblock content %}
+{% endblock %}
