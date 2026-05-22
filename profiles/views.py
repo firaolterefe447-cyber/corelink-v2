@@ -915,20 +915,40 @@ class CompanyEditView(LoginRequiredMixin, UpdateView):
 @login_required
 @require_POST
 def company_quick_update(request, slug):
-    """AJAX endpoint for the Command Center on the Company Dashboard."""
+    """AJAX endpoint for the Command Center & Mission Editor on the Company Dashboard."""
     try:
-        # Verify ownership
+        # 1. Verify ownership
         company = get_object_or_404(Company, slug=slug)
-        if not CompanyMember.objects.filter(company=company, user=request.user, role__in=['OWNER', 'ADMIN'], is_active=True).exists():
+        if not CompanyMember.objects.filter(company=company, user=request.user, role__in=['OWNER', 'ADMIN'],
+                                            is_active=True).exists():
             return JsonResponse({'status': 'error', 'message': 'Permission denied'}, status=403)
 
-        # Parse JSON
+        # 2. Parse JSON
         data = json.loads(request.body)
-        company.is_hiring = bool(data.get('is_hiring', False))
-        company.looking_for = data.get('looking_for', 'BUILDING')
-        company.save(update_fields=['is_hiring', 'looking_for'])
+
+        # We will track which fields are actually being updated so we only save what we need
+        fields_to_update = []
+
+        # 3. Handle Command Center Updates
+        if 'is_hiring' in data:
+            company.is_hiring = bool(data.get('is_hiring', False))
+            fields_to_update.append('is_hiring')
+
+        if 'looking_for' in data:
+            company.looking_for = data.get('looking_for', 'BUILDING')
+            fields_to_update.append('looking_for')
+
+        # 4. Handle Mission Statement Updates (from the new Pop-up modal)
+        if 'mission_stmt' in data:
+            company.mission_stmt = data.get('mission_stmt', '').strip()
+            fields_to_update.append('mission_stmt')
+
+        # 5. Save only the updated fields
+        if fields_to_update:
+            company.save(update_fields=fields_to_update)
 
         return JsonResponse({'status': 'success', 'message': 'Company updated'})
+
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 

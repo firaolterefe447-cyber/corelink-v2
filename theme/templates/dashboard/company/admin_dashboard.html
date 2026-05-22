@@ -255,7 +255,7 @@
         <!-- COMPANY HERO (FULL WIDTH) -->
         <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-10" id="company-hero">
 
-            <!-- ── Cover Image (Clean edge, deeply integrated clickable zone) ── -->
+            <!-- ── Cover Image ── -->
             <div onclick="window.location.href='{% url 'company_media_manage' company.slug %}'"
                  class="relative h-[140px] sm:h-[180px] md:h-[250px] w-full shrink-0 border-b border-slate-200/50 overflow-hidden cover-container-radius cursor-pointer group"
                  style="z-index:10;"
@@ -264,12 +264,11 @@
                 {% if company.cover_image %}
                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" alt="Cover">
                 {% else %}
-                    <!-- Smooth Forest Glow Fallback with Instructional Text Top-Left -->
+                    <!-- Smooth Forest Glow Fallback -->
                     <div class="cover-placeholder-forest">
                         <div class="glow-tr"></div>
                         <div class="glow-bl"></div>
 
-                        <!-- Instructional Text carefully positioned Top-Left to NEVER overlap the logo -->
                         <div class="absolute top-4 left-6 sm:left-10 md:top-6 md:left-12 z-10 flex items-center gap-2.5 text-emerald-500/80 pointer-events-none">
                             <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
                                 <i data-lucide="image-plus" class="w-4 h-4"></i>
@@ -292,12 +291,11 @@
                 </div>
             </div>
 
-            <!-- ── Hero Body (Higher z-index than Cover to ensure perfect overlap without clipping) ── -->
+            <!-- ── Hero Body ── -->
             <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-14 relative z-10 flex flex-col h-full">
 
-                <!-- Logo — Boxed, pulled up over cover, strictly isolated as an Anchor tag -->
+                <!-- Logo -->
                 <div class="-mt-[4.5rem] md:-mt-[5.5rem] mb-5 md:mb-8 w-max relative" style="z-index: 1000;">
-                    <!-- Direct A Tag ensures native click routing without DOM blockage -->
                     <a href="{% url 'company_media_manage' company.slug %}"
                        class="w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[170px] md:h-[170px] rounded-[2rem] border-[6px] md:border-[8px] border-white bg-slate-100 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden flex items-center justify-center relative group cursor-pointer block hover:-translate-y-2 transition-transform duration-500"
                        style="pointer-events: auto !important;"
@@ -343,25 +341,40 @@
                 </div>
 
                 <!-- Mission Statement -->
-                <div class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative w-full">
+                <div id="mission-section" class="p-6 sm:p-8 md:p-10 bg-slate-50/50 rounded-[1.8rem] md:rounded-[2.5rem] border border-slate-200/80 text-left mt-8 md:mt-12 shadow-inner relative w-full">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center uppercase tracking-widest">{% trans "Mission Statement" %}</h3>
-                        <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5 inline pointer-events-none"></i> <span class="pointer-events-none">{% trans "Edit" %}</span>
+                        <h3 class="font-bold text-slate-800 text-[14px] md:text-[15px] flex items-center uppercase tracking-widest cursor-default">{% trans "Mission Statement" %}</h3>
+                        <!-- Direct link to edit page, no modal -->
+                        <a href="{% url 'company_edit' company.slug %}" id="mission-header-btn" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors relative z-50 cursor-pointer pointer-events-auto inline-flex items-center gap-1.5">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% if company.mission_stmt %}{% trans "Edit" %}{% else %}{% trans "Write Mission" %}{% endif %}</span>
                         </a>
                     </div>
 
-                    <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">
-                        {% trans "Define your company's core purpose and long-term vision. Whether you're building software, manufacturing goods, or providing local services, a clear mission helps partners and clients understand your driving force." %}
-                    </p>
-
-                    {% if company.mission_stmt %}
-                        <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-800 font-medium leading-[1.9] whitespace-pre-line bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm">{{ company.mission_stmt }}</p>
-                    {% else %}
-                        <a href="{% url 'company_edit' company.slug %}" class="group/empty w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-50 mt-2">
+                    {% if not company.mission_stmt %}
+                        <!-- Empty State: Direct link to edit page, no modal -->
+                        <p id="mission-empty-text" class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                            {% trans "Define your company's core purpose and long-term vision. Whether you're building software, manufacturing goods, or providing local services, a clear mission helps partners and clients understand your driving force." %}
+                        </p>
+                        <a href="{% url 'company_edit' company.slug %}" id="mission-empty-btn" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-all p-5 flex items-center gap-3 relative z-50 mt-2 text-left cursor-pointer pointer-events-auto">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-white group-hover/empty:text-emerald-600 group-hover/empty:shadow-sm transition-all pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 group-hover/empty:text-slate-800 text-[14px] transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
+                            <h4 class="font-bold text-slate-600 group-hover/empty:text-emerald-600 text-[14px] transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
                         </a>
+                    {% else %}
+                        <!-- Populated State: Display Text with Expand/Collapse -->
+                        <div id="mission-container" class="relative z-10 mt-3">
+                            <div id="mission-text-wrap"
+                                 class="relative overflow-hidden transition-all duration-300 ease-in-out bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm cursor-default"
+                                 style="max-height: 120px;">
+                                <p class="text-[14.5px] sm:text-[15.5px] md:text-[17px] text-slate-800 font-medium leading-[1.9] whitespace-pre-line">{{ company.mission_stmt }}</p>
+                                <div id="mission-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none" aria-hidden="true"></div>
+                            </div>
+                            <button id="mission-expand-btn" onclick="toggleMission()"
+                                    class="mt-3 text-emerald-600 font-extrabold text-[13.5px] hover:text-emerald-700 flex items-center gap-1.5 cursor-pointer relative z-50 pointer-events-auto transition-colors">
+                                <span id="mission-btn-text" class="pointer-events-none">{% trans "Read More" %}</span>
+                                <i id="mission-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300 pointer-events-none"></i>
+                            </button>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -387,7 +400,7 @@
                 </div>
 
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">
-                    {% trans "Showcase your core offerings, from digital products and consulting to physical goods and retail services. Highlighting what you sell helps potential clients and partners instantly understand your value proposition." %}
+                    {% trans "List the products or services your business offers, whether digital, physical, or consulting. You can add up to 20 items and include plenty of images to show clients and partners exactly what you do." %}
                 </p>
 
                 <div class="flex-1 mt-2">
@@ -426,7 +439,7 @@
                 </div>
 
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">
-                    {% trans "Document your company's growth timeline, key achievements, and major pivots. Tracking milestones like product launches, store openings, or funding rounds builds credibility across any industry." %}
+                    {% trans "Share your business journey. You can mention when you started, key achievements, major turning points, or milestones like product launches and new locations to help others understand your background." %}
                 </p>
 
                 <div class="flex-1 mt-2">
@@ -466,7 +479,7 @@
                 </div>
 
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 relative z-10">
-                    {% trans "Share your latest company news, product releases, or industry insights. Regular updates keep your network informed and establish your business as an active, authoritative voice in your market." %}
+                    {% trans "Share your latest business news, product updates, or insights. Posting regular updates keeps people in the loop and shows that your business is active." %}
                 </p>
 
                 <div class="flex-1 mt-2 relative z-10">
@@ -517,7 +530,7 @@
                 </div>
 
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">
-                    {% trans "Provide official communication channels so prospects, investors, and partners can easily reach you. Ensure your sales, support, or general inquiry emails and phone numbers are up to date." %}
+                    {% trans "Add your official phone numbers, email addresses, and location so people can reach your business directly for sales, support, or general inquiries." %}
                 </p>
 
                 <div class="flex-1 mt-2">
@@ -562,7 +575,7 @@
                 </div>
 
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">
-                    {% trans "Connect your company's digital footprint by linking official websites and social media profiles. A unified online presence helps verify your brand and makes networking frictionless." %}
+                    {% trans "Link your official website and social media profiles so people can easily find your business online and see your other profiles." %}
                 </p>
 
                 <div class="flex-1 mt-2">
@@ -721,7 +734,7 @@
 </main>
 
 <!-- ==============================================
-     MOBILE NAVIGATION DOCK (Identical 5 Buttons)
+     MOBILE NAVIGATION DOCK
      ============================================== -->
 {% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
@@ -769,7 +782,6 @@
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
 
-        <!-- NEW: Personal Profile Link inside Drawer -->
         <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Personal Profile" %}</button>
 
         <button onclick="window.scrollTo({top:0, behavior:'smooth'}); closeAllDrawers();" class="w-full min-h-[44px] text-left px-4 py-3 bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-700 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-emerald-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Company Hub" %}</button>
@@ -820,44 +832,38 @@
     /* ==============================================
        PEERLIST-STYLE UNIVERSAL LOADING BAR
        ============================================== */
-    document.addEventListener('DOMContentLoaded', () => {
+    let loaderInterval;
+
+    function startGlobalLoader() {
         const loader = document.getElementById('global-page-loader');
-        let loaderInterval;
+        if(!loader) return;
+        loader.style.opacity = '1';
+        loader.style.transitionDuration = '300ms';
+        loader.style.width = '15%';
 
-        function startGlobalLoader() {
-            if(!loader) return;
-            loader.style.opacity = '1';
-            loader.style.transitionDuration = '300ms';
-            loader.style.width = '15%';
-
-            let progress = 15;
-            clearInterval(loaderInterval);
-            loaderInterval = setInterval(() => {
-                progress += (Math.random() * 5 + 1); // jump by 1-6%
-                if(progress > 85) {
-                    progress = 85;
-                    clearInterval(loaderInterval); // hold at 85% until page naturally unloads
-                }
-                loader.style.transitionDuration = '200ms';
-                loader.style.width = progress + '%';
-            }, 300);
-        }
-
-        function stopGlobalLoader() {
-            if(!loader) return;
-            clearInterval(loaderInterval);
+        let progress = 15;
+        clearInterval(loaderInterval);
+        loaderInterval = setInterval(() => {
+            progress += (Math.random() * 5 + 1);
+            if(progress > 85) { progress = 85; clearInterval(loaderInterval); }
             loader.style.transitionDuration = '200ms';
-            loader.style.width = '100%';
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.transitionDuration = '0ms';
-                    loader.style.width = '0%';
-                }, 300);
-            }, 250);
-        }
+            loader.style.width = progress + '%';
+        }, 300);
+    }
 
-        // Intercept standard link clicks
+    function stopGlobalLoader() {
+        const loader = document.getElementById('global-page-loader');
+        if(!loader) return;
+        clearInterval(loaderInterval);
+        loader.style.transitionDuration = '200ms';
+        loader.style.width = '100%';
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.transitionDuration = '0ms'; loader.style.width = '0%'; }, 300);
+        }, 250);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link) {
@@ -867,8 +873,6 @@
                 const isHash = href && href.startsWith('#');
                 const isNewTab = target === '_blank';
                 const hasDownload = link.hasAttribute('download');
-
-                // Allow users to open in new tab with cmd/ctrl click without triggering loader
                 const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
 
                 if (href && !isJS && !isHash && !isNewTab && !hasDownload && !isModifierPressed) {
@@ -877,13 +881,11 @@
             }
         });
 
-        // Intercept form submissions
         document.body.addEventListener('submit', (e) => {
             const form = e.target.closest('form');
             if (form) {
                 const target = form.getAttribute('target');
                 if (target !== '_blank') {
-                    // Start loader only if form is valid
                     if (form.checkValidity()) {
                         startGlobalLoader();
                     }
@@ -891,16 +893,12 @@
             }
         });
 
-        // Reset loader if user uses the browser 'Back' button (bfcache hit)
-        window.addEventListener('pageshow', (e) => {
-            if (e.persisted) {
-                stopGlobalLoader();
-            }
-        });
+        window.addEventListener('pageshow', (e) => { if (e.persisted) { stopGlobalLoader(); } });
+        initMissionExpansion();
     });
 
     /* ==============================================
-       NAVIGATION & UI LOGIC (Matches Profile)
+       NAVIGATION & UI LOGIC
        ============================================== */
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
@@ -942,15 +940,14 @@
     }
 
     let shareTimeout;
-    function showToast(message, isInfo=false) {
+    function showToast(message, isError=false) {
         const toast = document.getElementById('share-toast'); const toastMsg = document.getElementById('toast-msg');
         if (toastMsg && message) toastMsg.textContent = message;
 
-        // Adjust icon color based on type
         const icon = toast.querySelector('i');
-        if(isInfo) {
+        if(isError) {
             icon.setAttribute('data-lucide', 'info');
-            icon.className = 'w-5 h-5 text-blue-400';
+            icon.className = 'w-5 h-5 text-rose-400';
         } else {
             icon.setAttribute('data-lucide', 'check-circle-2');
             icon.className = 'w-5 h-5 text-emerald-400';
@@ -986,12 +983,57 @@
             showToast('{% trans "Objective broadcasted successfully!" %}');
             btn.innerHTML = originalContent;
             if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof stopGlobalLoader === 'function') stopGlobalLoader();
         })
         .catch(err => {
-            showToast('{% trans "Network error. Try again." %}');
+            showToast('{% trans "Network error. Try again." %}', true);
             btn.innerHTML = originalContent;
             if (typeof lucide !== 'undefined') lucide.createIcons();
+            if (typeof stopGlobalLoader === 'function') stopGlobalLoader();
         });
+    }
+
+    /* ==============================================
+       MISSION READ MORE LOGIC
+       ============================================== */
+    function initMissionExpansion() {
+        const wrap = document.getElementById('mission-text-wrap');
+        const btn  = document.getElementById('mission-expand-btn');
+        const fade = document.getElementById('mission-fade');
+        if (wrap && btn && fade) {
+            if (wrap.scrollHeight <= 120) {
+                btn.style.display    = 'none';
+                fade.style.display   = 'none';
+                wrap.style.maxHeight = 'none';
+            } else {
+                btn.style.display    = 'flex';
+                fade.style.display   = 'block';
+                wrap.style.maxHeight = '120px';
+            }
+        }
+    }
+
+    function toggleMission() {
+        const wrap    = document.getElementById('mission-text-wrap');
+        const btnText = document.getElementById('mission-btn-text');
+        const btnIcon = document.getElementById('mission-btn-icon');
+        const fade    = document.getElementById('mission-fade');
+        if (!wrap) return;
+
+        const expanded = wrap.classList.contains('mission-expanded');
+        if (expanded) {
+            wrap.style.maxHeight    = '120px';
+            wrap.classList.remove('mission-expanded');
+            btnText.textContent     = '{% trans "Read More" %}';
+            btnIcon.style.transform = 'rotate(0deg)';
+            if (fade) fade.style.opacity = '1';
+        } else {
+            wrap.style.maxHeight    = wrap.scrollHeight + 'px';
+            wrap.classList.add('mission-expanded');
+            btnText.textContent     = '{% trans "Show less" %}';
+            btnIcon.style.transform = 'rotate(180deg)';
+            if (fade) fade.style.opacity = '0';
+        }
     }
 </script>
 {% endblock content %}
