@@ -48,7 +48,7 @@
                     {% trans "Updates" %}
                 </a>
 
-                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                <a href="#" onclick="showToast('{% trans "Opportunities are coming soon!" %}', true); return false;" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
                     <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Opportunities" %}
                 </a>
@@ -422,68 +422,6 @@
                 </div>
             </div>
 
-            <!-- NEW: 1.5 Opportunities & Hiring -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Opportunities & Hiring" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
-                        <a href="{% url 'opportunities:workspace_list' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage Pipeline' %}">
-                            <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Pipeline" %}</span>
-                        </a>
-                        <a href="{% url 'opportunities:create' %}" class="btn-add-solid flex-1 sm:flex-none !bg-[#4F46E5] hover:!bg-[#4338CA] shadow-indigo-500/30">
-                            <i data-lucide="briefcase" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Post Job" %}</span>
-                        </a>
-                    </div>
-                </div>
-
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 relative z-10">
-                    {% trans "Post job openings, gigs, and challenges. Track incoming applications and manage your hiring pipeline directly from your workspace." %}
-                </p>
-
-                <div class="flex-1 mt-2 relative z-10">
-                    {% if company_jobs %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {% for job in company_jobs|slice:":4" %}
-                            <div class="border border-slate-200/80 rounded-2xl p-5 bg-white hover:shadow-md hover:border-indigo-200 transition-all flex flex-col group/job relative cursor-default">
-                                <!-- Quick actions hidden on hover -->
-                                <div class="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover/job:opacity-100 transition-opacity">
-                                    <a href="{% url 'opportunities:update' job.slug %}" class="w-8 h-8 bg-white/95 border border-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-[#4F46E5] shadow-sm relative z-50"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
-                                </div>
-
-                                <div class="flex justify-between items-start mb-3 pr-10">
-                                    <h4 class="font-bold text-slate-900 text-[15px] leading-snug line-clamp-1">{{ job.title }}</h4>
-                                </div>
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest {% if job.status == 'ACTIVE' %}bg-emerald-50 text-emerald-600{% elif job.status == 'PENDING' %}bg-amber-50 text-amber-600{% else %}bg-slate-100 text-slate-500{% endif %}">
-                                        {{ job.get_status_display }}
-                                    </span>
-                                    <span class="text-[12px] font-medium text-slate-500"><i data-lucide="clock" class="w-3 h-3 inline-block -mt-0.5"></i> {{ job.created_at|timesince }} ago</span>
-                                </div>
-
-                                <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
-                                        <span class="text-[13px] font-bold text-slate-700">{{ job.applications_count|default:0 }} <span class="font-medium text-slate-500">Applicants</span></span>
-                                    </div>
-                                    <a href="{% url 'opportunities:applicant_board' job.slug %}" class="text-[12px] font-extrabold text-[#4F46E5] hover:text-indigo-700 transition-colors relative z-50 flex items-center gap-1">
-                                        View Board <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'opportunities:create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-indigo-300 transition-all p-8 flex flex-col items-center justify-center gap-3 relative z-20 text-center">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover/empty:bg-indigo-50 group-hover/empty:text-[#4F46E5] transition-all pointer-events-none"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
-                            <h4 class="font-bold text-slate-700 group-hover/empty:text-slate-900 text-[15px] transition-colors pointer-events-none">{% trans "No Opportunities Posted" %}</h4>
-                            <p class="text-slate-400 text-[13px] font-medium pointer-events-none">{% trans "Hire top talent by posting your first job or gig." %}</p>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
             <!-- 2. Business History (formerly Milestones) -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
@@ -740,6 +678,79 @@
 
         </div>
 
+        <!-- Opportunities & Hiring (MOVED, BLURRED, & COMING SOON OVERLAY) -->
+        <div class="bento-card p-6 md:p-8 flex flex-col relative bg-white/80 overflow-hidden mb-8 lg:mb-12">
+
+            <!-- MASSIVE COMING SOON OVERLAY -->
+            <div class="absolute inset-0 bg-white/50 backdrop-blur-[3px] z-[100] flex flex-col items-center justify-center pointer-events-auto rounded-[inherit]">
+                <div class="bg-indigo-600 text-white px-8 py-4 rounded-full font-black text-[18px] md:text-[22px] uppercase tracking-widest shadow-2xl flex items-center gap-3 transform hover:scale-105 transition-transform cursor-default ring-4 ring-indigo-600/20">
+                    <i data-lucide="lock" class="w-6 h-6 text-indigo-200"></i> {% trans "Coming Soon" %}
+                </div>
+            </div>
+
+            <!-- INNER CONTENT WRAPPED WITH BLUR & DISABLED POINTER EVENTS -->
+            <div class="opacity-50 grayscale blur-[3px] pointer-events-none select-none flex flex-col h-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                    <h3 class="font-heading text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none">{% trans "Opportunities & Hiring" %}</h3>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto relative z-20">
+                        <a href="{% url 'opportunities:workspace_list' %}" class="btn-manage-text shrink-0" title="{% trans 'Manage Pipeline' %}">
+                            <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Pipeline" %}</span>
+                        </a>
+                        <a href="{% url 'opportunities:create' %}" class="btn-add-solid flex-1 sm:flex-none !bg-[#4F46E5] hover:!bg-[#4338CA] shadow-indigo-500/30">
+                            <i data-lucide="briefcase" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Post Job" %}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 relative z-10">
+                    {% trans "Post job openings, gigs, and challenges. Track incoming applications and manage your hiring pipeline directly from your workspace." %}
+                </p>
+
+                <div class="flex-1 mt-2 relative z-10">
+                    {% if company_jobs %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {% for job in company_jobs|slice:":4" %}
+                            <div class="border border-slate-200/80 rounded-2xl p-5 bg-white hover:shadow-md hover:border-indigo-200 transition-all flex flex-col group/job relative cursor-default">
+                                <!-- Quick actions hidden on hover -->
+                                <div class="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover/job:opacity-100 transition-opacity">
+                                    <a href="{% url 'opportunities:update' job.slug %}" class="w-8 h-8 bg-white/95 border border-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-[#4F46E5] shadow-sm relative z-50"><i data-lucide="edit-2" class="w-4 h-4"></i></a>
+                                </div>
+
+                                <div class="flex justify-between items-start mb-3 pr-10">
+                                    <h4 class="font-bold text-slate-900 text-[15px] leading-snug line-clamp-1">{{ job.title }}</h4>
+                                </div>
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest {% if job.status == 'ACTIVE' %}bg-emerald-50 text-emerald-600{% elif job.status == 'PENDING' %}bg-amber-50 text-amber-600{% else %}bg-slate-100 text-slate-500{% endif %}">
+                                        {{ job.get_status_display }}
+                                    </span>
+                                    <span class="text-[12px] font-medium text-slate-500"><i data-lucide="clock" class="w-3 h-3 inline-block -mt-0.5"></i> {{ job.created_at|timesince }} ago</span>
+                                </div>
+
+                                <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
+                                        <span class="text-[13px] font-bold text-slate-700">{{ job.applications_count|default:0 }} <span class="font-medium text-slate-500">Applicants</span></span>
+                                    </div>
+                                    <a href="{% url 'opportunities:applicant_board' job.slug %}" class="text-[12px] font-extrabold text-[#4F46E5] hover:text-indigo-700 transition-colors relative z-50 flex items-center gap-1">
+                                        View Board <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'opportunities:create' %}" class="group/empty block w-full rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-indigo-300 transition-all p-8 flex flex-col items-center justify-center gap-3 relative z-20 text-center">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover/empty:bg-indigo-50 group-hover/empty:text-[#4F46E5] transition-all pointer-events-none"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
+                            <h4 class="font-bold text-slate-700 group-hover/empty:text-slate-900 text-[15px] transition-colors pointer-events-none">{% trans "No Opportunities Posted" %}</h4>
+                            <p class="text-slate-400 text-[13px] font-medium pointer-events-none">{% trans "Hire top talent by posting your first job or gig." %}</p>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
         <!-- 6. Core Team (Coming Soon) -->
         <div class="bento-card p-6 md:p-8 flex flex-col relative overflow-hidden mb-8 lg:mb-12">
 
@@ -818,7 +829,7 @@
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
 
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
+    <a href="#" onclick="showToast('{% trans "Opportunities are coming soon!" %}', true); return false;" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
     </a>

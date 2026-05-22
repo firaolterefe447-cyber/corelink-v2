@@ -298,7 +298,7 @@ class IdentityMediaView(LoginRequiredMixin, UpdateView):
     model = CustomUser
     form_class = IdentityMediaForm
     template_name = 'dashboard/shared/media_settings.html'
-    success_url = reverse_lazy('media_manager')
+    success_url = reverse_lazy('dashboard')
 
     def get_object(self):
         return self.request.user
@@ -332,7 +332,7 @@ def delete_media_asset(request, asset_type):
 
     user.save()
     messages.success(request, "Image removed successfully.")
-    return redirect('media_manager')
+    return redirect('dashboard')
 
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
