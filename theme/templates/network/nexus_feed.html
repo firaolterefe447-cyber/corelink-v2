@@ -150,7 +150,7 @@
         .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
     }
 
-    /* GLASS CARD — removed heavy shadow, translateY hover, excessive radius */
+    /* GLASS CARD */
     .glass-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
@@ -201,7 +201,7 @@
         <!-- HERO -->
         <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-6 mb-12 md:mb-16 relative z-10 anim-smooth-appear">
 
-            <!-- Avatar pill — removed hover:scale-105 -->
+            <!-- Avatar pill -->
             <div class="inline-flex items-center p-1.5 pr-6 bg-white/80 border border-slate-200/90 rounded-full shadow-sm mb-8 md:mb-10 cursor-default">
                 <div class="flex -space-x-3 mr-4">
                     {% for person in people %}
@@ -237,7 +237,7 @@
             {% endif %}
         </div>
 
-        <!-- SEARCH BAR — removed glow backdrop, kept focus ring -->
+        <!-- SEARCH BAR -->
         <div class="mb-14 md:mb-20 w-full flex justify-center relative z-20 px-2 anim-smooth-appear" style="animation-delay: 0.1s;">
             <form method="GET" class="w-full max-w-3xl relative">
                 <div class="relative flex items-center w-full p-2.5 bg-white/90 border border-slate-200/90 rounded-[1.5rem] shadow-sm focus-within:border-[#0A66C2]/50 focus-within:ring-4 focus-within:ring-[#0A66C2]/8 transition-all">
@@ -270,32 +270,44 @@
         <!-- PROFILE CARDS GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 relative z-10">
             {% for person in people %}
-                <div class="glass-card group">
+                <div class="glass-card group/card">
 
-                    <!-- Cover -->
-                    <div class="h-28 sm:h-32 md:h-36 w-full rounded-t-[1rem] md:rounded-t-[1.25rem] bg-slate-50 relative overflow-hidden border-b border-slate-200/50 shrink-0">
+                    <!-- COVER IMAGE (Optimized & Prettier) -->
+                    <div class="h-32 sm:h-36 md:h-44 w-full rounded-t-[1rem] md:rounded-t-[1.25rem] bg-slate-50 relative overflow-hidden shrink-0 group-hover/card:bg-slate-100 transition-colors">
                         {% if person.cover_image %}
-                            <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover" loading="lazy">
+                            <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.03]" loading="lazy">
                         {% else %}
                             <div class="w-full h-full bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 relative overflow-hidden flex items-center justify-center">
-                                <div class="absolute -top-12 -left-10 w-40 h-40 bg-blue-300/30 rounded-full blur-3xl"></div>
-                                <div class="absolute -bottom-16 -right-12 w-48 h-48 bg-slate-300/40 rounded-full blur-3xl"></div>
+                                <div class="absolute -top-12 -left-10 w-48 h-48 bg-blue-300/30 rounded-full blur-3xl"></div>
+                                <div class="absolute -bottom-16 -right-12 w-56 h-56 bg-slate-300/40 rounded-full blur-3xl"></div>
                             </div>
                         {% endif %}
+                        <!-- Soft Gradient Overlay at the bottom edge to make the Avatar's white border pop smoothly -->
+                        <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent"></div>
                     </div>
 
-                    <!-- PADDINGS ADJUSTED FOR MOBILE -->
+                    <!-- CARD BODY -->
                     <div class="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 flex-1 flex flex-col relative z-10">
 
-                        <!-- Avatar — Adjusted margins for mobile -->
-                        <div class="-mt-10 sm:-mt-12 md:-mt-14 mb-4 sm:mb-5 flex justify-between items-end">
-                            {% if person.avatar %}
-                                <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-[5.5rem] h-[5.5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full object-cover bg-white border-[4px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 relative z-20" loading="lazy">
-                            {% else %}
-                                <div class="w-[5.5rem] h-[5.5rem] sm:w-[6rem] sm:h-[6rem] md:w-[7rem] md:h-[7rem] rounded-full bg-blue-50 border-[4px] md:border-[6px] border-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center font-black text-[#0A66C2] text-3xl relative z-20">
-                                    {{ person.full_name|default:"U"|slice:":1" }}
-                                </div>
-                            {% endif %}
+                        <!-- PREMIUM AVATAR STYLING (LinkedIn Style - Perfect Overlap & Depth) -->
+                        <div class="-mt-[3.5rem] sm:-mt-[4rem] md:-mt-[4.5rem] mb-4 sm:mb-5 flex justify-between items-end relative z-20">
+
+                            <!-- Avatar Wrapper -->
+                            <div class="relative group/avatar cursor-pointer">
+                                <!-- Depth Shadow layered behind the avatar -->
+                                <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[8px] transform translate-y-1.5 scale-[0.9] transition-all duration-300 group-hover/avatar:scale-100 group-hover/avatar:translate-y-2 group-hover/avatar:bg-slate-900/20"></div>
+
+                                {% if person.avatar %}
+                                    <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}"
+                                         class="w-[7rem] h-[7rem] sm:w-[8rem] sm:h-[8rem] md:w-[9rem] md:h-[9rem] rounded-full object-cover bg-white border-[4px] sm:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 transition-transform duration-300 group-hover/avatar:scale-[1.02]"
+                                         loading="lazy">
+                                {% else %}
+                                    <div class="w-[7rem] h-[7rem] sm:w-[8rem] sm:h-[8rem] md:w-[9rem] md:h-[9rem] rounded-full bg-blue-50 border-[4px] sm:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 flex items-center justify-center font-black text-[#0A66C2] text-4xl transition-transform duration-300 group-hover/avatar:scale-[1.02]">
+                                        {{ person.full_name|default:"U"|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
                         </div>
 
                         <!-- Name / headline / meta -->
@@ -379,7 +391,7 @@
                 </div>
             {% endfor %}
 
-            <!-- PAYWALL CTA — removed orb hover animations, kept dark bg as-is -->
+            <!-- PAYWALL CTA -->
             {% if show_paywall and people|length == 20 %}
                 <div class="col-span-full mt-6 md:mt-8 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.25rem] p-10 md:p-16 flex flex-col items-center justify-center text-center relative overflow-hidden anim-smooth-appear" style="animation-delay: 0.4s;">
                     <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
