@@ -145,14 +145,14 @@
   .hero {
     position: relative; width: 100%; min-height: 100dvh;
     background: var(--void); overflow: hidden;
-    display: flex; flex-direction: column; justify-content: center;
-    padding-top: 100px; padding-bottom: 80px;
+    display: flex; flex-direction: column; justify-content: flex-end; /* Restored flex-end alignment */
+    padding-top: 140px; padding-bottom: 90px;
   }
 
   .hero-bg { position: absolute; inset: 0; z-index: 0; }
   .hero-bg img {
     width: 100%; height: 100%; object-fit: cover;
-    opacity: 0.35; /* Brightened for better aesthetics */
+    opacity: 0.35;
     filter: contrast(1.15) saturate(1.1);
     animation: hero-zoom 40s ease-in-out infinite alternate;
     will-change: transform;
@@ -164,7 +164,6 @@
   @keyframes glow-drift-1 { to { transform: translate(40px, 30px); } }
   @keyframes glow-drift-2 { to { transform: translate(-40px, -30px); } }
 
-  /* Smoother, richer veil */
   .hero-veil {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(2,0,10,0.95) 0%, rgba(2,0,10,0.4) 40%, rgba(2,0,10,0.1) 100%);
@@ -177,7 +176,7 @@
     position: relative; z-index: 10; width: 100%; max-width: 1500px;
     margin: 0 auto; padding: 0 40px;
   }
-  .hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 48px; align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 48px; align-items: flex-end; /* Restored flex-end alignment */ }
 
   .hero-h1 {
     font-family: var(--font-display); font-size: clamp(3rem, 7vw, 7rem);
@@ -191,6 +190,7 @@
     filter: drop-shadow(0 8px 20px rgba(10,102,194,0.25));
   }
 
+  .hero-right { padding-bottom: 12px; }
   .hero-desc {
     font-size: clamp(1rem, 1.5vw, 1.15rem); color: rgba(203,213,225,0.85);
     font-weight: 400; line-height: 1.7; margin-bottom: 36px; max-width: 480px; text-wrap: balance;
@@ -216,37 +216,41 @@
     border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-2xl); padding: 12px 20px 12px 14px; margin-top: 32px; width: fit-content;
     transition: border-color 0.3s;
   }
-  .avatar-stack { display: flex; }
+  .hero-avatars:hover { border-color: rgba(255,255,255,0.18); }
+  .avatar-stack { display: flex; align-items: center; }
   .avatar-item { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid rgba(10,13,20,0.9); margin-left: -12px; overflow: hidden; background: #1e293b; transition: transform 0.35s var(--ease-out), z-index 0s; }
   .avatar-item:first-child { margin-left: 0; }
   .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
   .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--white); }
-  .avatar-plus { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid rgba(10,13,20,0.9); margin-left: -12px; background: #EFF6FF; border-color: #BFDBFE; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: var(--blue); text-decoration: none; transition: transform 0.35s var(--ease-out); }
+  .avatar-plus {
+    width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid rgba(10,13,20,0.9);
+    margin-left: -12px; background: #EFF6FF; border-color: #BFDBFE;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900; color: var(--blue);
+    text-decoration: none; transition: transform 0.35s var(--ease-out);
+  }
   .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
   .hero-av-info { margin-left: 16px; }
   .hero-stars { display: flex; gap: 2px; color: #f59e0b; font-size: 14px; margin-bottom: 4px; }
   .hero-av-label { font-size: 13px; font-weight: 700; color: var(--white); white-space: nowrap; }
 
   /* ==========================================================================
-     5. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH & TEXTURE)
+     5. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
      ========================================================================== */
   .main-canvas {
     position: relative; z-index: 20;
     margin-top: 0;
     border-radius: 40px 40px 0 0;
     background-color: var(--surface);
-    /* Rich subtle glows to prevent "whiteboard" look */
     background-image:
         radial-gradient(circle at 10% 0%, rgba(10, 102, 194, 0.05) 0%, transparent 60%),
         radial-gradient(circle at 90% 40%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
-    /* Massive deep shadow dropping onto the dark hero below */
     box-shadow: 0 -30px 80px rgba(0, 0, 0, 0.6);
     padding: 100px 40px;
     overflow: hidden;
   }
 
-  /* Brings back the premium tech texture overlay */
   .bg-grid-cyber {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background-size: 40px 40px;
@@ -325,7 +329,6 @@
     position: relative; overflow: hidden;
   }
 
-  /* Animated top border line on hover */
   .cap-card::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
     background: linear-gradient(to right, var(--blue), var(--cyan));
@@ -399,20 +402,18 @@
     .cap-grid { grid-template-columns: 1fr 1fr; }
     .footer-main { grid-template-columns: 1fr 1fr; }
     .footer-brand, .footer-cta-card { grid-column: 1 / -1; }
-    .hero-grid { grid-template-columns: 1fr; gap: 32px; text-align: center; }
-    .hero-right { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-    .hero-desc { text-align: center; }
-    .hero-avatars { justify-content: center; }
+
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: flex-start; }
+    .hero-right { max-width: 600px; text-align: left; }
   }
 
   @media (max-width: 768px) {
     .nav { padding: 0 20px; }
     .nav-right .nav-divider, .nav-right .btn-nav-login, .nav-right .btn-nav-join { display: none; }
 
-    .hero { padding-top: 120px; padding-bottom: 56px; }
-    .hero-content { padding: 0 20px; }
+    .hero { padding-top: 120px; padding-bottom: 60px; justify-content: flex-end; }
+    .hero-content { padding: 0 20px; text-align: left; }
     .hero-h1 { font-size: clamp(2.8rem, 11vw, 4rem); line-height: 1; }
-    .hero-cta { display: inline-flex; width: auto; }
 
     .main-canvas { padding: 60px 20px; border-radius: 24px 24px 0 0; }
     .bento-card { padding: 32px 24px; }
@@ -423,8 +424,22 @@
   }
 
   @media (max-width: 540px) {
-    .hero-avatars { flex-direction: column; align-items: center; gap: 12px; padding: 16px 18px; }
-    .hero-av-info { margin-left: 0; text-align: center; }
+    .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
+
+    /* Perfect Fit for 10 Avatars on Mobile */
+    .hero-avatars {
+      flex-direction: column; align-items: flex-start;
+      gap: 12px; padding: 16px;
+      width: 100%; box-sizing: border-box;
+    }
+    .avatar-stack { display: flex; flex-wrap: nowrap; }
+    .avatar-item, .avatar-plus {
+      width: 32px; height: 32px; margin-left: -12px; border-width: 2px;
+    }
+    .avatar-item:first-child { margin-left: 0; }
+    .avatar-initials { font-size: 10px; }
+    .avatar-plus { font-size: 10px; }
+    .hero-av-info { margin-left: 0; text-align: left; }
   }
 </style>
 
@@ -545,7 +560,6 @@
       <!-- Right: Narrative + CTA + Avatars -->
       <div class="hero-right">
         <p class="hero-desc">
-          <!-- Text updated as requested -->
           <strong style="color: var(--white); font-weight: 600; font-size: 1.15em; display: block; margin-bottom: 8px;">
             {% trans "Ethiopia's Talent & Business Hub for Discovery and Innovation" %}
           </strong>
