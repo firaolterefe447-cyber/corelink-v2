@@ -148,7 +148,7 @@
     }
     .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
 
-    /* MODERN PROFILE BUTTONS (Fixed for perfect clicks) */
+    /* MODERN PROFILE BUTTONS */
     .btn-profile-primary, .btn-profile-secondary {
         height: 44px;
         padding: 0 1.25rem;
@@ -166,17 +166,16 @@
     }
 
     .btn-profile-primary {
-        background: linear-gradient(135deg, #0A66C2, #0856A8);
+        background: linear-gradient(135deg, #0952A5, #073E89);
         color: #ffffff;
         border: none;
-        box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
+        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
     }
     .btn-profile-primary:hover {
-        box-shadow: 0 6px 16px rgba(10, 102, 194, 0.35);
+        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
         transform: translateY(-2px);
     }
     .btn-profile-primary:active {
-        /* Removed translation/scaling completely so bounding box never moves. Used inset shadow instead. */
         transform: translateY(0);
         box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
     }
@@ -194,7 +193,6 @@
         transform: translateY(-2px);
     }
     .btn-profile-secondary:active {
-        /* Same fix: inset shadow instead of movement */
         transform: translateY(0);
         box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08);
         background: #f1f5f9;
@@ -235,7 +233,7 @@
     .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
     .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
 
-    /* AVATAR CIRCLE (Cleaned up, no hacks) */
+    /* AVATAR CIRCLE */
     .avatar-circle {
         display: flex; align-items: center; justify-content: center;
         width: 124px; height: 124px;
@@ -294,7 +292,7 @@
             <!-- Hero Body Container -->
             <div class="px-5 sm:px-8 md:px-12 pb-10 md:pb-14 flex flex-col relative z-20">
 
-                <!-- Avatar Link Block (Cleaned up DOM) -->
+                <!-- Avatar Link Block -->
                 <div class="relative -mt-[4rem] md:-mt-[5.5rem] mb-5 md:mb-7 z-30 inline-flex sm:ml-2 md:ml-4">
                     <a href="{% url 'media_manager' %}" class="avatar-circle group" title="{% trans 'Change profile photo' %}">
                         {% if user.avatar %}
@@ -351,7 +349,7 @@
                         </div>
                     </div>
 
-                    <!-- Actions Column (Wrapped to prevent any layout overlap) -->
+                    <!-- Actions Column -->
                     <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
                         {% if user.role == 'FOUNDER' %}
                             {% if company %}
@@ -398,7 +396,7 @@
 
                     {% if not portfolio.bio_narrative %}
                         <p class="text-[13px] text-slate-400 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                            {% trans "Write a professional summary detailing your background, focus, and future goals. A well-crafted story helps people understand not just what you do, but who you are." %}
+                            {% trans "Write a detailed professional bio that covers your background and summarizes who you are in depth." %}
                         </p>
                         <button onclick="openBioEditor()" class="w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer group/empty">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-blue-100 group-hover/empty:text-blue-600 transition-colors pointer-events-none">
@@ -428,7 +426,7 @@
             <!-- 1. Skills -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.skill_title|default:"Skills & Tools" }}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Skills & Expertise" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_skills' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -441,19 +439,19 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Highlight your core competencies, technical skills, and industry tools. A well-rounded skill set instantly communicates your capabilities to potential collaborators." %}
+                    {% trans "Add the professional and soft skills you have in your field. You can list up to 10 skills. Examples: Python, Project Management, Data Analysis, Communication" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if skills %}
                         <div class="flex flex-wrap gap-2.5">
-                            {% for skill in skills|slice:":12" %}
+                            {% for skill in skills|slice:":10" %}
                             <span class="px-4 py-2 bg-white border border-slate-200/80 rounded-xl text-[13.5px] font-bold text-slate-700 hover:border-[#0A66C2] hover:text-[#0A66C2] transition-colors cursor-default">{{ skill.name }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
                         <a href="{% url 'skill_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "List your strengths" %}</h4>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your first skill" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -462,7 +460,7 @@
             <!-- 2. Credentials -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.edu_title|default:"Credentials" }}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Education & Certificates" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_credentials' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -470,12 +468,12 @@
                         </a>
                         <a href="{% url 'credential_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add" %}</span>
+                            <span class="pointer-events-none">{% trans "Add Credential" %}</span>
                         </a>
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Showcase your educational background, degrees, and professional certifications. Verified credentials build trust and validate your expertise." %}
+                    {% trans "Add any certificates, credentials, degrees, or licenses you have earned. You can add as many as you want to build a strong profile" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if credentials %}
@@ -496,10 +494,10 @@
                 </div>
             </div>
 
-            <!-- 3. Daily Progress -->
+            <!-- 3. Growth Log -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Daily Progress" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Growth Log" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -512,7 +510,7 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Log your daily wins, learning milestones, and project updates. Consistent updates show your dedication to growth and keep your network engaged." %}
+                    {% trans "Document your daily work, learning progress, or project milestones. Sharing what you built or learned today creates a clear record of your daily efforts and dedication over time. Future employers, partners, and collaborators will look through this history to see your day-to-day consistency, progress, and real proof of work" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if growth_logs %}
@@ -531,16 +529,16 @@
                     {% else %}
                         <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Log your first daily win" %}</h4>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your first update" %}</h4>
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- 4. Portfolio & Work -->
+            <!-- 4. Featured Projects -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.proj_title|default:"Portfolio & Work" }}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Featured Projects" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_projects' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -553,7 +551,7 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Present your best projects, case studies, or published work. Visual proof of your capabilities is the strongest way to attract high-quality opportunities." %}
+                    {% trans "List all the projects you have worked on, from small to major ones. This includes any type of project in your field like case studies, technical projects, designs, research, etc. to show real examples of your practical experience" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if projects %}
@@ -585,7 +583,7 @@
             <!-- 5. Experience -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{{ role_text.exp_title|default:"Experience" }}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Experience" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_experiences' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -593,12 +591,12 @@
                         </a>
                         <a href="{% url 'experience_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add" %}</span>
+                            <span class="pointer-events-none">{% trans "Add Role" %}</span>
                         </a>
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Detail your professional journey, past roles, and key responsibilities. A clear work history demonstrates your career progression and practical knowledge." %}
+                    {% trans "List all of your work experience from the start of your professional journey until now, including internships, full-time roles, or part-time positions. This helps show your career progression and practical knowledge" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if experiences %}
@@ -620,52 +618,10 @@
                 </div>
             </div>
 
-            <!-- 6. Headlines -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Headlines" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Manage" %}</span>
-                        </a>
-                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Title" %}</span>
-                        </a>
-                    </div>
-                </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Add professional titles that summarize your expertise. A strong headline helps you stand out in the network and makes your profile easily discoverable by recruiters and partners." %}
-                </p>
-                <div class="flex-1 mt-2">
-                    {% if headlines %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {% for hl in headlines|slice:":3" %}
-                            <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 flex items-center gap-3 transition-colors cursor-default">
-                                <div class="w-2.5 h-2.5 rounded-full bg-[#0A66C2] shrink-0 {% if hl.is_primary %}opacity-100{% else %}opacity-30{% endif %}"></div>
-                                <div class="overflow-hidden">
-                                    <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ hl.title }}</h4>
-                                    {% if hl.is_primary %}
-                                        <span class="inline-block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em] mt-0.5">{% trans "Primary" %}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
             <!-- 7. Goal & Vision -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "My Goal & Vision" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Vision & Goals" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_vision_blocks' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -678,7 +634,7 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Share your professional aspirations and what drives you. Clearly articulating your vision helps align you with like-minded individuals and relevant organizations." %}
+                    {% trans "Share your vision and long-term goals. You can add up to 5 goals and choose to use this space privately to track your own focus, or make it public so other people understand what drives you and how they can align with you" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if vision_blocks %}
@@ -700,10 +656,10 @@
                 </div>
             </div>
 
-            <!-- 8. Industry Thoughts -->
+            <!-- 8. Insights & Articles -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Industry Thoughts" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Insights & Articles" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_essays' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -716,7 +672,7 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Publish your insights, analysis, or opinions on industry trends. Thought leadership establishes your authority and sparks meaningful conversations." %}
+                    {% trans "Document your insights, industry analysis, or regular field perspectives for other people and potential employers to see. Writing your knowledge consistently shows your deep understanding of your field" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if essays %}
@@ -743,10 +699,10 @@
                 </div>
             </div>
 
-            <!-- 9. Contact & Network -->
+            <!-- 9. Connect With Me -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Contact & Network" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Connect With Me" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_network' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -763,7 +719,7 @@
                     </div>
                 </div>
                 <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Provide the best ways for people to reach you and link your digital presence. A connected profile makes networking seamless." %}
+                    {% trans "Add your direct contact methods, social profiles, or personal website. You can include multiple ways for people to reach you, such as your email, phone, Telegram, or WhatsApp, along with links to any of your digital spaces like GitHub, LinkedIn, or anything else you use" %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if user.contact_methods.all or user.social_links.all %}
@@ -796,6 +752,48 @@
                 </div>
             </div>
 
+            <!-- 6. Professional Titles (Moved Below Contact & Network) -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Professional Titles" %}</h3>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
+                        </a>
+                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Headline" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                    {% trans "Add up to five professional titles that summarize your expertise. Clear, specific titles help recruiters, founders, and partners quickly understand your background and find you in the network." %}
+                </p>
+                <div class="flex-1 mt-2">
+                    {% if headlines %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {% for hl in headlines|slice:":3" %}
+                            <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 flex items-center gap-3 transition-colors cursor-default">
+                                <div class="w-2.5 h-2.5 rounded-full bg-[#0A66C2] shrink-0 {% if hl.is_primary %}opacity-100{% else %}opacity-30{% endif %}"></div>
+                                <div class="overflow-hidden">
+                                    <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ hl.title }}</h4>
+                                    {% if hl.is_primary %}
+                                        <span class="inline-block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em] mt-0.5">{% trans "Primary" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
 
         <!-- BOTTOM GRID -->
@@ -814,18 +812,25 @@
                         </div>
                     </div>
                     <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10 cursor-default">
-                        {% trans "Select your current objective to match your portfolio with relevant opportunities. This signals to recruiters, founders, and partners exactly how they can collaborate with you." %}
+                        {% trans "Select your current objective to match your portfolio with relevant opportunities. Regularly update what you are looking for so that we can connect you with exactly what you are looking for" %}
                     </p>
                     <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-5 relative z-50">
                         {% csrf_token %}
+                        <!-- Added base user form fields to ensure server validation passes cleanly -->
                         <div style="display:none;">
+                            <input type="hidden" name="username" value="{{ user.username|default_if_none:''|escape }}">
+                            <input type="hidden" name="email" value="{{ user.email|default_if_none:''|escape }}">
+                            <input type="hidden" name="phone_number" value="{{ user.phone_number|default_if_none:''|escape }}">
+                            <input type="hidden" name="first_name" value="{{ user.first_name|default_if_none:''|escape }}">
+                            <input type="hidden" name="last_name" value="{{ user.last_name|default_if_none:''|escape }}">
                             <input type="hidden" name="full_name" value="{{ user.full_name|default:user.phone_number|escape }}">
-                            <input type="hidden" name="location" value="{{ portfolio.location|default_if_none:'' }}">
-                            <input type="hidden" name="institution" value="{{ portfolio.institution|default_if_none:'' }}">
-                            <input type="hidden" name="field_of_interest" value="{{ portfolio.field_of_interest|default_if_none:'' }}">
+
+                            <input type="hidden" name="location" value="{{ portfolio.location|default_if_none:''|escape }}">
+                            <input type="hidden" name="institution" value="{{ portfolio.institution|default_if_none:''|escape }}">
+                            <input type="hidden" name="field_of_interest" value="{{ portfolio.field_of_interest|default_if_none:''|escape }}">
                             <input type="hidden" name="years_experience" value="{{ portfolio.years_experience|default_if_none:0 }}">
-                            <textarea name="bio_narrative">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
-                            <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:'' }}</textarea>
+                            <textarea name="bio_narrative">{{ portfolio.bio_narrative|default_if_none:''|escape }}</textarea>
+                            <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:''|escape }}</textarea>
                             <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
                         </div>
                         <div class="relative w-full group">
@@ -928,16 +933,22 @@
             <form id="bio-edit-form" method="POST" action="{% url 'profile_settings' %}" onsubmit="handleBioSubmit(event)" class="max-w-2xl mx-auto h-full flex flex-col">
                 {% csrf_token %}
                 <div style="display:none;">
+                    <input type="hidden" name="username" value="{{ user.username|default_if_none:''|escape }}">
+                    <input type="hidden" name="email" value="{{ user.email|default_if_none:''|escape }}">
+                    <input type="hidden" name="phone_number" value="{{ user.phone_number|default_if_none:''|escape }}">
+                    <input type="hidden" name="first_name" value="{{ user.first_name|default_if_none:''|escape }}">
+                    <input type="hidden" name="last_name" value="{{ user.last_name|default_if_none:''|escape }}">
                     <input type="hidden" name="full_name" value="{{ user.full_name|default:user.phone_number|escape }}">
-                    <input type="hidden" name="location" value="{{ portfolio.location|default_if_none:'' }}">
-                    <input type="hidden" name="institution" value="{{ portfolio.institution|default_if_none:'' }}">
-                    <input type="hidden" name="field_of_interest" value="{{ portfolio.field_of_interest|default_if_none:'' }}">
+
+                    <input type="hidden" name="location" value="{{ portfolio.location|default_if_none:''|escape }}">
+                    <input type="hidden" name="institution" value="{{ portfolio.institution|default_if_none:''|escape }}">
+                    <input type="hidden" name="field_of_interest" value="{{ portfolio.field_of_interest|default_if_none:''|escape }}">
                     <input type="hidden" name="years_experience" value="{{ portfolio.years_experience|default_if_none:0 }}">
-                    <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:'' }}</textarea>
+                    <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:''|escape }}</textarea>
                     <input type="hidden" name="current_search" value="{{ portfolio.current_search|default:'LEARNING' }}">
                     <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
                 </div>
-                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input flex-1 resize-none placeholder:text-slate-400 placeholder:font-normal" style="min-height: 200px;" placeholder="{% trans 'Write a professional summary detailing your background, focus, and future goals...' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
+                <textarea name="bio_narrative" id="bio_narrative_input" class="premium-input flex-1 resize-none placeholder:text-slate-400 placeholder:font-normal" style="min-height: 200px;" placeholder="{% trans 'Write a detailed professional bio that covers your background and summarizes who you are in depth...' %}">{{ portfolio.bio_narrative|default_if_none:'' }}</textarea>
             </form>
         </div>
     </div>
@@ -949,7 +960,6 @@
     <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
     <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
 
-        <!-- Workspace (My Updates) at Top -->
         <a href="/workspace/" class="w-full text-left px-4 py-3.5 bg-blue-50/70 hover:bg-blue-100/50 rounded-[0.85rem] text-[14.5px] font-bold text-[#0A66C2] flex items-center gap-3.5 transition-colors">
             <div class="w-8 h-8 rounded-full bg-white border border-blue-200/60 flex items-center justify-center shadow-sm">
                 <i data-lucide="bell-ring" class="w-4 h-4 text-[#0A66C2]"></i>
@@ -957,7 +967,6 @@
             {% trans "My Updates" %}
         </a>
 
-        <!-- Discover Teams (Unique Link) -->
         <a href="{% url 'team_nexus' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
             <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center shadow-sm">
                 <i data-lucide="users" class="w-4 h-4 text-slate-600"></i>
@@ -967,7 +976,6 @@
 
         <div class="h-px bg-slate-100 my-2 mx-2"></div>
 
-        <!-- Language Option -->
         <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
             <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center shadow-sm">
                 <i data-lucide="globe" class="w-4 h-4 text-slate-600"></i>
@@ -978,7 +986,6 @@
             </span>
         </button>
 
-        <!-- Logout -->
         <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3.5 transition-colors mt-1">
             <div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm">
                 <i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i>
@@ -1196,7 +1203,24 @@
                 body: new FormData(form),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
-            showToast(response.ok ? '{% trans "Objective updated!" %}' : '{% trans "Failed to update. Check your settings." %}');
+
+            if (response.redirected) {
+                showToast('{% trans "Objective updated!" %}');
+            } else if (response.ok) {
+                const responseText = await response.text();
+                try {
+                    const data = JSON.parse(responseText);
+                    if (data.success !== false) {
+                        showToast('{% trans "Objective updated!" %}');
+                    } else {
+                        showToast('{% trans "Failed to update objective." %}');
+                    }
+                } catch (e) {
+                    showToast('{% trans "Validation Error: Please update via Settings page." %}');
+                }
+            } else {
+                showToast('{% trans "Failed to update. Check your settings." %}');
+            }
         } catch {
             showToast('{% trans "Network error. Please try again." %}');
         } finally {
@@ -1218,14 +1242,29 @@
                 body: new FormData(form),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
-            if (response.ok) {
-                showToast('{% trans "Story updated!" %}');
-                const newText   = form.querySelector('[name="bio_narrative"]').value;
-                const container = document.querySelector('#bio-text-wrap p');
-                if (container) container.textContent = newText;
-                closeBioEditor();
-                initBioExpansion();
-                if (!container) setTimeout(() => window.location.reload(), 700);
+
+            if (response.redirected || response.ok) {
+                const responseText = await response.text();
+                let isSuccess = true;
+
+                try {
+                    const data = JSON.parse(responseText);
+                    isSuccess = (data.success !== false);
+                } catch(e) {
+                    if (!response.redirected) isSuccess = false;
+                }
+
+                if (isSuccess) {
+                    showToast('{% trans "Story updated!" %}');
+                    const newText = form.querySelector('[name="bio_narrative"]').value;
+                    const container = document.querySelector('#bio-text-wrap p');
+                    if (container) container.textContent = newText;
+                    closeBioEditor();
+                    initBioExpansion();
+                    if (!container) setTimeout(() => window.location.reload(), 700);
+                } else {
+                    alert('{% trans "Failed to save due to missing profile information. Please update via the main Settings page." %}');
+                }
             } else {
                 alert('{% trans "Failed to save. Please try again." %}');
             }
