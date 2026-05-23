@@ -13,7 +13,7 @@
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
 
         <div class="flex-1">
-            <!-- Typographic Logo (Clean, Lowercase, No Dot) -->
+            <!-- Typographic Logo -->
             <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
                 <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
                 <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
@@ -79,10 +79,10 @@
     </div>
 </aside>
 
-<!-- MOBILE TOP BAR (Sub-page layout with back button) -->
+<!-- MOBILE TOP BAR -->
 <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center gap-3 pb-0.5">
-        <a href="{% url 'profile_settings' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
+        <a href="{% url 'dashboard' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </a>
         <span class="font-black text-[18px] text-slate-900 tracking-tight">{% trans "Profile Media" %}</span>
@@ -127,23 +127,15 @@
     h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
     .app-canvas {
         width: 100%;
         position: relative;
         z-index: 10;
         padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-
-    @media (min-width: 768px) {
-        .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
-    }
-    @media (min-width: 1024px) {
-        .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
-    }
-    @media (min-width: 1280px) {
-        .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1600px; margin: 0 auto; }
-    }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1600px; margin: 0 auto; } }
 
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-in-up { animation: fadeInUp 0.6s var(--ease-magic) forwards; }
@@ -160,11 +152,36 @@
     }
     @media (min-width: 768px) { .premium-card { border-radius: 2.5rem; } }
 
-    /* Cropper UI Overrides */
-    .cropper-view-box { outline: 3px solid #0A66C2 !important; box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.8) !important; border-radius: 8px; }
-    .cropper-line { background-color: transparent !important; }
-    .cropper-point { background-color: #FFFFFF !important; border: 2px solid #0A66C2 !important; width: 14px !important; height: 14px !important; opacity: 1 !important; border-radius: 50% !important; }
-    .cropper-center { display: block !important; width: 8px !important; height: 8px !important; background-color: #0A66C2 !important; border-radius: 50% !important; border: 2px solid #FFF; opacity: 1 !important; }
+    /* =========================================
+       LINKEDIN-STYLE CROPPER UI
+       ========================================= */
+    .cropper-bg { background-image: none !important; background-color: #1e293b !important; }
+    .cropper-view-box {
+        outline: none !important;
+        border: 2px solid white !important;
+        box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.8) !important; /* Elegant dark overlay */
+        border-radius: 0;
+    }
+
+    /* Hide all default cropper grids and points - clean UI only */
+    .cropper-line, .cropper-point, .cropper-dashed, .cropper-center { display: none !important; }
+
+    /* Magic CSS class to make the avatar cropper circular */
+    .is-avatar-mode .cropper-view-box { border-radius: 50% !important; }
+
+    /* Custom Zoom Slider Styling - Thick & Touchable for Mobile */
+    input[type=range] {
+        -webkit-appearance: none; width: 100%; background: transparent; margin: 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+        background: #0A66C2; cursor: pointer; margin-top: -8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 5px; cursor: pointer; background: #E2E8F0; border-radius: 2.5px;
+    }
+    input[type=range]:focus { outline: none; }
 
     .drawer-closed { transform: translateY(100%); }
     .drawer-open { transform: translateY(0); box-shadow: 0 -24px 60px rgba(0,0,0,0.15); }
@@ -175,9 +192,9 @@
 
     <!-- DESKTOP BACK BUTTON -->
     <div class="hidden md:flex w-full mb-6">
-        <a href="{% url 'profile_settings' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-slate-50 transition-all active:scale-95 group w-max">
+        <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-slate-50 transition-all active:scale-95 group w-max">
             <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
-            {% trans "Back to Settings" %}
+            {% trans "Back to Dashboard" %}
         </a>
     </div>
 
@@ -203,45 +220,32 @@
 
     <form method="post" enctype="multipart/form-data" class="premium-card p-5 md:p-10 w-full mb-8 max-w-5xl mx-auto">
         {% csrf_token %}
-        <!-- Hidden Inputs for actual file processing -->
         <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden" onchange="openCropper(this, 'avatar')">
         <input type="file" name="cover_image" id="id_cover" accept="image/*" class="hidden" onchange="openCropper(this, 'cover')">
 
-        <!-- MODERN ASYMMETRIC GRID FOR PC -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 relative z-10 items-stretch">
 
-            <!-- ======================= -->
             <!-- PROFILE AVATAR SECTION -->
-            <!-- ======================= -->
-            <div class="lg:col-span-5 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 transition-all duration-300 hover:bg-white hover:shadow-[0_10px_30px_-10px_rgba(10,102,194,0.1)] hover:border-blue-100 h-full">
+            <div class="lg:col-span-5 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 hover:bg-white hover:border-blue-100 h-full transition-colors">
 
-                <!-- CLICKABLE IMAGE PREVIEW (1:1 SQUARE/CIRCLE ASPECT RATIO) -->
-                <!-- Mobile: 140x140px | PC: 240x240px -->
-                <label for="id_avatar" class="relative mb-5 w-[140px] h-[140px] md:w-60 md:h-60 z-10 mx-auto cursor-pointer block group/preview shrink-0">
-                    <div class="w-full h-full bg-white rounded-full md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-md group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
-
-                        <!-- Internal Canvas -->
-                        <div class="w-full h-full rounded-full md:rounded-[1.5rem] overflow-hidden relative {% if not user.avatar %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-100{% endif %}">
+                <!-- PERFECT CIRCLE PREVIEW BOX -->
+                <label for="id_avatar" class="relative mb-5 w-[140px] h-[140px] md:w-56 md:h-56 z-10 mx-auto cursor-pointer block group/preview shrink-0">
+                    <div class="w-full h-full bg-white rounded-full p-1.5 md:p-2 shadow-sm border border-slate-200 relative z-10 group-hover/preview:border-blue-300 transition-colors">
+                        <div class="w-full h-full rounded-full overflow-hidden relative {% if not user.avatar %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-100{% endif %}">
                             {% if user.avatar %}
-                                <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover" alt="{% trans 'Profile Picture' %}">
+                                <!-- object-cover ensures it fits beautifully inside the circle -->
+                                <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover">
                             {% else %}
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
                                     <i data-lucide="user" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
                                     <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
                                 </div>
                             {% endif %}
-
-                            <!-- Hover Overlay -->
                             <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
                                 <i data-lucide="camera" class="w-8 h-8 mb-1"></i>
-                                <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
+                                <span class="text-[12px] font-bold text-center px-2">{% trans "Click to Change" %}</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Floating Affordance Icon -->
-                    <div class="absolute bottom-0 right-0 md:-bottom-2 md:-right-2 bg-white text-[#0A66C2] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
-                        <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
                     </div>
                 </label>
 
@@ -250,13 +254,11 @@
                     {% trans "Please upload a clean professional image for your profile." %}
                 </p>
 
-                <!-- Avatar Actions -->
                 <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
                     <label for="id_avatar" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-[#0A66C2] text-white py-3.5 px-6 shadow-md hover:bg-[#004182] hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
                         <i data-lucide="camera" class="w-4.5 h-4.5"></i>
                         <span class="uppercase tracking-wide">{% trans "UPLOAD NEW PHOTO" %}</span>
                     </label>
-
                     {% if user.avatar %}
                     <button type="submit" formaction="{% url 'media_delete' 'avatar' %}" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE PHOTO" %}</span>
@@ -265,37 +267,24 @@
                 </div>
             </div>
 
-            <!-- ======================= -->
             <!-- BACKGROUND BANNER SECTION -->
-            <!-- ======================= -->
-            <div class="lg:col-span-7 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 transition-all duration-300 hover:bg-white hover:shadow-[0_10px_30px_-10px_rgba(15,23,42,0.1)] hover:border-slate-200 h-full">
-
-                <!-- CLICKABLE IMAGE PREVIEW -->
+            <div class="lg:col-span-7 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 hover:bg-white hover:border-slate-200 h-full transition-colors">
                 <label for="id_cover" class="relative mb-5 w-full max-w-[340px] md:max-w-full h-[120px] md:h-[240px] z-10 mx-auto flex items-center cursor-pointer block group/preview shrink-0">
-                    <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-md group-hover/preview:-translate-y-1 group-hover/preview:border-slate-400">
-
-                        <!-- Internal Canvas -->
+                    <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 shadow-sm border border-slate-200 relative z-10 group-hover/preview:border-slate-400 transition-colors">
                         <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not user.cover_image %}bg-slate-50 border-[2px] border-dashed border-slate-300{% else %}bg-slate-100{% endif %}">
                             {% if user.cover_image %}
-                                <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover" alt="{% trans 'Cover Banner' %}">
+                                <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover">
                             {% else %}
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
                                     <i data-lucide="image" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
                                     <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
                                 </div>
                             {% endif %}
-
-                            <!-- Hover Overlay -->
                             <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
                                 <i data-lucide="image" class="w-8 h-8 mb-1"></i>
                                 <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Floating Affordance Icon -->
-                    <div class="absolute -bottom-2 -right-2 bg-white text-slate-700 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-slate-800 group-hover/preview:text-white transition-colors">
-                        <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
                     </div>
                 </label>
 
@@ -304,13 +293,11 @@
                     {% trans "Upload a wide background banner that represents your professional space and personal branding." %}
                 </p>
 
-                <!-- Banner Actions -->
                 <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
                     <label for="id_cover" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-slate-800 text-white py-3.5 px-6 shadow-md hover:bg-slate-900 hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
                         <i data-lucide="image" class="w-4.5 h-4.5"></i>
                         <span class="uppercase tracking-wide">{% trans "UPLOAD NEW BANNER" %}</span>
                     </label>
-
                     {% if user.cover_image %}
                     <button type="submit" formaction="{% url 'media_delete' 'cover' %}" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE BANNER" %}</span>
@@ -373,43 +360,52 @@
 </div>
 
 <!-- ==============================================
-     SMOOTH PROFESSIONAL CROPPER MODAL (UNTOUCHED)
+     ELEGANT CENTERED CROPPER MODAL
      ============================================== -->
-<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
-    <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
+<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-3 md:p-6 opacity-0 transition-opacity duration-300">
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
 
-    <div class="relative w-full max-w-3xl h-full max-h-[750px] bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-slate-200 z-10 transform scale-95 transition-transform duration-300 overflow-hidden" id="cropper-content">
+    <!-- Container perfectly sized for phones and PC -->
+    <div class="relative w-full max-w-3xl h-[90dvh] md:h-full md:max-h-[750px] bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-slate-200 z-10 transform scale-95 transition-transform duration-300 overflow-hidden" id="cropper-content">
+
+        <!-- Header -->
         <div class="flex justify-between items-center px-4 py-4 md:px-6 md:py-5 border-b border-slate-100 bg-white shrink-0">
             <div>
                 <h3 class="text-[17px] md:text-[20px] font-extrabold text-slate-900 tracking-tight nav-heading" id="cropper-title">{% trans "Adjust Image" %}</h3>
-                <p class="text-[12px] md:text-[14px] font-medium text-slate-500 mt-0.5">{% trans "Drag to reposition or pinch to zoom" %}</p>
             </div>
             <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-11 h-11 flex items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-slate-500 hover:text-slate-900 border border-slate-200 active:scale-95">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
-        <div class="flex-1 w-full bg-slate-900/5 relative overflow-hidden min-h-0 flex items-center justify-center">
+        <!-- Canvas Area (Locked to touch actions so page doesn't scroll) -->
+        <div class="flex-1 w-full bg-[#1e293b] relative overflow-hidden min-h-0 flex items-center justify-center" id="cropper-container-wrapper" style="touch-action: none;">
             <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-500">
-            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10">
-                <i data-lucide="loader-2" class="w-8 h-8 text-[#0A66C2] animate-spin mb-3"></i>
-                <span class="text-[14px] font-semibold text-slate-600">{% trans "Preparing editor..." %}</span>
+            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-[#1e293b] z-10">
+                <i data-lucide="loader-2" class="w-8 h-8 text-white/50 animate-spin mb-3"></i>
             </div>
         </div>
 
-        <div class="bg-white border-t border-slate-100 p-4 md:p-6 shrink-0 z-20">
-            <div class="max-w-md mx-auto space-y-4">
-                <div class="flex justify-center gap-3">
-                    <button type="button" onclick="cropper.zoom(0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.zoom(-0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.rotate(90)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+        <!-- Footer & Controls (Centered) -->
+        <div class="bg-white border-t border-slate-100 p-5 md:p-6 shrink-0 z-20">
+            <div class="max-w-md mx-auto space-y-5">
+
+                <!-- Zoom Slider -->
+                <div class="flex items-center gap-3 px-2">
+                    <i data-lucide="image" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                    <div class="flex-1 py-2">
+                        <input type="range" id="zoom-slider" min="0" max="1" step="0.01" value="0" class="w-full block">
+                    </div>
+                    <i data-lucide="image" class="w-6 h-6 text-slate-500 shrink-0"></i>
                 </div>
+
+                <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-3 md:gap-4">
                     <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 py-3.5 md:py-4 transition-all active:scale-95 text-[14px] md:text-[15px]">
                         {% trans "Cancel" %}
                     </button>
                     <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-3.5 md:py-4 shadow-md transition-all active:scale-95 text-[14px] md:text-[15px]">
-                        <i data-lucide="check" class="w-4.5 h-4.5"></i> {% trans "Save" %}
+                        {% trans "Save" %}
                     </button>
                 </div>
             </div>
@@ -475,6 +471,8 @@
     let currentMode = 'avatar';
     let currentInput = null;
 
+    const zoomSlider = document.getElementById('zoom-slider');
+
     function openCropper(input, mode) {
         currentMode = mode;
         currentInput = input;
@@ -489,8 +487,16 @@
             const cropperImg = document.getElementById('cropper-image');
             const cropperTitle = document.getElementById('cropper-title');
             const loader = document.getElementById('cropper-loader');
+            const wrapper = document.getElementById('cropper-container-wrapper');
 
             cropperTitle.innerText = mode === 'avatar' ? "{% trans 'Adjust Profile Picture' %}" : "{% trans 'Adjust Background Banner' %}";
+
+            // Add class for circular overlay when cropping avatar
+            if (mode === 'avatar') {
+                wrapper.classList.add('is-avatar-mode');
+            } else {
+                wrapper.classList.remove('is-avatar-mode');
+            }
 
             cropperModal.classList.remove('hidden');
             cropperModal.classList.add('flex');
@@ -507,30 +513,52 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Set Avatar strictly to 1:1 aspect ratio (Square/Circle), Cover stays at 3:1
-                const ratio = mode === 'avatar' ? 1 : 3;
+                // Exact 1:1 Aspect ratio for Avatar so it fits a circle, 3.2:1 for Cover
+                const ratio = mode === 'avatar' ? 1 : 3.2;
+
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    viewMode: 1,
-                    dragMode: 'move',
-                    autoCropArea: 0.95,
-                    restore: false,
-                    guides: true,
-                    center: true,
-                    highlight: false,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
+                    viewMode: 1,           // Restrict crop box to not exceed canvas size
+                    dragMode: 'move',      // Move the image, not the box
+                    autoCropArea: 1,       // 1 = maximize crop box to take up 100% of available space
+                    cropBoxMovable: false, // Box stays perfectly centered
+                    cropBoxResizable: false, // Box cannot be resized by user
                     toggleDragModeOnDblclick: false,
-                    background: true,
+                    guides: false,         // Clean UI
+                    center: false,         // Clean UI
+                    highlight: false,      // Clean UI
+                    background: false,     // Disabled to use our own solid color
                     ready: function () {
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
+
+                        // Setup Zoom Slider bounds
+                        const canvasData = cropper.getCanvasData();
+                        const imageData = cropper.getImageData();
+
+                        // Calculate minimum zoom to fit the image inside container
+                        const minZoomRatio = canvasData.width / imageData.naturalWidth;
+
+                        zoomSlider.min = minZoomRatio;
+                        zoomSlider.max = minZoomRatio * 3; // Allow up to 3x zoom
+                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
+                        zoomSlider.value = imageData.width / imageData.naturalWidth;
+                    },
+                    zoom: function(e) {
+                        zoomSlider.value = e.detail.ratio;
                     }
                 });
-            }, 150);
+            }, 100);
         };
         reader.readAsDataURL(file);
     }
+
+    // Handle Slider Input
+    zoomSlider.addEventListener('input', function() {
+        if (cropper) {
+            cropper.zoomTo(parseFloat(this.value));
+        }
+    });
 
     function closeProCropper() {
         const cropperModal = document.getElementById('cropper-modal');
@@ -550,13 +578,6 @@
         }, 300);
     }
 
-    window.addEventListener('resize', () => {
-        if (cropper) {
-            clearTimeout(window.resizeTimer);
-            window.resizeTimer = setTimeout(() => { cropper.resize(); }, 100);
-        }
-    });
-
     document.getElementById('save-crop-btn').addEventListener('click', function() {
         if (!cropper) return;
         const btn = this;
@@ -564,13 +585,13 @@
 
         btn.disabled = true;
         btn.classList.add('opacity-80', 'cursor-not-allowed');
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline-block mr-2"></i>{% trans "Saving..." %}';
         lucide.createIcons();
 
-        // Size outputs - 1:1 Square for Avatar, 3:1 wide for Cover
+        // 1:1 Resolution Output for Avatar (800x800 high quality)
         const cropOptions = {
-            width: currentMode === 'avatar' ? 800 : 1200,
-            height: currentMode === 'avatar' ? 800 : 400,
+            width: currentMode === 'avatar' ? 800 : 1600,
+            height: currentMode === 'avatar' ? 800 : 500,
             imageSmoothingEnabled: true,
             imageSmoothingQuality: 'high'
         };

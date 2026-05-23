@@ -2,140 +2,155 @@
 {% load static i18n %}
 
 {% block navbar %}
-<!-- ==============================================
-     FLOATING BACK NAVIGATION
-     ============================================== -->
-<div class="hidden md:flex fixed top-8 left-0 right-0 z-[60] justify-center pointer-events-none px-4 transition-all duration-500 animate-fade-in-down">
-    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full">
-        <a href="javascript:history.back()" class="px-8 py-3 rounded-full text-[14px] font-bold bg-gradient-to-r from-[#0A66C2] to-[#0052a3] text-white shadow-md shadow-blue-600/20 hover:shadow-[0_12px_24px_-8px_rgba(10,102,194,0.5)] hover:-translate-y-0.5 transition-all flex items-center gap-2.5 active:scale-95">
-            <i data-lucide="arrow-left" class="w-4 h-4 opacity-90"></i>
-            <span>{% trans "Go Back" %}</span>
-        </a>
-    </div>
-</div>
-<div class="fixed top-5 left-4 z-50 flex items-center md:hidden pointer-events-none animate-fade-in-down pt-safe">
-    <a href="javascript:history.back()" class="pointer-events-auto px-5 py-3 bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] text-slate-700 hover:text-[#0A66C2] rounded-full flex items-center justify-center gap-2.5 transition-all active:scale-95 group font-bold text-[13px]">
-        <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
-        <span>{% trans "Back" %}</span>
-    </a>
-</div>
+<!-- Hide standard nav for a pure, immersive focus mode -->
+<style>
+    #mobile-navbar, .default-navbar { display: none !important; }
+</style>
 {% endblock navbar %}
 
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-    :root { --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif; }
-    body { font-family: var(--font-body); background-color: #F8FAFC; color: #0F172A; -webkit-font-smoothing: antialiased; }
-    h1, h2, h3, h4, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
-    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
-    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --blue: #0A66C2;
+    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .animate-fade-in-down { animation: fadeInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    /* MATCH MAIN PAGE BACKGROUND */
+    body {
+        font-family: var(--font-body);
+        background-color: #F0F4F8;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(219,234,254,0.5) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241,245,249,0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+    }
 
-    .premium-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.04); }
-    .bento-item { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 1.5rem; transition: all 0.3s ease; }
-    .bento-item:hover { border-color: #CBD5E1; box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.06); transform: translateY(-2px); }
+    h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 1rem; font-weight: 800; background: linear-gradient(135deg, #0A66C2, #0052a3); color: #FFFFFF; padding: 0.75rem 1.5rem; font-size: 14px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
-    .btn-primary:active { transform: scale(0.96); }
+    /* =========================================
+       PRIMARY BUTTON
+       ========================================= */
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #0952A5, #073E89);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
+        transition: all 0.2s ease-out;
+    }
+    .btn-primary-gradient:hover {
+        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
+        transform: translateY(-2px);
+    }
+    .btn-primary-gradient:active {
+        transform: translateY(0);
+        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.4s ease forwards; }
 </style>
 
-<div class="relative z-10 pt-28 md:pt-40 pb-safe px-4 md:px-8 min-h-screen max-w-[56rem] mx-auto animate-fade-in-up">
+<main class="w-full min-h-screen py-6 px-4 md:py-12 md:px-0 flex justify-center items-start anim-smooth-appear">
 
-    <!-- Title & Action Header -->
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-8 px-2">
-        <div>
-            <h1 class="text-3xl md:text-[2.2rem] font-black text-slate-900 tracking-tight leading-none mb-2">{% trans "Projects & Portfolio" %}</h1>
-            <p class="text-[14.5px] text-slate-500 font-medium">{% trans "Showcase your best work, case studies, and personal projects." %}</p>
+    <!-- CLEAN BENTO CARD CONTAINER -->
+    <div class="w-full max-w-[760px] bg-white/95 backdrop-blur-md rounded-[1.25rem] border border-slate-200/90 shadow-[0_1px_4px_rgba(15,23,42,0.06)] overflow-hidden relative z-10">
+
+        <!-- HEADER -->
+        <div class="px-5 sm:px-8 pt-6 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
+            <div class="flex items-center gap-4">
+                <!-- Back to Dashboard Button -->
+                <a href="{% url 'dashboard' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-500 rounded-[0.75rem] flex items-center justify-center transition-transform active:scale-95 shrink-0" title="{% trans 'Back to Dashboard' %}">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <div>
+                    <h1 class="font-heading text-[20px] md:text-[24px] font-extrabold text-slate-900 leading-tight">
+                        {% trans "Manage Projects" %}
+                    </h1>
+                    <p class="text-[13.5px] text-slate-500 font-medium mt-0.5">
+                        {% trans "Add, edit, or delete your featured projects and portfolio work." %}
+                    </p>
+                </div>
+            </div>
+
+            <a href="{% url 'project_create' %}" class="btn-primary-gradient px-5 py-2.5 rounded-[0.75rem] text-[13.5px] font-bold flex justify-center items-center gap-2 shrink-0 w-full sm:w-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>{% trans "Add Project" %}</span>
+            </a>
         </div>
-        <a href="{% url 'project_create' %}" class="btn-primary shrink-0 self-start sm:self-auto">
-            <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Project" %}
-        </a>
-    </div>
 
-    <!-- Main Container -->
-    <div class="premium-card p-4 sm:p-6 lg:p-8 relative overflow-hidden bg-slate-50/30">
-        <!-- Subtle decorative blob -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[60px] rounded-full pointer-events-none"></div>
-
-        <div class="flex flex-col gap-4 relative z-10">
+        <!-- LIST BODY -->
+        <div class="p-5 sm:p-8 bg-slate-50/30 flex flex-col gap-4">
             {% for proj in object_list %}
-                <div class="bento-item p-5 sm:p-6 flex flex-col sm:flex-row gap-5 justify-between items-start">
+                <div class="bg-white border border-slate-200/80 rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start gap-5 hover:border-slate-300 transition-colors">
 
-                    <div class="flex gap-4 sm:gap-5 flex-1 min-w-0 w-full">
-                        <!-- Visual Icon Indicator -->
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-[1rem] flex items-center justify-center border bg-blue-50 border-blue-100 text-[#0A66C2]">
-                            <i data-lucide="layers" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                    <div class="flex-1 min-w-0 w-full">
+                        <div class="flex flex-wrap items-center gap-3 mb-1.5">
+                            <h3 class="text-[16px] font-bold text-slate-800 leading-tight truncate">{{ proj.title }}</h3>
                         </div>
 
-                        <div class="flex-1 min-w-0">
-                            <!-- Title -->
-                            <h3 class="text-[1.15rem] font-black text-slate-800 leading-tight truncate">{{ proj.title }}</h3>
+                        {% if proj.role %}
+                            <p class="text-[13px] font-bold text-slate-400 mt-1">{% trans "Role:" %} <span class="text-slate-600">{{ proj.role }}</span></p>
+                        {% endif %}
 
-                            {% if proj.role %}
-                                <p class="text-[13px] font-bold text-slate-500 mt-1">{% trans "Role:" %} <span class="text-slate-700">{{ proj.role }}</span></p>
+                        {% if proj.description %}
+                            <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mt-2.5 max-w-2xl whitespace-pre-line">{{ proj.description }}</p>
+                        {% endif %}
+
+                        <!-- Metadata Pills -->
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-3.5">
+                            {% if proj.start_date %}
+                                <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 text-[11.5px] font-bold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 opacity-70"></i>
+                                    {{ proj.start_date|date:"Y" }}
+                                </span>
                             {% endif %}
 
-                            {% if proj.description %}
-                                <p class="text-[13.5px] font-medium text-slate-600 mt-3 leading-relaxed max-w-2xl whitespace-pre-line">{{ proj.description }}</p>
+                            {% if proj.url_link %}
+                                <a href="{{ proj.url_link }}" target="_blank" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-100 text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-colors text-[11.5px] font-bold">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    {% trans "View Project" %}
+                                </a>
                             {% endif %}
-
-                            <!-- Metadata Pills -->
-                            <div class="flex flex-wrap items-center gap-2 sm:gap-3 mt-4">
-                                {% if proj.start_date %}
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-[11px] font-bold">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5 opacity-70"></i>
-                                        {{ proj.start_date|date:"Y" }}
-                                    </span>
-                                {% endif %}
-
-                                {% if proj.url_link %}
-                                    <a href="{{ proj.url_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-colors text-[11px] font-bold">
-                                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                        {% trans "View Project" %}
-                                    </a>
-                                {% endif %}
-                            </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex items-center gap-2 shrink-0 self-end sm:self-start w-full sm:w-auto justify-end mt-4 sm:mt-0 pt-4 sm:pt-0 border-t border-slate-100 sm:border-0">
-                        <a href="{% url 'project_edit' proj.pk %}" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 rounded-[10px] shadow-sm transition-all" title="{% trans 'Edit' %}">
-                            <i data-lucide="edit-2" class="w-4.5 h-4.5"></i>
+                    <div class="flex items-center gap-2 shrink-0 border-t sm:border-t-0 pt-4 sm:pt-0 mt-2 sm:mt-0 border-slate-100 w-full sm:w-auto justify-end">
+                        <a href="{% url 'project_edit' proj.pk %}" class="w-9 h-9 flex items-center justify-center bg-slate-50 border border-slate-200 text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 rounded-lg transition-colors" title="{% trans 'Edit' %}">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
                         </a>
-                        <a href="{% url 'project_delete' proj.pk %}" class="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-[10px] shadow-sm transition-all" title="{% trans 'Delete' %}">
-                            <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+                        <a href="{% url 'project_delete' proj.pk %}" class="w-9 h-9 flex items-center justify-center bg-slate-50 border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-lg transition-colors" title="{% trans 'Delete' %}">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </a>
                     </div>
 
                 </div>
             {% empty %}
-                <!-- Highly Professional Empty State -->
-                <div class="py-12 sm:py-16 text-center flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[1.5rem] bg-white">
-                    <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[1rem] flex items-center justify-center mb-4 shadow-sm">
-                        <i data-lucide="layers" class="w-8 h-8 text-blue-500"></i>
+                <!-- Clean Empty State -->
+                <div class="py-12 sm:py-16 text-center flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-white">
+                    <div class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-400">
+                        <i data-lucide="folder-open" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-[1.1rem] font-black text-slate-800 mb-1.5">{% trans "No projects added yet" %}</h3>
-                    <p class="text-[13px] text-slate-500 font-medium mb-6 max-w-xs">
-                        {% trans "Show off your best work and personal projects to build a strong portfolio." %}
+                    <h3 class="text-[15px] font-bold text-slate-800 mb-1.5">{% trans "No projects added yet" %}</h3>
+                    <p class="text-[13.5px] text-slate-500 font-medium mb-6 max-w-md px-4">
+                        {% trans "List all the projects you have worked on, from small to major ones. This includes any type of project in your field like case studies, technical projects, designs, research, etc. to show real examples of your practical experience." %}
                     </p>
-                    <a href="{% url 'project_create' %}" class="btn-primary">
+                    <a href="{% url 'project_create' %}" class="btn-primary-gradient px-5 py-2.5 rounded-[0.75rem] text-[13.5px] font-bold flex justify-center items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add First Project" %}
                     </a>
                 </div>
             {% endfor %}
         </div>
-
     </div>
-</div>
+</main>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
