@@ -28,18 +28,22 @@
         </a>
 
         <!-- RIGHT: Actions -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 md:gap-4">
+            <button onclick="copyProfileLink()" aria-label="Share Profile" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none text-[11px] md:text-[12px] font-extrabold uppercase tracking-[0.1em] shadow-sm">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+                <span>Share</span>
+            </button>
+
             {% if request.user.is_authenticated %}
-                <button onclick="copyProfileLink()" aria-label="Share Profile" class="text-slate-500 hover:text-[#0A66C2] transition-colors transform active:scale-90 focus-visible:outline-none flex items-center justify-center w-9 h-9 bg-slate-50 border border-slate-200 rounded-full">
-                    <i data-lucide="share-2" class="w-[16px] h-[16px]"></i>
+                <button onclick="history.back(); return false;" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Back</span>
                 </button>
-                <a href="{% url 'dashboard' %}" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none">
-                    Dashboard
-                </a>
             {% else %}
                 <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] transition-colors focus-visible:outline-none rounded-sm">Log In</a>
-                <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none">
-                    Join
+                <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                    <span class="md:hidden">Join</span>
+                    <span class="hidden md:block">Join CoreLink Ethiopia</span>
                 </a>
             {% endif %}
         </div>
@@ -148,9 +152,8 @@
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
                         {% else %}
-                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-400">
-                                <i data-lucide="user" class="w-8 h-8 md:w-12 md:h-12 stroke-[1.5]"></i>
-                                <span class="text-[8px] md:text-[9px] font-black tracking-[0.1em] mt-1">NO PHOTO</span>
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-[#0A66C2]">
+                                <span class="text-4xl md:text-5xl font-serif-title font-bold">{{ user.display_name|slice:":1"|upper }}</span>
                             </div>
                         {% endif %}
                     </div>
