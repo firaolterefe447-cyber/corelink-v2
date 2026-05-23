@@ -212,7 +212,7 @@
   .hero-cta svg { position: relative; z-index: 1; opacity: 0.7; transition: transform 0.3s; }
   .hero-cta:hover svg { transform: translateX(4px); opacity: 1; }
 
-  /* 30-Avatar Wrap Grid CSS (The Massive Crowd Effect) */
+  /* Avatar Wrap Grid CSS (25 Desktop / 30 Mobile) */
   .hero-avatars {
     display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
     background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
@@ -224,14 +224,14 @@
 
   .avatar-stack {
     display: flex; flex-wrap: wrap;
-    gap: 12px 0; /* Clear vertical gap between rows */
-    padding-left: 10px; /* Exact offset for the negative margin */
+    gap: 12px 0;
+    padding-left: 10px;
   }
 
   .avatar-item {
     width: 42px; height: 42px; border-radius: 50%;
-    border: 2px solid #0f172a; /* Solid crisp border to separate them */
-    margin-left: -10px; /* Reduced overlap so faces are clearly visible */
+    border: 2px solid #0f172a;
+    margin-left: -10px;
     overflow: hidden; background: #1e293b;
     transition: transform 0.35s var(--ease-out), z-index 0s;
   }
@@ -251,6 +251,11 @@
   .hero-av-info { display: flex; align-items: center; gap: 8px; }
   .hero-stars { color: #f59e0b; font-size: 14px; }
   .hero-av-label { font-size: 13px; font-weight: 600; color: #cbd5e1; }
+
+  /* Hide avatars beyond 25 on Desktop */
+  @media (min-width: 769px) {
+    .hide-on-desktop { display: none !important; }
+  }
 
   /* ==========================================================================
      6. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
@@ -443,16 +448,15 @@
   @media (max-width: 540px) {
     .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
 
-    /* Perfect Fit for 30 Avatars on Mobile (Spaced, Distinct, Wrapped gracefully) */
     .hero-avatars {
       padding: 16px; width: 100%; box-sizing: border-box;
     }
     .avatar-stack {
-      padding-left: 8px; /* Matches negative margin */
-      gap: 10px 0; /* Creates distinct vertical spacing between rows */
+      padding-left: 8px;
+      gap: 10px 0;
     }
     .avatar-item, .avatar-plus {
-      width: 36px; height: 36px; margin-left: -8px; /* Less overlap, bigger faces */
+      width: 36px; height: 36px; margin-left: -8px;
     }
     .avatar-initials { font-size: 11px; }
   }
@@ -591,9 +595,9 @@
         {% if hero_avatars %}
         <div class="hero-avatars">
           <div class="avatar-stack">
-            <!-- Increased limit to 30 to show massive traffic/community -->
+            <!-- Fetching 30 avatars. Desktop hides the last 5 for a clean look, mobile shows all 30 forming a crowd -->
             {% for person in hero_avatars|slice:":30" %}
-            <div class="avatar-item">
+            <div class="avatar-item {% if forloop.counter > 25 %}hide-on-desktop{% endif %}">
               {% if person.avatar %}
                 <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
               {% else %}
@@ -607,8 +611,8 @@
           </div>
           <div class="hero-av-info">
             <div class="hero-stars">★★★★★</div>
-            <!-- Beautiful localized text instead of a hardcoded fake number -->
-            <div class="hero-av-label">{% trans "Ethiopia's talent, united at one table." %}</div>
+            <!-- Updated localized text representing an authentic community -->
+            <div class="hero-av-label">{% trans "Join verified Ethiopian professionals." %}</div>
           </div>
         </div>
         {% endif %}
