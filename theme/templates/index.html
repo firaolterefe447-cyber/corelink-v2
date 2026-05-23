@@ -180,8 +180,9 @@
   /* Zooming background image */
   .hero-bg { position: absolute; inset: 0; z-index: 0; }
   .hero-bg img {
-    width: 100%; height: 100%; object-fit: cover; opacity: 0.18;
-    filter: contrast(1.25) saturate(1.1);
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.3; /* Increased opacity to make the background brighter */
+    filter: contrast(1.15) saturate(1.1);
     animation: hero-zoom 40s ease-in-out infinite alternate;
     will-change: transform;
   }
@@ -193,8 +194,12 @@
   @keyframes glow-drift-1 { to { transform: translate(40px, 30px); } }
   @keyframes glow-drift-2 { to { transform: translate(-40px, -30px); } }
 
-  /* Gradient veil */
-  .hero-veil { position: absolute; inset: 0; background: linear-gradient(to top, var(--void) 0%, rgba(2,0,10,0.75) 50%, transparent 100%); z-index: 1; }
+  /* Gradient veil - Lightened up slightly for better visibility */
+  .hero-veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--void) 0%, rgba(2,0,10,0.4) 50%, rgba(2,0,10,0.1) 100%);
+    z-index: 1;
+  }
   .bg-noise { position: absolute; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.03; z-index: 2; }
 
   /* Hero content */
@@ -283,7 +288,7 @@
      ========================================================================== */
   .main-canvas {
     position: relative; z-index: 20;
-    margin-top: 0; /* Removed negative margin to prevent the "white mountain" overlapping the hero */
+    margin-top: 0; /* Ensures the white mountain doesn't show over the hero */
     border-radius: 40px 40px 0 0;
     background-color: #F4F7FA;
     background-image:
