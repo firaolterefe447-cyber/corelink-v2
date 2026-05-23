@@ -182,6 +182,13 @@
     .magic-input { width: 100%; background-color: transparent; border: none; outline: none; }
     .elite-avatar:nth-child(n+7) { display: none; }
 
+    /* Default Cover Placeholder Glow */
+    .cover-placeholder-01 {
+        display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
+    }
+    .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
+
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.5s var(--ease-magic) forwards; }
 
@@ -284,9 +291,9 @@
                         {% if person.cover_image %}
                             <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.05]" loading="lazy">
                         {% else %}
-                            <div class="w-full h-full bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 relative overflow-hidden flex items-center justify-center">
-                                <div class="absolute -top-12 -left-10 w-48 h-48 bg-blue-300/30 rounded-full blur-3xl"></div>
-                                <div class="absolute -bottom-16 -right-12 w-56 h-56 bg-slate-300/40 rounded-full blur-3xl"></div>
+                            <div class="cover-placeholder-01">
+                                <div class="glow-left"></div>
+                                <div class="glow-right"></div>
                             </div>
                         {% endif %}
                         <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/8 to-transparent"></div>
