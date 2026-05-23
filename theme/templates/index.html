@@ -39,7 +39,7 @@
     --ink-faint:     #64748b;
     --white:         #ffffff;
     --surface:       #f8fafc;
-    --border:        rgba(203, 213, 225, 0.6);
+    --border:        rgba(226, 232, 240, 0.8);
 
     /* Typography */
     --font-display:  'Instrument Serif', Georgia, serif;
@@ -270,7 +270,7 @@
   }
 
   /* ==========================================================================
-     6. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
+     6. MAIN CANVAS (PREMIUM TYPOGRAPHIC NARRATIVE)
      ========================================================================== */
   .main-canvas {
     position: relative; z-index: 20;
@@ -281,7 +281,7 @@
         radial-gradient(circle at 10% 0%, rgba(10, 102, 194, 0.05) 0%, transparent 60%),
         radial-gradient(circle at 90% 40%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
     box-shadow: 0 -30px 80px rgba(0, 0, 0, 0.6);
-    padding: 100px 40px;
+    padding: 120px 40px 0;
     overflow: hidden;
   }
 
@@ -297,25 +297,57 @@
 
   .content-wrapper { max-width: 1280px; margin: 0 auto; position: relative; z-index: 10; }
 
-  .sec-title { font-family: var(--font-display); font-size: clamp(2.4rem, 4.5vw, 4rem); font-weight: 400; font-style: italic; letter-spacing: -0.01em; line-height: 1.05; color: var(--ink); margin-bottom: 24px; text-wrap: balance; }
-  .sec-desc { font-size: clamp(1rem, 1.2vw, 1.15rem); color: var(--ink-muted); font-weight: 400; line-height: 1.8; text-wrap: balance; }
-
   /* ==========================================================================
-     7. NEW UI: STORY BENTO GRID (TYPOGRAPHY FOCUSED, NO ICONS)
+     7. NARRATIVE TYPOGRAPHY SECTION
      ========================================================================== */
-  .mission-block { text-align: center; max-width: 800px; margin: 0 auto 80px; }
+  .mission-block {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 100px;
+  }
+  .sec-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 32px;
+    text-wrap: balance;
+  }
+  .sec-desc-large {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .sec-desc-large p {
+    font-size: clamp(1.1rem, 1.3vw, 1.25rem);
+    color: var(--ink-muted);
+    font-weight: 400;
+    line-height: 1.8;
+    text-wrap: balance;
+  }
 
-  .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 120px; }
+  /* --- TYPOGRAPHY FOCUSED BENTO GRID --- */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 100px;
+  }
 
   .bento-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: var(--r-2xl); padding: 48px;
-    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0,0,0,0.02);
-    display: flex; flex-direction: column; justify-content: center;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-2xl);
+    padding: 56px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
     transition: transform 0.5s var(--ease-out), box-shadow 0.5s ease, border-color 0.5s ease;
-    position: relative; overflow: hidden;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .bento-card:hover {
     transform: translateY(-8px);
@@ -325,93 +357,239 @@
 
   .bento-card::before {
     content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
-    background: radial-gradient(circle, rgba(10,102,194,0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(10,102,194,0.05) 0%, transparent 70%);
     z-index: 1; pointer-events: none; transition: transform 0.8s var(--ease-out);
   }
   .bento-card:hover::before { transform: scale(1.3); }
-  .bento-card.alt::before { background: radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%); top: auto; bottom: -50%; left: -50%; right: auto; }
+  .bento-card.alt::before { background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 70%); top: auto; bottom: -50%; left: -50%; right: auto; }
 
-  .bento-title { font-family: var(--font-display); font-size: 2.5rem; font-style: italic; color: var(--ink); margin-bottom: 16px; line-height: 1.1; transition: color 0.3s; position: relative; z-index: 2; }
+  .bento-subtitle {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+    display: block;
+    position: relative; z-index: 2;
+  }
+  .bento-card.alt .bento-subtitle { color: var(--cyan); }
+
+  .bento-title {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 24px;
+    line-height: 1.1;
+    position: relative; z-index: 2;
+    transition: color 0.3s;
+  }
   .bento-card:hover .bento-title { color: var(--blue); }
-  .bento-text { font-size: 15.5px; color: var(--ink-muted); line-height: 1.8; font-weight: 400; position: relative; z-index: 2; }
+  .bento-card.alt:hover .bento-title { color: var(--cyan); }
 
-  .bento-list { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; list-style: none; position: relative; z-index: 2; border-top: 1px solid rgba(226, 232, 240, 0.6); padding-top: 24px; }
-  .bento-list li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 600; color: var(--ink); }
-  .bento-list li svg { color: var(--blue); }
+  .bento-text { position: relative; z-index: 2; margin-bottom: 40px; }
+  .bento-text p {
+    font-size: 15.5px;
+    color: var(--ink-muted);
+    line-height: 1.8;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .bento-text p:last-child { margin-bottom: 0; }
 
-  /* ==========================================================================
-     8. CAPABILITIES GRID (TYPOGRAPHY FOCUSED, NO ICONS)
-     ========================================================================== */
-  .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 80px; }
-  .cap-card {
-    background: #ffffff; border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: var(--r-xl); padding: 48px 40px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
-    transition: transform 0.5s var(--ease-out), box-shadow 0.5s, border-color 0.5s;
-    position: relative; overflow: hidden;
+  .bento-list {
+    margin-top: auto;
+    padding-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+    list-style: none;
+    position: relative; z-index: 2;
+  }
+  .bento-list::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 60px;
+    height: 2px; background: var(--blue); opacity: 0.3;
+  }
+  .bento-card.alt .bento-list::before { background: var(--cyan); }
+
+  .bento-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14.5px; font-weight: 600; color: var(--ink);
+  }
+  .bento-list li::before {
+    content: '—';
+    color: var(--blue);
+    font-weight: 300;
+  }
+  .bento-card.alt .bento-list li::before { color: var(--cyan); }
+
+  .bento-card.full-width {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 80px;
+    align-items: center;
+    padding: 72px;
+  }
+  .bento-card.full-width .bento-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .bento-card.full-width .bento-text { margin-bottom: 0; }
+
+  .large-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    list-style: none;
+    position: relative; z-index: 2;
+    padding-top: 0; margin-top: 0;
+  }
+  .large-list::before { display: none; }
+  .large-list li {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-style: italic;
+    color: var(--ink);
+    font-weight: 400;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 24px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  .large-list li:hover {
+    transform: translateX(10px);
+    color: var(--blue);
+  }
+  .large-list li:first-child { padding-top: 0; }
+  .large-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .large-list li::before { display: none; }
+  .large-list li span {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 800;
+    font-style: normal;
+    color: var(--blue);
+    letter-spacing: 0.1em;
+    opacity: 0.6;
   }
 
-  .cap-card::before {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-    background: linear-gradient(to right, var(--blue), var(--cyan));
-    transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease-out);
-  }
-
-  .cap-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(10, 102, 194, 0.1); border-color: rgba(10, 102, 194, 0.2); }
-  .cap-card:hover::before { transform: scaleX(1); }
-
-  .cap-title { font-family: var(--font-display); font-size: 2rem; font-style: italic; color: var(--ink); margin-bottom: 16px; line-height: 1.2; transition: color 0.3s; }
-  .cap-card:hover .cap-title { color: var(--blue); }
-  .cap-text { font-size: 15px; color: var(--ink-muted); line-height: 1.75; }
-
   /* ==========================================================================
-     9. FOOTER (SEAMLESS LIGHT INTEGRATION WITH MAIN CANVAS)
+     8. FOOTER (EDITORIAL GRID, NO COLOR CHANGE, PREMIUM DIEHS)
      ========================================================================== */
   .footer {
-    background: var(--surface); color: var(--ink); position: relative; z-index: 10;
-    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    background: var(--surface); /* Inherits identical light canvas color */
+    color: var(--ink);
+    position: relative;
+    z-index: 10;
   }
-  .footer-inner { max-width: 1200px; margin: 0 auto; }
-  .footer-main {
-    padding: 80px 40px 60px; display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 48px;
+  /* Elegant structured top border */
+  .footer-top-border {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px; background: var(--border);
   }
 
-  .footer-logo { font-family: var(--font-body); font-size: 24px; font-weight: 400; letter-spacing: -0.04em; color: var(--ink); text-decoration: none; display: inline-block; margin-bottom: 16px; transition: color 0.3s; }
+  .footer-inner {
+    max-width: 1400px; /* Wider to accommodate editorial grid */
+    margin: 0 auto;
+  }
+
+  /* Editorial Grid Design */
+  .footer-main {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Beautifully structured columns separated by fine lines */
+  .footer-col-wrap {
+    padding: 80px 40px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+  .footer-col-wrap:last-child {
+    border-right: none;
+  }
+  .footer-col-wrap.brand-col {
+    padding-left: 40px; /* Safe zone */
+  }
+
+  .footer-logo {
+    font-family: var(--font-body); font-size: 26px; font-weight: 400;
+    letter-spacing: -0.04em; color: var(--ink); text-decoration: none;
+    display: inline-block; margin-bottom: 20px; transition: color 0.3s;
+  }
   .footer-logo span { font-weight: 800; color: var(--blue); }
 
-  .footer-brand p { font-size: 14.5px; line-height: 1.7; max-width: 320px; color: var(--ink-muted); font-weight: 400; }
+  .footer-brand p {
+    font-size: 14.5px; line-height: 1.8; max-width: 340px;
+    color: var(--ink-muted); font-weight: 400;
+  }
 
-  .footer-col h4 { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); margin-bottom: 24px; }
-  .footer-col a { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--ink-muted); text-decoration: none; margin-bottom: 16px; transition: all 0.2s ease; }
-  .footer-col a:hover { color: var(--blue); transform: translateX(2px); }
+  .footer-col h4 {
+    font-family: var(--font-body); font-size: 12px; font-weight: 800;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink);
+    margin-bottom: 32px;
+  }
 
-  /* Clean Light CTA Card in Footer */
+  .footer-link {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 14.5px; font-weight: 500; color: var(--ink-muted);
+    text-decoration: none; margin-bottom: 20px; transition: all 0.2s ease;
+    line-height: 1.5;
+  }
+  .footer-link:hover { color: var(--blue); transform: translateX(2px); }
+  .footer-link svg { flex-shrink: 0; margin-top: 2px; opacity: 0.7; transition: opacity 0.2s ease; }
+  .footer-link:hover svg { opacity: 1; }
+
+  /* Refined Glass/Structural CTA Card in Footer */
   .footer-cta-card {
     background: #ffffff;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: 20px; padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 36px 32px;
     display: flex; flex-direction: column; align-items: flex-start;
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02);
+    margin-top: -12px; /* aligns perfectly visually */
   }
-  .footer-cta-card:hover { border-color: rgba(10, 102, 194, 0.2); box-shadow: 0 10px 30px rgba(10, 102, 194, 0.08); }
+  .footer-cta-card:hover {
+    border-color: rgba(10, 102, 194, 0.3);
+    box-shadow: 0 16px 40px rgba(10, 102, 194, 0.08);
+    transform: translateY(-4px);
+  }
 
-  .footer-cta-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; display: block; }
-  .footer-cta-card h4 { font-family: var(--font-body); font-size: 1.4rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; line-height: 1.3; letter-spacing: -0.02em; }
-  .footer-cta-card p { font-size: 14px; color: var(--ink-muted); margin-bottom: 28px; line-height: 1.6; }
+  .footer-cta-eyebrow {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--blue); margin-bottom: 16px; display: block;
+  }
+  .footer-cta-card h4 {
+    font-family: var(--font-display); font-size: 2.2rem; font-style: italic;
+    color: var(--ink); margin-bottom: 12px; line-height: 1.1; letter-spacing: -0.01em;
+  }
+  .footer-cta-card p {
+    font-size: 14.5px; color: var(--ink-muted); margin-bottom: 32px; line-height: 1.7;
+  }
 
   .footer-cta-btn {
     background: var(--ink); color: var(--white); text-decoration: none;
-    font-size: 13.5px; font-weight: 700; padding: 14px 28px; border-radius: var(--r-pill);
-    transition: all 0.3s ease;
+    font-size: 14px; font-weight: 700; padding: 16px 32px; border-radius: var(--r-pill);
+    transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
   }
-  .footer-cta-btn:hover { background: var(--blue); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 102, 194, 0.2); }
+  .footer-cta-btn:hover { background: var(--blue); box-shadow: 0 8px 24px rgba(10, 102, 194, 0.25); }
 
-  .footer-bottom { padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(226, 232, 240, 0.8); }
+  .footer-bottom {
+    padding: 32px 40px; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 16px;
+  }
   .footer-bottom p { font-size: 13px; color: var(--ink-faint); font-weight: 500; }
   .footer-bottom-links { display: flex; gap: 24px; }
-  .footer-bottom-links a { font-size: 13px; color: var(--ink-faint); text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+  .footer-bottom-links a {
+    font-size: 13px; color: var(--ink-faint); text-decoration: none;
+    font-weight: 500; transition: color 0.2s ease;
+  }
   .footer-bottom-links a:hover { color: var(--blue); }
 
   /* ==========================================================================
@@ -420,10 +598,16 @@
   @media (max-width: 1024px) {
     .nav-center { display: none; }
     .mobile-menu-btn { display: block; }
+
+    .bento-card.full-width { grid-template-columns: 1fr; gap: 48px; padding: 48px; }
     .bento-grid { grid-template-columns: 1fr; }
-    .cap-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Adapt Editorial Grid */
     .footer-main { grid-template-columns: 1fr 1fr; }
-    .footer-brand, .footer-cta-card { grid-column: 1 / -1; }
+    .footer-col-wrap { border-bottom: 1px solid var(--border); border-right: none; padding: 60px 40px; }
+    .footer-col-wrap:nth-child(even) { border-left: 1px solid var(--border); }
+    .footer-col-wrap.brand-col, .footer-col-wrap.cta-col { grid-column: 1 / -1; border-left: none; }
+    .footer-cta-card { margin-top: 0; }
 
     .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: flex-start; }
     .hero-right { max-width: 600px; text-align: left; }
@@ -437,27 +621,20 @@
     .hero-content { padding: 0 20px; text-align: left; }
     .hero-h1 { font-size: clamp(2.8rem, 11vw, 4rem); line-height: 1; }
 
-    .main-canvas { padding: 60px 20px; border-radius: 24px 24px 0 0; }
-    .bento-card { padding: 32px 24px; }
-    .cap-grid { grid-template-columns: 1fr; }
+    .main-canvas { padding: 60px 20px 0; border-radius: 24px 24px 0 0; }
+    .bento-card, .bento-card.full-width { padding: 32px 24px; }
+    .bento-list { grid-template-columns: 1fr; }
 
-    .footer-main { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 40px; }
+    .footer-main { grid-template-columns: 1fr; }
+    .footer-col-wrap { border-left: none !important; border-right: none; padding: 48px 24px; }
     .footer-bottom { padding: 24px; flex-direction: column; align-items: flex-start; }
   }
 
   @media (max-width: 540px) {
     .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
-
-    .hero-avatars {
-      padding: 16px; width: 100%; box-sizing: border-box;
-    }
-    .avatar-stack {
-      padding-left: 8px;
-      gap: 10px 0;
-    }
-    .avatar-item, .avatar-plus {
-      width: 36px; height: 36px; margin-left: -8px;
-    }
+    .hero-avatars { padding: 16px; width: 100%; box-sizing: border-box; }
+    .avatar-stack { padding-left: 8px; gap: 10px 0; }
+    .avatar-item, .avatar-plus { width: 36px; height: 36px; margin-left: -8px; }
     .avatar-initials { font-size: 11px; }
   }
 </style>
@@ -622,114 +799,156 @@
 </header>
 
 <!-- ============================================================
-     MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
+     MAIN CANVAS (PREMIUM TYPOGRAPHIC NARRATIVE)
      ============================================================ -->
 <main class="main-canvas" id="main-content">
   <div class="bg-grid-cyber"></div>
 
   <div class="content-wrapper">
 
-    <!-- Section 1: Core Purpose (Text Updated) -->
+    <!-- Narrative Intro -->
     <div class="mission-block reveal">
       <h2 class="sec-title">{% blocktrans %}Built to Unite Ethiopia's <br> Professional Family.{% endblocktrans %}</h2>
-      <p class="sec-desc">
-        {% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant community. We are not another job board. We are a space for innovation, creating real opportunities for our country's emerging talent." %}
-      </p>
+      <div class="sec-desc-large">
+        <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. We are a space for innovation, creating real opportunities for our country's emerging talent and connecting them to the exact places they need to grow." %}</p>
+        <p>{% trans "We are the living network that Ethiopia has been waiting for. We provide powerful digital visibility and optimization for Ethiopian-based businesses and companies, ensuring that every connection made is a step forward for the nation as a whole." %}</p>
+      </div>
     </div>
 
-    <!-- Section 2: The Ecosystem Bento Grid (Clean Typography, No Icons) -->
+    <!-- The 3-Part Typography Bento Grid -->
     <div class="bento-grid reveal-stagger">
 
-      <!-- Card: For Talent -->
-      <div class="bento-card">
-        <h3 class="bento-title">{% trans "For Talent" %}</h3>
-        <p class="bento-text">
-          {% trans "Ethiopian talent deserves a professional identity that goes beyond a PDF. Build a deep profile, link your proof-of-work, and let local companies and international opportunities find you automatically." %}
-        </p>
-        <ul class="bento-list">
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Deep Portfolios & Proof of Work" %}</li>
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Get discovered locally & globally" %}</li>
+      <!-- Card 1: Meet Your Match (Full Width) -->
+      <div class="bento-card full-width">
+        <div class="bento-content">
+          <span class="bento-subtitle">{% trans "Network" %}</span>
+          <h3 class="bento-title">{% trans "Meet Your Match." %}</h3>
+          <div class="bento-text">
+            <p>{% trans "Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
+          </div>
+        </div>
+        <ul class="large-list">
+          <li><span>01.</span> {% trans "Co-founders" %}</li>
+          <li><span>02.</span> {% trans "Peers & Mentors" %}</li>
+          <li><span>03.</span> {% trans "Job Opportunities" %}</li>
+          <li><span>04.</span> {% trans "Collaborators" %}</li>
         </ul>
       </div>
 
-      <!-- Card: For Business -->
+      <!-- Card 2: For Business (Half) -->
       <div class="bento-card alt">
-        <h3 class="bento-title">{% trans "For Business" %}</h3>
-        <p class="bento-text">
-          {% trans "Your business, discoverable by the world. List services, tell your story, and hire exactly the verified professional your team needs, right when you need them." %}
-        </p>
+        <span class="bento-subtitle">{% trans "For Business" %}</span>
+        <h3 class="bento-title">{% trans "Your Business, Discoverable by the World." %}</h3>
+        <div class="bento-text">
+          <p>{% trans "Ethiopian startups, companies, businesses, and organizations build their profile on CoreLink by listing their services, telling their story, and making themselves discoverable, by both local and international clients." %}</p>
+          <p>{% trans "No more relying on scattered word of mouth. Your digital storefront is live, searchable, and always working. Clients can browse your service catalog, read about your expertise, and contact you directly, from anywhere in the world." %}</p>
+          <p>{% trans "And when it is time to grow your team, you can instantly search our verified talent pool and find the exact professional your business needs, in your city, at the right moment." %}</p>
+        </div>
         <ul class="bento-list">
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Live Service Catalog" %}</li>
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Search & Hire Verified Talent" %}</li>
+          <li>{% trans "Business Profile" %}</li>
+          <li>{% trans "Service Catalog" %}</li>
+          <li>{% trans "Local & Global Reach" %}</li>
+          <li>{% trans "Hire Verified Talent" %}</li>
         </ul>
       </div>
 
-    </div>
-
-    <!-- Section 3: Engineered for Excellence (Clean Typography, No Icons) -->
-    <div style="text-align: center; margin-bottom: 60px;" class="reveal">
-      <h2 class="sec-title">{% blocktrans %}Engineered for <em class="text-magic">Excellence.</em>{% endblocktrans %}</h2>
-    </div>
-
-    <div class="cap-grid reveal-stagger">
-      <div class="cap-card">
-        <h3 class="cap-title">{% trans "Build Your Identity" %}</h3>
-        <p class="cap-text">{% trans "Designed for every industry — tech, design, finance, arts. Create an identity that showcases your true expertise." %}</p>
+      <!-- Card 3: For Talent (Half) -->
+      <div class="bento-card">
+        <span class="bento-subtitle">{% trans "For Talent" %}</span>
+        <h3 class="bento-title">{% trans "Your Proof of Work, Seen by the Right People." %}</h3>
+        <div class="bento-text">
+          <p>{% trans "Ethiopian talent deserves a professional identity that goes beyond a PDF. CoreLink gives professionals, developers, designers, researchers, strategists, the space to build a deep profile that shows the world exactly what they are capable of." %}</p>
+          <p>{% trans "Link your GitHub projects, upload design portfolios, publish your research, and let your proof of work speak louder than any resume ever could." %}</p>
+          <p>{% trans "With that profile live on CoreLink, you are no longer waiting. Local companies find you. International opportunities reach you. Whether you are looking for full-time roles, freelance work, or meaningful collaborations, our system connects your skills to the right doors, automatically." %}</p>
+        </div>
+        <ul class="bento-list">
+          <li>{% trans "Deep Portfolio" %}</li>
+          <li>{% trans "Proof of Work" %}</li>
+          <li>{% trans "Local Opportunities" %}</li>
+          <li>{% trans "International Reach" %}</li>
+        </ul>
       </div>
 
-      <div class="cap-card">
-        <h3 class="cap-title">{% trans "Seamless Connections" %}</h3>
-        <p class="cap-text">{% trans "Discover like-minded professionals. Find the perfect co-founder and collaborate to bring your vision to life." %}</p>
-      </div>
-
-      <div class="cap-card">
-        <h3 class="cap-title">{% trans "Verified Trust" %}</h3>
-        <p class="cap-text">{% trans "Earn verification through your proof-of-work. Instantly signal your value to collaborators across the ecosystem." %}</p>
-      </div>
     </div>
 
   </div>
 </main>
 
 <!-- ============================================================
-     FOOTER — SEAMLESS LIGHT INTEGRATION
+     FOOTER — HIGH-END EDITORIAL GRID (SAME LIGHT COLOR)
      ============================================================ -->
 <footer class="footer">
+  <div class="footer-top-border"></div>
   <div class="footer-inner">
     <div class="footer-main">
-      <div class="footer-brand">
+
+      <!-- Column 1: Brand -->
+      <div class="footer-col-wrap brand-col">
         <a href="/" class="footer-logo">core<span>Link</span></a>
-        <p>{% trans "The definitive infrastructure uniting Ethiopian talent with boundless local and global opportunity." %}</p>
+        <div class="footer-brand">
+          <p>{% trans "The definitive infrastructure uniting Ethiopian talent with boundless local and global opportunity." %}</p>
+        </div>
       </div>
 
-      <div class="footer-col">
-        <h4>{% trans "Platform" %}</h4>
-        <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
-        <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
-        <a href="{% url 'login' %}">{% trans "Log In" %}</a>
+      <!-- Column 2: Platform -->
+      <div class="footer-col-wrap">
+        <div class="footer-col">
+          <h4>{% trans "Platform" %}</h4>
+          <a href="{% url 'nexus_feed' %}" class="footer-link">
+            {% trans "Discover Talent" %}
+          </a>
+          <a href="{% url 'company_nexus' %}" class="footer-link">
+            {% trans "Discover Companies" %}
+          </a>
+          <a href="{% url 'login' %}" class="footer-link">
+            {% trans "Log In" %}
+          </a>
+        </div>
       </div>
 
-      <div class="footer-col">
-        <h4>{% trans "Contact" %}</h4>
-        <a href="mailto:corelinkethiopia@gmail.com">corelinkethiopia@gmail.com</a>
-        <a href="https://t.me/corelinkteam" target="_blank" rel="noopener">
-          @corelinkteam
-        </a>
-        <a href="https://t.me/CoreLinkEthiopia" target="_blank" rel="noopener">
-          {% trans "Telegram Channel" %}
-        </a>
+      <!-- Column 3: Contact (Updated with new info) -->
+      <div class="footer-col-wrap">
+        <div class="footer-col">
+          <h4>{% trans "Contact" %}</h4>
+
+          <a href="#" class="footer-link" style="pointer-events: none;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>{% trans "Arat Kilo, Addis Ababa," %}<br>{% trans "Ethiopia" %}</span>
+          </a>
+
+          <a href="tel:+251963062789" class="footer-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            <span>+251 96 306 2789</span>
+          </a>
+
+          <a href="mailto:corelinkethiopia@gmail.com" class="footer-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span>corelinkethiopia@gmail.com</span>
+          </a>
+
+          <a href="https://t.me/corelinkteam" target="_blank" rel="noopener" class="footer-link">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+            <span>@corelinkteam</span>
+          </a>
+        </div>
       </div>
 
-      <!-- Clean Light CTA Card in Footer -->
-      <div class="footer-cta-card">
-        <span class="footer-cta-eyebrow">{% trans "Join the Movement" %}</span>
-        <h4>{% trans "Shape the Future." %}</h4>
-        <p>{% trans "Join the community uniting talent with opportunity across Ethiopia." %}</p>
-        <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">{% trans "Get Started" %} →</a>
+      <!-- Column 4: Elegant CTA Box -->
+      <div class="footer-col-wrap cta-col">
+        <div class="footer-cta-card">
+          <span class="footer-cta-eyebrow">{% trans "Initiate" %}</span>
+          <h4>{% trans "Shape the Future." %}</h4>
+          <p>{% trans "Join the community uniting talent with opportunity." %}</p>
+          <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">
+            {% trans "Get Started" %}
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7-7 7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
 
     </div>
 
+    <!-- Footer Bottom -->
     <div class="footer-bottom">
       <p>{% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}</p>
       <div class="footer-bottom-links">
