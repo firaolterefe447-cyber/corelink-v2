@@ -238,7 +238,7 @@
   .hero-cta svg { position: relative; z-index: 1; opacity: 0.7; transition: transform 0.3s; }
   .hero-cta:hover svg { transform: translateX(4px); opacity: 1; }
 
-  /* 25-Avatar Wrap Grid CSS (The Crowd Effect) */
+  /* 25-Avatar Wrap Grid CSS (Optimized Space & Visibility) */
   .hero-avatars {
     display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
     background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
@@ -249,31 +249,31 @@
   .hero-avatars:hover { border-color: rgba(255,255,255,0.18); }
 
   .avatar-stack {
-    display: flex; flex-wrap: wrap; row-gap: 10px;
-    /* Padding left offsets the negative margin so the first item in any row doesn't break out */
-    padding-left: 14px;
+    display: flex; flex-wrap: wrap;
+    gap: 12px 0; /* Clear vertical gap between rows */
+    padding-left: 10px; /* Exact offset for the negative margin */
   }
 
   .avatar-item {
-    width: 38px; height: 38px; border-radius: 50%;
-    border: 2px solid rgba(10,13,20,0.9);
-    margin-left: -14px; /* Applied to ALL items so wrapped rows stay perfect */
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid #0f172a; /* Solid crisp border to separate them */
+    margin-left: -10px; /* Reduced overlap so faces are clearly visible */
     overflow: hidden; background: #1e293b;
     transition: transform 0.35s var(--ease-out), z-index 0s;
   }
-  .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
+  .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
   .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--white); }
 
   .avatar-plus {
-    width: 38px; height: 38px; border-radius: 50%;
-    border: 2px solid rgba(10,13,20,0.9);
-    margin-left: -14px; background: #EFF6FF; border-color: #BFDBFE;
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid #0f172a;
+    margin-left: -10px; background: var(--surface); border-color: var(--border);
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 900; color: var(--blue);
     text-decoration: none; transition: transform 0.35s var(--ease-out);
   }
-  .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
+  .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
 
   .hero-av-info { display: flex; align-items: center; gap: 8px; }
   .hero-stars { color: #f59e0b; font-size: 14px; }
@@ -470,18 +470,19 @@
   @media (max-width: 540px) {
     .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
 
-    /* Perfect Fit for 25 Avatars on Mobile */
+    /* Perfect Fit for 25 Avatars on Mobile (Spaced, Distinct, Wrapped gracefully) */
     .hero-avatars {
       padding: 16px; width: 100%; box-sizing: border-box;
     }
     .avatar-stack {
-      padding-left: 10px; row-gap: 8px;
+      padding-left: 8px; /* Matches negative margin */
+      gap: 8px 0; /* Creates vertical spacing between rows */
     }
     .avatar-item, .avatar-plus {
-      width: 32px; height: 32px; margin-left: -10px;
+      width: 36px; height: 36px; margin-left: -8px; /* Less overlap, bigger faces */
     }
-    .avatar-initials { font-size: 10px; }
-    .avatar-plus { font-size: 10px; }
+    .avatar-initials { font-size: 11px; }
+    .avatar-plus { font-size: 11px; }
   }
 </style>
 
@@ -618,7 +619,7 @@
         {% if hero_avatars %}
         <div class="hero-avatars">
           <div class="avatar-stack">
-            <!-- Increased limit to 25. Will securely wrap forming a "crowd" -->
+            <!-- Increased limit to 25. Will securely wrap forming a dense "crowd" -->
             {% for person in hero_avatars|slice:":25" %}
             <div class="avatar-item">
               {% if person.avatar %}
