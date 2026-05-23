@@ -35,7 +35,7 @@
             </button>
 
             {% if request.user.is_authenticated %}
-                <button onclick="history.back(); return false;" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     <span>Back</span>
                 </button>
@@ -611,6 +611,18 @@
         const toast = document.getElementById('share-toast');
         toast.classList.remove('translate-y-32', 'opacity-0');
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
+    }
+
+    function smartBack() {
+        if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+            window.location.href = document.referrer;
+        } else {
+            window.history.back();
+            setTimeout(() => {
+                // If history.back() fails (e.g., direct link or new tab with no referrer), fallback safely
+                window.location.href = '/';
+            }, 200);
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
