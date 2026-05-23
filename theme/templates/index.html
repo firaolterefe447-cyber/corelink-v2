@@ -13,61 +13,74 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Sora:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <!-- PAGE LOADER -->
 <div id="page-loader"></div>
 
 <style>
   /* ==========================================================================
-     1. DESIGN TOKENS
+     DESIGN TOKENS
      ========================================================================== */
   :root {
-    /* Brand - Unified & Cleaned */
-    --blue:          #0A66C2;
-    --blue-dark:     #0052a3;
-    --cyan:          #06B6D4;
-    
-    /* Neutrals */
-    --void:          #02000A;
-    --navy:          #0C1628;
-    --navy-mid:      #112240;
-    --ink:           #0f172a;
-    --ink-mid:       #1e293b;
-    --ink-muted:     #475569;
-    --ink-faint:     #64748b;
-    --white:         #ffffff;
-    --surface:       #f8fafc;
-    --border:        rgba(203, 213, 225, 0.6);
+    --blue:        #0A66C2;
+    --blue-dark:   #0052a3;
+    --blue-tint:   #EFF6FF;
+    --blue-border: #BFDBFE;
 
-    /* Typography */
-    --font-display:  'Instrument Serif', Georgia, serif;
-    --font-body:     'Sora', system-ui, sans-serif;
+    --amber:       #D97706;
+    --amber-tint:  #FFFBEB;
+    --amber-light: #FEF3C7;
+    --amber-text:  #92400E;
 
-    /* Radii & Easing */
-    --r-lg:   16px;
-    --r-xl:   24px;
-    --r-2xl:  32px;
+    --emerald:     #059669;
+    --emerald-tint:#F0FDF4;
+    --emerald-light:#DCFCE7;
+    --emerald-text: #14532D;
+
+    --violet:      #7C3AED;
+    --violet-tint: #FAF5FF;
+    --violet-light:#EDE9FE;
+    --violet-text: #4C1D95;
+
+    --navy:        #0C1628;
+    --navy-mid:    #112240;
+    --navy-card:   #172a46;
+    --navy-border: #1e3a5f;
+
+    --ink:         #0f172a;
+    --ink-mid:     #1e293b;
+    --ink-muted:   #475569;
+    --ink-faint:   #64748b;
+    --ink-ghost:   #94a3b8;
+
+    --canvas:      #F0F4F8;
+    --white:       #ffffff;
+    --border:      #e2e8f0;
+    --border-mid:  #cbd5e1;
+
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body:    'Sora', system-ui, sans-serif;
+
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
     --r-pill: 999px;
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  /* ==========================================================================
+     RESET
+     ========================================================================== */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-  body { font-family: var(--font-body); background: var(--white); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-  
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--void); }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
-  ::selection { background: var(--blue); color: var(--white); }
+  body { font-family: var(--font-body); background: var(--white); color: var(--ink); overflow-x: hidden; }
 
   /* ==========================================================================
-     2. PAGE LOADER
+     TOP LOADING BAR
      ========================================================================== */
   #page-loader {
     position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(to right, var(--blue), var(--cyan), var(--blue));
+    background: linear-gradient(to right, var(--blue), #3b82f6, var(--emerald), var(--amber));
     background-size: 200% 100%; z-index: 999999;
     transition: width 0.3s ease, opacity 0.4s ease;
     width: 0%; opacity: 1; pointer-events: none;
@@ -76,616 +89,836 @@
   @keyframes loader-gradient { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
   /* ==========================================================================
-     3. UTILITIES & ANIMATIONS
-     ========================================================================== */
-  .text-magic {
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  
-  /* GPU Accelerated Scroll Reveals */
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); will-change: opacity, transform; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  
-  .reveal-stagger > * { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
-  .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
-  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; }
-  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.2s; }
-  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.3s; }
-  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.4s; }
-
-  /* ==========================================================================
-     4. NAVBAR (SLIM, CLEAN, MODERN)
+     NAVBAR
      ========================================================================== */
   .nav {
-    position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9000;
-    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6); display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; transition: all 0.3s ease;
+    position: sticky; top: 0; z-index: 9000;
+    background: rgba(255,255,255,0.96); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;
+    padding: 0 36px; height: 72px;
   }
-  .nav.scrolled { background: rgba(255, 255, 255, 0.98); box-shadow: 0 4px 20px -5px rgba(0,0,0,0.06); border-bottom: 1px solid transparent; }
+  .logo { font-family: var(--font-body); font-size: 22px; font-weight: 900; letter-spacing: -0.05em; color: var(--ink); text-decoration: none; }
+  .logo span { color: var(--blue); }
 
-  .nav-logo { font-family: var(--font-body); font-size: 20px; font-weight: 400; letter-spacing: -0.04em; color: #475569; text-decoration: none; display: flex; align-items: center; }
-  .nav-logo span { font-weight: 800; color: var(--blue); }
-
-  .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 32px; }
-  .nav-link { font-size: 13.5px; font-weight: 600; color: #64748b; text-decoration: none; transition: color 0.2s ease; }
-  .nav-link:hover { color: var(--blue); }
-
-  .nav-right { display: flex; align-items: center; gap: 4px; }
-  .nav-divider { width: 1px; height: 16px; background: #e2e8f0; margin: 0 6px; }
-
-  /* Dropdown & Buttons - Scaled Down */
-  .lang-btn {
-    display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569;
-    background: transparent; border: none; padding: 6px 12px; border-radius: 999px;
-    cursor: pointer; transition: all 0.2s ease;
+  .nav-desktop { display: flex; align-items: center; gap: 36px; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-link {
+    font-size: 13.5px; font-weight: 600; color: var(--ink-muted);
+    text-decoration: none; letter-spacing: -0.01em;
+    position: relative; padding: 6px 0; transition: color 0.2s;
   }
-  .lang-btn:hover { background: #f1f5f9; color: #0f172a; }
-
-  .lang-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
-  .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #64748b; background: none; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-  .lang-option:hover { background: #f1f5f9; color: #0f172a; }
-  .lang-option.active { background: #eff6ff; color: var(--blue); }
-
-  .btn-nav-login {
-    font-size: 13.5px; font-weight: 600; color: #475569;
-    background: transparent; border: none; padding: 6px 14px; border-radius: 999px;
-    text-decoration: none; transition: all 0.2s ease;
+  .nav-link::after {
+    content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px;
+    background: var(--blue); border-radius: 2px; transition: width 0.3s ease;
   }
-  .btn-nav-login:hover { background: #f1f5f9; color: #0f172a; }
+  .nav-link:hover { color: var(--ink); }
+  .nav-link:hover::after { width: 100%; }
 
-  .btn-nav-join {
-    font-size: 13.5px; font-weight: 600; color: #ffffff;
-    background: var(--blue); border: none; padding: 7px 18px; border-radius: 999px;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(10,102,194,0.25);
-    margin-left: 2px;
-  }
-  .btn-nav-join:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(10,102,194,0.35); }
-  .btn-nav-join svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
-  .btn-nav-join:hover svg { transform: translateX(3px); }
+  .nav-btns { display: flex; align-items: center; gap: 10px; }
+  .btn-ghost { font-size: 13px; font-weight: 700; color: var(--ink-muted); border: 1px solid var(--border); background: var(--white); padding: 9px 20px; border-radius: var(--r-pill); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .btn-ghost:hover { border-color: var(--border-mid); background: var(--canvas); color: var(--ink); }
+  .btn-primary { font-size: 13px; font-weight: 700; color: var(--white); background: var(--blue); border: none; padding: 9px 22px; border-radius: var(--r-pill); cursor: pointer; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 14px rgba(10,102,194,0.22); }
+  .btn-primary:hover { background: var(--blue-dark); box-shadow: 0 6px 18px rgba(10,102,194,0.3); }
 
-  /* Mobile Nav */
-  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; padding: 6px; margin-left: 8px; }
-  .mobile-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 99990; }
-  .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: #ffffff; z-index: 99995; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
-  .m-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #f1f5f9; }
-  .m-close-btn { width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .m-body { padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-  .m-nav-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; text-decoration: none; color: #0f172a; border-bottom: 1px solid #f8fafc; }
-  .m-nav-link span { font-size: 15px; font-weight: 600; }
-  .m-lang-section { padding: 20px 24px; border-top: 1px solid #f1f5f9; }
-  .m-lang-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 10px; }
-  .m-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .m-lang-btn { padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; }
-  .m-lang-btn.active { border-color: var(--blue-border); background: var(--blue-tint); color: var(--blue); }
-  .m-footer { padding: 24px; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
-  .m-btn-ghost { display: block; text-align: center; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: #0f172a; border: 1px solid #cbd5e1; text-decoration: none; }
-  .m-btn-primary { display: block; text-align: center; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: #ffffff; background: #0f172a; text-decoration: none; }
+  .lang-btn { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--ink-muted); background: var(--canvas); border: 1px solid var(--border); padding: 8px 14px; border-radius: var(--r-pill); cursor: pointer; transition: border-color 0.2s; }
+  .lang-btn:hover { border-color: var(--border-mid); }
+  .lang-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 6px; box-shadow: 0 12px 28px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
+  .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--ink-muted); background: none; border: none; border-radius: var(--r-sm); cursor: pointer; transition: all 0.15s; }
+  .lang-option:hover { background: var(--canvas); color: var(--blue); }
+  .lang-option.active { background: var(--blue-tint); color: var(--blue); }
 
   /* ==========================================================================
-     5. HERO — REFINED FOR PERFECT MOBILE & DESKTOP ALIGNMENT
+     MOBILE DRAWER, NAVY MIDNIGHT EDITION
      ========================================================================== */
-  .hero { 
-    position: relative; width: 100%; min-height: 100dvh; background: var(--void); 
-    overflow: hidden; display: flex; align-items: center; justify-content: center; 
-    padding-top: 60px; padding-bottom: 80px; 
+  .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--ink); outline: none; }
+
+  .mobile-backdrop {
+    position: fixed; inset: 0; background: rgba(12,22,40,0.8); backdrop-filter: blur(8px); z-index: 99990;
   }
-  .hero-bg { position: absolute; inset: 0; z-index: 0; }
-  .hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.18; filter: contrast(1.2) saturate(1.1); animation: hero-zoom 40s ease-in-out infinite alternate; will-change: transform; }
-  @keyframes hero-zoom { from { transform: scale(1) translateZ(0); } to { transform: scale(1.12) translateZ(0); } }
-  
-  .hero-glow-1 { position: absolute; top: -20%; left: -10%; width: 900px; height: 900px; background: rgba(124,58,237,0.15); border-radius: 50%; filter: blur(160px); pointer-events: none; animation: glow-drift-1 25s ease-in-out infinite alternate; }
-  .hero-glow-2 { position: absolute; bottom: -10%; right: -10%; width: 800px; height: 800px; background: rgba(10,102,194,0.18); border-radius: 50%; filter: blur(160px); pointer-events: none; animation: glow-drift-2 30s ease-in-out infinite alternate; }
-  @keyframes glow-drift-1 { to { transform: translate(40px, 30px); } }
-  @keyframes glow-drift-2 { to { transform: translate(-40px, -30px); } }
-  
-  /* Perfected Gradient Veil to ensure text readability */
-  .hero-veil { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(2,0,10,0.6) 0%, rgba(2,0,10,0.95) 100%); z-index: 1; }
-  .bg-noise { position: absolute; inset: 0; opacity: 0.03; z-index: 2; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
-  
-  /* Centered Content Structure */
-  .hero-content { position: relative; z-index: 10; width: 100%; max-width: 1000px; margin: 0 auto; padding: 0 24px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-  
-  .hero-h1 { font-family: var(--font-display); font-size: clamp(3.2rem, 8vw, 6.5rem); font-weight: 400; font-style: italic; letter-spacing: -0.02em; line-height: 0.95; color: var(--white); margin-bottom: 24px; }
-  .hero-h1-accent { display: inline-block; font-style: italic; background: linear-gradient(135deg, #60a5fa, #a78bfa, #2dd4bf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  
-  .hero-subtitle { font-family: var(--font-body); font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 500; color: #f8fafc; margin-bottom: 16px; line-height: 1.4; text-wrap: balance; max-width: 700px; }
-  .hero-desc { font-size: clamp(1rem, 1.2vw, 1.1rem); color: #cbd5e1; font-weight: 400; line-height: 1.7; margin: 0 auto 40px auto; max-width: 600px; text-wrap: balance; }
-  
-  /* Actions Row - Perfectly centered inline on Desktop, Stacked on Mobile */
-  .hero-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 20px; }
-  .hero-cta-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 36px; border-radius: 8px; background: var(--blue); border: 1px solid var(--blue); font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--white); text-decoration: none; transition: all 0.3s var(--ease-out); box-shadow: 0 8px 24px rgba(10,102,194,0.3); }
-  .hero-cta-btn:hover { background: #0ea5e9; border-color: #0ea5e9; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(14,165,233,0.4); }
-  
-  .hero-avatars { display: flex; align-items: center; background: rgba(15,23,42,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-pill); padding: 8px 20px 8px 12px; transition: border-color 0.3s; }
-  .avatar-stack { display: flex; align-items: center; }
-  .avatar-item { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0f172a; margin-left: -10px; overflow: hidden; background: #1e293b; }
-  .avatar-item:first-child { margin-left: 0; }
-  .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--white); }
-  .avatar-plus { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0f172a; margin-left: -10px; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #e2e8f0; text-decoration: none; }
-  .hero-av-info { margin-left: 12px; text-align: left; }
-  .hero-stars { display: flex; gap: 2px; color: #f59e0b; font-size: 11px; margin-bottom: 2px; }
-  .hero-av-label { font-size: 11.5px; font-weight: 600; color: #cbd5e1; }
+  .mobile-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 88%; max-width: 400px;
+    background: var(--navy); z-index: 99995; display: flex; flex-direction: column;
+    box-shadow: -20px 0 60px rgba(12,22,40,0.8);
+  }
+
+  .m-drawer-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 24px;
+    border-bottom: 1px solid var(--navy-border); background: var(--navy);
+  }
+  .m-drawer-header .logo { color: var(--white); }
+  .m-drawer-header .logo span { color: #60a5fa; }
+
+  .m-drawer-close {
+    background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2);
+    width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #60a5fa; cursor: pointer; transition: all 0.3s ease; outline: none;
+  }
+  .m-drawer-close:hover { background: var(--blue); color: var(--white); border-color: var(--blue); transform: rotate(90deg); }
+
+  .m-drawer-body {
+    padding: 32px 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 32px;
+    background: var(--navy);
+  }
+
+  .m-nav-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; text-decoration: none; color: #f8fafc;
+    transition: all 0.3s ease; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .m-icon-box {
+    width: 46px; height: 46px; border-radius: var(--r-md);
+    background: rgba(96,165,250,0.1); color: #60a5fa;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease; border: 1px solid rgba(96,165,250,0.2);
+  }
+  .m-nav-link span { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; transition: color 0.3s ease; }
+  .m-chevron { color: var(--navy-border); transition: all 0.3s ease; }
+
+  .m-nav-link:hover .m-icon-box { background: var(--blue); color: var(--white); transform: scale(1.08) rotate(-4deg); box-shadow: 0 4px 14px rgba(10,102,194,0.4); }
+  .m-nav-link:hover .m-chevron { color: #60a5fa; transform: translateX(4px); }
+  .m-nav-link:hover span { color: #60a5fa; }
+
+  .m-lang-section { margin-top: auto; padding-top: 12px; }
+  .m-lang-title { font-size: 11px; font-weight: 800; color: rgba(96,165,250,0.6); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; display: block; }
+  .m-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .m-lang-btn {
+    padding: 13px; border-radius: var(--r-md); font-size: 13px; font-weight: 700; text-align: center;
+    border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color: var(--ink-ghost);
+    cursor: pointer; transition: all 0.25s ease;
+  }
+  .m-lang-btn.active {
+    border-color: var(--blue); background: rgba(10,102,194,0.15); color: #60a5fa;
+    box-shadow: 0 4px 12px rgba(10,102,194,0.2);
+  }
+
+  .m-drawer-footer {
+    padding: 24px; border-top: 1px solid var(--navy-border); background: #091120;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .m-btn-ghost {
+    display: block; text-align: center; padding: 16px; border-radius: var(--r-pill); font-size: 15px; font-weight: 700;
+    color: var(--white); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    text-decoration: none; transition: all 0.25s ease;
+  }
+  .m-btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: #60a5fa; color: #60a5fa; }
+  .m-btn-primary {
+    display: block; text-align: center; padding: 16px; border-radius: var(--r-pill); font-size: 15px; font-weight: 800;
+    color: var(--white); background: var(--blue); border: none; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(10,102,194,0.35); transition: all 0.25s ease;
+  }
+  .m-btn-primary:hover { background: var(--blue-dark); box-shadow: 0 8px 24px rgba(10,102,194,0.45); transform: translateY(-2px); }
+
+  .transition-opacity-transform { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .transition-opacity { transition: opacity 0.3s ease; }
+  .opacity-0 { opacity: 0; } .opacity-100 { opacity: 1; }
+  .translate-x-full { transform: translateX(100%); } .translate-x-0 { transform: translateX(0); }
 
   /* ==========================================================================
-     6. MAIN CANVAS (New CoreLink Branding)
+     HERO, UNTOUCHED STRUCTURE, UPGRADED TYPOGRAPHY ONLY
      ========================================================================== */
-  .main-canvas {
-    position: relative; z-index: 20;
-    margin-top: -64px; border-radius: 40px 40px 0 0;
-    background-color: #F4F7FA;
+  .hero {
+    background: var(--canvas);
     background-image:
-        radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.7) 0%, transparent 45%),
-        radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.8) 0%, transparent 45%),
-        radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 1) 0%, transparent 100%);
-    background-attachment: fixed;
-    box-shadow: 0 -20px 50px rgba(0,0,0,0.4);
-    padding: 100px 40px;
+      radial-gradient(circle at 12% 0%, rgba(219,234,254,0.85) 0%, transparent 42%),
+      radial-gradient(circle at 88% 20%, rgba(241,245,249,0.8) 0%, transparent 46%);
+    padding: 112px 24px 80px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border);
   }
-  .content-wrapper { max-width: 1280px; margin: 0 auto; }
+  .hero-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(to right, rgba(10,102,194,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(10,102,194,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; }
 
-  /* Section Headers */
-  .eyebrow { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); margin-bottom: 20px; }
-  .sec-title { font-family: var(--font-display); font-size: clamp(2.4rem, 4.5vw, 4rem); font-weight: 400; font-style: italic; letter-spacing: -0.01em; line-height: 1.05; color: var(--ink); margin-bottom: 24px; text-wrap: balance; }
-  .sec-desc { font-size: clamp(1rem, 1.2vw, 1.15rem); color: var(--ink-muted); font-weight: 400; line-height: 1.8; text-wrap: balance; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+    color: var(--ink);
+    margin: 0 auto 24px auto;
+    max-width: 920px;
+    position: relative;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; }
+  .hero h1 .blue { color: var(--blue); font-style: italic; }
 
-  /* ==========================================================================
-     7. NEW UI: STORY BENTO GRID
-     ========================================================================== */
-  .mission-block { text-align: center; max-width: 800px; margin: 0 auto 80px; }
-  
-  .bento-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 120px;
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+    font-weight: 400;
+    color: var(--ink-faint);
+    max-width: 620px;
+    margin: 0 auto 36px auto;
+    line-height: 1.75;
+    position: relative;
+    text-wrap: balance;
   }
-  
-  .bento-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: var(--r-2xl);
-    padding: 48px;
-    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255,255,255,1);
-    display: flex; flex-direction: column; justify-content: center;
-    transition: transform 0.4s var(--ease-out), box-shadow 0.4s;
-    position: relative; overflow: hidden;
-  }
-  .bento-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 50px rgba(10, 102, 194, 0.08), inset 0 1px 0 rgba(255,255,255,1);
-    border-color: rgba(203, 213, 225, 1);
-  }
-  
-  /* Abstract UI Elements inside Bento */
-  .abstract-ui {
-    background: var(--white);
-    border-radius: var(--r-xl);
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    border: 1px solid rgba(226, 232, 240, 0.6);
-    margin-bottom: 40px;
-    position: relative; z-index: 2;
-  }
-  .bento-card::before {
-    content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
-    background: radial-gradient(circle, rgba(10,102,194,0.05) 0%, transparent 70%);
-    z-index: 1; pointer-events: none; transition: transform 0.6s var(--ease-out);
-  }
-  .bento-card:hover::before { transform: scale(1.2); }
-  .bento-card.alt::before { background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 70%); top: auto; bottom: -50%; left: -50%; right: auto; }
 
-  /* UI Skeletons */
-  .ui-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-  .ui-circle { width: 48px; height: 48px; border-radius: 50%; background: var(--surface); }
-  .ui-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-  .ui-line { height: 8px; border-radius: 4px; background: var(--surface); }
-  .ui-line.primary { background: var(--blue-tint); }
-  .ui-badge { display: inline-block; padding: 4px 12px; border-radius: var(--r-pill); background: var(--surface); height: 24px; width: 60px; }
-  
-  .bento-title { font-family: var(--font-display); font-size: 2.2rem; font-style: italic; color: var(--ink); margin-bottom: 16px; line-height: 1.1; }
-  .bento-text { font-size: 15px; color: var(--ink-muted); line-height: 1.7; font-weight: 400; }
-  .bento-list { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; list-style: none; }
-  .bento-list li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--ink); }
-  .bento-list li svg { color: var(--blue); }
+  /* Bouncy, Interactive Avatar Clouds - Not Links Anymore */
+  .hero-avatar-cloud { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 20px; max-width: 700px; padding: 0 10px; }
+  .av {
+    width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: var(--white);
+    flex-shrink: 0; overflow: hidden; text-decoration: none;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; cursor: default;
+  }
+  .av:hover {
+    transform: scale(1.25) translateY(-6px) rotate(-3deg);
+    z-index: 10;
+    box-shadow: 0 12px 24px rgba(10,102,194,0.25);
+    border-color: var(--blue-border);
+  }
+  a.av { cursor: pointer; } /* Maintain pointer strictly for the +2k link */
 
-  /* ==========================================================================
-     8. NEW UI: CAPABILITIES GRID
-     ========================================================================== */
-  .cap-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 120px;
+  .av img { width: 100%; height: 100%; object-fit: cover; }
+  .av-bg-1 { background: #0A66C2; } .av-bg-2 { background: #7c3aed; } .av-bg-3 { background: #059669; } .av-bg-4 { background: #d97706; } .av-bg-5 { background: #dc2626; } .av-bg-6 { background: #0891b2; } .av-bg-7 { background: #be185d; } .av-bg-8 { background: #4338ca; }
+  .av-plus { background: var(--blue-tint); border: 2px solid var(--blue-border); color: var(--blue); font-size: 13px; font-weight: 900; }
+
+  .hero-stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; position: relative; }
+  .hero-stars .star { color: #f59e0b; font-size: 17px; }
+  .hero-av-count { font-size: 11px; font-weight: 700; color: var(--ink-ghost); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 40px; position: relative; }
+
+  .hero-ctas { display: flex; align-items: center; justify-content: center; gap: 14px; position: relative; flex-wrap: wrap; }
+  .hero-cta-main { background: var(--blue); color: var(--white); font-size: 14.5px; font-weight: 700; text-decoration: none; border: none; padding: 17px 40px; border-radius: var(--r-pill); cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 24px rgba(10,102,194,0.25); letter-spacing: -0.01em; }
+  .hero-cta-main:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(10,102,194,0.32); }
+  .hero-cta-ghost { background: var(--white); color: var(--ink); font-size: 14.5px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); padding: 17px 36px; border-radius: var(--r-pill); cursor: pointer; transition: all 0.2s; }
+  .hero-cta-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--canvas); }
+
+  .hero-transformation-wrapper {
+    display: inline-flex; align-items: center; justify-content: center; margin-top: 64px; padding: 13px 28px;
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--r-pill); box-shadow: 0 8px 28px rgba(10,102,194,0.07);
+    position: relative; transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .cap-card {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: var(--r-xl); padding: 40px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
-    transition: transform 0.4s var(--ease-out), box-shadow 0.4s;
-    position: relative; overflow: hidden;
-  }
-  .cap-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(10, 102, 194, 0.06); border-color: rgba(203, 213, 225, 1); }
-  .cap-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--blue-tint); color: var(--blue); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: transform 0.4s; }
-  .cap-card:hover .cap-icon { transform: scale(1.1) rotate(-5deg); }
-  .cap-title { font-family: var(--font-display); font-size: 1.8rem; font-style: italic; color: var(--ink); margin-bottom: 12px; line-height: 1.2; }
-  .cap-text { font-size: 14.5px; color: var(--ink-muted); line-height: 1.7; }
+  .hero-transformation-wrapper:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(10,102,194,0.12); }
+  .hero-transformation-wrapper p { font-size: 13px; font-weight: 600; color: var(--ink-muted); letter-spacing: 0.02em; text-transform: uppercase; margin: 0; }
+  .hero-transformation-wrapper .gradient-text { background: linear-gradient(135deg, var(--blue), var(--emerald)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
 
   /* ==========================================================================
-     9. NEW UI: BOTTOM CTA
+     STORY SECTION, THREE WAVES
      ========================================================================== */
-  .cta-wrapper {
-    background: var(--navy); border-radius: 40px; padding: 80px;
-    position: relative; overflow: hidden; text-align: center;
-    box-shadow: 0 20px 60px rgba(12, 22, 40, 0.2);
+  .story-section { padding: 0; overflow: hidden; }
+
+  /* /WAVE 1: Community intro, dark navy /*/
+  .wave-community {
+    background: var(--navy);
+    padding: 100px 32px 96px;
+    position: relative;
+    overflow: hidden;
   }
-  .cta-wrapper::before {
-    content: ''; position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 50% 0%, rgba(10,102,194,0.3) 0%, transparent 60%);
+  .wave-community::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 80% 50%, rgba(10,102,194,0.12) 0%, transparent 55%),
+                      radial-gradient(circle at 10% 80%, rgba(5,150,105,0.08) 0%, transparent 45%);
     pointer-events: none;
   }
-  .cta-title { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4.5rem); font-style: italic; color: var(--white); margin-bottom: 20px; position: relative; z-index: 2; line-height: 1.1; }
-  .cta-desc { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 500px; margin: 0 auto 40px; line-height: 1.6; position: relative; z-index: 2; }
-  .cta-btn {
-    display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; border-radius: var(--r-pill);
-    background: var(--white); color: var(--ink); font-weight: 700; font-size: 14px; text-decoration: none;
-    transition: transform 0.3s, box-shadow 0.3s; position: relative; z-index: 2;
+  .wave-community-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    position: relative; z-index: 2;
   }
-  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+  .wave-community-text {}
+  .wave-eyebrow {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #60a5fa; margin-bottom: 24px; display: block;
+  }
+  .wave-community-text h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400; font-style: italic;
+    color: var(--white); line-height: 1.12;
+    letter-spacing: -0.01em; margin-bottom: 28px;
+    text-wrap: balance;
+  }
+  .wave-community-text p {
+    font-size: 16px; color: rgba(148,163,184,0.9); line-height: 1.85; font-weight: 400;
+    margin-bottom: 20px;
+  }
+  .wave-community-text p:last-child { margin-bottom: 0; }
+  .wave-community-text strong { color: var(--white); font-weight: 600; }
+
+  /* Match card on the right */
+  .wave-match-card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: var(--r-xl);
+    padding: 44px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wave-match-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--blue), #60a5fa);
+  }
+  .wave-match-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(10,102,194,0.15); border: 1px solid rgba(10,102,194,0.25);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+  }
+  .wave-match-icon svg { color: #60a5fa; }
+  .wave-match-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.7rem; font-weight: 400; font-style: italic;
+    color: var(--white); margin-bottom: 16px; letter-spacing: -0.01em; line-height: 1.15;
+  }
+  .wave-match-card p {
+    font-size: 15px; color: rgba(148,163,184,0.85); line-height: 1.8; font-weight: 400;
+  }
+  .wave-match-tags {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px;
+  }
+  .wave-tag {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 5px 13px; border-radius: var(--r-pill);
+    border: 1px solid rgba(96,165,250,0.25); color: #93c5fd;
+    background: rgba(96,165,250,0.07);
+  }
+
+  /* /WAVE 2: Business, white with amber accent /*/
+  .wave-business {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .wave-business-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; min-height: 560px;
+  }
+  .wave-business-visual {
+    background: var(--amber-tint);
+    border-right: 1px solid #FDE68A;
+    padding: 64px 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: relative; overflow: hidden;
+  }
+  .wave-business-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+                      linear-gradient(-135deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+                      linear-gradient(135deg, transparent 75%, rgba(255,255,255,0.07) 75%),
+                      linear-gradient(-135deg, transparent 75%, rgba(255,255,255,0.07) 75%);
+    background-size: 22px 22px; background-position: 0 0, 11px 0, 11px -11px, 0 11px;
+    pointer-events: none;
+  }
+  .wave-big-num {
+    font-family: var(--font-display);
+    font-size: 180px; font-weight: 400; line-height: 0.8;
+    position: absolute; top: 24px; left: 32px;
+    user-select: none; letter-spacing: -0.05em;
+    color: rgba(217,119,6,0.1);
+  }
+  .wave-business-visual .band-badge { position: relative; z-index: 2; }
+  .wave-business-visual h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+    font-weight: 400; font-style: italic;
+    color: #78350F; line-height: 1.12;
+    letter-spacing: -0.01em; position: relative; z-index: 2;
+  }
+
+  .wave-business-content {
+    padding: 64px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .wave-accent-bar {
+    width: 40px; height: 3px; border-radius: 2px; margin-bottom: 32px;
+  }
+  .wave-accent-amber { background: var(--amber); }
+  .wave-accent-emerald { background: var(--emerald); }
+
+  .wave-business-content p {
+    font-size: 16px; color: var(--ink-muted); line-height: 1.85; font-weight: 400;
+    margin-bottom: 18px;
+  }
+  .wave-business-content p:last-child { margin-bottom: 0; }
+  .wave-business-content strong { color: var(--ink); font-weight: 600; }
+
+  /* Capability pills */
+  .wave-caps {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px;
+  }
+  .wave-cap {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.03em;
+    padding: 6px 14px; border-radius: var(--r-pill);
+    border: 1px solid #FDE68A; color: var(--amber-text); background: var(--amber-light);
+  }
+  .wave-cap-em {
+    border-color: var(--emerald-light); color: var(--emerald-text); background: var(--emerald-light);
+  }
+  .wave-cap-vio {
+    border-color: var(--violet-light); color: var(--violet-text); background: var(--violet-light);
+  }
+  .wave-cap svg { flex-shrink: 0; }
+
+  /* /WAVE 3: Talent, canvas bg with emerald /*/
+  .wave-talent {
+    background: var(--canvas);
+    position: relative; overflow: hidden;
+  }
+  .wave-talent-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; min-height: 540px;
+  }
+  .wave-talent-content {
+    padding: 64px 60px 64px 32px;
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+  .wave-talent-content p {
+    font-size: 16px; color: var(--ink-muted); line-height: 1.85; font-weight: 400;
+    margin-bottom: 18px;
+  }
+  .wave-talent-content p:last-child { margin-bottom: 0; }
+  .wave-talent-content strong { color: var(--ink); font-weight: 600; }
+
+  .wave-talent-visual {
+    background: var(--emerald-tint);
+    border-left: 1px solid #BBF7D0;
+    padding: 64px 52px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    position: relative; overflow: hidden;
+  }
+  .wave-talent-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+                      linear-gradient(-135deg, rgba(255,255,255,0.07) 25%, transparent 25%),
+                      linear-gradient(135deg, transparent 75%, rgba(255,255,255,0.07) 75%),
+                      linear-gradient(-135deg, transparent 75%, rgba(255,255,255,0.07) 75%);
+    background-size: 22px 22px; background-position: 0 0, 11px 0, 11px -11px, 0 11px;
+    pointer-events: none;
+  }
+  .wave-talent-visual .wave-big-num {
+    color: rgba(5,150,105,0.1); top: 24px; left: auto; right: 24px;
+  }
+  .wave-talent-visual h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+    font-weight: 400; font-style: italic;
+    color: #064E3B; line-height: 1.12;
+    letter-spacing: -0.01em; position: relative; z-index: 2;
+    margin-top: 16px;
+  }
+  .wave-talent-visual .band-badge { position: relative; z-index: 2; }
 
   /* ==========================================================================
-     10. FOOTER (Untouched)
+     FOOTER, NAVY MIDNIGHT REDESIGN
      ========================================================================== */
-  .footer { background: var(--navy); color: var(--white); }
-  .footer-accent { height: 4px; background: linear-gradient(to right, var(--blue) 0%, #3b82f6 40%, var(--cyan) 70%, var(--blue) 100%); }
+  .footer {
+    background: var(--navy);
+    color: var(--white);
+    border-top: none;
+  }
+
+  /* Footer top bar, colored accent stripe */
+  .footer-accent-bar {
+    height: 4px;
+    background: linear-gradient(to right, var(--blue) 0%, #3b82f6 40%, var(--emerald) 70%, var(--amber) 100%);
+  }
+
   .footer-inner { max-width: 1140px; margin: 0 auto; }
-  .footer-main { padding: 80px 40px 60px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 48px; border-bottom: 1px solid var(--navy-border); }
-  .footer-logo { font-family: var(--font-body); font-size: 24px; font-weight: 900; letter-spacing: -0.06em; color: var(--white); text-decoration: none; display: block; margin-bottom: 14px; }
-  .footer-logo span { color: #60a5fa; }
-  .footer-brand p { font-size: 14px; color: var(--ink-ghost); line-height: 1.75; max-width: 280px; }
-  .footer-col h4 { font-size: 10.5px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(148,163,184,0.45); margin-bottom: 20px; }
-  .footer-col a { display: block; font-size: 14px; font-weight: 500; color: var(--ink-ghost); text-decoration: none; margin-bottom: 12px; transition: color 0.2s; }
+
+  .footer-main {
+    padding: 80px 40px 60px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: 48px;
+    border-bottom: 1px solid var(--navy-border);
+  }
+
+  .footer-brand .footer-logo {
+    font-family: var(--font-body);
+    font-size: 24px; font-weight: 900; letter-spacing: -0.05em;
+    color: var(--white); text-decoration: none; display: block; margin-bottom: 16px;
+  }
+  .footer-brand .footer-logo span { color: #60a5fa; }
+  .footer-brand p { font-size: 14px; color: var(--ink-ghost); line-height: 1.75; font-weight: 400; max-width: 280px; }
+
+  .footer-col h4 {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(148,163,184,0.5); margin-bottom: 22px;
+  }
+  .footer-col a {
+    display: block; font-size: 14px; font-weight: 500; color: var(--ink-ghost);
+    text-decoration: none; margin-bottom: 13px; transition: color 0.2s;
+  }
   .footer-col a:hover { color: var(--white); }
-  .footer-cta-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: var(--r-xl); padding: 28px; display: flex; flex-direction: column; }
-  .footer-cta-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #60a5fa; margin-bottom: 10px; display: block; }
-  .footer-cta-card h4 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; font-style: italic; color: var(--white); margin-bottom: 8px; line-height: 1.2; letter-spacing: -0.01em; }
-  .footer-cta-card p { font-size: 13.5px; color: var(--ink-ghost); margin-bottom: 20px; line-height: 1.65; flex: 1; }
-  .footer-cta-btn { display: block; text-align: center; background: var(--blue); color: var(--white); text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 14px; border-radius: var(--r-pill); transition: all 0.2s; }
-  .footer-cta-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
-  .footer-bottom { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-  .footer-bottom p { font-size: 12.5px; color: rgba(100,116,139,0.65); font-weight: 500; }
-  .footer-bottom-links { display: flex; gap: 22px; }
-  .footer-bottom-links a { font-size: 12.5px; color: rgba(100,116,139,0.65); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .footer-col .tg-link {
+    display: flex; align-items: center; gap: 7px;
+  }
+  .footer-col .tg-link svg { opacity: 0.6; transition: opacity 0.2s; flex-shrink: 0; }
+  .footer-col .tg-link:hover svg { opacity: 1; }
+
+  /* Footer CTA card */
+  .footer-cta-card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: var(--r-xl);
+    padding: 32px;
+    display: flex; flex-direction: column;
+  }
+  .footer-cta-card-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #60a5fa; margin-bottom: 12px;
+  }
+  .footer-cta-card h4 {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 400; font-style: italic;
+    color: var(--white); margin-bottom: 10px; line-height: 1.2; letter-spacing: -0.01em;
+  }
+  .footer-cta-card p { font-size: 13.5px; color: var(--ink-ghost); margin-bottom: 24px; line-height: 1.65; flex: 1; }
+  .footer-cta-btn {
+    display: block; text-align: center; background: var(--blue); color: var(--white);
+    text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 14px 20px;
+    border-radius: var(--r-pill); transition: all 0.2s; box-shadow: 0 4px 14px rgba(10,102,194,0.3);
+  }
+  .footer-cta-btn:hover { background: var(--blue-dark); box-shadow: 0 6px 18px rgba(10,102,194,0.4); }
+
+  /* Footer bottom */
+  .footer-bottom {
+    padding: 28px 40px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+  }
+  .footer-bottom p { font-size: 12.5px; color: rgba(100,116,139,0.7); font-weight: 500; }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a { font-size: 12.5px; color: rgba(100,116,139,0.7); text-decoration: none; font-weight: 500; transition: color 0.2s; }
   .footer-bottom-links a:hover { color: var(--ink-ghost); }
 
   /* ==========================================================================
-     11. RESPONSIVE (Perfected for Hero & Main body)
+     RESPONSIVE
      ========================================================================== */
-  @media (max-width: 1024px) {
-    .nav-center { display: none; }
+  @media (max-width: 960px) {
+    .nav-desktop { display: none; }
     .mobile-menu-btn { display: block; }
-    .bento-grid { grid-template-columns: 1fr; }
-    .cap-grid { grid-template-columns: 1fr 1fr; }
-    .footer-main { grid-template-columns: 1fr 1fr; }
-    .footer-brand, .footer-cta-card { grid-column: 1 / -1; }
+
+    .wave-community-inner { grid-template-columns: 1fr; gap: 48px; }
+    .wave-business-inner, .wave-talent-inner { grid-template-columns: 1fr; min-height: auto; }
+    .wave-business-visual, .wave-talent-visual { min-height: 280px; padding: 40px 32px 36px; border-right: none; border-bottom: 1px solid #FDE68A; border-left: none; }
+    .wave-talent-visual { border-bottom: 1px solid #BBF7D0; }
+    .wave-talent-content { order: 1; border-right: none; border-top: 1px solid var(--border); padding: 48px 32px; }
+    .wave-business-content { padding: 48px 32px; }
+    .wave-big-num { font-size: 120px; }
+
+    .footer-main { grid-template-columns: 1fr 1fr; padding: 60px 32px 48px; }
+    .footer-brand { grid-column: 1 / -1; }
+    .footer-cta-card { grid-column: 1 / -1; }
   }
-  
-  @media (max-width: 768px) {
+
+  @media (max-width: 600px) {
     .nav { padding: 0 20px; }
-    .nav-right .nav-divider, .nav-right .btn-nav-login, .nav-right .btn-nav-join { display: none; }
-    
-    /* Clean, centered mobile hero */
-    .hero { padding-top: 100px; padding-bottom: 80px; align-items: center; }
-    .hero-content { padding: 0 20px; text-align: center; }
-    .hero-h1 { font-size: clamp(2.8rem, 11vw, 4rem); margin-bottom: 16px; line-height: 1; }
-    .hero-subtitle { font-size: 1.15rem; margin-bottom: 16px; }
-    .hero-desc { font-size: 1rem; margin-bottom: 32px; }
-    
-    /* Stacking actions cleanly on mobile */
-    .hero-actions { flex-direction: column; gap: 16px; width: 100%; }
-    .hero-cta-btn { width: 100%; max-width: 320px; padding: 14px 20px; }
-    .hero-avatars { justify-content: center; width: 100%; max-width: 320px; padding: 12px; }
-    
-    .main-canvas { padding: 60px 20px; border-radius: 24px 24px 0 0; margin-top: -40px; }
-    .bento-card { padding: 32px 24px; }
-    .cap-grid { grid-template-columns: 1fr; }
-    .cta-wrapper { padding: 60px 24px; border-radius: 24px; }
-    .footer-main { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 32px; }
-    .footer-bottom { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
+    .hero { padding: 64px 16px 60px; }
+    .hero h1 { font-size: clamp(1.9rem, 7.5vw, 2.6rem); }
+    .hero-ctas { flex-direction: column; width: 100%; }
+    .hero-cta-main, .hero-cta-ghost { width: 100%; text-align: center; }
+    .av { width: 40px; height: 40px; font-size: 11px; }
+    .hero-avatar-cloud { gap: 4px; }
+    .hero-transformation-wrapper { padding: 12px 18px; margin-top: 48px; }
+    .hero-transformation-wrapper p { font-size: 11px; }
+
+    .wave-community { padding: 64px 20px; }
+    .wave-community-text h2 { font-size: 1.9rem; }
+    .wave-match-card { padding: 32px 24px; }
+    .wave-business-content, .wave-talent-content { padding: 40px 24px; }
+    .wave-business-visual, .wave-talent-visual { padding: 32px 24px 28px; }
+    .wave-big-num { font-size: 90px; }
+
+    .footer-main { grid-template-columns: 1fr; padding: 48px 24px 40px; gap: 36px; }
+    .footer-brand { grid-column: auto; }
+    .footer-cta-card { grid-column: auto; }
+    .footer-bottom { padding: 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
   }
 </style>
 
-<!-- ============================================================
-     ALPINE ROOT
-     ============================================================ -->
+<!-- ALPINE WRAPPER -->
 <div x-data="{ mobileMenuOpen: false }">
 
-  <!-- ============================================================
-       DESKTOP NAV (DRIBBBLE STANDARD - SLIM & CLEAN)
-       ============================================================ -->
-  <nav class="nav" id="main-nav">
-    <a href="/" class="nav-logo">core<span>Link</span></a>
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <a href="/" class="logo">core<span>link</span></a>
 
-    <div class="nav-center">
-      <a href="{% url 'nexus_feed' %}" class="nav-link">{% trans "Discover Talent" %}</a>
-      <a href="{% url 'company_nexus' %}" class="nav-link">{% trans "Companies" %}</a>
-    </div>
-
-    <div class="nav-right">
-      <div x-data="{ open: false }" style="position:relative;">
-        <button @click="open = !open" @click.outside="open = false" class="lang-btn" aria-label="Change Language">
-          <span>{{ current_lang.name_local|title|default:"EN" }}</span>
-          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="open ? 'rotate-180' : ''"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div x-show="open" style="display:none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="lang-dropdown">
-          <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-            {% for language in languages %}
-              {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-              <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">{{ language.name_local|title }}</button>
-              {% endif %}
-            {% endfor %}
-          </form>
-        </div>
+    <div class="nav-desktop">
+      <div class="nav-links">
+        <a class="nav-link" href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
+        <a class="nav-link" href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
+        <a class="nav-link" href="#">{% trans "Teams & Groups" %}</a>
       </div>
-
-      <div class="nav-divider"></div>
-
-      <a href="{% url 'login' %}" class="btn-nav-login">{% trans "Log In" %}</a>
-      <a href="{% url 'unified_onboarding' %}" class="btn-nav-join">
-        {% trans "Join corelink" %}
-        <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
-      <!-- Mobile hamburger -->
-      <button class="mobile-menu-btn" @click="mobileMenuOpen = true" aria-label="Open menu">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
+      <div class="nav-btns">
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" @click.outside="open = false" class="lang-btn">
+            <span>{{ current_lang.name_local|title|default:"English" }}</span>
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div x-show="open" style="display: none;" class="lang-dropdown">
+            <form action="{% url 'set_language' %}" method="post" class="m-0 flex flex-col gap-1">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ request.get_full_path }}">
+              {% for language in languages %}
+                {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+                <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+                  {{ language.name_local|title }}
+                </button>
+                {% endif %}
+              {% endfor %}
+            </form>
+          </div>
+        </div>
+        <a href="{% url 'login' %}" class="btn-ghost">{% trans "Log In" %}</a>
+        <a href="{% url 'unified_onboarding' %}" class="btn-primary">{% trans "Join CoreLink" %}</a>
+      </div>
     </div>
+
+    <button class="mobile-menu-btn" @click="mobileMenuOpen = true">
+      <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
   </nav>
 
-  <!-- ============================================================
-       CLEAN MOBILE DRAWER
-       ============================================================ -->
-  <div x-show="mobileMenuOpen" style="display:none;" x-transition:enter="t-fade" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="t-fade" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="mobile-backdrop" @click="mobileMenuOpen = false"></div>
+  <!-- Mobile Backdrop -->
+  <div x-show="mobileMenuOpen" style="display:none;"
+       x-transition:enter="transition-opacity" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       x-transition:leave="transition-opacity" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+       class="mobile-backdrop" @click="mobileMenuOpen = false"></div>
 
-  <div x-show="mobileMenuOpen" style="display:none;" x-transition:enter="t-slide" x-transition:enter-start="opacity-0 translate-x-full" x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="t-slide" x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-full" class="mobile-drawer">
-    <div class="m-header">
-      <a href="/" class="nav-logo">core<span>Link</span></a>
-      <button class="m-close-btn" @click="mobileMenuOpen = false" aria-label="Close menu">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+  <!-- Mobile Drawer -->
+  <div x-show="mobileMenuOpen" style="display:none;"
+       x-transition:enter="transition-opacity-transform" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+       x-transition:leave="transition-opacity-transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+       class="mobile-drawer">
+
+    <div class="m-drawer-header">
+      <a href="/" class="logo">core<span>link</span></a>
+      <button class="m-drawer-close" @click="mobileMenuOpen = false">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
     </div>
-    <div class="m-body">
-      <a href="{% url 'nexus_feed' %}" class="m-nav-link">
-        <span>{% trans "Discover Talent" %}</span>
-        <svg class="m-chevron" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-      </a>
-      <a href="{% url 'company_nexus' %}" class="m-nav-link">
-        <span>{% trans "Companies" %}</span>
-        <svg class="m-chevron" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-      </a>
+
+    <div class="m-drawer-body">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <a href="{% url 'nexus_feed' %}" class="m-nav-link">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="m-icon-box">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <span>{% trans "Discover Talent" %}</span>
+          </div>
+          <svg class="m-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <a href="{% url 'company_nexus' %}" class="m-nav-link">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="m-icon-box">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            </div>
+            <span>{% trans "Discover Companies" %}</span>
+          </div>
+          <svg class="m-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <a href="#" class="m-nav-link">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="m-icon-box">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+            <span>{% trans "Teams & Groups" %}</span>
+          </div>
+          <svg class="m-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+      </div>
+
+      <div class="m-lang-section">
+        <span class="m-lang-title">{% trans "Select Language" %}</span>
+        <form action="{% url 'set_language' %}" method="post" class="m-lang-grid">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          {% for language in languages %}
+            {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
+            <button type="submit" name="language" value="{{ language.code }}" class="m-lang-btn {% if language.code == LANGUAGE_CODE %}active{% endif %}">
+              {{ language.name_local|title }}
+            </button>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
     </div>
-    <div class="m-lang-section">
-      <span class="m-lang-label">{% trans "Language" %}</span>
-      <form action="{% url 'set_language' %}" method="post" class="m-lang-grid">
-        {% csrf_token %}
-        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-        {% for language in languages %}
-          {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-          <button type="submit" name="language" value="{{ language.code }}" class="m-lang-btn {% if language.code == LANGUAGE_CODE %}active{% endif %}">{{ language.name_local|title }}</button>
-          {% endif %}
-        {% endfor %}
-      </form>
-    </div>
-    <div class="m-footer">
+
+    <div class="m-drawer-footer">
       <a href="{% url 'login' %}" class="m-btn-ghost">{% trans "Log In" %}</a>
-      <a href="{% url 'unified_onboarding' %}" class="m-btn-primary">{% trans "Join corelink" %}</a>
+      <a href="{% url 'unified_onboarding' %}" class="m-btn-primary">{% trans "Join CoreLink" %}</a>
     </div>
   </div>
-
 </div>
+<!-- END ALPINE WRAPPER -->
 
-<!-- ============================================================
-     HERO — PERFECTLY CENTERED & CLEAN
-     ============================================================ -->
-<header class="hero" id="hero">
-  <div class="hero-bg"><img id="hero-img" src="{% static 'img/hero_image_v2.jpg' %}" alt="" aria-hidden="true"></div>
-  <div class="hero-glow-1"></div>
-  <div class="hero-glow-2"></div>
-  <div class="hero-veil"></div>
-  <div class="bg-noise"></div>
+<!-- HERO, STRUCTURE PRESERVED, TYPOGRAPHY ELEVATED -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
 
-  <div class="hero-content">
-    <div class="hero-inner">
-      <h1 class="hero-h1">
-        {% trans "CoreLink" %}<br>
-        <span class="hero-h1-accent">{% trans "Ethiopia." %}</span>
-      </h1>
-      <h2 class="hero-subtitle">{% trans "CoreLink: Ethiopia's Talent & Business Hub for Discovery and Innovation" %}</h2>
-      <p class="hero-desc">{% trans "Facilitating discovery, innovation, and collaboration: Connecting opportunity across the nation." %}</p>
+  <h1>
+    {% trans "CoreLink:" %}<br>
+    <span class="blue">{% trans "Ethiopia's Talent & Business Hub for Discovery and Innovation" %}</span>
+  </h1>
+  <p class="hero-sub">
+    {% trans "Facilitating discovery, innovation, and collaboration: Connecting opportunity across the nation" %}
+  </p>
 
-      <div class="hero-actions">
-        <a href="{% url 'unified_onboarding' %}" class="hero-cta-btn">
-          {% trans "Start Your Journey" %}
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7-7 7 7-7 7"/></svg>
-        </a>
-
-        {% if hero_avatars %}
-        <div class="hero-avatars">
-          <div class="avatar-stack">
-            {% for person in hero_avatars %}
-            <div class="avatar-item">
-              {% if person.avatar %}<img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
-              {% else %}<div class="avatar-initials" style="background:{% cycle 'linear-gradient(135deg,#0A66C2,#06B6D4)' 'linear-gradient(135deg,#7C3AED,#D946EF)' 'linear-gradient(135deg,#059669,#06B6D4)' 'linear-gradient(135deg,#D97706,#f59e0b)' 'linear-gradient(135deg,#dc2626,#f43f5e)' %};">{{ person.full_name|slice:":1" }}</div>{% endif %}
-            </div>
-            {% endfor %}
-            <a href="{% url 'nexus_feed' %}" class="avatar-plus">+2k</a>
-          </div>
-          <div class="hero-av-info">
-            <div class="hero-stars">★★★★★</div>
-            <div class="hero-av-label">{% trans "Verified Professionals" %}</div>
-          </div>
-        </div>
+  {% if hero_avatars %}
+  <div class="hero-avatar-cloud">
+    {% for person in hero_avatars %}
+      <!-- Replaced <a> with <div> to prevent profile linking, updated classes to apply animation -->
+      <div class="av {% cycle 'av-bg-1' 'av-bg-2' 'av-bg-3' 'av-bg-4' 'av-bg-5' 'av-bg-6' 'av-bg-7' 'av-bg-8' %}">
+        {% if person.avatar %}
+          <img src="{{ person.get_avatar_url }}" alt="{{ person.display_name }}" loading="lazy">
+        {% else %}
+          <span>{{ person.display_name|slice:":2"|upper }}</span>
         {% endif %}
       </div>
+    {% endfor %}
+    <!-- Maintained <a> strictly for the "Feed / Directory" +2k button -->
+    <a href="{% url 'nexus_feed' %}" class="av av-plus">+2k</a>
+  </div>
+  <div class="hero-stars">
+    <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+  </div>
+  <p class="hero-av-count">{% trans "Verified Ethiopian Professionals" %}</p>
+  {% endif %}
+
+  <div class="hero-ctas">
+    <a href="{% url 'unified_onboarding' %}" class="hero-cta-main">{% trans "Start Your Journey" %}</a>
+    <a href="{% url 'company_nexus' %}" class="hero-cta-ghost">{% trans "Explore Companies" %} →</a>
+  </div>
+
+  <div class="hero-transformation-wrapper">
+    <p>{% trans "Be part of Ethiopia's" %} <span class="gradient-text">{% trans "Digital Transformation & Optimization" %}</span></p>
+  </div>
+</section>
+
+<!-- STORY SECTION, THREE WAVES -->
+<section class="story-section">
+
+  <!-- WAVE 1: Community, dark navy -->
+  <div class="wave-community">
+    <div class="wave-community-inner">
+      <div class="wave-community-text">
+        <span class="wave-eyebrow">{% trans "Our Purpose" %}</span>
+        <h2>{% trans "Built to Unite Ethiopia's Professional Family." %}</h2>
+        <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. We are a space for innovation, creating real opportunities for our country's emerging talent and connecting them to the exact places they need to grow." %}</p>
+        <p>{% trans "We are not another job board. We are the living network that Ethiopia has been waiting for, where every connection made is a step forward for the nation as a whole." %}</p>
+      </div>
+      <div class="wave-match-card">
+        <div class="wave-match-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        </div>
+        <h3>{% trans "Meet Your Match." %}</h3>
+        <p>{% trans "Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
+        <div class="wave-match-tags">
+          <span class="wave-tag">{% trans "Co-founders" %}</span>
+          <span class="wave-tag">{% trans "Peers & Mentors" %}</span>
+          <span class="wave-tag">{% trans "Job Opportunities" %}</span>
+          <span class="wave-tag">{% trans "Collaborators" %}</span>
+        </div>
+      </div>
     </div>
   </div>
-</header>
 
-<!-- ============================================================
-     MAIN CANVAS (NEW BENTO & GLASS UI)
-     ============================================================ -->
-<main class="main-canvas" id="main-content">
-  <div class="content-wrapper">
-
-    <!-- Section 1: Core Purpose -->
-    <div class="mission-block reveal">
-      <span class="eyebrow">{% trans "Our Purpose" %}</span>
-      <h2 class="sec-title">{% blocktrans %}Built to Unite Ethiopia's <br> Professional Family.{% endblocktrans %}</h2>
-      <p class="sec-desc">
-        {% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant community. We are not another job board. We are a space for innovation, creating real opportunities for our country's emerging talent." %}
-      </p>
-    </div>
-
-    <!-- Section 2: The Ecosystem Bento Grid -->
-    <div class="bento-grid reveal-stagger">
-      
-      <!-- Card: For Talent -->
-      <div class="bento-card">
-        <!-- Abstract Portfolio UI -->
-        <div class="abstract-ui">
-          <div class="ui-row">
-            <div class="ui-circle" style="border: 2px solid var(--blue-tint);"></div>
-            <div class="ui-lines">
-              <div class="ui-line primary" style="width: 70%;"></div>
-              <div class="ui-line" style="width: 40%;"></div>
-            </div>
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 20px;">
-            <div class="ui-badge" style="width: 40px;"></div>
-            <div class="ui-badge"></div>
-            <div class="ui-badge" style="width: 50px;"></div>
-          </div>
-        </div>
-        <h3 class="bento-title">{% trans "For Talent" %}</h3>
-        <p class="bento-text">
-          {% trans "Ethiopian talent deserves a professional identity that goes beyond a PDF. Build a deep profile, link your proof-of-work, and let local companies and international opportunities find you automatically." %}
-        </p>
-        <ul class="bento-list">
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Deep Portfolios & Proof of Work" %}</li>
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Get discovered locally & globally" %}</li>
-        </ul>
+  <!-- WAVE 2: Business, white with amber -->
+  <div class="wave-business">
+    <div class="wave-business-inner">
+      <div class="wave-business-visual">
+        <div class="wave-big-num">02</div>
+        <span class="band-badge badge-talent" style="margin-bottom:16px;">{% trans "For Business" %}</span>
+        <h3>{% trans "Your Business, Discoverable by the World." %}</h3>
       </div>
-
-      <!-- Card: For Business -->
-      <div class="bento-card alt">
-        <!-- Abstract Business UI -->
-        <div class="abstract-ui">
-          <div class="ui-row" style="margin-bottom: 24px;">
-            <div class="ui-circle" style="border-radius: 8px; background: var(--blue-tint);"></div>
-            <div class="ui-lines">
-              <div class="ui-line" style="width: 80%;"></div>
-              <div class="ui-line" style="width: 50%;"></div>
-            </div>
-          </div>
-          <div class="ui-line" style="width: 100%; margin-bottom: 12px;"></div>
-          <div class="ui-line" style="width: 85%; margin-bottom: 12px;"></div>
-          <div class="ui-line" style="width: 40%;"></div>
+      <div class="wave-business-content">
+        <span class="wave-accent-bar wave-accent-amber"></span>
+        <p>{% trans "Ethiopian startups, companies, businesses, and organizations build their profile on CoreLink by listing their services, telling their story, and making themselves discoverable, by both local and international clients." %}</p>
+        <p>{% trans "No more relying on scattered word of mouth. Your digital storefront is live, searchable, and always working. Clients can browse your service catalog, read about your expertise, and contact you directly, from anywhere in the world." %}</p>
+        <p>{% trans "And when it is time to grow your team, you can instantly search our verified talent pool and find the exact professional your business needs, in your city, at the right moment." %}</p>
+        <div class="wave-caps">
+          <span class="wave-cap">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            {% trans "Business Profile" %}
+          </span>
+          <span class="wave-cap">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            {% trans "Service Catalog" %}
+          </span>
+          <span class="wave-cap wave-cap-vio">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            {% trans "Local & Global Reach" %}
+          </span>
+          <span class="wave-cap wave-cap-em">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            {% trans "Hire Verified Talent" %}
+          </span>
         </div>
-        <h3 class="bento-title">{% trans "For Business" %}</h3>
-        <p class="bento-text">
-          {% trans "Your business, discoverable by the world. List services, tell your story, and hire exactly the verified professional your team needs, right when you need them." %}
-        </p>
-        <ul class="bento-list">
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Live Service Catalog" %}</li>
-          <li><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>{% trans "Search & Hire Verified Talent" %}</li>
-        </ul>
-      </div>
-
-    </div>
-
-    <!-- Section 3: Engineered for Excellence -->
-    <div style="text-align: center; margin-bottom: 60px;" class="reveal">
-      <span class="eyebrow">{% trans "The Platform" %}</span>
-      <h2 class="sec-title">{% blocktrans %}Engineered for <em class="text-magic">Excellence.</em>{% endblocktrans %}</h2>
-    </div>
-
-    <div class="cap-grid reveal-stagger">
-      <div class="cap-card">
-        <div class="cap-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><path d="M3 9h18M9 21V9" stroke-width="2"/></svg>
-        </div>
-        <h3 class="cap-title">{% trans "Build Your Identity" %}</h3>
-        <p class="cap-text">{% trans "Designed for every industry — tech, design, finance, arts. Create an identity that showcases your true expertise." %}</p>
-      </div>
-      
-      <div class="cap-card">
-        <div class="cap-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke-width="2"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" stroke-width="2"/></svg>
-        </div>
-        <h3 class="cap-title">{% trans "Seamless Connections" %}</h3>
-        <p class="cap-text">{% trans "Discover like-minded professionals. Find the perfect co-founder and collaborate to bring your vision to life." %}</p>
-      </div>
-
-      <div class="cap-card">
-        <div class="cap-icon">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke-width="2"/></svg>
-        </div>
-        <h3 class="cap-title">{% trans "Verified Trust" %}</h3>
-        <p class="cap-text">{% trans "Earn verification through your proof-of-work. Instantly signal your value to collaborators across the ecosystem." %}</p>
       </div>
     </div>
-
-    <!-- Section 4: Final Elevated CTA -->
-    <div class="cta-wrapper reveal">
-      <h2 class="cta-title">{% blocktrans %}Ready to <em class="text-magic">Initiate?</em>{% endblocktrans %}</h2>
-      <p class="cta-desc">{% trans "Join verified professionals building the future of the Ethiopian digital economy." %}</p>
-      <a href="{% url 'unified_onboarding' %}" class="cta-btn">
-        {% trans "Start Your Journey" %}
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7-7 7 7-7 7"/></svg>
-      </a>
-    </div>
-
   </div>
-</main>
 
-<!-- ============================================================
-     FOOTER — NAVY MIDNIGHT (Untouched)
-     ============================================================ -->
+  <!-- WAVE 3: Talent, canvas with emerald -->
+  <div class="wave-talent">
+    <div class="wave-talent-inner">
+      <div class="wave-talent-content">
+        <span class="wave-accent-bar wave-accent-emerald"></span>
+        <p>{% trans "Ethiopian talent deserves a professional identity that goes beyond a PDF. CoreLink gives professionals, developers, designers, researchers, strategists, the space to build a deep profile that shows the world exactly what they are capable of." %}</p>
+        <p>{% trans "Link your GitHub projects, upload design portfolios, publish your research, and let your proof of work speak louder than any resume ever could." %}</p>
+        <p>{% trans "With that profile live on CoreLink, you are no longer waiting. Local companies find you. International opportunities reach you. Whether you are looking for full-time roles, freelance work, or meaningful collaborations, our system connects your skills to the right doors, automatically." %}</p>
+        <div class="wave-caps" style="margin-top:24px;">
+          <span class="wave-cap wave-cap-em">{% trans "Deep Portfolio" %}</span>
+          <span class="wave-cap wave-cap-em">{% trans "Local Opportunities" %}</span>
+          <span class="wave-cap wave-cap-em">{% trans "International Reach" %}</span>
+        </div>
+      </div>
+      <div class="wave-talent-visual">
+        <div class="wave-big-num">03</div>
+        <span class="band-badge badge-discovery" style="margin-bottom:16px;">{% trans "For Talent" %}</span>
+        <h3>{% trans "Your Proof of Work, Seen by the Right People." %}</h3>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER, NAVY MIDNIGHT REDESIGN -->
 <footer class="footer">
-  <div class="footer-accent"></div>
+  <div class="footer-accent-bar"></div>
   <div class="footer-inner">
     <div class="footer-main">
+
       <div class="footer-brand">
-        <a href="/" class="footer-logo">core<span>Link</span></a>
-        <p>{% trans "The definitive infrastructure uniting Ethiopian talent with boundless local and global opportunity." %}</p>
+        <a href="/" class="footer-logo">core<span>link</span></a>
+        <p>{% trans "Elevating Ethiopian professionals through verified proof-of-work, deep portfolios, and intelligent, seamless connections." %}</p>
       </div>
+
       <div class="footer-col">
-        <h4>{% trans "Platform" %}</h4>
+        <h4>{% trans "Platform Ecosystem" %}</h4>
         <a href="{% url 'nexus_feed' %}">{% trans "Discover Talent" %}</a>
         <a href="{% url 'company_nexus' %}">{% trans "Discover Companies" %}</a>
+        <a href="#">{% trans "Teams & Groups" %}</a>
         <a href="{% url 'login' %}">{% trans "Log In" %}</a>
       </div>
+
       <div class="footer-col">
-        <h4>{% trans "Contact" %}</h4>
-        <a href="mailto:corelinkethiopia@gmail.com">corelinkethiopia@gmail.com</a>
-        <a href="https://t.me/corelinkteam" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" style="opacity:0.6;"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
-          @corelinkteam
+        <h4>{% trans "Community" %}</h4>
+        <a href="mailto:corelinkethiopia@gmail.com">{% trans "Contact Us" %}</a>
+        <a href="https://t.me/CoreLinkEthiopia" target="_blank" class="tg-link">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+          Telegram
         </a>
-        <a href="https://t.me/CoreLinkEthiopia" target="_blank" rel="noopener">{% trans "Telegram Channel" %}</a>
       </div>
+
       <div class="footer-cta-card">
-        <span class="footer-cta-eyebrow">{% trans "Join the Movement" %}</span>
+        <span class="footer-cta-card-eyebrow">{% trans "Join the Movement" %}</span>
         <h4>{% trans "Shape the Future." %}</h4>
-        <p>{% trans "Join the community uniting talent with opportunity across Ethiopia." %}</p>
+        <p>{% trans "Join the community uniting talent with opportunity in Ethiopia." %}</p>
         <a href="{% url 'unified_onboarding' %}" class="footer-cta-btn">{% trans "Get Started" %} →</a>
       </div>
+
     </div>
+
     <div class="footer-bottom">
       <p>{% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}</p>
       <div class="footer-bottom-links">
@@ -696,72 +929,33 @@
   </div>
 </footer>
 
-<!-- ============================================================
-     JAVASCRIPT
-     ============================================================ -->
+<!-- TOP LOADER SCRIPT -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  /* ---- Page Loader ---- */
-  const loader = document.getElementById('page-loader');
-  if (loader) {
-    let w = 0;
-    const iv = setInterval(() => {
-      if (w >= 85) clearInterval(iv);
-      else { w += Math.random() * 12; loader.style.width = w + '%'; }
+  document.addEventListener("DOMContentLoaded", () => {
+    const loader = document.getElementById('page-loader');
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 85) clearInterval(interval);
+      else { width += Math.random() * 12; loader.style.width = width + '%'; }
     }, 150);
     window.addEventListener('load', () => {
-      clearInterval(iv); loader.style.width = '100%';
-      setTimeout(() => { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 400); }, 300);
+      clearInterval(interval);
+      loader.style.width = '100%';
+      setTimeout(() => {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.style.display = 'none', 400);
+      }, 300);
     });
     document.querySelectorAll('a[href^="/"], a[href^="http"]').forEach(link => {
-      link.addEventListener('click', e => {
+      link.addEventListener('click', (e) => {
         if (link.target !== '_blank' && !e.ctrlKey && !e.metaKey) {
           loader.style.display = 'block';
           setTimeout(() => { loader.style.opacity = '1'; loader.style.width = '30%'; }, 10);
         }
       });
     });
-  }
-
-  /* ---- Scroll Reveals (GPU-accelerated) ---- */
-  const revealOpts = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
-  const revealObs = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.willChange = 'opacity, transform';
-        requestAnimationFrame(() => entry.target.classList.add('visible'));
-        setTimeout(() => entry.target.style.willChange = 'auto', 1000);
-        obs.unobserve(entry.target);
-      }
-    });
-  }, revealOpts);
-  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => revealObs.observe(el));
-
-  /* ---- Navbar scroll state ---- */
-  const nav = document.getElementById('main-nav');
-  if (nav) {
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
-  }
-
-  /* ---- Hero Parallax ---- */
-  const heroImg = document.getElementById('hero-img');
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        if (heroImg && window.scrollY < window.innerHeight) {
-          heroImg.style.transform = `translate3d(0, ${window.scrollY * 0.28}px, 0) scale(1.06)`;
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-
-});
+  });
 </script>
 
 {% endblock %}
+
