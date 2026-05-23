@@ -23,10 +23,9 @@
      1. DESIGN TOKENS
      ========================================================================== */
   :root {
-    /* Brand */
+    /* Brand - Unified & Cleaned */
     --blue:          #0A66C2;
     --blue-dark:     #0052a3;
-    --blue-tint:     #eff6ff;
     --cyan:          #06B6D4;
     --fuchsia:       #D946EF;
 
@@ -35,10 +34,12 @@
     --navy:          #0C1628;
     --navy-mid:      #112240;
     --ink:           #0f172a;
+    --ink-mid:       #1e293b;
     --ink-muted:     #475569;
     --ink-faint:     #64748b;
     --white:         #ffffff;
     --surface:       #f8fafc;
+    --border:        rgba(203, 213, 225, 0.6);
 
     /* Typography */
     --font-display:  'Instrument Serif', Georgia, serif;
@@ -63,7 +64,7 @@
   ::selection { background: var(--blue); color: var(--white); }
 
   /* ==========================================================================
-     2. PAGE LOADER & UTILITIES
+     2. PAGE LOADER
      ========================================================================== */
   #page-loader {
     position: fixed; top: 0; left: 0; height: 3px;
@@ -75,22 +76,29 @@
   }
   @keyframes loader-gradient { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
+  /* ==========================================================================
+     3. UTILITIES & ANIMATIONS
+     ========================================================================== */
   .text-magic {
     background: linear-gradient(135deg, var(--blue), var(--cyan));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
+
   @keyframes text-shine { to { background-position: 200% center; } }
 
+  /* GPU Accelerated Scroll Reveals */
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); will-change: opacity, transform; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
   .reveal-stagger > * { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
   .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
   .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; }
   .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.2s; }
   .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.3s; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.4s; }
 
   /* ==========================================================================
-     3. NAVBAR (SLIM, CLEAN, MODERN)
+     4. NAVBAR (SLIM, CLEAN, MODERN)
      ========================================================================== */
   .nav {
     position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9000;
@@ -99,29 +107,48 @@
     padding: 0 32px; transition: all 0.3s ease;
   }
   .nav.scrolled { background: rgba(255, 255, 255, 0.98); box-shadow: 0 4px 20px -5px rgba(0,0,0,0.06); border-bottom: 1px solid transparent; }
+
   .nav-logo { font-family: var(--font-body); font-size: 20px; font-weight: 400; letter-spacing: -0.04em; color: #475569; text-decoration: none; display: flex; align-items: center; }
   .nav-logo span { font-weight: 800; color: var(--blue); }
+
   .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 32px; }
   .nav-link { font-size: 13.5px; font-weight: 600; color: #64748b; text-decoration: none; transition: color 0.2s ease; }
   .nav-link:hover { color: var(--blue); }
+
   .nav-right { display: flex; align-items: center; gap: 4px; }
   .nav-divider { width: 1px; height: 16px; background: #e2e8f0; margin: 0 6px; }
 
-  .lang-btn { display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s ease; }
+  .lang-btn {
+    display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569;
+    background: transparent; border: none; padding: 6px 12px; border-radius: 999px;
+    cursor: pointer; transition: all 0.2s ease;
+  }
   .lang-btn:hover { background: #f1f5f9; color: #0f172a; }
+
   .lang-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
   .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #64748b; background: none; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
   .lang-option:hover { background: #f1f5f9; color: #0f172a; }
   .lang-option.active { background: #eff6ff; color: var(--blue); }
 
-  .btn-nav-login { font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 14px; border-radius: 999px; text-decoration: none; transition: all 0.2s ease; }
+  .btn-nav-login {
+    font-size: 13.5px; font-weight: 600; color: #475569;
+    background: transparent; border: none; padding: 6px 14px; border-radius: 999px;
+    text-decoration: none; transition: all 0.2s ease;
+  }
   .btn-nav-login:hover { background: #f1f5f9; color: #0f172a; }
-  .btn-nav-join { font-size: 13.5px; font-weight: 600; color: #ffffff; background: var(--blue); border: none; padding: 7px 18px; border-radius: 999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(10,102,194,0.25); margin-left: 2px; }
+
+  .btn-nav-join {
+    font-size: 13.5px; font-weight: 600; color: #ffffff;
+    background: var(--blue); border: none; padding: 7px 18px; border-radius: 999px;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(10,102,194,0.25);
+    margin-left: 2px;
+  }
   .btn-nav-join:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(10,102,194,0.35); }
   .btn-nav-join svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
   .btn-nav-join:hover svg { transform: translateX(3px); }
 
-  /* Mobile Nav Elements */
+  /* Mobile Nav */
   .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; padding: 6px; margin-left: 8px; }
   .mobile-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 99990; }
   .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: #ffffff; z-index: 99995; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
@@ -140,12 +167,12 @@
   .m-btn-primary { display: block; text-align: center; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: #ffffff; background: #0f172a; text-decoration: none; }
 
   /* ==========================================================================
-     4. HERO — CINEMATIC DARK
+     5. HERO — CINEMATIC DARK
      ========================================================================== */
   .hero {
     position: relative; width: 100%; min-height: 100dvh;
     background: var(--void); overflow: hidden;
-    display: flex; flex-direction: column; justify-content: flex-end; /* Restored flex-end alignment */
+    display: flex; flex-direction: column; justify-content: flex-end;
     padding-top: 140px; padding-bottom: 90px;
   }
 
@@ -176,7 +203,7 @@
     position: relative; z-index: 10; width: 100%; max-width: 1500px;
     margin: 0 auto; padding: 0 40px;
   }
-  .hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 48px; align-items: flex-end; /* Restored flex-end alignment */ }
+  .hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 48px; align-items: flex-end; }
 
   .hero-h1 {
     font-family: var(--font-display); font-size: clamp(3rem, 7vw, 7rem);
@@ -211,32 +238,49 @@
   .hero-cta svg { position: relative; z-index: 1; opacity: 0.7; transition: transform 0.3s; }
   .hero-cta:hover svg { transform: translateX(4px); opacity: 1; }
 
+  /* 25-Avatar Wrap Grid CSS (The Crowd Effect) */
   .hero-avatars {
-    display: flex; align-items: center; background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-2xl); padding: 12px 20px 12px 14px; margin-top: 32px; width: fit-content;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+    background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-xl);
+    padding: 16px 20px; margin-top: 32px; width: fit-content; max-width: 100%;
     transition: border-color 0.3s;
   }
   .hero-avatars:hover { border-color: rgba(255,255,255,0.18); }
-  .avatar-stack { display: flex; align-items: center; }
-  .avatar-item { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid rgba(10,13,20,0.9); margin-left: -12px; overflow: hidden; background: #1e293b; transition: transform 0.35s var(--ease-out), z-index 0s; }
-  .avatar-item:first-child { margin-left: 0; }
+
+  .avatar-stack {
+    display: flex; flex-wrap: wrap; row-gap: 10px;
+    /* Padding left offsets the negative margin so the first item in any row doesn't break out */
+    padding-left: 14px;
+  }
+
+  .avatar-item {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 2px solid rgba(10,13,20,0.9);
+    margin-left: -14px; /* Applied to ALL items so wrapped rows stay perfect */
+    overflow: hidden; background: #1e293b;
+    transition: transform 0.35s var(--ease-out), z-index 0s;
+  }
   .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
   .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
   .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--white); }
+
   .avatar-plus {
-    width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid rgba(10,13,20,0.9);
-    margin-left: -12px; background: #EFF6FF; border-color: #BFDBFE;
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 2px solid rgba(10,13,20,0.9);
+    margin-left: -14px; background: #EFF6FF; border-color: #BFDBFE;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 900; color: var(--blue);
+    font-size: 11px; font-weight: 900; color: var(--blue);
     text-decoration: none; transition: transform 0.35s var(--ease-out);
   }
   .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; }
-  .hero-av-info { margin-left: 16px; }
-  .hero-stars { display: flex; gap: 2px; color: #f59e0b; font-size: 14px; margin-bottom: 4px; }
-  .hero-av-label { font-size: 13px; font-weight: 700; color: var(--white); white-space: nowrap; }
+
+  .hero-av-info { display: flex; align-items: center; gap: 8px; }
+  .hero-stars { color: #f59e0b; font-size: 14px; }
+  .hero-av-label { font-size: 13px; font-weight: 600; color: #cbd5e1; }
 
   /* ==========================================================================
-     5. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
+     6. MAIN CANVAS (PREMIUM UI/UX WITH DEPTH)
      ========================================================================== */
   .main-canvas {
     position: relative; z-index: 20;
@@ -268,7 +312,7 @@
   .sec-desc { font-size: clamp(1rem, 1.2vw, 1.15rem); color: var(--ink-muted); font-weight: 400; line-height: 1.8; text-wrap: balance; }
 
   /* ==========================================================================
-     6. STORY BENTO GRID (ELEVATED, DEEP SHADOWS)
+     7. NEW UI: STORY BENTO GRID
      ========================================================================== */
   .mission-block { text-align: center; max-width: 800px; margin: 0 auto 80px; }
 
@@ -318,7 +362,7 @@
   .bento-list li svg { color: var(--blue); }
 
   /* ==========================================================================
-     7. CAPABILITIES GRID (WITH HOVER GRADIENTS)
+     8. CAPABILITIES GRID (WITH HOVER GRADIENTS)
      ========================================================================== */
   .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 120px; }
   .cap-card {
@@ -345,7 +389,7 @@
   .cap-text { font-size: 14.5px; color: var(--ink-muted); line-height: 1.7; }
 
   /* ==========================================================================
-     8. BOTTOM CTA (RICH GRADIENTS)
+     9. BOTTOM CTA (RICH GRADIENTS)
      ========================================================================== */
   .cta-wrapper {
     background: var(--navy); border-radius: 40px; padding: 80px;
@@ -368,7 +412,7 @@
   .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(255,255,255,0.25); color: var(--blue); }
 
   /* ==========================================================================
-     9. FOOTER
+     10. FOOTER
      ========================================================================== */
   .footer { background: var(--navy); color: var(--white); position: relative; z-index: 10; }
   .footer-accent { height: 4px; background: linear-gradient(to right, var(--blue) 0%, #3b82f6 40%, var(--cyan) 70%, var(--blue) 100%); }
@@ -393,7 +437,7 @@
   .footer-bottom-links a:hover { color: var(--ink-ghost); }
 
   /* ==========================================================================
-     10. RESPONSIVE
+     11. RESPONSIVE
      ========================================================================== */
   @media (max-width: 1024px) {
     .nav-center { display: none; }
@@ -426,20 +470,18 @@
   @media (max-width: 540px) {
     .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
 
-    /* Perfect Fit for 10 Avatars on Mobile */
+    /* Perfect Fit for 25 Avatars on Mobile */
     .hero-avatars {
-      flex-direction: column; align-items: flex-start;
-      gap: 12px; padding: 16px;
-      width: 100%; box-sizing: border-box;
+      padding: 16px; width: 100%; box-sizing: border-box;
     }
-    .avatar-stack { display: flex; flex-wrap: nowrap; }
+    .avatar-stack {
+      padding-left: 10px; row-gap: 8px;
+    }
     .avatar-item, .avatar-plus {
-      width: 32px; height: 32px; margin-left: -12px; border-width: 2px;
+      width: 32px; height: 32px; margin-left: -10px;
     }
-    .avatar-item:first-child { margin-left: 0; }
     .avatar-initials { font-size: 10px; }
     .avatar-plus { font-size: 10px; }
-    .hero-av-info { margin-left: 0; text-align: left; }
   }
 </style>
 
@@ -576,8 +618,8 @@
         {% if hero_avatars %}
         <div class="hero-avatars">
           <div class="avatar-stack">
-            <!-- Limiting to 10 Avatars exactly as requested -->
-            {% for person in hero_avatars|slice:":10" %}
+            <!-- Increased limit to 25. Will securely wrap forming a "crowd" -->
+            {% for person in hero_avatars|slice:":25" %}
             <div class="avatar-item">
               {% if person.avatar %}
                 <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
@@ -590,7 +632,7 @@
           </div>
           <div class="hero-av-info">
             <div class="hero-stars">★★★★★</div>
-            <div class="hero-av-label">{% trans "Verified Professionals" %}</div>
+            <div class="hero-av-label">{% trans "2,000+ Verified Professionals" %}</div>
           </div>
         </div>
         {% endif %}
