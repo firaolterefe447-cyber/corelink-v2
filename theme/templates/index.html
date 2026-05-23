@@ -64,7 +64,7 @@
   ::selection { background: var(--blue); color: var(--white); }
 
   /* ==========================================================================
-     2. PAGE LOADER
+     2. PAGE LOADER & UTILITIES
      ========================================================================== */
   #page-loader {
     position: fixed; top: 0; left: 0; height: 3px;
@@ -76,29 +76,22 @@
   }
   @keyframes loader-gradient { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
-  /* ==========================================================================
-     3. UTILITIES & ANIMATIONS
-     ========================================================================== */
   .text-magic {
     background: linear-gradient(135deg, var(--blue), var(--cyan));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-
   @keyframes text-shine { to { background-position: 200% center; } }
 
-  /* GPU Accelerated Scroll Reveals */
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); will-change: opacity, transform; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
-
   .reveal-stagger > * { opacity: 0; transform: translateY(30px); transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out); }
   .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
   .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; }
   .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.2s; }
   .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.3s; }
-  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.4s; }
 
   /* ==========================================================================
-     4. NAVBAR (SLIM, CLEAN, MODERN)
+     3. NAVBAR (SLIM, CLEAN, MODERN)
      ========================================================================== */
   .nav {
     position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9000;
@@ -107,48 +100,29 @@
     padding: 0 32px; transition: all 0.3s ease;
   }
   .nav.scrolled { background: rgba(255, 255, 255, 0.98); box-shadow: 0 4px 20px -5px rgba(0,0,0,0.06); border-bottom: 1px solid transparent; }
-
   .nav-logo { font-family: var(--font-body); font-size: 20px; font-weight: 400; letter-spacing: -0.04em; color: #475569; text-decoration: none; display: flex; align-items: center; }
   .nav-logo span { font-weight: 800; color: var(--blue); }
-
   .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 32px; }
   .nav-link { font-size: 13.5px; font-weight: 600; color: #64748b; text-decoration: none; transition: color 0.2s ease; }
   .nav-link:hover { color: var(--blue); }
-
   .nav-right { display: flex; align-items: center; gap: 4px; }
   .nav-divider { width: 1px; height: 16px; background: #e2e8f0; margin: 0 6px; }
 
-  .lang-btn {
-    display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569;
-    background: transparent; border: none; padding: 6px 12px; border-radius: 999px;
-    cursor: pointer; transition: all 0.2s ease;
-  }
+  .lang-btn { display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s ease; }
   .lang-btn:hover { background: #f1f5f9; color: #0f172a; }
-
   .lang-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
   .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #64748b; background: none; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
   .lang-option:hover { background: #f1f5f9; color: #0f172a; }
   .lang-option.active { background: #eff6ff; color: var(--blue); }
 
-  .btn-nav-login {
-    font-size: 13.5px; font-weight: 600; color: #475569;
-    background: transparent; border: none; padding: 6px 14px; border-radius: 999px;
-    text-decoration: none; transition: all 0.2s ease;
-  }
+  .btn-nav-login { font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 14px; border-radius: 999px; text-decoration: none; transition: all 0.2s ease; }
   .btn-nav-login:hover { background: #f1f5f9; color: #0f172a; }
-
-  .btn-nav-join {
-    font-size: 13.5px; font-weight: 600; color: #ffffff;
-    background: var(--blue); border: none; padding: 7px 18px; border-radius: 999px;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(10,102,194,0.25);
-    margin-left: 2px;
-  }
+  .btn-nav-join { font-size: 13.5px; font-weight: 600; color: #ffffff; background: var(--blue); border: none; padding: 7px 18px; border-radius: 999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(10,102,194,0.25); margin-left: 2px; }
   .btn-nav-join:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(10,102,194,0.35); }
   .btn-nav-join svg { width: 14px; height: 14px; transition: transform 0.2s ease; }
   .btn-nav-join:hover svg { transform: translateX(3px); }
 
-  /* Mobile Nav */
+  /* Mobile Nav Elements */
   .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; color: #0f172a; padding: 6px; margin-left: 8px; }
   .mobile-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 99990; }
   .mobile-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 300px; background: #ffffff; z-index: 99995; display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
@@ -167,7 +141,7 @@
   .m-btn-primary { display: block; text-align: center; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: #ffffff; background: #0f172a; text-decoration: none; }
 
   /* ==========================================================================
-     5. HERO — CINEMATIC DARK
+     4. HERO — CINEMATIC DARK
      ========================================================================== */
   .hero {
     position: relative; width: 100%; min-height: 100dvh;
@@ -238,7 +212,7 @@
   .hero-cta svg { position: relative; z-index: 1; opacity: 0.7; transition: transform 0.3s; }
   .hero-cta:hover svg { transform: translateX(4px); opacity: 1; }
 
-  /* 25-Avatar Wrap Grid CSS (Optimized Space & Visibility) */
+  /* 30-Avatar Wrap Grid CSS (The Massive Crowd Effect) */
   .hero-avatars {
     display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
     background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
@@ -270,8 +244,7 @@
     border: 2px solid #0f172a;
     margin-left: -10px; background: var(--surface); border-color: var(--border);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 900; color: var(--blue);
-    text-decoration: none; transition: transform 0.35s var(--ease-out);
+    color: var(--blue); text-decoration: none; transition: transform 0.35s var(--ease-out);
   }
   .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
 
@@ -470,19 +443,18 @@
   @media (max-width: 540px) {
     .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
 
-    /* Perfect Fit for 25 Avatars on Mobile (Spaced, Distinct, Wrapped gracefully) */
+    /* Perfect Fit for 30 Avatars on Mobile (Spaced, Distinct, Wrapped gracefully) */
     .hero-avatars {
       padding: 16px; width: 100%; box-sizing: border-box;
     }
     .avatar-stack {
       padding-left: 8px; /* Matches negative margin */
-      gap: 8px 0; /* Creates vertical spacing between rows */
+      gap: 10px 0; /* Creates distinct vertical spacing between rows */
     }
     .avatar-item, .avatar-plus {
       width: 36px; height: 36px; margin-left: -8px; /* Less overlap, bigger faces */
     }
     .avatar-initials { font-size: 11px; }
-    .avatar-plus { font-size: 11px; }
   }
 </style>
 
@@ -619,8 +591,8 @@
         {% if hero_avatars %}
         <div class="hero-avatars">
           <div class="avatar-stack">
-            <!-- Increased limit to 25. Will securely wrap forming a dense "crowd" -->
-            {% for person in hero_avatars|slice:":25" %}
+            <!-- Increased limit to 30 to show massive traffic/community -->
+            {% for person in hero_avatars|slice:":30" %}
             <div class="avatar-item">
               {% if person.avatar %}
                 <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
@@ -629,11 +601,14 @@
               {% endif %}
             </div>
             {% endfor %}
-            <a href="{% url 'nexus_feed' %}" class="avatar-plus">+2k</a>
+            <a href="{% url 'nexus_feed' %}" class="avatar-plus" aria-label="View more professionals">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 5v14M5 12h14"/></svg>
+            </a>
           </div>
           <div class="hero-av-info">
             <div class="hero-stars">★★★★★</div>
-            <div class="hero-av-label">{% trans "2,000+ Verified Professionals" %}</div>
+            <!-- Beautiful localized text instead of a hardcoded fake number -->
+            <div class="hero-av-label">{% trans "Ethiopia's talent, united at one table." %}</div>
           </div>
         </div>
         {% endif %}
