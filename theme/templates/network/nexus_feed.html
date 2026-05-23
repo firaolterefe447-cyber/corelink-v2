@@ -135,13 +135,15 @@
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
+    /* Layout Spacing */
     .app-canvas {
         width: 100%;
         position: relative;
         z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 0 calc(6.5rem + env(safe-area-inset-bottom)) 0;
     }
     @media (min-width: 768px) {
+        .app-canvas { padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
         .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
         .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
     }
@@ -150,21 +152,24 @@
         .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
     }
 
-    /* GLASS CARD */
+    /* PREMIUM GLASS CARD (Softer, floaty shadow) */
     .glass-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.98);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1rem;
-        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+        border-radius: 1.5rem; /* Smoother curve */
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
         position: relative;
-        transition: border-color 0.2s ease;
+        transition: all 0.3s ease;
         display: flex;
         flex-direction: column;
         opacity: 0;
         animation: smoothAppear 0.5s var(--ease-magic) forwards;
     }
-    @media (min-width: 768px) { .glass-card { border-radius: 1.25rem; } }
-    .glass-card:hover { border-color: rgba(203, 213, 225, 1); }
+    .glass-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
+    }
 
     /* Staggered load */
     .glass-card:nth-child(1) { animation-delay: 0.05s; }
@@ -177,18 +182,19 @@
     .magic-input { width: 100%; background-color: transparent; border: none; outline: none; }
     .elite-avatar:nth-child(n+7) { display: none; }
 
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.5s var(--ease-magic) forwards; }
 
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %}">
-    <div class="max-w-[1100px] mx-auto w-full relative z-10">
+    <!-- RESTRICTED TO 1280px to force a clean 3-column max layout -->
+    <div class="max-w-[1280px] mx-auto w-full relative z-10">
 
         {% if request.user.is_authenticated %}
         <!-- NAV TABS -->
-        <div class="flex items-center justify-start md:justify-center gap-6 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 overflow-x-auto hide-scrollbar w-full pl-2 pr-6 md:pr-0 relative z-10">
+        <div class="flex items-center justify-start md:justify-center gap-6 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 overflow-x-auto hide-scrollbar w-full pl-4 pr-6 md:px-0 relative z-10">
             <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2]">
                 <span class="text-[12px] md:text-[13px] font-black uppercase tracking-[0.15em] whitespace-nowrap">{% trans "Discover People" %}</span>
             </a>
@@ -199,18 +205,18 @@
         {% endif %}
 
         <!-- HERO -->
-        <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-6 mb-12 md:mb-16 relative z-10 anim-smooth-appear">
+        <div class="w-full flex flex-col items-center justify-center text-center mt-2 md:mt-6 mb-10 md:mb-16 relative z-10 anim-smooth-appear px-4">
 
             <!-- Avatar pill -->
-            <div class="inline-flex items-center p-1.5 pr-6 bg-white/80 border border-slate-200/90 rounded-full shadow-sm mb-8 md:mb-10 cursor-default">
-                <div class="flex -space-x-3 mr-4">
+            <div class="inline-flex items-center p-1.5 pr-5 md:pr-6 bg-white/80 border border-slate-200/90 rounded-full shadow-sm mb-6 md:mb-10 cursor-default">
+                <div class="flex -space-x-3 mr-3 md:mr-4">
                     {% for person in people %}
                         {% if person.portfolio.admin_rating > 2 %}
                             <div class="elite-avatar">
                                 {% if person.avatar %}
-                                    <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-[2.5px] border-white bg-slate-100" loading="lazy">
+                                    <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-[2.5px] border-white bg-slate-100" loading="lazy">
                                 {% else %}
-                                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-full border-[2.5px] border-white bg-blue-50 flex items-center justify-center text-[#0A66C2] font-black text-[12px] md:text-[13px]">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-[2.5px] border-white bg-blue-50 flex items-center justify-center text-[#0A66C2] font-black text-[12px] md:text-[13px]">
                                         {{ person.full_name|default:"U"|slice:":1" }}
                                     </div>
                                 {% endif %}
@@ -218,160 +224,157 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-                <span class="text-[11px] md:text-[12px] font-black text-slate-700 tracking-[0.1em] uppercase">{% trans "Meet the community" %}</span>
+                <span class="text-[10px] md:text-[12px] font-black text-slate-700 tracking-[0.1em] uppercase">{% trans "Meet the community" %}</span>
             </div>
 
-            <h1 class="text-[clamp(2rem,5vw,3.8rem)] font-black text-slate-900 tracking-tighter leading-[1.1] md:leading-[1.05] mb-5 font-heading max-w-4xl mx-auto">
+            <h1 class="text-[clamp(1.75rem,5vw,3.8rem)] font-black text-slate-900 tracking-tighter leading-[1.15] md:leading-[1.05] mb-4 md:mb-5 font-heading max-w-4xl mx-auto">
                 {% trans "Connect with Verified Ethiopian Talent, All at One Table." %}
             </h1>
-            <p class="text-slate-500 text-[15px] md:text-[17px] font-medium max-w-2xl mx-auto leading-relaxed px-2 md:mt-2">
+            <p class="text-slate-500 text-[14.5px] md:text-[17px] font-medium max-w-2xl mx-auto leading-relaxed px-2">
                 {% trans "Find students, professionals, and founders in our community by searching for the skills or professions you need" %}
             </p>
 
             {% if not request.user.is_authenticated %}
-            <div class="mt-10 flex justify-center w-full relative z-20">
-                <a href="{% url 'unified_onboarding' %}" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[15px] md:text-[16px] px-8 py-4 rounded-full transition-colors active:scale-95 flex items-center gap-3">
-                    {% trans "Join Ethiopian Talent Hub" %} <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <div class="mt-8 flex justify-center w-full relative z-20">
+                <a href="{% url 'unified_onboarding' %}" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[14.5px] md:text-[16px] px-6 md:px-8 py-3.5 md:py-4 rounded-full transition-colors active:scale-95 flex items-center gap-2 md:gap-3 shadow-lg shadow-blue-500/20">
+                    {% trans "Join Ethiopian Talent Hub" %} <i data-lucide="sparkles" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </a>
             </div>
             {% endif %}
         </div>
 
-        <!-- SEARCH BAR -->
-        <div class="mb-14 md:mb-20 w-full flex justify-center relative z-20 px-2 anim-smooth-appear" style="animation-delay: 0.1s;">
+        <!-- MOBILE-OPTIMIZED SEARCH BAR -->
+        <div class="mb-12 md:mb-20 w-full flex justify-center relative z-20 px-4 anim-smooth-appear" style="animation-delay: 0.1s;">
             <form method="GET" class="w-full max-w-3xl relative">
-                <div class="relative flex items-center w-full p-2.5 bg-white/90 border border-slate-200/90 rounded-[1.5rem] shadow-sm focus-within:border-[#0A66C2]/50 focus-within:ring-4 focus-within:ring-[#0A66C2]/8 transition-all">
-                    <i data-lucide="search" class="w-6 h-6 text-[#0A66C2] shrink-0 ml-5"></i>
+                <div class="relative flex items-center w-full p-1.5 md:p-2.5 bg-white/95 border border-slate-200/90 rounded-full md:rounded-[1.5rem] shadow-[0_4px_16px_rgba(0,0,0,0.04)] focus-within:border-[#0A66C2]/50 focus-within:ring-4 focus-within:ring-[#0A66C2]/8 transition-all">
+                    <i data-lucide="search" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2] shrink-0 ml-3 md:ml-5"></i>
 
                     <label for="search-input" class="sr-only">{% trans 'Search by skill, profession, or location...' %}</label>
                     <input id="search-input" type="text" name="q" value="{{ search_query }}"
-                        class="magic-input flex-grow h-12 md:h-14 px-5 text-[15px] md:text-[16px] text-slate-900 font-bold placeholder:text-slate-400"
-                        placeholder="{% trans 'Search by skill, profession, or location...' %}"
+                        class="magic-input flex-grow h-12 md:h-14 px-3 md:px-5 text-[14.5px] md:text-[16px] text-slate-900 font-bold placeholder:text-slate-400"
+                        placeholder="{% trans 'Search by skill, profession...' %}"
                         autocomplete="off">
 
                     {% if search_query %}
-                        <a href="{% url 'nexus_feed' %}" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-[#0A66C2] hover:bg-blue-50 transition-colors mr-2" aria-label="{% trans 'Clear search' %}">
-                            <i data-lucide="x" class="w-5 h-5"></i>
+                        <a href="{% url 'nexus_feed' %}" class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full text-slate-400 hover:text-[#0A66C2] hover:bg-blue-50 transition-colors mr-1 md:mr-2" aria-label="{% trans 'Clear search' %}">
+                            <i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i>
                         </a>
                     {% endif %}
 
-                    <button type="submit" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold h-12 md:h-14 px-6 md:px-8 rounded-[1rem] md:rounded-[1.25rem] transition-colors active:scale-95 shrink-0 flex items-center justify-center">
-                        <span class="text-[13px] md:text-[14px] uppercase tracking-[0.1em]">{% trans "Search" %}</span>
+                    <button type="submit" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold w-12 h-12 md:w-auto md:h-14 md:px-8 rounded-full md:rounded-[1.25rem] transition-colors active:scale-95 shrink-0 flex items-center justify-center shadow-md">
+                        <span class="hidden md:block text-[14px] uppercase tracking-[0.1em]">{% trans "Search" %}</span>
+                        <i data-lucide="search" class="w-5 h-5 block md:hidden"></i>
                     </button>
                 </div>
             </form>
         </div>
 
         <!-- SECTION HEADER -->
-        <div class="flex items-center justify-between mb-8 md:mb-10 px-2 border-b border-slate-200/80 pb-4 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
-            <h2 class="text-[1.4rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Network Results" %}</h2>
+        <div class="flex items-center justify-between mb-6 md:mb-10 px-5 md:px-2 border-b border-slate-200/80 pb-3 md:pb-4 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
+            <h2 class="text-[1.35rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Network Results" %}</h2>
         </div>
 
-        <!-- PROFILE CARDS GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 relative z-10">
+        <!-- STRICT 3-COLUMN MAX GRID: 1 on mobile, 2 on tablet, 3 on PC -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 relative z-10 px-4 md:px-0">
             {% for person in people %}
                 <div class="glass-card group/card">
 
-                    <!-- COVER IMAGE (Optimized & Prettier) -->
-                    <div class="h-32 sm:h-36 md:h-44 w-full rounded-t-[1rem] md:rounded-t-[1.25rem] bg-slate-50 relative overflow-hidden shrink-0 group-hover/card:bg-slate-100 transition-colors">
+                    <!-- COVER IMAGE -->
+                    <div class="h-32 md:h-40 w-full rounded-t-[1.5rem] bg-slate-50 relative overflow-hidden shrink-0 group-hover/card:bg-slate-100 transition-colors">
                         {% if person.cover_image %}
-                            <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.03]" loading="lazy">
+                            <img src="{{ person.cover_image.url }}" alt="Cover" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.05]" loading="lazy">
                         {% else %}
                             <div class="w-full h-full bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 relative overflow-hidden flex items-center justify-center">
                                 <div class="absolute -top-12 -left-10 w-48 h-48 bg-blue-300/30 rounded-full blur-3xl"></div>
                                 <div class="absolute -bottom-16 -right-12 w-56 h-56 bg-slate-300/40 rounded-full blur-3xl"></div>
                             </div>
                         {% endif %}
-                        <!-- Soft Gradient Overlay at the bottom edge to make the Avatar's white border pop smoothly -->
-                        <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/5 to-transparent"></div>
+                        <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/8 to-transparent"></div>
                     </div>
 
                     <!-- CARD BODY -->
-                    <div class="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 flex-1 flex flex-col relative z-10">
+                    <div class="px-5 pb-5 md:px-7 md:pb-7 flex-1 flex flex-col relative z-10">
 
-                        <!-- PREMIUM AVATAR STYLING (LinkedIn Style - Perfect Overlap & Depth) -->
-                        <div class="-mt-[3.5rem] sm:-mt-[4rem] md:-mt-[4.5rem] mb-4 sm:mb-5 flex justify-between items-end relative z-20">
-
-                            <!-- Avatar Wrapper -->
+                        <!-- HUGE PREMIUM AVATAR (Perfectly mathematically aligned negative margin) -->
+                        <div class="-mt-[3.25rem] md:-mt-[4rem] mb-4 sm:mb-5 flex justify-between items-end relative z-20">
                             <div class="relative group/avatar cursor-pointer">
-                                <!-- Depth Shadow layered behind the avatar -->
-                                <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[8px] transform translate-y-1.5 scale-[0.9] transition-all duration-300 group-hover/avatar:scale-100 group-hover/avatar:translate-y-2 group-hover/avatar:bg-slate-900/20"></div>
+                                <!-- Avatar depth shadow -->
+                                <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[10px] transform translate-y-2 scale-[0.85] transition-all duration-300 group-hover/avatar:scale-100 group-hover/avatar:translate-y-3 group-hover/avatar:bg-slate-900/25"></div>
 
                                 {% if person.avatar %}
+                                    <!-- Mobile: 6.5rem (104px) | PC: 8rem (128px) -->
                                     <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}"
-                                         class="w-[7rem] h-[7rem] sm:w-[8rem] sm:h-[8rem] md:w-[9rem] md:h-[9rem] rounded-full object-cover bg-white border-[4px] sm:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 transition-transform duration-300 group-hover/avatar:scale-[1.02]"
+                                         class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full object-cover bg-white border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-sm transition-transform duration-300 group-hover/avatar:scale-[1.03]"
                                          loading="lazy">
                                 {% else %}
-                                    <div class="w-[7rem] h-[7rem] sm:w-[8rem] sm:h-[8rem] md:w-[9rem] md:h-[9rem] rounded-full bg-blue-50 border-[4px] sm:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 flex items-center justify-center font-black text-[#0A66C2] text-4xl transition-transform duration-300 group-hover/avatar:scale-[1.02]">
+                                    <div class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full bg-blue-50 border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-sm flex items-center justify-center font-black text-[#0A66C2] text-3xl md:text-4xl transition-transform duration-300 group-hover/avatar:scale-[1.03]">
                                         {{ person.full_name|default:"U"|slice:":1" }}
                                     </div>
                                 {% endif %}
                             </div>
-
                         </div>
 
                         <!-- Name / headline / meta -->
-                        <div class="mb-5">
+                        <div class="mb-4 md:mb-5">
                             <h3 class="font-black text-[20px] md:text-[22px] text-slate-900 truncate tracking-tight font-heading">{{ person.full_name|default:"Unknown User" }}</h3>
-                            <p class="text-[13.5px] md:text-[14.5px] text-[#0A66C2] font-bold truncate mt-1">
+                            <p class="text-[13.5px] md:text-[14.5px] text-[#0A66C2] font-bold truncate mt-0.5 md:mt-1">
                                 {% if person.portfolio.headlines.first %}
                                     {{ person.portfolio.headlines.first.title }}
                                 {% else %}
                                     {{ person.portfolio.field_of_interest|default:"Professional" }}
                                 {% endif %}
                             </p>
-                            <div class="text-[12.5px] text-slate-500 font-bold mt-2.5 flex items-center gap-3">
-                                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> {{ person.portfolio.location|default:"Addis Ababa" }}</span>
+                            <div class="text-[12.5px] md:text-[13px] text-slate-500 font-bold mt-2.5 flex items-center gap-2.5">
+                                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i> <span class="truncate">{{ person.portfolio.location|default:"Addis Ababa" }}</span></span>
                                 {% if person.portfolio.years_experience %}
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-                                <span class="flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i> {{ person.portfolio.years_experience }} {% trans "Yrs" %}</span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-200 shrink-0"></span>
+                                <span class="flex items-center gap-1.5 shrink-0"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i> {{ person.portfolio.years_experience }} {% trans "Yrs" %}</span>
                                 {% endif %}
                             </div>
                         </div>
 
                         <!-- Skills -->
                         {% if person.portfolio.skills.all %}
-                            <div class="flex flex-wrap gap-2 mb-5 md:mb-6">
-                                {% for skill in person.portfolio.skills.all|slice:":4" %}
-                                    <span class="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-lg text-[11px] md:text-[11.5px] font-black text-slate-600 uppercase tracking-wider cursor-default">
+                            <div class="flex flex-wrap gap-1.5 md:gap-2 mb-5 md:mb-6">
+                                {% for skill in person.portfolio.skills.all|slice:":3" %}
+                                    <span class="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-[0.5rem] text-[10.5px] md:text-[11px] font-black text-slate-600 uppercase tracking-wider cursor-default">
                                         {{ skill.name }}
                                     </span>
                                 {% endfor %}
-                                {% if person.portfolio.skills.all.count > 4 %}
-                                    <span class="px-2 py-1.5 text-[11px] md:text-[11.5px] font-black text-slate-400 uppercase tracking-wider cursor-help flex items-center" title="{% trans 'View profile to see more skills' %}">
-                                        +{{ person.portfolio.skills.all.count|add:"-4" }}
+                                {% if person.portfolio.skills.all.count > 3 %}
+                                    <span class="px-2.5 py-1.5 text-[10.5px] md:text-[11px] font-black text-slate-400 uppercase tracking-wider cursor-help flex items-center" title="{% trans 'View profile to see more skills' %}">
+                                        +{{ person.portfolio.skills.all.count|add:"-3" }}
                                     </span>
                                 {% endif %}
                             </div>
                         {% endif %}
 
-                        <!-- Bio -->
-                        <div class="mb-6 md:mb-8 flex-grow">
-                            <div class="bg-slate-50/50 rounded-xl p-4 sm:p-5 border border-slate-200/60 relative h-full"
-                                 title="{{ person.portfolio.bio_narrative }}">
+                        <!-- Bio Card -->
+                        <div class="mb-6 flex-grow">
+                            <div class="bg-slate-50/60 rounded-xl p-4 md:p-5 border border-slate-200/70 relative h-full group-hover/card:bg-slate-50 transition-colors" title="{{ person.portfolio.bio_narrative }}">
                                 <i data-lucide="quote" class="absolute -top-3 -left-3 w-7 h-7 text-slate-300 rotate-180 bg-white rounded-full border border-slate-100 shadow-sm"></i>
-                                <p class="text-[13.5px] md:text-[14px] text-slate-600 font-medium leading-relaxed line-clamp-3 relative z-10 pt-1">
+                                <p class="text-[13px] md:text-[14px] text-slate-600 font-medium leading-relaxed line-clamp-3 relative z-10 pt-0.5">
                                     "{{ person.portfolio.bio_narrative }}"
                                 </p>
                             </div>
                         </div>
 
-                        <!-- NEW COMPACT & MODERN ACTION BUTTONS -->
-                        <div class="flex items-center gap-2.5 sm:gap-3 mt-auto pt-2">
-                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[13.5px] py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95">
-                                <i data-lucide="user" class="w-4 h-4"></i>
-                                <span class="whitespace-nowrap">{% trans "View Profile" %}</span>
+                        <!-- PERFECT 50/50 GRID BUTTONS -->
+                        <div class="grid grid-cols-2 gap-2.5 md:gap-3 mt-auto pt-2">
+                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-colors active:scale-95">
+                                <i data-lucide="user" class="w-4 h-4 shrink-0"></i>
+                                <span class="truncate">{% trans "Profile" %}</span>
                             </a>
 
                             {% if request.user.is_authenticated %}
-                                <a href="{% url 'chat_with' person.id %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13.5px] py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
-                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90"></i>
-                                    <span>{% trans "Message" %}</span>
+                                <a href="{% url 'chat_with' person.id %}" class="flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90 shrink-0"></i>
+                                    <span class="truncate">{% trans "Message" %}</span>
                                 </a>
                             {% else %}
-                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex-1 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13.5px] py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
-                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90"></i>
-                                    <span>{% trans "Message" %}</span>
+                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white/90 shrink-0"></i>
+                                    <span class="truncate">{% trans "Message" %}</span>
                                 </button>
                             {% endif %}
                         </div>
@@ -379,13 +382,13 @@
                 </div>
 
             {% empty %}
-                <div class="col-span-full py-24 md:py-32 text-center border-dashed border-2 border-slate-200 bg-white/50 rounded-2xl anim-smooth-appear">
-                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
-                        <i data-lucide="search-x" class="w-10 h-10 text-[#0A66C2]"></i>
+                <div class="col-span-full py-16 md:py-28 text-center border-dashed border-2 border-slate-200 bg-white/50 rounded-2xl anim-smooth-appear mx-4 md:mx-0">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 border border-blue-100 shadow-sm">
+                        <i data-lucide="search-x" class="w-8 h-8 md:w-10 md:h-10 text-[#0A66C2]"></i>
                     </div>
-                    <h3 class="text-slate-900 font-black text-[22px] md:text-[24px] mb-3 font-heading tracking-tight">{% trans "No profiles found" %}</h3>
-                    <p class="text-slate-500 font-medium text-[15px] max-w-md mx-auto leading-relaxed px-4">{% trans "We couldn't find anyone matching your exact search. Try using broader keywords like 'Developer' or 'Design'." %}</p>
-                    <a href="{% url 'nexus_feed' %}" class="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200/90 rounded-xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-blue-200 transition-colors active:scale-95 text-[14px]">
+                    <h3 class="text-slate-900 font-black text-[20px] md:text-[24px] mb-2 md:mb-3 font-heading tracking-tight">{% trans "No profiles found" %}</h3>
+                    <p class="text-slate-500 font-medium text-[14px] md:text-[15px] max-w-md mx-auto leading-relaxed px-4">{% trans "We couldn't find anyone matching your exact search. Try using broader keywords like 'Developer' or 'Design'." %}</p>
+                    <a href="{% url 'nexus_feed' %}" class="mt-6 md:mt-8 inline-flex items-center gap-2 px-6 py-3.5 md:px-8 md:py-4 bg-white border border-slate-200/90 rounded-xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-blue-200 transition-colors active:scale-95 text-[13px] md:text-[14px] shadow-sm">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Clear Filters" %}
                     </a>
                 </div>
@@ -393,24 +396,24 @@
 
             <!-- PAYWALL CTA -->
             {% if show_paywall and people|length == 20 %}
-                <div class="col-span-full mt-6 md:mt-8 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.25rem] p-10 md:p-16 flex flex-col items-center justify-center text-center relative overflow-hidden anim-smooth-appear" style="animation-delay: 0.4s;">
+                <div class="col-span-full mt-4 md:mt-8 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] p-8 md:p-16 flex flex-col items-center justify-center text-center relative overflow-hidden anim-smooth-appear shadow-xl" style="animation-delay: 0.4s;">
                     <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                    <div class="w-20 h-20 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mb-6 relative z-10">
-                        <i data-lucide="lock" class="w-10 h-10 text-blue-200"></i>
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mb-4 md:mb-6 relative z-10 shadow-lg">
+                        <i data-lucide="lock" class="w-8 h-8 md:w-10 md:h-10 text-blue-200"></i>
                     </div>
 
-                    <h3 class="text-[28px] md:text-[36px] font-black text-white font-heading tracking-tight mb-4 relative z-10">
+                    <h3 class="text-[24px] md:text-[36px] font-black text-white font-heading tracking-tight mb-3 md:mb-4 relative z-10">
                         Unlock Full Talent Access
                     </h3>
 
-                    <p class="text-blue-100/90 text-[16px] md:text-[18px] font-medium max-w-2xl leading-relaxed mb-10 relative z-10">
+                    <p class="text-blue-100/90 text-[14.5px] md:text-[18px] font-medium max-w-2xl leading-relaxed mb-8 md:mb-10 relative z-10 px-2">
                         {% trans "You have to be verified to discover, message, and collaborate with thousands of verified professionals and untapped talent." %}
                     </p>
 
-                    <button id="premium-teaser-btn" onclick="handlePremiumClick(event)" class="bg-blue-400 hover:bg-blue-300 text-slate-900 font-black text-[15px] md:text-[16px] uppercase tracking-[0.05em] px-10 py-5 rounded-xl transition-colors active:scale-95 flex items-center justify-center gap-3 relative z-10 min-w-[280px]">
-                        <i data-lucide="search" class="w-5 h-5"></i> <span>Search Extended Network</span>
+                    <button id="premium-teaser-btn" onclick="handlePremiumClick(event)" class="bg-blue-400 hover:bg-blue-300 text-slate-900 font-black text-[14px] md:text-[16px] uppercase tracking-[0.05em] px-6 py-4 md:px-10 md:py-5 rounded-xl transition-colors active:scale-95 flex items-center justify-center gap-2 md:gap-3 relative z-10 w-full sm:w-auto min-w-[280px] shadow-lg shadow-blue-500/20">
+                        <i data-lucide="search" class="w-4 h-4 md:w-5 md:h-5"></i> <span>Search Extended Network</span>
                     </button>
                 </div>
             {% endif %}
@@ -474,7 +477,7 @@
 
 <!-- LOGIN GATE MODAL -->
 <div id="login-gate-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title" class="hidden fixed inset-0 z-[300] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-md">
-    <div class="bg-white border border-slate-200/90 rounded-[1.25rem] max-w-md w-full p-10 text-center shadow-2xl">
+    <div class="bg-white border border-slate-200/90 rounded-[1.5rem] max-w-md w-full p-10 text-center shadow-2xl">
         <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-100">
             <i data-lucide="lock" class="w-8 h-8 text-[#0A66C2]"></i>
         </div>
@@ -483,7 +486,7 @@
             {% trans "Join Corelink to message and collaborate with" %} <br><span id="target-name" class="font-black text-slate-800">this professional</span>.
         </p>
         <div class="space-y-3">
-            <a href="{% url 'unified_onboarding' %}" class="flex items-center justify-center w-full bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[14px] uppercase tracking-wide py-4 rounded-xl transition-colors active:scale-95">{% trans "Create Free Account" %}</a>
+            <a href="{% url 'unified_onboarding' %}" class="flex items-center justify-center w-full bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[14px] uppercase tracking-wide py-4 rounded-xl transition-colors active:scale-95 shadow-md">{% trans "Create Free Account" %}</a>
             <a href="{% url 'login' %}?next={{ request.path }}" class="flex items-center justify-center w-full bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-[#0A66C2] font-bold text-[14px] uppercase tracking-wide py-4 rounded-xl transition-colors active:scale-95">{% trans "Log In" %}</a>
         </div>
         <button onclick="document.getElementById('login-gate-modal').classList.add('hidden')" aria-label="Close" class="mt-6 text-[13px] font-bold text-slate-400 hover:text-slate-600 transition-colors">{% trans "Cancel" %}</button>
