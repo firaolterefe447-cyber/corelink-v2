@@ -65,7 +65,7 @@
         color: #0f172a;
         font-size: 14px;
         font-weight: 600;
-        padding: 1rem 1rem 1rem 0.5rem;
+        padding: 0.85rem 1rem 0.85rem 0.5rem;
     }
 
     .field-input::placeholder { color: #94a3b8; font-weight: 500; }
@@ -84,7 +84,7 @@
         text-transform: uppercase;
         letter-spacing: 0.18em;
         color: #64748b;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
     }
 
     /* Smooth Fade-in Animation */
@@ -95,34 +95,40 @@
     .anim-smooth-appear { animation: smoothAppear 0.7s var(--ease-magic) forwards; }
 </style>
 
-<div class="min-h-[100dvh] flex flex-col items-center justify-center py-10 px-4 sm:px-6 w-full max-w-[28rem] mx-auto relative z-10 anim-smooth-appear">
+<!-- Adjusted vertical padding (py-6 instead of py-10) to help fit PC screens -->
+<div class="min-h-[100dvh] flex flex-col items-center justify-center py-6 sm:py-8 px-4 sm:px-6 w-full max-w-[28rem] mx-auto relative z-10 anim-smooth-appear">
 
-    <!-- GLOBAL WORD-BASED BACK BUTTON -->
-    <div class="w-full mb-8">
-        <a href="javascript:history.back()" class="inline-block text-slate-500 hover:text-blue-700 font-black text-[12px] uppercase tracking-[0.25em] transition-colors hover:pl-1 duration-300">
-            {% trans "BACK" %}
+    <!-- GLOBAL BACK NAVIGATION -->
+    <div class="w-full mb-4 sm:mb-6">
+        <a href="javascript:history.back()" class="group inline-flex items-center gap-2.5 text-slate-500 hover:text-blue-700 transition-all duration-300">
+            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-white/60 border border-slate-200 shadow-sm backdrop-blur-sm group-hover:bg-white group-hover:shadow group-hover:border-blue-200 transition-all duration-300">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-all duration-300 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </span>
+            <span class="font-black text-[11px] uppercase tracking-[0.2em] mt-0.5">{% trans "Back" %}</span>
         </a>
     </div>
 
     <div class="w-full">
         <!-- Header Section -->
-        <div class="text-center mb-8">
+        <!-- Tightened margin-bottom -->
+        <div class="text-center mb-6">
             <h1 class="font-heading text-3xl sm:text-[2.2rem] leading-tight font-black tracking-tight text-slate-900">
                 {% trans "Welcome" %} <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] to-blue-500">Back</span>
             </h1>
-            <p class="mt-3 text-[14px] font-semibold text-slate-500">
-                {% trans "Enter your credentials to access the network." %}
-            </p>
+            <!-- Removed the subtitle text here -->
         </div>
 
         <!-- FORM CARD -->
-        <main class="glass-card p-6 sm:p-10 relative">
+        <!-- Reduced padding on PC (sm:px-8 sm:py-7 instead of sm:p-10) to save vertical space -->
+        <main class="glass-card p-6 sm:px-8 sm:py-7 relative">
             <!-- Decorative blur orbs inside card -->
             <div class="absolute -top-14 -right-14 h-36 w-36 rounded-full bg-blue-400/15 blur-2xl pointer-events-none"></div>
 
             <!-- Django Messages -->
             {% if messages %}
-            <div class="mb-6 space-y-2 relative z-10">
+            <div class="mb-5 space-y-2 relative z-10">
                 {% for message in messages %}
                     {% if "Welcome" not in message.message and "logged out" not in message.message %}
                         <div class="flex items-start gap-3 rounded-xl border px-4 py-3 text-[13px] font-bold leading-relaxed shadow-sm
@@ -139,7 +145,8 @@
             </div>
             {% endif %}
 
-            <form method="POST" class="relative z-10 space-y-6">
+            <!-- Reduced vertical gap space-y-5 (was space-y-6) -->
+            <form method="POST" class="relative z-10 space-y-5">
                 {% csrf_token %}
 
                 <!-- Identifier (Phone/Email) -->
@@ -172,7 +179,7 @@
                 </div>
 
                 <!-- Remember Me -->
-                <div class="flex items-center pt-1">
+                <div class="flex items-center">
                     <label class="flex items-center gap-2.5 cursor-pointer group">
                         <div class="relative flex items-center justify-center w-5 h-5">
                             <input type="checkbox" class="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-[0.4rem] bg-white checked:bg-[#0A66C2] checked:border-[#0A66C2] transition-all cursor-pointer">
@@ -183,27 +190,27 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-3">
-                    <button type="submit" class="w-full rounded-[1rem] bg-gradient-to-r from-[#0A66C2] to-blue-600 px-4 py-4 text-[13px] font-black uppercase tracking-[0.2em] text-white transition-all hover:shadow-xl hover:shadow-blue-500/25 active:scale-[0.99]">
+                <div class="pt-1">
+                    <button type="submit" class="w-full rounded-[1rem] bg-gradient-to-r from-[#0A66C2] to-blue-600 px-4 py-3.5 text-[13px] font-black uppercase tracking-[0.2em] text-white transition-all hover:shadow-xl hover:shadow-blue-500/25 active:scale-[0.99]">
                         {% trans "Sign in" %}
                     </button>
                 </div>
 
                 <!-- Divider -->
-                <div class="flex items-center justify-center py-3">
+                <div class="flex items-center justify-center py-1">
                     <div class="h-px flex-grow bg-gradient-to-r from-transparent via-slate-200 to-slate-200"></div>
                     <span class="mx-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{% trans "Forgot Password?" %}</span>
                     <div class="h-px flex-grow bg-gradient-to-r from-slate-200 via-slate-200 to-transparent"></div>
                 </div>
 
                 <!-- Automated Telegram Bot Button -->
-                <a href="https://t.me/corelinkhelpbot" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2.5 py-3.5 bg-slate-900 text-white rounded-[1rem] font-black text-[12px] uppercase tracking-[0.1em] hover:bg-slate-800 hover:shadow-lg active:scale-[0.99] transition-all duration-200">
+                <a href="https://t.me/corelinkhelpbot" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2.5 py-3 bg-slate-900 text-white rounded-[1rem] font-black text-[12px] uppercase tracking-[0.1em] hover:bg-slate-800 hover:shadow-lg active:scale-[0.99] transition-all duration-200">
                     <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.181-4.686c.223-.195-.054-.282-.346-.086l-6.4 4.024-2.76-.86c-.6-.185-.615-.6.125-.89l10.816-4.18c.5-.18.943.116.804.837z"/></svg>
                     {% trans "Recover via Telegram" %}
                 </a>
 
                 <!-- Human Support Text Fallback -->
-                <p class="text-[12px] text-center text-slate-500 mt-4 leading-relaxed font-semibold">
+                <p class="text-[11px] text-center text-slate-500 mt-2 leading-relaxed font-semibold">
                     {% blocktrans %}Need further assistance? Contact support at{% endblocktrans %}
                     <a href="https://t.me/corelinkteam" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-bold hover:text-blue-800 transition-colors underline decoration-2 underline-offset-2 decoration-blue-200">@corelinkteam</a>
                     {% trans "or" %}
@@ -214,7 +221,7 @@
         </main>
 
         <!-- Sign Up Link -->
-        <div class="mt-8 text-center pb-6">
+        <div class="mt-6 text-center pb-4">
             <p class="text-[13px] text-slate-500 font-bold">
                 {% trans "Don't have an account yet?" %}
                 <a href="{% url 'unified_onboarding' %}" class="text-blue-600 font-black hover:text-blue-800 transition-colors ml-1 underline decoration-2 underline-offset-4 decoration-blue-200 hover:decoration-blue-600">
