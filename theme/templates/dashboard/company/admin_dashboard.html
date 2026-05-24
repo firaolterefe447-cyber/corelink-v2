@@ -41,7 +41,6 @@
                     {% trans "Updates" %}
                 </a>
 
-                <!-- UNLOCKED: Opportunities Link -->
                 <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
                     <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
                     {% trans "Opportunities" %}
@@ -305,7 +304,7 @@
 
                     <!-- Actions Column -->
                     <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
-                        <a href="{% url 'company_public_profile' company.slug %}" target="_blank" class="btn-company-primary w-full sm:w-auto !bg-[linear-gradient(135deg,#0f172a,#1e293b)] hover:!bg-[linear-gradient(135deg,#000000,#0f172a)] !shadow-slate-900/30">
+                        <a href="{% url 'company_public_profile' company.slug %}" class="btn-company-primary w-full sm:w-auto !bg-[linear-gradient(135deg,#0f172a,#1e293b)] hover:!bg-[linear-gradient(135deg,#000000,#0f172a)] !shadow-slate-900/30">
                             <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Public Profile" %}</span>
                         </a>
@@ -358,13 +357,13 @@
         <div class="bento-card p-6 md:p-8 flex flex-col relative mb-6 lg:mb-10 w-full">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                 <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">
-                    {% trans "Job Posts & Talent Management" %}
+                    {% trans "Recruitment & Talent Management" %}
                 </h3>
                 <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                     <!-- LINKED TO PIPELINE LIST -->
                     <a href="{% url 'opportunities:workspace_list' %}" class="btn-manage-text">
                         <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 pointer-events-none"></i>
-                        <span class="pointer-events-none">{% trans "Pipeline" %}</span>
+                        <span class="pointer-events-none">{% trans "Manage Recruitment" %}</span>
                     </a>
                     <!-- LINKED TO POST CREATE -->
                     <a href="{% url 'opportunities:create' %}" class="btn-add-solid !bg-[#4F46E5] hover:!bg-[#4338CA] !shadow-none">
@@ -375,7 +374,7 @@
             </div>
 
             <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                {% trans "Post job openings, gigs, and challenges. Track incoming applications and manage your hiring pipeline." %}
+                {% trans "Post job openings, gigs, and challenges. Track incoming applications and manage your recruitment process." %}
             </p>
 
             <div class="flex-1 mt-2">
@@ -474,7 +473,7 @@
                             <div class="p-5 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors cursor-default group/item relative">
                                 <span class="inline-block px-2.5 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[10px] font-black tracking-widest rounded-lg mb-3">{{ milestone.year }}</span>
                                 <h4 class="font-bold text-slate-800 text-[14.5px] leading-snug mb-1">{{ milestone.title }}</h4>
-                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-300 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
                             {% endfor %}
                         </div>
@@ -509,7 +508,7 @@
                     {% if news %}
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {% for article in news|slice:":3" %}
-                            <div class="flex flex-col border border-slate-200/80 rounded-xl overflow-hidden bg-white hover:border-slate-300 transition-colors group/news relative cursor-default">
+                            <div class="flex flex-col border border-slate-200/80 rounded-xl overflow-hidden bg-white hover:border-slate-300 group/news relative cursor-default">
                                 <div class="absolute top-3 right-3 z-20 flex gap-1.5 opacity-0 group-hover/news:opacity-100 transition-opacity">
                                     <a href="{% url 'news_update' article.pk %}" class="w-8 h-8 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center text-slate-600 hover:text-emerald-600 shadow-sm"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></a>
                                     <a href="{% url 'news_delete' article.pk %}" class="w-8 h-8 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center text-rose-500 hover:text-rose-700 shadow-sm"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></a>
@@ -780,7 +779,6 @@
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
 
-    <!-- UNLOCKED: Opportunities Link -->
     <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
         <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
