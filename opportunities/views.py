@@ -431,6 +431,15 @@ def track_external_application(request, slug):
 from django.db.models import Prefetch
 # Adjust this import to match the app where your new unified profile models live
 from profiles.models import ProfileHeadline, Skill, WorkExperience
+from django.db.models import Prefetch
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+
+# Adjust this import to match the app where your new unified profile models live
+from profiles.models import ProfileHeadline, Skill, WorkExperience
+from .models import JobApplication, JobPost
 
 class ApplicantBoardView(LoginRequiredMixin, ListView):
     model = JobApplication
