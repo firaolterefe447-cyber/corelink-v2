@@ -20,7 +20,7 @@ class OpportunitySubmissionForm(forms.ModelForm):
 
     class Meta:
         model = JobPost
-        fields =[
+        fields = [
             # Core
             'title', 'job_type', 'level', 'cover_image', 'description',
             'is_remote', 'location', 'required_skills',
@@ -67,17 +67,19 @@ class OpportunitySubmissionForm(forms.ModelForm):
             'requires_challenge': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         help_texts = {
-            'is_external': _('Check this if candidates should apply on an outside website (e.g., Google Forms, LinkedIn).'),
+            'is_external': _(
+                'Check this if candidates should apply on an outside website (e.g., Google Forms, LinkedIn).'),
             'is_open_ended': _('Check this if the role is open until filled.'),
-            'requires_challenge': _('Bypass resumes. Require candidates to attach a specific Project/Proof of Work to apply.'),
+            'requires_challenge': _(
+                'Bypass resumes. Require candidates to attach a specific Project/Proof of Work to apply.'),
         }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        # 1. Mark fields as optional in the UI (Django's clean() method will handle strict logic)
-        optional_fields =[
+        # 1. Mark fields as optional in the UI
+        optional_fields = [
             'cover_image', 'location', 'compensation_text', 'is_remote',
             'salary_min', 'salary_max', 'challenge_description',
             'external_url', 'external_company_name', 'external_company_logo',
@@ -86,75 +88,84 @@ class OpportunitySubmissionForm(forms.ModelForm):
         for field in optional_fields:
             self.fields[field].required = False
 
-        # 2. Build Attribution Choices dynamically based on user context
-        choices =[]
-        valid_memberships = None # Initialized as None to prevent list .exists() crash
+        # 2. Build Attribution & UI Context
+        self.has_company_context = False  # Default flag for the template
 
         if self.user:
+            # Check if user is linked to any active company
             valid_memberships = CompanyMember.objects.filter(
                 user=self.user,
-                role__in=['OWNER', 'ADMIN'],
                 is_active=True
             ).select_related('company')
 
-            # PRIORITY 1: Companies (Top)
-            for membership in valid_memberships:
-                choices.append((f"COMPANY_{membership.company.id}", f"🏢 {membership.company.name}"))
+            has_company = valid_memberships.exists()
+            is_founder = getattr(self.user, 'role', None) == 'FOUNDER'
 
-            # PRIORITY 2: Personal Identity
-            user_name = self.user.get_full_name() or self.user.username
-            choices.append(('USER', f'👤 Myself ({user_name})'))
+            # SET CONTEXT FOR HTML: Hide external company inputs if they already have one
+            self.has_company_context = bool(has_company or is_founder)
 
-            # PRIORITY 3: Admin Post
-            is_admin = getattr(self.user, 'role', None) == 'ADMIN' or self.user.is_staff
-            if is_admin:
-                choices.append(('OFFICIAL_ADMIN', '🌟 Official Core Admin Post'))
+            # LOGIC: If they are a Founder or have a company, force the default and hide the 'post_as' field.
+            if self.has_company_context:
+                if has_company:
+                    # Default completely to their first linked company
+                    first_company = valid_memberships.first().company
+                    choice_val = f"COMPANY_{first_company.id}"
+                    self.fields['post_as'].choices = [(choice_val, first_company.name)]
+                    self.initial['post_as'] = choice_val
+                else:
+                    # Edge Case: They are a founder but haven't created a company yet.
+                    user_name = self.user.get_full_name() or getattr(self.user, 'phone_number', 'User')
+                    choice_val = 'USER'
+                    self.fields['post_as'].choices = [(choice_val, f'👤 Myself ({user_name})')]
+                    self.initial['post_as'] = choice_val
 
-        self.fields['post_as'].choices = choices
+                # Crucial: Change the widget to a hidden input so it disappears from the page
+                self.fields['post_as'].widget = forms.HiddenInput()
 
-        # 3. Set Initial Value Safely
-        if self.instance and self.instance.pk:
-            if self.instance.is_official_admin_post:
-                self.initial['post_as'] = 'OFFICIAL_ADMIN'
-            elif self.instance.company:
-                self.initial['post_as'] = f"COMPANY_{self.instance.company.id}"
             else:
-                self.initial['post_as'] = 'USER'
-        else:
-            # Safely check if valid_memberships is a QuerySet and exists
-            if valid_memberships and valid_memberships.exists():
-                self.initial['post_as'] = f"COMPANY_{valid_memberships.first().company.id}"
-            else:
-                self.initial['post_as'] = 'USER'
+                # Normal Users & Admins (Show the dropdown)
+                choices = []
+                user_name = self.user.get_full_name() or getattr(self.user, 'phone_number', 'User')
+                choices.append(('USER', f'👤 Myself ({user_name})'))
+
+                is_admin = getattr(self.user, 'role', None) == 'ADMIN' or getattr(self.user, 'is_staff', False)
+                if is_admin:
+                    choices.append(('OFFICIAL_ADMIN', '🌟 Official Core Admin Post'))
+
+                self.fields['post_as'].choices = choices
+
+                # Safely set initial value for edits vs new
+                if self.instance and self.instance.pk:
+                    if getattr(self.instance, 'is_official_admin_post', False):
+                        self.initial['post_as'] = 'OFFICIAL_ADMIN'
+                    elif getattr(self.instance, 'company', None):
+                        # Catch-all if editing an old post linked to a company
+                        self.initial['post_as'] = f"COMPANY_{self.instance.company.id}"
+                    else:
+                        self.initial['post_as'] = 'USER'
+                else:
+                    self.initial['post_as'] = 'USER'
 
     def clean(self):
         cleaned_data = super().clean()
 
-        # 1. Removed External Job URL Validation to allow external posts without mandatory URLs
-
-        # -----------------------------------------------------------------
-        # 2. SMOOTH 3-WAY DEADLINE LOGIC (Zero-Friction Fix)
-        # -----------------------------------------------------------------
+        # 1. SMOOTH 3-WAY DEADLINE LOGIC
         is_open_ended = cleaned_data.get('is_open_ended')
         deadline_date = cleaned_data.get('deadline_date')
         deadline_text = cleaned_data.get('deadline_text')
 
-        # If they left Date and Text blank, and didn't check open-ended
         if not deadline_date and not deadline_text and not is_open_ended:
-            # Silently auto-correct it to Open-Ended so they can keep moving.
             cleaned_data['is_open_ended'] = True
-
-        # If they picked a date OR wrote custom text, ensure open-ended is strictly False
         elif deadline_date or deadline_text:
             cleaned_data['is_open_ended'] = False
 
-        # 3. Challenge Validation
+        # 2. Challenge Validation
         requires_challenge = cleaned_data.get('requires_challenge')
         challenge_description = cleaned_data.get('challenge_description')
         if requires_challenge and not challenge_description:
             self.add_error('challenge_description', _("Please describe the challenge requirements."))
 
-        # 4. Salary Bound Validation
+        # 3. Salary Bound Validation
         salary_min = cleaned_data.get('salary_min')
         salary_max = cleaned_data.get('salary_max')
         if salary_min and salary_max and salary_min > salary_max:
@@ -167,7 +178,7 @@ class OpportunitySearchForm(forms.Form):
     """
     Smart, AI-ready search form used by the Feed View.
     """
-    DATE_CHOICES =[
+    DATE_CHOICES = [
         ('', '📅 Any Time'),
         ('1', 'Last 24 Hours'),
         ('7', 'Last 7 Days'),
@@ -290,6 +301,9 @@ class PublicOpportunitySubmissionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Guests DO NOT have a company context, so show the inputs
+        self.has_company_context = False
+
         # Make certain fields optional just like the master form
         optional_fields = [
             'cover_image', 'location', 'compensation_text', 'is_remote',
@@ -306,7 +320,7 @@ class PublicOpportunitySubmissionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        # 1. 3-Way Deadline Logic (Copied exactly from master form)
+        # 1. 3-Way Deadline Logic
         is_open_ended = cleaned_data.get('is_open_ended')
         deadline_date = cleaned_data.get('deadline_date')
         deadline_text = cleaned_data.get('deadline_text')
@@ -316,14 +330,13 @@ class PublicOpportunitySubmissionForm(forms.ModelForm):
         elif deadline_date or deadline_text:
             cleaned_data['is_open_ended'] = False
 
-        # 2. Challenge Validation (Copied exactly)
+        # 2. Challenge Validation
         requires_challenge = cleaned_data.get('requires_challenge')
         challenge_description = cleaned_data.get('challenge_description')
         if requires_challenge and not challenge_description:
             self.add_error('challenge_description', _("Please describe the challenge requirements."))
 
         # 3. Force Guest Posts to be External (Crucial!)
-        # We manually inject this because guests don't have the checkbox
         cleaned_data['is_external'] = True
 
         return cleaned_data
