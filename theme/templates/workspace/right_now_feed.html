@@ -387,8 +387,16 @@
                                         onclick="{% if request.user.is_authenticated %}toggleCommentSection('{{ post.id }}'){% else %}openLoginModal('{{ post.profile.user.full_name|escapejs }}'){% endif %}"
                                         class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-xl transition-colors group text-slate-500 hover:bg-slate-50 hover:text-slate-900 whitespace-nowrap">
                                         <i data-lucide="message-square" class="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] transition-colors group-hover:text-[#0A66C2]"></i>
-                                        <span class="text-[13px] sm:text-[14px] font-bold">{% trans "Feedback" %}</span>
-                                        <span id="comment-count-{{ post.id }}" class="bg-slate-100 group-hover:bg-blue-50 text-slate-600 group-hover:text-[#0A66C2] px-1.5 rounded text-[12px] font-black transition-colors">{{ post.comments_count|default:"0" }}</span>
+                                        <span id="feedback-label-{{ post.id }}" class="text-[13px] sm:text-[14px] font-bold">
+                                            {% if post.comments_count and post.comments_count > 0 %}
+                                                {% trans "Feedback" %}
+                                            {% else %}
+                                                {% trans "Give Feedback" %}
+                                            {% endif %}
+                                        </span>
+                                        <span id="comment-count-{{ post.id }}" class="bg-slate-100 group-hover:bg-blue-50 text-slate-600 group-hover:text-[#0A66C2] px-1.5 rounded text-[12px] font-black transition-colors {% if not post.comments_count or post.comments_count == 0 %}hidden{% endif %}">
+                                            {{ post.comments_count|default:"0" }}
+                                        </span>
                                     </button>
                                 </div>
 
@@ -601,11 +609,25 @@
             });
             const data = await response.json();
             if (data.status === 'success') {
-                document.getElementById(`comment-count-${postId}`).innerText = data.comments_count;
+
+                // Update feedback label and show number smoothly
+                const countBadge = document.getElementById(`comment-count-${postId}`);
+                const labelBadge = document.getElementById(`feedback-label-${postId}`);
+
+                if (countBadge) {
+                    countBadge.innerText = data.comments_count;
+                    countBadge.classList.remove('hidden');
+                }
+                if (labelBadge) {
+                    labelBadge.innerText = '{% trans "Feedback" %}';
+                }
+
                 const noCommentsMsg = document.getElementById(`no-comments-${postId}`);
                 if (noCommentsMsg) noCommentsMsg.remove();
+
                 const listContainer = document.getElementById(`comments-list-${postId}`);
                 listContainer.insertAdjacentHTML('beforeend', buildCommentHTML(data.comment));
+
                 inputEl.value = '';
                 inputEl.style.height = '';
                 listContainer.scrollTop = listContainer.scrollHeight;
