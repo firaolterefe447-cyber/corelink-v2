@@ -162,16 +162,6 @@
     .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
     .btn-manage-text:active { transform: scale(0.96); }
 
-    .btn-add-solid {
-        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 42px; padding: 0 1.25rem; border-radius: 0.75rem; background: #10B981; color: #ffffff;
-        font-size: 14px; font-weight: 800; border: none;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
-    }
-    .btn-add-solid:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.5); }
-    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.4); }
-
     /* Animations */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
@@ -223,81 +213,133 @@
             {% if applications %}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                     {% for app in applications %}
-                    <div class="bento-card p-6 flex flex-col group/app">
+                    <div class="bento-card flex flex-col group/app overflow-hidden">
 
-                        <!-- Top: Avatar & Identity -->
-                        <div class="flex justify-between items-start mb-5">
-                            <div class="flex items-center gap-3 w-full min-w-0 pr-3">
-                                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200/80 shadow-sm overflow-hidden shrink-0 flex items-center justify-center">
-                                    {% if app.applicant.get_avatar_url %}
-                                        <img src="{{ app.applicant.get_avatar_url }}" alt="{{ app.applicant.display_name }}" class="w-full h-full object-cover">
+                        <!-- Top Header & Identity -->
+                        <div class="p-5 border-b border-slate-100/80 bg-gradient-to-b from-slate-50/50 to-white">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center gap-3 w-full min-w-0 pr-3">
+                                    <div class="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm overflow-hidden shrink-0 flex items-center justify-center relative">
+                                        <!-- Avatar / Fallback -->
+                                        {% if app.applicant.get_avatar_url %}
+                                            <img src="{{ app.applicant.get_avatar_url }}" alt="{{ app.applicant.display_name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <span class="font-black text-[18px] text-slate-400 uppercase">
+                                                {{ app.applicant.display_name|first|default:app.applicant.username|first }}
+                                            </span>
+                                        {% endif %}
+
+                                        <!-- Status Dot Indicator (Availability) -->
+                                        {% if app.applicant.portfolio.collaboration_status == 'OPEN' %}
+                                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm" title="Open to Work"></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h4 class="font-bold text-[16px] text-slate-900 leading-tight truncate" title="{{ app.applicant.display_name }}">
+                                            {{ app.applicant.display_name }}
+                                        </h4>
+
+                                        <!-- Primary Headline Injection -->
+                                        {% if app.applicant.portfolio.primary_headline %}
+                                            <p class="text-[12.5px] font-medium text-slate-500 truncate mt-0.5">
+                                                {{ app.applicant.portfolio.primary_headline.0.title }}
+                                            </p>
+                                        {% endif %}
+
+                                        <!-- View Full Profile Link -->
+                                        <a href="{% url 'public_profile' app.applicant.username %}" target="_blank" class="text-[11px] font-extrabold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mt-1 transition-colors w-max relative z-50">
+                                            {% trans "View Full Profile" %} <i data-lucide="external-link" class="w-3 h-3"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- App Status Badge -->
+                                <div class="shrink-0">
+                                    {% if app.status == 'SHORTLISTED' %}
+                                        <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm" title="Shortlisted"><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
+                                    {% elif app.status == 'REJECTED' %}
+                                        <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-200/60 flex items-center justify-center" title="Passed"><i data-lucide="x" class="w-4 h-4"></i></div>
+                                    {% elif app.status == 'ACCEPTED' %}
+                                        <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] border border-blue-100 flex items-center justify-center shadow-sm" title="Accepted"><i data-lucide="check-check" class="w-4 h-4"></i></div>
                                     {% else %}
-                                        <span class="font-black text-[18px] text-slate-400 uppercase">{{ app.applicant.display_name|first }}</span>
+                                        <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 border border-amber-100 flex items-center justify-center shadow-sm" title="Pending"><i data-lucide="clock" class="w-4 h-4"></i></div>
                                     {% endif %}
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <h4 class="font-bold text-[16px] text-slate-900 leading-tight truncate" title="{{ app.applicant.display_name }}">{{ app.applicant.display_name }}</h4>
-                                    <a href="{% url 'public_profile' app.applicant.username %}" target="_blank" class="text-[12px] font-extrabold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 mt-0.5 transition-colors w-max relative z-50">
-                                        {% trans "View Profile" %} <i data-lucide="external-link" class="w-3 h-3"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- Status Badge -->
-                            <div class="shrink-0">
-                                {% if app.status == 'SHORTLISTED' %}
-                                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm" title="Shortlisted"><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
-                                {% elif app.status == 'REJECTED' %}
-                                    <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-200/60 flex items-center justify-center" title="Passed"><i data-lucide="x" class="w-4 h-4"></i></div>
-                                {% elif app.status == 'ACCEPTED' %}
-                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] border border-blue-100 flex items-center justify-center shadow-sm" title="Accepted"><i data-lucide="check-check" class="w-4 h-4"></i></div>
-                                {% else %}
-                                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 border border-amber-100 flex items-center justify-center shadow-sm" title="Pending"><i data-lucide="clock" class="w-4 h-4"></i></div>
-                                {% endif %}
                             </div>
                         </div>
 
-                        <!-- Middle: Pitch & Portfolio -->
-                        <div class="flex-1 flex flex-col gap-3 mb-6">
+                        <!-- Middle: The Synthesis Body -->
+                        <div class="flex-1 p-5 flex flex-col gap-4">
+
+                            <!-- Quick ATS Data Context (Experiences & Skills) -->
+                            <div class="flex flex-col gap-2">
+                                <!-- Current Experience (If available) -->
+                                {% if app.applicant.portfolio.ordered_experiences %}
+                                    <div class="flex items-start gap-2 text-[12.5px] text-slate-600 font-medium">
+                                        <i data-lucide="briefcase" class="w-4 h-4 text-slate-400 shrink-0 mt-0.5"></i>
+                                        <span class="truncate">{{ app.applicant.portfolio.ordered_experiences.0.role_title }} @ {{ app.applicant.portfolio.ordered_experiences.0.company_name }}</span>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Top Mastered Skills (Limit 3) -->
+                                {% if app.applicant.portfolio.mastered_skills %}
+                                    <div class="flex flex-wrap gap-1.5 mt-1">
+                                        {% for skill in app.applicant.portfolio.mastered_skills|slice:":3" %}
+                                            <span class="px-2 py-0.5 bg-slate-100 border border-slate-200/60 rounded text-[11px] font-bold text-slate-600">
+                                                {{ skill.name }}
+                                            </span>
+                                        {% endfor %}
+                                        {% if app.applicant.portfolio.mastered_skills|length > 3 %}
+                                            <span class="px-2 py-0.5 text-[11px] font-bold text-slate-400">
+                                                +{{ app.applicant.portfolio.mastered_skills|length|add:"-3" }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Cover Note (Pitch) -->
                             {% if app.cover_note %}
-                                <div class="bg-slate-50/80 border border-slate-200/60 rounded-2xl p-4 relative group/note">
-                                    <i data-lucide="quote" class="w-4 h-4 text-slate-300 absolute top-4 left-4"></i>
-                                    <p class="text-[13px] text-slate-600 font-medium leading-relaxed pl-7 line-clamp-3 group-hover/note:line-clamp-none transition-all cursor-default">
+                                <div class="bg-slate-50 border border-slate-200/60 rounded-xl p-3 relative group/note">
+                                    <i data-lucide="quote" class="w-3.5 h-3.5 text-slate-300 absolute top-3 left-3"></i>
+                                    <p class="text-[12.5px] text-slate-600 font-medium leading-relaxed pl-6 line-clamp-2 group-hover/note:line-clamp-none transition-all cursor-default">
                                         "{{ app.cover_note }}"
                                     </p>
                                 </div>
                             {% else %}
-                                <div class="bg-slate-50/50 border border-slate-200/50 rounded-2xl p-4 flex items-center justify-center h-full min-h-[80px]">
+                                <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-3 flex items-center justify-center h-full min-h-[60px]">
                                     <span class="text-[12.5px] font-medium text-slate-400 italic">{% trans "No cover note provided." %}</span>
                                 </div>
                             {% endif %}
 
+                            <!-- Attached Proof of Work (Challenge Mode) -->
                             {% if app.attached_project %}
-                                <a href="{{ app.attached_project.get_absolute_url }}" target="_blank" class="mt-auto bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-sm rounded-xl p-3 flex items-center gap-3 transition-all relative z-50 group/proj">
-                                    <div class="w-9 h-9 bg-emerald-50 rounded-lg border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
-                                        <i data-lucide="box" class="w-4.5 h-4.5"></i>
+                                <a href="{{ app.attached_project.get_absolute_url }}" target="_blank" class="mt-auto bg-emerald-50/50 border border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-sm rounded-xl p-3 flex items-center gap-3 transition-all relative z-50 group/proj">
+                                    <div class="w-8 h-8 bg-white rounded-lg border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+                                        <i data-lucide="box" class="w-4 h-4"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{% trans "Proof of Work" %}</p>
-                                        <p class="text-[13px] font-bold text-slate-800 truncate">{{ app.attached_project.title }}</p>
+                                        <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-0.5">{% trans "Proof of Work" %}</p>
+                                        <p class="text-[12.5px] font-bold text-slate-800 truncate">{{ app.attached_project.title }}</p>
                                     </div>
                                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover/proj:translate-x-1 group-hover/proj:text-emerald-500 transition-all"></i>
                                 </a>
                             {% endif %}
                         </div>
 
-                        <!-- Bottom: Actions -->
-                        <div class="mt-auto pt-5 border-t border-slate-100/80 grid grid-cols-2 gap-3 relative z-50">
+                        <!-- Bottom: Action Buttons -->
+                        <div class="mt-auto p-3 border-t border-slate-100/80 bg-slate-50/30 grid grid-cols-2 gap-2 relative z-50">
                             <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
                                 {% csrf_token %}
                                 <input type="hidden" name="status" value="REJECTED">
-                                <button type="submit" class="btn-manage-text w-full !h-10 !bg-rose-50 hover:!bg-rose-100 !text-rose-600 border-rose-100/50" {% if app.status == 'REJECTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
+                                <button type="submit" class="btn-manage-text w-full !h-9 !bg-rose-50 hover:!bg-rose-100 !text-rose-600 border-rose-100/50" {% if app.status == 'REJECTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
                                     <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Pass" %}</span>
                                 </button>
                             </form>
                             <form action="{% url 'opportunities:update_status' app.id %}" method="POST" class="w-full">
                                 {% csrf_token %}
                                 <input type="hidden" name="status" value="SHORTLISTED">
-                                <button type="submit" class="btn-manage-text w-full !h-10 !bg-emerald-50 hover:!bg-emerald-100 !text-emerald-700 border-emerald-100/50" {% if app.status == 'SHORTLISTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
+                                <button type="submit" class="btn-manage-text w-full !h-9 !bg-emerald-50 hover:!bg-emerald-100 !text-emerald-700 border-emerald-100/50" {% if app.status == 'SHORTLISTED' %}disabled style="opacity: 0.5; pointer-events: none;"{% endif %}>
                                     <i data-lucide="check" class="w-4 h-4 pointer-events-none"></i> <span class="pointer-events-none">{% trans "Shortlist" %}</span>
                                 </button>
                             </form>
@@ -331,29 +373,23 @@
      ============================================== -->
 {% if not is_inspector %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] prevent-select px-1">
-
-    <!-- Active: My Company -->
     <a href="javascript:history.back()" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-emerald-600 relative">
         <div class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-full shadow-[0_0_12px_rgba(16,185,129,0.8)]"></div>
         <i data-lucide="building" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "My Company" %}</span>
     </a>
-
     <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
     </a>
-
     <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
-
     <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all">
         <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Jobs" %}</span>
     </a>
-
     <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-all relative">
         <div class="relative">
             <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>

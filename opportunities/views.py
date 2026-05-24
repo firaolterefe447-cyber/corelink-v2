@@ -1,5 +1,4 @@
 # opportunities/views.py
-
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db import transaction
@@ -429,6 +428,10 @@ def track_external_application(request, slug):
 # 4. RECRUITER DASHBOARD
 # ==============================================================================
 
+from django.db.models import Prefetch
+# Adjust this import to match the app where your new unified profile models live
+from profiles.models import ProfileHeadline, Skill, WorkExperience
+
 class ApplicantBoardView(LoginRequiredMixin, ListView):
     model = JobApplication
     template_name = 'opportunities/workspace/applicant_board.html'
@@ -443,8 +446,25 @@ class ApplicantBoardView(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
+        # 🔥 MAGICAL QUERY: Fetches applications + all unified profile data in ~4 queries total!
         return JobApplication.objects.filter(job=self.job).select_related(
-            'applicant', 'attached_project'
+            'applicant', 'applicant__portfolio', 'attached_project'
+        ).prefetch_related(
+            Prefetch(
+                'applicant__portfolio__headlines',
+                queryset=ProfileHeadline.objects.filter(is_primary=True),
+                to_attr='primary_headline'
+            ),
+            Prefetch(
+                'applicant__portfolio__skills',
+                queryset=Skill.objects.filter(status='MASTERED').order_by('-progress_bar'),
+                to_attr='mastered_skills'
+            ),
+            Prefetch(
+                'applicant__portfolio__experiences',
+                queryset=WorkExperience.objects.order_by('-is_current', '-start_date'),
+                to_attr='ordered_experiences'
+            )
         ).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
