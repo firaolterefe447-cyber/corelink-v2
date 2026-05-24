@@ -156,7 +156,7 @@
     .glass-card {
         background: rgba(255, 255, 255, 0.98);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1.5rem; /* Smoother curve */
+        border-radius: 1.5rem;
         box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
         position: relative;
         transition: all 0.3s ease;
@@ -196,34 +196,33 @@
 </style>
 
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %}">
-    <!-- RESTRICTED TO 1280px to force a clean 3-column max layout -->
     <div class="max-w-[1280px] mx-auto w-full relative z-10">
 
         {% if request.user.is_authenticated %}
         <!-- NAV TABS -->
-        <div class="flex items-center justify-center gap-3 sm:gap-6 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 w-full px-2 relative z-10">
+        <div class="flex items-center justify-center gap-4 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 w-full px-2 relative z-10">
             <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
-                <span class="text-[10.5px] sm:text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover People" %}</span>
+                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover People" %}</span>
             </a>
 
             <!-- Real link (Commented out until more companies are added)
             <a href="{% url 'company_nexus' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent text-slate-400 hover:text-slate-800 transition-colors shrink-0">
-                <span class="text-[10.5px] sm:text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Companies" %}</span>
+                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Companies" %}</span>
             </a>
             -->
 
             <!-- Placeholder 'Coming Soon' link -->
             <a href="javascript:void(0)" onclick="showToast('{% trans "Coming soon!" %}')" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-indigo-200 transition-all group shrink-0 top-[1px]">
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                    <span class="text-[10.5px] sm:text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                    <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
                         {% trans "Discover Companies" %}
                     </span>
-                    <div class="flex items-center gap-1 md:gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 px-1.5 py-[2px] md:px-2.5 md:py-[3px] rounded-full shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0">
-                        <span class="relative flex h-1 w-1 md:h-1.5 md:w-1.5 shrink-0">
+                    <div class="flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-[2px] md:px-2.5 md:py-[3px] rounded-full shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0">
+                        <span class="relative flex h-1.5 w-1.5 shrink-0">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-1 w-1 md:h-1.5 md:w-1.5 bg-white"></span>
+                          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
                         </span>
-                        <span class="text-[7.5px] md:text-[9px] font-black text-white tracking-widest md:tracking-widest leading-none mt-[1px]">NEW</span>
+                        <span class="text-[9px] font-black text-white tracking-widest leading-none mt-[1px]">NEW</span>
                     </div>
                 </div>
             </a>
@@ -321,14 +320,13 @@
                     <!-- CARD BODY -->
                     <div class="px-5 pb-5 md:px-7 md:pb-7 flex-1 flex flex-col relative z-10">
 
-                        <!-- HUGE PREMIUM AVATAR (Perfectly mathematically aligned negative margin) -->
+                        <!-- HUGE PREMIUM AVATAR -->
                         <div class="-mt-[3.25rem] md:-mt-[4rem] mb-4 sm:mb-5 flex justify-between items-end relative z-20">
                             <div class="relative group/avatar cursor-pointer">
                                 <!-- Avatar depth shadow -->
                                 <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[10px] transform translate-y-2 scale-[0.85] transition-all duration-300 group-hover/avatar:scale-100 group-hover/avatar:translate-y-3 group-hover/avatar:bg-slate-900/25"></div>
 
                                 {% if person.avatar %}
-                                    <!-- Mobile: 6.5rem (104px) | PC: 8rem (128px) -->
                                     <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}"
                                          class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full object-cover bg-white border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-sm transition-transform duration-300 group-hover/avatar:scale-[1.03]"
                                          loading="lazy">
