@@ -218,6 +218,11 @@ def public_profile_view(request, identifier):
         'projects': profile.projects.all().prefetch_related('gallery'),
         'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
 
+        # 🔥 THE NEW FOCUS HISTORY FEED
+        'right_now_posts': profile.right_now_posts.filter(
+            is_published=True
+        ).prefetch_related('gallery').order_by('-created_at'),
+
         # Intent & 10X Opportunities
         'job_preferences': profile.job_preferences.filter(is_active=True),
         'live_opportunities': profile.live_opportunities.filter(
