@@ -153,33 +153,37 @@
     @media (min-width: 768px) { .premium-card { border-radius: 2.5rem; } }
 
     /* =========================================
-       LINKEDIN-STYLE CROPPER UI
+       NATIVE-APP "MAGIC" CROPPER UI
        ========================================= */
-    .cropper-bg { background-image: none !important; background-color: #1e293b !important; }
+    .cropper-bg { background-image: none !important; background-color: #000 !important; }
+
+    /* The Cinematic Overlay */
     .cropper-view-box {
         outline: none !important;
-        border: 2px solid white !important;
-        box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.8) !important; /* Elegant dark overlay */
+        border: 2px solid rgba(255, 255, 255, 0.95) !important;
+        /* Massive black shadow that covers the whole screen */
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85) !important;
         border-radius: 0;
     }
 
-    /* Hide all default cropper grids and points - clean UI only */
+    /* Hide grids for the clean native-app look */
     .cropper-line, .cropper-point, .cropper-dashed, .cropper-center { display: none !important; }
 
-    /* Magic CSS class to make the avatar cropper circular */
+    /* Magic perfect circle for avatars */
     .is-avatar-mode .cropper-view-box { border-radius: 50% !important; }
 
+    /* Make the drag area fully responsive and touch-friendly */
+    .cropper-drag-box { background-color: transparent !important; }
+
     /* Custom Zoom Slider Styling - Thick & Touchable for Mobile */
-    input[type=range] {
-        -webkit-appearance: none; width: 100%; background: transparent; margin: 0;
-    }
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 0; }
     input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
-        background: #0A66C2; cursor: pointer; margin-top: -8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+        background: #ffffff; cursor: pointer; margin-top: -10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5); border: 2px solid #e2e8f0;
     }
     input[type=range]::-webkit-slider-runnable-track {
-        width: 100%; height: 5px; cursor: pointer; background: #E2E8F0; border-radius: 2.5px;
+        width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px;
     }
     input[type=range]:focus { outline: none; }
 
@@ -233,7 +237,6 @@
                     <div class="w-full h-full bg-white rounded-full p-1.5 md:p-2 shadow-sm border border-slate-200 relative z-10 group-hover/preview:border-blue-300 transition-colors">
                         <div class="w-full h-full rounded-full overflow-hidden relative {% if not user.avatar %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-100{% endif %}">
                             {% if user.avatar %}
-                                <!-- object-cover ensures it fits beautifully inside the circle -->
                                 <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover">
                             {% else %}
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
@@ -360,52 +363,58 @@
 </div>
 
 <!-- ==============================================
-     ELEGANT CENTERED CROPPER MODAL
+     NATIVE-APP IMMERSIVE CROPPER MODAL
      ============================================== -->
-<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-3 md:p-6 opacity-0 transition-opacity duration-300">
-    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
+<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center opacity-0 transition-opacity duration-300 bg-black">
 
-    <!-- Container perfectly sized for phones and PC -->
-    <div class="relative w-full max-w-3xl h-[90dvh] md:h-full md:max-h-[750px] bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-slate-200 z-10 transform scale-95 transition-transform duration-300 overflow-hidden" id="cropper-content">
+    <!-- Container: 100% Full Screen on Mobile, Massive Floating Card on PC -->
+    <div class="relative w-full h-[100dvh] md:h-[90vh] md:max-h-[900px] md:max-w-5xl bg-black md:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="cropper-content">
 
-        <!-- Header -->
-        <div class="flex justify-between items-center px-4 py-4 md:px-6 md:py-5 border-b border-slate-100 bg-white shrink-0">
-            <div>
-                <h3 class="text-[17px] md:text-[20px] font-extrabold text-slate-900 tracking-tight nav-heading" id="cropper-title">{% trans "Adjust Image" %}</h3>
-            </div>
-            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-11 h-11 flex items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-slate-500 hover:text-slate-900 border border-slate-200 active:scale-95">
-                <i data-lucide="x" class="w-5 h-5"></i>
+        <!-- Header: Floating over the image -->
+        <div class="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 md:py-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+            <h3 class="text-[18px] md:text-[22px] font-extrabold text-white tracking-tight drop-shadow-lg" id="cropper-title">{% trans "Move and Scale" %}</h3>
+            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-colors text-white pointer-events-auto active:scale-95">
+                <i data-lucide="x" class="w-5 h-5 md:w-6 md:h-6"></i>
             </button>
         </div>
 
-        <!-- Canvas Area (Locked to touch actions so page doesn't scroll) -->
-        <div class="flex-1 w-full bg-[#1e293b] relative overflow-hidden min-h-0 flex items-center justify-center" id="cropper-container-wrapper" style="touch-action: none;">
-            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-500">
-            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-[#1e293b] z-10">
-                <i data-lucide="loader-2" class="w-8 h-8 text-white/50 animate-spin mb-3"></i>
+        <!-- Canvas Area: Edge-to-Edge -->
+        <div class="flex-1 w-full h-full relative overflow-hidden bg-black" id="cropper-container-wrapper" style="touch-action: none;">
+            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-700">
+            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <i data-lucide="loader-2" class="w-10 h-10 text-white/50 animate-spin mb-3"></i>
             </div>
         </div>
 
-        <!-- Footer & Controls (Centered) -->
-        <div class="bg-white border-t border-slate-100 p-5 md:p-6 shrink-0 z-20">
-            <div class="max-w-md mx-auto space-y-5">
+        <!-- Footer: Floating Dark Glassmorphism -->
+        <div class="absolute bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-6 px-5 md:pb-8 md:px-10 pointer-events-none">
+            <div class="max-w-2xl mx-auto space-y-6 pointer-events-auto">
 
-                <!-- Zoom Slider -->
-                <div class="flex items-center gap-3 px-2">
-                    <i data-lucide="image" class="w-4 h-4 text-slate-400 shrink-0"></i>
-                    <div class="flex-1 py-2">
+                <!-- Tools Row (Rotate + Zoom Slider) -->
+                <div class="flex items-center justify-between gap-4">
+                    <button type="button" onclick="cropper.rotate(-90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Zoom Slider -->
+                    <div class="flex-1 flex items-center gap-3 px-2">
+                        <i data-lucide="image" class="w-4 h-4 text-white/50 shrink-0"></i>
                         <input type="range" id="zoom-slider" min="0" max="1" step="0.01" value="0" class="w-full block">
+                        <i data-lucide="image" class="w-6 h-6 text-white/80 shrink-0"></i>
                     </div>
-                    <i data-lucide="image" class="w-6 h-6 text-slate-500 shrink-0"></i>
+
+                    <button type="button" onclick="cropper.rotate(90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <i data-lucide="rotate-cw" class="w-5 h-5"></i>
+                    </button>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 py-3.5 md:py-4 transition-all active:scale-95 text-[14px] md:text-[15px]">
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 backdrop-blur-md py-4 md:py-4.5 transition-all active:scale-95 text-[15px]">
                         {% trans "Cancel" %}
                     </button>
-                    <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-3.5 md:py-4 shadow-md transition-all active:scale-95 text-[14px] md:text-[15px]">
-                        {% trans "Save" %}
+                    <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-4 md:py-4.5 shadow-[0_4px_20px_rgba(10,102,194,0.4)] transition-all active:scale-95 text-[15px]">
+                        {% trans "Save & Apply" %}
                     </button>
                 </div>
             </div>
@@ -489,9 +498,9 @@
             const loader = document.getElementById('cropper-loader');
             const wrapper = document.getElementById('cropper-container-wrapper');
 
-            cropperTitle.innerText = mode === 'avatar' ? "{% trans 'Adjust Profile Picture' %}" : "{% trans 'Adjust Background Banner' %}";
+            cropperTitle.innerText = mode === 'avatar' ? "{% trans 'Move and Scale' %}" : "{% trans 'Adjust Banner' %}";
 
-            // Add class for circular overlay when cropping avatar
+            // Add class for perfect circular overlay when cropping avatar
             if (mode === 'avatar') {
                 wrapper.classList.add('is-avatar-mode');
             } else {
@@ -513,38 +522,45 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Exact 1:1 Aspect ratio for Avatar so it fits a circle, 3.2:1 for Cover
+                // Exact 1:1 Aspect ratio for Avatar, 3.2:1 for Cover
                 const ratio = mode === 'avatar' ? 1 : 3.2;
 
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    viewMode: 1,           // Restrict crop box to not exceed canvas size
-                    dragMode: 'move',      // Move the image, not the box
-                    autoCropArea: 1,       // 1 = maximize crop box to take up 100% of available space
-                    cropBoxMovable: false, // Box stays perfectly centered
-                    cropBoxResizable: false, // Box cannot be resized by user
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.95,    // MAGIC: Forces the crop circle to be massive (95% of screen width)
+                    cropBoxMovable: false, // Locked in center like native apps
+                    cropBoxResizable: false, // Cannot be resized by user
                     toggleDragModeOnDblclick: false,
-                    guides: false,         // Clean UI
-                    center: false,         // Clean UI
-                    highlight: false,      // Clean UI
-                    background: false,     // Disabled to use our own solid color
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    background: false,     // Disabled to use our pitch-black background
                     ready: function () {
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
 
-                        // Setup Zoom Slider bounds
-                        const canvasData = cropper.getCanvasData();
+                        // Automatic Smart Zoom: Ensure image fills the giant circle perfectly without black edges
+                        const cropBoxData = cropper.getCropBoxData();
                         const imageData = cropper.getImageData();
+                        const canvasData = cropper.getCanvasData();
 
-                        // Calculate minimum zoom to fit the image inside container
-                        const minZoomRatio = canvasData.width / imageData.naturalWidth;
+                        const minZoomRatio = Math.max(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
 
                         zoomSlider.min = minZoomRatio;
-                        zoomSlider.max = minZoomRatio * 3; // Allow up to 3x zoom
+                        zoomSlider.max = minZoomRatio * 3; // Allow zooming in up to 3x
                         zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
-                        zoomSlider.value = imageData.width / imageData.naturalWidth;
+
+                        // Force cropper to jump to minimum zoom instantly
+                        cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
+                        zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
                     },
                     zoom: function(e) {
+                        // Keep slider in sync if user pinches-to-zoom on mobile
                         zoomSlider.value = e.detail.ratio;
                     }
                 });
@@ -555,9 +571,7 @@
 
     // Handle Slider Input
     zoomSlider.addEventListener('input', function() {
-        if (cropper) {
-            cropper.zoomTo(parseFloat(this.value));
-        }
+        if (cropper) { cropper.zoomTo(parseFloat(this.value)); }
     });
 
     function closeProCropper() {
@@ -578,6 +592,7 @@
         }, 300);
     }
 
+    // 2-Step Canvas Processing (The Secret to Premium Quality)
     document.getElementById('save-crop-btn').addEventListener('click', function() {
         if (!cropper) return;
         const btn = this;
@@ -585,43 +600,72 @@
 
         btn.disabled = true;
         btn.classList.add('opacity-80', 'cursor-not-allowed');
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline-block mr-2"></i>{% trans "Saving..." %}';
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2"></i>{% trans "Applying..." %}';
         lucide.createIcons();
 
-        // 1:1 Resolution Output for Avatar (800x800 high quality)
-        const cropOptions = {
-            width: currentMode === 'avatar' ? 800 : 1600,
-            height: currentMode === 'avatar' ? 800 : 500,
+        // High DPI / Premium Resolution Target
+        const outputWidth = currentMode === 'avatar' ? 800 : 1600;
+        const outputHeight = currentMode === 'avatar' ? 800 : 500;
+
+        // 1. Get cropped canvas at original unscaled high-res
+        let originalCanvas = cropper.getCroppedCanvas({
             imageSmoothingEnabled: true,
             imageSmoothingQuality: 'high'
-        };
+        });
 
-        cropper.getCroppedCanvas(cropOptions).toBlob((blob) => {
+        // 2. Create pristine destination canvas to prevent PNG black-background bug
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = outputWidth;
+        finalCanvas.height = outputHeight;
+        const ctx = finalCanvas.getContext('2d');
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // 3. Fill with white (Saves transparent PNG logos from turning black)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+        // 4. Draw crop on top of white background
+        ctx.drawImage(originalCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+        // 5. Output as WebP (Premium web compression), fallback to JPEG
+        const mimeType = 'image/webp';
+        const quality = 0.95; // 95% quality for deep, crisp colors
+
+        finalCanvas.toBlob((blob) => {
             if (!blob) {
-                alert('{% trans "Error processing image. Please try another image." %}');
-                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent; return;
+                // Fallback for older browsers
+                finalCanvas.toBlob((fallbackBlob) => {
+                    uploadBlob(fallbackBlob, btn, originalContent, 'image/jpeg');
+                }, 'image/jpeg', 0.95);
+                return;
             }
-
-            const file = new File([blob], currentMode + '.jpg', { type: 'image/jpeg' });
-            const formData = new FormData();
-            formData.append(currentInput.name, file);
-
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
-            }).then(response => {
-                if (response.ok) { window.location.reload(); }
-                else {
-                    alert('{% trans "Upload failed. Please try again." %}');
-                    btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
-                }
-            }).catch(err => {
-                console.error(err);
-                alert('{% trans "An unexpected network error occurred." %}');
-                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
-            });
-        }, 'image/jpeg', 0.9);
+            uploadBlob(blob, btn, originalContent, mimeType);
+        }, mimeType, quality);
     });
+
+    function uploadBlob(blob, btn, originalContent, mimeType) {
+        const extension = mimeType === 'image/webp' ? '.webp' : '.jpg';
+        const file = new File([blob], currentMode + extension, { type: mimeType });
+        const formData = new FormData();
+        formData.append(currentInput.name, file);
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+        }).then(response => {
+            if (response.ok) { window.location.reload(); }
+            else {
+                alert('{% trans "Upload failed. Please try again." %}');
+                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('{% trans "An unexpected network error occurred." %}');
+            btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+        });
+    }
 </script>
 {% endblock %}
