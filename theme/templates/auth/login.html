@@ -133,30 +133,36 @@
             <form method="POST" class="relative z-10 space-y-5">
                 {% csrf_token %}
 
-                <!-- 🚨 ERROR HANDLING BLOCK STARTS HERE 🚨 -->
-                {% if messages or form.errors %}
-                <div class="anim-error-pop bg-red-50/80 backdrop-blur-md border border-red-200 p-4 rounded-[1rem] flex gap-3 items-center shadow-sm shadow-red-500/10 mb-2">
-                    <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                    <div class="text-[13px] font-bold text-red-700 leading-snug">
-                        <!-- Standard Form Errors (Invalid Password/Email) -->
-                        {% if form.non_field_errors %}
-                            {% for error in form.non_field_errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
+                <!-- 🚨 ONLY INVALID ERRORS WILL SHOW HERE 🚨 -->
+                <div class="space-y-2 mb-2">
 
-                        <!-- Django Messages (Custom View Errors) -->
-                        {% if messages %}
-                            {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                    <!-- 1. Form Non-Field Errors -->
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                        <div class="anim-error-pop bg-red-50/80 backdrop-blur-md border border-red-200 p-4 rounded-[1rem] flex gap-3 items-center shadow-sm shadow-red-500/10">
+                            <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-[13px] font-bold text-red-700 leading-snug">{{ error }}</p>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- 2. Django Custom Messages (Filtered to Errors Only) -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'error' in message.tags or 'warning' in message.tags %}
+                            <div class="anim-error-pop bg-red-50/80 backdrop-blur-md border border-red-200 p-4 rounded-[1rem] flex gap-3 items-center shadow-sm shadow-red-500/10">
+                                <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <p class="text-[13px] font-bold text-red-700 leading-snug">{{ message }}</p>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
                 </div>
-                {% endif %}
-                <!-- 🚨 ERROR HANDLING BLOCK ENDS HERE 🚨 -->
 
                 <!-- Identifier (Phone/Email) -->
                 <div>
@@ -179,9 +185,7 @@
                                class="field-input ml-2 font-bold tracking-widest placeholder:tracking-normal">
 
                         <button type="button" onclick="togglePassword()" class="p-2 text-slate-400 hover:text-blue-600 focus:outline-none rounded-lg hover:bg-slate-50 transition-colors">
-                            <!-- Eye Icon -->
                             <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            <!-- Eye Off Icon (Hidden by default) -->
                             <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                         </button>
                     </div>
@@ -217,14 +221,6 @@
                     <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.181-4.686c.223-.195-.054-.282-.346-.086l-6.4 4.024-2.76-.86c-.6-.185-.615-.6.125-.89l10.816-4.18c.5-.18.943.116.804.837z"/></svg>
                     {% trans "Recover via Telegram" %}
                 </a>
-
-                <!-- Human Support Text Fallback -->
-                <p class="text-[11px] text-center text-slate-500 mt-2 leading-relaxed font-semibold">
-                    {% blocktrans %}Need further assistance? Contact support at{% endblocktrans %}
-                    <a href="https://t.me/corelinkteam" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-bold hover:text-blue-800 transition-colors underline decoration-2 underline-offset-2 decoration-blue-200">@corelinkteam</a>
-                    {% trans "or" %}
-                    <a href="mailto:corelinkethiopia@gmail.com" class="text-blue-600 font-bold hover:text-blue-800 transition-colors underline decoration-2 underline-offset-2 decoration-blue-200">email</a>.
-                </p>
 
             </form>
         </main>
