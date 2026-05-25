@@ -325,7 +325,7 @@
                     </div>
 
                     {% if not company.mission_stmt %}
-                        <p class="text-[13px] text-slate-400 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                        <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
                             {% trans "Define your company's core purpose and long-term vision. Whether you're building software or providing local services, a clear mission helps partners understand your drive." %}
                         </p>
                         <a href="{% url 'company_edit' company.slug %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer">
@@ -351,63 +351,6 @@
         </div>
 
 
-        <!-- ==============================================
-             JOBS POST & TALENT MANAGEMENT (MOVED TO TOP)
-             ============================================== -->
-        <div class="bento-card p-6 md:p-8 flex flex-col relative mb-6 lg:mb-10 w-full">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">
-                    {% trans "Recruitment & Talent Management" %}
-                </h3>
-                <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                    <!-- LINKED TO PIPELINE LIST -->
-                    <a href="{% url 'opportunities:workspace_list' %}" class="btn-manage-text">
-                        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 pointer-events-none"></i>
-                        <span class="pointer-events-none">{% trans "Manage Recruitment" %}</span>
-                    </a>
-                    <!-- LINKED TO POST CREATE -->
-                    <a href="{% url 'opportunities:create' %}" class="btn-add-solid !bg-[#4F46E5] hover:!bg-[#4338CA] !shadow-none">
-                        <i data-lucide="briefcase" class="w-4 h-4 pointer-events-none"></i>
-                        <span class="pointer-events-none">{% trans "Post Job" %}</span>
-                    </a>
-                </div>
-            </div>
-
-            <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                {% trans "Post job openings, gigs, and challenges. Track incoming applications and manage your recruitment process. We are currently in our trial phase, everything is free, including headhunting and posting opportunities." %}
-            </p>
-
-            <div class="flex-1 mt-2">
-                {% if company_jobs %}
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {% for job in company_jobs|slice:":4" %}
-                        <div class="border border-slate-200/80 rounded-xl p-4 bg-white flex flex-col shadow-sm hover:border-slate-300 transition-colors group">
-                            <h4 class="font-bold text-slate-900 text-[14.5px] leading-snug mb-3 truncate" title="{{ job.title }}">{{ job.title }}</h4>
-                            <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
-                                <div class="flex items-center gap-2 text-slate-500 text-[12px] font-semibold">
-                                    <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> {{ job.applications_count|default:0 }} {% trans "Applicants" %}
-                                </div>
-                                <a href="{% url 'opportunities:applicant_board' job.slug %}" class="text-[12px] font-extrabold text-[#4F46E5] group-hover:text-indigo-700 transition-colors">
-                                    {% trans "View Board" %} &rarr;
-                                </a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{% url 'opportunities:create' %}" class="border-2 border-dashed border-slate-200 hover:border-indigo-300 rounded-xl p-4 bg-slate-50/50 hover:bg-indigo-50/30 transition-colors flex flex-col items-center justify-center gap-1.5 h-[100px] cursor-pointer group w-full">
-                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                            </div>
-                            <span class="text-[13px] font-bold text-slate-500 group-hover:text-indigo-600 transition-colors">{% trans "Post new role" %}</span>
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-
-
         <!-- MODULAR BENTO CARDS -->
         <div class="flex flex-col gap-5 lg:gap-6 mb-6 lg:mb-10">
 
@@ -426,8 +369,8 @@
                         </a>
                     </div>
                 </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "List the products or services your business offers. Detail what you do so clients and partners understand your full capabilities." %}
+                <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                    {% trans "Establish your digital storefront on CoreLink to showcase your offerings and streamline discovery for clients and partners network-wide. You can list up to 20 different products or services completely free." %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if services %}
@@ -451,7 +394,7 @@
             <!-- 2. Business History -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Business History" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Company History / Milestones" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_milestones' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -463,8 +406,8 @@
                         </a>
                     </div>
                 </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Share your business journey. You can mention when you started, key achievements, major turning points, or milestones like product launches." %}
+                <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                    {% trans "Document your company history, key achievements, and product launches to establish industry authority and show potential partners your real-world progress over time. Build an active timeline to showcase your growth and major operational turning points." %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if milestones %}
@@ -489,7 +432,7 @@
             <!-- 3. Business Updates -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Business Updates" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Business News & Updates" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_news_list' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -501,8 +444,8 @@
                         </a>
                     </div>
                 </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Share your latest business news, product updates, or insights. Posting regular updates keeps people in the loop." %}
+                <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                    {% trans "Publish regular business news, product updates, and insights to maintain a dynamic presence and establish authority within the Ethiopian business ecosystem. Stay active in the local company hub by consistently sharing your real-world progress and operational milestones." %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if news %}
@@ -537,7 +480,7 @@
             <!-- 4. Contacts -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Contacts" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Direct Contact Details" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_company_network' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -549,8 +492,8 @@
                         </a>
                     </div>
                 </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Add your official phone numbers, email addresses, and location so people can reach your business directly." %}
+                <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                    {% trans "Provide your official contact details, office locations, and communication channels to be publicly displayed on your company's CoreLink page. Make it easy for clients, talent, and partners to reach out and initiate direct communication." %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if company.contacts.all %}
@@ -578,7 +521,7 @@
             <!-- 5. Social Links -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Social Links" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Digital Presence & Links" %}</h3>
                     <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_company_network' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -590,8 +533,8 @@
                         </a>
                     </div>
                 </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Link your official website and social media profiles so people can easily find your business online." %}
+                <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                    {% trans "Link your official website, social media profiles, and any other digital presence to be publicly displayed on your company's CoreLink page." %}
                 </p>
                 <div class="flex-1 mt-2">
                     {% if company.socials.all %}
@@ -618,6 +561,64 @@
 
         </div>
 
+
+        <!-- ==============================================
+             JOBS POST & TALENT MANAGEMENT
+             ============================================== -->
+        <div class="bento-card p-6 md:p-8 flex flex-col relative mb-6 lg:mb-10 w-full">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">
+                    {% trans "Recruitment & Talent Management" %}
+                </h3>
+                <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                    <!-- LINKED TO PIPELINE LIST -->
+                    <a href="{% url 'opportunities:workspace_list' %}" class="btn-manage-text">
+                        <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 pointer-events-none"></i>
+                        <span class="pointer-events-none">{% trans "Manage Recruitment" %}</span>
+                    </a>
+                    <!-- LINKED TO POST CREATE -->
+                    <a href="{% url 'opportunities:create' %}" class="btn-add-solid !bg-[#4F46E5] hover:!bg-[#4338CA] !shadow-none">
+                        <i data-lucide="briefcase" class="w-4 h-4 pointer-events-none"></i>
+                        <span class="pointer-events-none">{% trans "Post Job" %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                {% trans "Access CoreLink talent through dynamic, living portfolios engineered for the modern digital economy rather than outdated, static CVs. Streamline your search by evaluating verified proof of work and real-time execution instead of generic resumes. Posting roles is completely free, while premium charges apply exclusively to advanced features." %}
+            </p>
+
+            <div class="flex-1 mt-2">
+                {% if company_jobs %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for job in company_jobs|slice:":4" %}
+                        <div class="border border-slate-200/80 rounded-xl p-4 bg-white flex flex-col shadow-sm hover:border-slate-300 transition-colors group">
+                            <h4 class="font-bold text-slate-900 text-[14.5px] leading-snug mb-3 truncate" title="{{ job.title }}">{{ job.title }}</h4>
+                            <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-slate-500 text-[12px] font-semibold">
+                                    <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> {{ job.applications_count|default:0 }} {% trans "Applicants" %}
+                                </div>
+                                <a href="{% url 'opportunities:applicant_board' job.slug %}" class="text-[12px] font-extrabold text-[#4F46E5] group-hover:text-indigo-700 transition-colors">
+                                    {% trans "View Board" %} &rarr;
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="{% url 'opportunities:create' %}" class="border-2 border-dashed border-slate-200 hover:border-indigo-300 rounded-xl p-4 bg-slate-50/50 hover:bg-indigo-50/30 transition-colors flex flex-col items-center justify-center gap-1.5 h-[100px] cursor-pointer group w-full">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-bold text-slate-500 group-hover:text-indigo-600 transition-colors">{% trans "Post new role" %}</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
         <!-- BOTTOM GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-8 lg:mb-12 items-stretch" id="section-command">
 
@@ -625,11 +626,11 @@
             <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col relative h-full z-20">
                 <div class="relative flex flex-col h-full z-10">
                     <div class="mb-3">
-                        <h3 class="text-[1.3rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight leading-tight cursor-default">{% trans "Command Center" %}</h3>
+                        <h3 class="text-[1.3rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight leading-tight cursor-default">{% trans "Current Company Needs" %}</h3>
                         <div class="h-1 w-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-2 md:mt-3"></div>
                     </div>
-                    <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10 cursor-default">
-                        {% trans "Broadcast your company's current operational needs to the network. Instantly match with targeted opportunities, whether you're hiring talent or seeking clients." %}
+                    <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-6 md:pr-10 cursor-default">
+                        {% trans "Broadcast your current company status and operational needs to the Ethiopian business ecosystem. Signal whether you are scaling operations, raising investment, hiring talent, or seeking strategic partners and B2B clients." %}
                     </p>
                     <form id="quick-company-form" onsubmit="submitQuickCompanyUpdate(event)" class="mt-auto flex flex-col gap-5 relative z-50">
                         {% csrf_token %}
