@@ -435,16 +435,10 @@
                     <!-- Timeline Node -->
                     <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
 
-                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                    <!-- Date/Day -->
+                    <div class="mb-3">
                         <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
-                        {% if post.current_search %}
-                        <span class="px-2.5 py-1 border border-slate-200 text-[#0A66C2] text-[9.5px] md:text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ post.get_current_search_display }}</span>
-                        {% endif %}
                     </div>
-
-                    {% if post.title %}
-                    <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2.5 transition-colors group-hover:text-[#0A66C2]">{{ post.title }}</h4>
-                    {% endif %}
 
                     {% if post.body_narrative %}
                     <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.body_narrative }}</p>
@@ -458,26 +452,6 @@
                                 <img src="{{ media.image.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
                             </div>
                             {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    <!-- Rich OpenGraph Link Preview -->
-                    {% if post.external_link %}
-                        <div class="mt-4 border border-slate-200 rounded-xl overflow-hidden max-w-[32rem] hover:border-[#0A66C2]/40 transition-colors shadow-sm group/link">
-                            <a href="{{ post.external_link }}" target="_blank" rel="noopener noreferrer" class="flex flex-col sm:flex-row bg-slate-50 hover:bg-white transition-colors">
-                                {% if post.link_image_url %}
-                                <div class="sm:w-1/3 h-32 sm:h-auto bg-slate-200 shrink-0 border-b sm:border-b-0 sm:border-r border-slate-200 overflow-hidden">
-                                    <img src="{{ post.link_image_url }}" alt="Link preview" class="w-full h-full object-cover transition-transform duration-500 group-hover/link:scale-105">
-                                </div>
-                                {% endif %}
-                                <div class="p-4 flex flex-col justify-center flex-1">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="link" class="w-3 h-3"></i> {{ post.link_domain|default:"External Link" }}</span>
-                                    <h5 class="text-[14px] font-bold text-slate-800 line-clamp-2 mb-1 group-hover/link:text-[#0A66C2] transition-colors">{{ post.link_title|default:post.external_link }}</h5>
-                                    {% if post.link_description %}
-                                    <p class="text-[12px] text-slate-500 line-clamp-2">{{ post.link_description }}</p>
-                                    {% endif %}
-                                </div>
-                            </a>
                         </div>
                     {% endif %}
                 </article>
