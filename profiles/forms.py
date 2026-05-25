@@ -470,7 +470,7 @@ class CompanyProfileUpdateForm(TailwindFormMixin, forms.ModelForm):
             'sector': _("E.g., Agriculture, Manufacturing, Healthcare, Retail. Type the industry that best describes your core business."),
             'location': _("E.g., Addis Ababa, Nairobi, London, or Remote. Type the city and country where your primary operations are based."),
             'operating_since': _("The year the business was officially founded or established."),
-            'mission_stmt': _("Describe your business, the services you provide, and the customers you serve. Share your history and what makes your company unique."),
+            'mission_stmt': _("Write a deep description of your business identity and core mission. Share your authentic story and the values that make your company unique"),
             'is_hiring': _("Check this box if your company currently has open job positions."),
             'looking_for': _("Select your primary business objective to help others in the network understand how they can collaborate with you."),
         }
@@ -526,7 +526,7 @@ class CompanyServiceForm(TailwindFormMixin, forms.ModelForm):
         }
 
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'This service is designed to help customers...'}),
+            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Explain your service or product in detial ...'}),
         }
 
 
@@ -536,20 +536,20 @@ class CompanyMilestoneForm(TailwindFormMixin, forms.ModelForm):
         fields = ['year', 'title', 'description']
 
         labels = {
-            'year': _("Year Achieved"),
+            'year': _("Year "),
             'title': _("Milestone Title"),
             'description': _("Details"),
         }
 
         help_texts = {
             'year': _("The year this event occurred."),
-            'title': _("A short headline (e.g., 'Opened New Branch', 'Reached 100 Employees', 'Launched New Product Line')."),
+            'title': _("A short headline (e.g., 'we founded X company ' 'Opened New Branch', 'Reached 100 Employees', 'Launched New Product Line')."),
             'description': _("Share details about this achievement and how it helped your organization grow."),
         }
 
         widgets = {
             'year': forms.NumberInput(attrs={'placeholder': 'e.g. 2022'}),
-            'description': forms.Textarea(attrs={'rows': 3, 'placeholder': 'This milestone allowed the organization to...'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Eplain the event...'}),
         }
 
 
@@ -630,7 +630,7 @@ class CompanySocialLinkForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'platform': _("The social media network (e.g., LinkedIn, Facebook, X/Twitter)."),
+            'platform': _("The social media network or website (e.g.,our official website, LinkedIn, Facebook, X/Twitter)."),
             'url': _("The direct web link to your company's official page."),
             'order': _("Set the sequence in which this link appears. Lower numbers show up first."),
         }
