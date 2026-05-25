@@ -262,7 +262,7 @@
 
                     <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2 font-heading">{% trans "Company Logo" %}</h2>
                     <p class="text-[13px] md:text-[14px] text-slate-500 mb-6 md:mb-8 max-w-[260px] leading-relaxed font-medium">
-                        {% trans "Please upload a clean vector or high-res square image of your brand logo." %}
+                        {% trans "Large or wide logos are now automatically fitted to the square format instantly." %}
                     </p>
 
                     <!-- Logo Actions -->
@@ -348,9 +348,7 @@
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
 
-        <!-- NEW: Personal Profile Link inside Drawer -->
         <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Personal Profile" %}</button>
-
         <button onclick="window.location.href='{% url 'company_admin_dashboard' company.slug %}'" class="w-full min-h-[44px] text-left px-4 py-3 bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-700 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-emerald-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Company Hub" %}</button>
         <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="radio" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "My Updates" %}</button>
 
@@ -478,13 +476,14 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Set Logo strictly to 1:1 aspect ratio, Cover stays at 3:1 (approx 21:9 visual)
-                const ratio = mode === 'logo' ? 1 : 21/9;
+                const isLogo = mode === 'logo';
+                const ratio = isLogo ? 1 : 21/9;
+
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    viewMode: 1,
+                    viewMode: 0, // MUST BE 0 to allow zooming OUT completely
                     dragMode: 'move',
-                    autoCropArea: 0.95,
+                    autoCropArea: 1,
                     restore: false,
                     guides: true,
                     center: true,
@@ -493,9 +492,34 @@
                     cropBoxResizable: true,
                     toggleDragModeOnDblclick: false,
                     background: true,
+                    wheelZoomRatio: 0.1, // Smooth zoom
                     ready: function () {
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
+
+                        // ==========================================
+                        // THE MAGIC AUTO-FIT ALGORITHM FOR BIG LOGOS
+                        // ==========================================
+                        if (isLogo) {
+                            const containerData = this.cropper.getContainerData();
+                            const cropBoxData = this.cropper.getCropBoxData();
+                            const imageData = this.cropper.getImageData();
+
+                            // Calculate exactly how much to zoom out so the widest/tallest part fits inside the box
+                            const fitScale = Math.min(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            ) * 0.95; // 0.95 leaves a perfect 5% margin around the logo
+
+                            // Force the zoom out immediately
+                            this.cropper.zoomTo(fitScale);
+
+                            // Center the image canvas dead-center in the crop box
+                            this.cropper.setCanvasData({
+                                left: (containerData.width - imageData.naturalWidth * fitScale) / 2,
+                                top: (containerData.height - imageData.naturalHeight * fitScale) / 2,
+                            });
+                        }
                     }
                 });
             }, 150);
@@ -538,11 +562,17 @@
         btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
         lucide.createIcons();
 
+        const isLogo = currentMode === 'logo';
+
         const cropOptions = {
-            width: currentMode === 'logo' ? 800 : 1920,
+            width: isLogo ? 800 : 1920,
             imageSmoothingEnabled: true,
-            imageSmoothingQuality: 'high'
+            imageSmoothingQuality: 'high',
+            fillColor: isLogo ? 'transparent' : '#ffffff' // Transparent for logos
         };
+
+        const mimeType = isLogo ? 'image/png' : 'image/jpeg';
+        const ext = isLogo ? '.png' : '.jpg';
 
         cropper.getCroppedCanvas(cropOptions).toBlob((blob) => {
             if (!blob) {
@@ -550,10 +580,9 @@
                 btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent; return;
             }
 
-            const file = new File([blob], currentMode + '.jpg', { type: 'image/jpeg' });
+            const file = new File([blob], currentMode + ext, { type: mimeType });
             const formData = new FormData();
-            
-            // The name must be 'logo' or 'cover_image' exactly to match the view logic
+
             formData.append(currentInput.name, file);
 
             fetch(window.location.href, {
@@ -571,7 +600,7 @@
                 alert('{% trans "An unexpected network error occurred." %}');
                 btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
             });
-        }, 'image/jpeg', 0.9);
+        }, mimeType, 0.95);
     });
 </script>
 {% endblock %}
