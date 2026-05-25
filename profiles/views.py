@@ -657,6 +657,55 @@ class RightNowUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView)
         messages.success(self.request, "Right Now update modified.")
         return redirect(self.get_success_url())
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INLINE "RIGHT NOW" CREATION API
+# ═══════════════════════════════════════════════════════════════════════════════
+@login_required
+@require_POST
+def api_create_right_now(request):
+    """
+    Handles the inline AJAX composer from the dashboard.
+    Saves the post, attaches images, AND updates the user's primary profile intent.
+    """
+    body_narrative = request.POST.get('body_narrative', '').strip()
+    current_search = request.POST.get('current_search', 'LEARNING')
+    images = request.FILES.getlist('gallery_images')
+
+    if not body_narrative:
+        return JsonResponse({'success': False, 'error': 'Update cannot be empty'}, status=400)
+
+    with transaction.atomic():
+        # 1. Fetch the user's profile
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+
+        # 2. Sync Profile Intent: Whatever they select in the post becomes their main status
+        if profile.current_search != current_search:
+            profile.current_search = current_search
+            # The model's save() method will automatically trigger `last_signal_update`
+            profile.save(update_fields=['current_search'])
+
+        # 3. Create the Post (Title is intentionally left null as requested)
+        post = RightNowPost.objects.create(
+            profile=profile,
+            title=None,
+            body_narrative=body_narrative,
+            current_search=current_search,
+            collaboration_status=profile.collaboration_status,
+            is_published=True,
+            is_active_focus=True  # Automatically pins this to the top of their profile
+        )
+
+        # 4. Attach Media
+        for image in images:
+            RightNowMedia.objects.create(post=post, image=image)
+
+    return JsonResponse({
+        'success': True,
+        'post_id': post.id,
+        'new_search': current_search
+    })
+
 class RightNowDeleteView(PortfolioSecurityMixin, DeleteView):
     model = RightNowPost
     template_name = 'dashboard/shared/confirm_delete.html'

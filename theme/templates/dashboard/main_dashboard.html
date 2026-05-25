@@ -577,80 +577,86 @@
                 </div>
             </div>
 
-            <!-- 3. Growth Log -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Growth Log" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Manage" %}</span>
-                        </a>
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
-                        </a>
-                    </div>
-                </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Document your daily work, learning progress, or project milestones. Sharing what you built or learned today creates a clear record of your daily efforts and dedication over time. Future employers, partners, and collaborators will look through this history to see your day-to-day consistency, progress, and real proof of work" %}
-                </p>
-                <div class="flex-1 mt-2">
-                    {% if growth_logs %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {% for log in growth_logs|slice:":4" %}
-                            <div class="p-5 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 transition-colors cursor-default">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-wide">{{ log.created_at|date:"M d" }}</span>
-                                    <span class="px-2 py-0.5 bg-slate-50 border border-slate-100 text-slate-500 text-[10px] font-bold rounded-md">{{ log.get_category_display|default:"Log" }}</span>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-[14.5px] mb-1 line-clamp-2 leading-snug">{{ log.title }}</h4>
-                                <p class="text-slate-500 text-[13px] font-medium line-clamp-3">{{ log.content }}</p>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your first update" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
+            <!-- ============================================================================== -->
+            <!-- 🌟 "RIGHT NOW" QUICK COMPOSE SECTION -->
+            <!-- ============================================================================== -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative overflow-hidden bg-gradient-to-br from-white via-white to-indigo-50/40 border-indigo-200/60 shadow-[0_4px_20px_rgba(99,102,241,0.08)] transition-all z-30">
 
-            <!-- ============================================================================== -->
-            <!-- 🌟 "RIGHT NOW" BROADCAST SECTION -->
-            <!-- ============================================================================== -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative overflow-hidden bg-gradient-to-br from-white via-white to-indigo-50/40 border-indigo-200/60 shadow-[0_4px_20px_rgba(99,102,241,0.08)] hover:border-indigo-300 transition-all z-30">
                 <!-- Subtle Background Glows -->
                 <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-indigo-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
                 <div class="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-purple-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full relative z-10">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default flex items-center gap-2">
-                        {% trans "Right Now" %}
-                        <i data-lucide="zap" class="w-4 h-4 text-indigo-500 fill-indigo-500/20"></i>
-                    </h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_right_now' %}" class="btn-manage-text hover:text-indigo-600 hover:bg-indigo-50">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Manage" %}</span>
-                        </a>
-                        <a href="{% url 'right_now_create' %}" class="btn-add-solid flex-1 sm:flex-none !bg-gradient-to-r !from-indigo-500 !to-purple-500 hover:!from-indigo-600 hover:!to-purple-600 !shadow-[0_2px_8px_rgba(99,102,241,0.3)] border-none">
-                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Update" %}</span>
-                        </a>
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-5 w-full relative z-10">
+                    <div>
+                        <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default flex items-center gap-2">
+                            {% trans "Right Now" %}
+                            <i data-lucide="zap" class="w-5 h-5 text-indigo-500 fill-indigo-500/20"></i>
+                        </h3>
+                        <p class="text-[13px] text-slate-500 font-medium mt-1.5 leading-relaxed pr-10">
+                            {% trans "Document what you are learning, building, or looking for. This updates your active profile status instantly." %}
+                        </p>
                     </div>
+
+                    <!-- Manage Button (Takes them to the history list) -->
+                    <a href="{% url 'manage_right_now' %}" class="btn-manage-text hover:text-indigo-600 hover:bg-indigo-50 shrink-0 bg-white shadow-sm border-slate-200">
+                        <i data-lucide="history" class="w-4 h-4 pointer-events-none text-indigo-500"></i>
+                        <span class="pointer-events-none">{% trans "Update History" %}</span>
+                    </a>
                 </div>
 
-                <div class="relative z-10 mt-1">
-                    <h4 class="text-[1.1rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-1.5 tracking-tight w-fit">
-                        What are you focusing on right now?
-                    </h4>
-                    <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed md:pr-10 cursor-default mb-2">
-                        Document what you are currently focusing on, learning, developing, or building. Sharing your active professional pursuits helps the right opportunities, mentors, and collaborators find you. Pair this with your current objective (like seeking a full-time role or internship) to match with the ecosystem.
-                    </p>
-                </div>
+                <!-- INLINE COMPOSE BOX -->
+                <form id="quick-right-now-form" onsubmit="submitQuickUpdate(event)" class="relative z-10 bg-white border border-indigo-100/80 rounded-[1.25rem] shadow-[0_2px_12px_rgba(0,0,0,0.03)] focus-within:shadow-[0_4px_25px_rgba(99,102,241,0.12)] focus-within:border-indigo-300 transition-all duration-300 flex flex-col">
+                    {% csrf_token %}
+
+                    <!-- The Big Text Area Canvas -->
+                    <textarea
+                        name="body_narrative"
+                        id="right_now_text"
+                        rows="3"
+                        class="w-full bg-transparent text-slate-800 text-[15px] leading-relaxed font-medium placeholder:text-slate-400 placeholder:font-normal resize-none outline-none px-6 py-5 custom-scroll"
+                        placeholder="{% trans 'What are you actively working on, learning, or building right now? Share your progress...' %}"
+                        oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 300) + 'px';"
+                        required></textarea>
+
+                    <!-- Image Preview Container (Hidden by default) -->
+                    <div id="quick-image-preview-container" class="hidden px-6 pb-4 flex-wrap gap-3"></div>
+
+                    <!-- Action Footer -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/50 rounded-b-[1.25rem] gap-4">
+
+                        <!-- Left Side: Tools -->
+                        <div class="flex flex-wrap items-center gap-2.5">
+
+                            <!-- Hidden File Input -->
+                            <input type="file" id="quick-image-upload" name="gallery_images" multiple accept="image/*" class="hidden" onchange="previewQuickImages(this)">
+
+                            <!-- Attachment Button -->
+                            <button type="button" onclick="document.getElementById('quick-image-upload').click()" class="flex items-center gap-1.5 text-[13px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-4 py-2 rounded-lg transition-colors shadow-sm">
+                                <i data-lucide="image" class="w-4 h-4"></i>
+                                <span>{% trans "Add Image" %}</span>
+                            </button>
+
+                            <!-- 🌟 The Current Objective Dropdown -->
+                            <select name="current_search" class="bg-white border border-slate-200 hover:border-indigo-300 text-slate-700 text-[13px] font-bold px-3 py-2 rounded-lg outline-none cursor-pointer shadow-sm transition-colors">
+                                <option value="LEARNING"  {% if portfolio.current_search == 'LEARNING'  %}selected{% endif %}>{% trans "Learning / Studying" %}</option>
+                                <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Building a Startup" %}</option>
+                                <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
+                                <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Networking" %}</option>
+                                <option value="INTERN"    {% if portfolio.current_search == 'INTERN'    %}selected{% endif %}>{% trans "Seeking Internship" %}</option>
+                                <option value="FULL_TIME" {% if portfolio.current_search == 'FULL_TIME' %}selected{% endif %}>{% trans "Seeking Full-time Job" %}</option>
+                                <option value="PART_TIME" {% if portfolio.current_search == 'PART_TIME' %}selected{% endif %}>{% trans "Seeking Part-time Job" %}</option>
+                                <option value="FUNDING"   {% if portfolio.current_search == 'FUNDING'   %}selected{% endif %}>{% trans "Seeking Funding" %}</option>
+                            </select>
+                        </div>
+
+                        <!-- Right Side: Submit Button -->
+                        <button type="submit" id="quick-submit-btn" class="bg-gradient-to-r from-indigo-500 to-[#0A66C2] hover:from-indigo-600 hover:to-[#0856A8] text-white text-[13.5px] font-bold px-6 py-2.5 rounded-lg shadow-[0_2px_10px_rgba(10,102,194,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-70 w-full sm:w-auto shrink-0">
+                            <i data-lucide="save" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Save Update" %}</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- 7. Goal & Vision -->
@@ -831,67 +837,11 @@
 
         </div>
 
-        <!-- BOTTOM GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 mb-8 lg:mb-12 items-stretch" id="section-goal">
-
-            <!-- Goal Center -->
-            <div class="lg:col-span-8 bento-card p-6 md:p-8 flex flex-col relative h-full z-20">
-                <div class="relative flex flex-col h-full z-10">
-                    <div class="mb-3 flex justify-between items-start">
-                        <div>
-                            <h3 class="text-[1.3rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight leading-tight cursor-default">{% trans "What are you looking for?" %}</h3>
-                            <div class="h-1 w-12 bg-[#0A66C2] rounded-full mt-2 md:mt-3"></div>
-                        </div>
-                        <div id="goal-loading" class="hidden text-[#0A66C2]">
-                            <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
-                        </div>
-                    </div>
-                    <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10 cursor-default">
-                        {% trans "Select your current objective to match your portfolio with relevant opportunities. Regularly update what you are looking for so that we can connect you with exactly what you are looking for" %}
-                    </p>
-                    <form id="quick-goal-form" method="POST" action="{% url 'profile_settings' %}" class="mt-auto flex flex-col gap-5 relative z-50">
-                        {% csrf_token %}
-                        <!-- Added base user form fields to ensure server validation passes cleanly -->
-                        <div style="display:none;">
-                            <input type="hidden" name="username" value="{{ user.username|default_if_none:''|escape }}">
-                            <input type="hidden" name="email" value="{{ user.email|default_if_none:''|escape }}">
-                            <input type="hidden" name="phone_number" value="{{ user.phone_number|default_if_none:''|escape }}">
-                            <input type="hidden" name="first_name" value="{{ user.first_name|default_if_none:''|escape }}">
-                            <input type="hidden" name="last_name" value="{{ user.last_name|default_if_none:''|escape }}">
-                            <input type="hidden" name="full_name" value="{{ user.full_name|default:user.phone_number|escape }}">
-
-                            <input type="hidden" name="location" value="{{ portfolio.location|default_if_none:''|escape }}">
-                            <input type="hidden" name="institution" value="{{ portfolio.institution|default_if_none:''|escape }}">
-                            <input type="hidden" name="field_of_interest" value="{{ portfolio.field_of_interest|default_if_none:''|escape }}">
-                            <input type="hidden" name="years_experience" value="{{ portfolio.years_experience|default_if_none:0 }}">
-                            <textarea name="bio_narrative">{{ portfolio.bio_narrative|default_if_none:''|escape }}</textarea>
-                            <textarea name="current_mission">{{ portfolio.current_mission|default_if_none:''|escape }}</textarea>
-                            <input type="hidden" name="collaboration_status" value="{{ portfolio.collaboration_status|default:'OPEN' }}">
-                        </div>
-                        <div class="relative w-full group">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1 cursor-default">{% trans "CURRENT OBJECTIVE" %}</label>
-                            <div class="relative">
-                                <select name="current_search" onchange="autoSubmitGoal(this.form)" aria-label="{% trans 'Select your current goal' %}" class="premium-input cursor-pointer text-slate-700 hover:border-[#0A66C2] transition-colors w-full bg-white block" style="padding-right:3.5rem; appearance:none;">
-                                    <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Looking for a Startup or Team" %}</option>
-                                    <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
-                                    <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Looking to meet people in my industry" %}</option>
-                                    <option value="INTERN"    {% if portfolio.current_search == 'INTERN'    %}selected{% endif %}>{% trans "Looking for an Internship" %}</option>
-                                    <option value="FULL_TIME" {% if portfolio.current_search == 'FULL_TIME' %}selected{% endif %}>{% trans "Looking for a Full-time Job" %}</option>
-                                    <option value="PART_TIME" {% if portfolio.current_search == 'PART_TIME' %}selected{% endif %}>{% trans "Looking for a Part-time Job" %}</option>
-                                    <option value="FUNDING"   {% if portfolio.current_search == 'FUNDING'   %}selected{% endif %}>{% trans "Looking for Funding or Investment" %}</option>
-                                    <option value="LEARNING"  {% if portfolio.current_search == 'LEARNING'  %}selected{% endif %}>{% trans "Just focusing on Studying/Learning" %}</option>
-                                </select>
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover:text-[#0A66C2] group-hover:border-[#0A66C2] transition-colors z-[5010]" aria-hidden="true">
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <!-- BOTTOM SECTION (Trust Score) -->
+        <div class="flex justify-center mb-8 lg:mb-12">
 
             <!-- Trust Score -->
-            <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center h-full cursor-default z-20">
+            <div class="bento-card p-6 md:p-8 flex flex-col justify-center text-center w-full max-w-md cursor-default z-20">
                 <div class="w-16 h-16 mx-auto flex items-center justify-center mb-4 pointer-events-none">
                     <i data-lucide="shield-check" class="w-12 h-12 text-[#0A66C2]"></i>
                 </div>
@@ -1229,40 +1179,6 @@
         shareTimeout = setTimeout(() => toast.classList.add('translate-y-6', 'opacity-0'), 3200);
     }
 
-    async function autoSubmitGoal(form) {
-        const loader = document.getElementById('goal-loading');
-        if (loader) loader.classList.remove('hidden');
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-
-            if (response.redirected) {
-                showToast('{% trans "Objective updated!" %}');
-            } else if (response.ok) {
-                const responseText = await response.text();
-                try {
-                    const data = JSON.parse(responseText);
-                    if (data.success !== false) {
-                        showToast('{% trans "Objective updated!" %}');
-                    } else {
-                        showToast('{% trans "Failed to update objective." %}');
-                    }
-                } catch (e) {
-                    showToast('{% trans "Validation Error: Please update via Settings page." %}');
-                }
-            } else {
-                showToast('{% trans "Failed to update. Check your settings." %}');
-            }
-        } catch {
-            showToast('{% trans "Network error. Please try again." %}');
-        } finally {
-            if (loader) loader.classList.add('hidden');
-        }
-    }
-
     async function handleBioSubmit(event) {
         event.preventDefault();
         const form = event.target;
@@ -1308,6 +1224,91 @@
         } finally {
             btn.disabled  = false;
             btn.innerHTML = orig;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    }
+
+    // ==========================================
+    // RIGHT NOW INLINE COMPOSER LOGIC
+    // ==========================================
+    let quickFiles = [];
+
+    function previewQuickImages(input) {
+        const container = document.getElementById('quick-image-preview-container');
+        if (input.files.length > 0) {
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+
+            Array.from(input.files).forEach((file, index) => {
+                quickFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="removeQuickImage(this, ${quickFiles.length - 1})">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        // Reset input so the same file can be selected again if removed
+        input.value = '';
+    }
+
+    function removeQuickImage(btnElement, index) {
+        btnElement.parentElement.remove();
+        quickFiles.splice(index, 1);
+        const container = document.getElementById('quick-image-preview-container');
+        if(container.children.length === 0) {
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+        }
+    }
+
+    async function submitQuickUpdate(event) {
+        event.preventDefault();
+        const form = event.target;
+        const btn = document.getElementById('quick-submit-btn');
+        const originalBtnHtml = btn.innerHTML;
+
+        // UI Loading State
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>{% trans "Saving..." %}</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Build FormData
+        const formData = new FormData(form);
+        formData.delete('gallery_images'); // Remove default empty file input
+        quickFiles.forEach(file => formData.append('gallery_images', file));
+
+        try {
+            const response = await fetch("{% url 'api_create_right_now' %}", {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Redirect directly to the manage updates history page
+                window.location.href = "{% url 'manage_right_now' %}";
+            } else {
+                showToast(data.error || '{% trans "Failed to save update." %}');
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        } catch (e) {
+            showToast('{% trans "Network error occurred." %}');
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     }

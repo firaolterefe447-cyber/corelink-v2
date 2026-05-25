@@ -170,34 +170,6 @@
         </div>
 
         <!-- ==============================================
-             SOCIAL "QUICK POST" TRIGGER BOX
-             ============================================== -->
-        <a href="{% url 'right_now_create' %}" class="block bg-white p-3 md:p-4 rounded-[1.5rem] border border-slate-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(10,102,194,0.08)] hover:border-blue-300 transition-all duration-300 mb-12 group">
-            <div class="flex items-center gap-3.5">
-                <!-- Avatar -->
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-100 rounded-full border border-slate-200 shrink-0 overflow-hidden flex items-center justify-center text-slate-400">
-                    {% if user.avatar %}
-                        <img src="{{ user.get_avatar_url }}" class="w-full h-full object-cover">
-                    {% else %}
-                        <div class="w-full h-full flex items-center justify-center font-bold text-[16px] text-slate-500 bg-slate-100">
-                            {{ user.full_name|default:"U"|slice:":1"|upper }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Faux Input -->
-                <div class="flex-1 bg-slate-50 border border-slate-100 rounded-full px-4 md:px-5 py-3 group-hover:bg-blue-50/50 group-hover:border-blue-100 transition-colors">
-                    <span class="text-[14px] md:text-[15px] text-slate-500 font-medium">{% trans "What are you actively working on right now?" %}</span>
-                </div>
-
-                <!-- Action Button Icon -->
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-900 text-white rounded-full shadow-sm flex items-center justify-center shrink-0 group-hover:bg-[#0A66C2] transition-colors">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                </div>
-            </div>
-        </a>
-
-        <!-- ==============================================
              CHRONOLOGICAL TIMELINE (Clean Typography)
              ============================================== -->
         <div class="relative max-w-3xl">
@@ -267,7 +239,8 @@
                         <i data-lucide="zap" class="w-6 h-6 text-[#0A66C2]"></i>
                     </div>
                     <h3 class="text-[18px] md:text-[20px] font-black text-slate-800 mb-2 tracking-tight">{% trans "Your timeline is empty" %}</h3>
-                    <p class="text-[14.5px] text-slate-500 font-medium max-w-md leading-relaxed">{% trans "Build an undeniable professional history by posting updates about what you are learning, building, or searching for." %}</p>
+                    <p class="text-[14.5px] text-slate-500 font-medium max-w-md leading-relaxed mb-6">{% trans "Build an undeniable professional history by posting updates about what you are learning, building, or searching for directly from your dashboard." %}</p>
+                    <a href="{% url 'dashboard' %}" class="text-[13.5px] font-bold text-white bg-[#0A66C2] shadow-sm px-6 py-2.5 rounded-xl hover:bg-blue-700 transition-all">{% trans "Go to Dashboard" %}</a>
                 </div>
             {% endif %}
 

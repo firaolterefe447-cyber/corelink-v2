@@ -62,7 +62,7 @@ urlpatterns = [
     path('dashboard/projects/new/', views.ProjectCreateView.as_view(), name='project_create'),
     path('dashboard/projects/<uuid:pk>/edit/', views.ProjectUpdateView.as_view(), name='project_edit'),
     path('dashboard/projects/<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='project_delete'),
-
+path('api/right-now/create/', views.api_create_right_now, name='api_create_right_now'),
     # F. Content, Diaries, and Vision Blocks
     path('dashboard/posts/', views.ContentPostListView.as_view(), name='manage_contents'),
     path('dashboard/posts/new/', views.ContentPostCreateView.as_view(), name='content_create'),
