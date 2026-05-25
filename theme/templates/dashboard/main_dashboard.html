@@ -494,51 +494,10 @@
                 </div>
             </div>
 
-            <!-- 3. Growth Log -->
+            <!-- 4. Featured Projects and works -->
             <div class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Growth Log" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Manage" %}</span>
-                        </a>
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
-                        </a>
-                    </div>
-                </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Document your daily work, learning progress, or project milestones. Sharing what you built or learned today creates a clear record of your daily efforts and dedication over time. Future employers, partners, and collaborators will look through this history to see your day-to-day consistency, progress, and real proof of work" %}
-                </p>
-                <div class="flex-1 mt-2">
-                    {% if growth_logs %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {% for log in growth_logs|slice:":4" %}
-                            <div class="p-5 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 transition-colors cursor-default">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-wide">{{ log.created_at|date:"M d" }}</span>
-                                    <span class="px-2 py-0.5 bg-slate-50 border border-slate-100 text-slate-500 text-[10px] font-bold rounded-md">{{ log.get_category_display|default:"Log" }}</span>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-[14.5px] mb-1 line-clamp-2 leading-snug">{{ log.title }}</h4>
-                                <p class="text-slate-500 text-[13px] font-medium line-clamp-3">{{ log.content }}</p>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your first update" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- 4. Featured Projects -->
-            <div class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Featured Projects" %}</h3>
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Featured Projects and works" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <a href="{% url 'manage_projects' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
@@ -613,6 +572,47 @@
                         <a href="{% url 'experience_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
                             <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add work experience" %}</h4>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 3. Growth Log -->
+            <div class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Growth Log" %}</h3>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_growth_logs' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
+                        </a>
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Log" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                    {% trans "Document your daily work, learning progress, or project milestones. Sharing what you built or learned today creates a clear record of your daily efforts and dedication over time. Future employers, partners, and collaborators will look through this history to see your day-to-day consistency, progress, and real proof of work" %}
+                </p>
+                <div class="flex-1 mt-2">
+                    {% if growth_logs %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {% for log in growth_logs|slice:":4" %}
+                            <div class="p-5 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 transition-colors cursor-default">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="text-[11px] font-black text-slate-400 uppercase tracking-wide">{{ log.created_at|date:"M d" }}</span>
+                                    <span class="px-2 py-0.5 bg-slate-50 border border-slate-100 text-slate-500 text-[10px] font-bold rounded-md">{{ log.get_category_display|default:"Log" }}</span>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-[14.5px] mb-1 line-clamp-2 leading-snug">{{ log.title }}</h4>
+                                <p class="text-slate-500 text-[13px] font-medium line-clamp-3">{{ log.content }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'content_create' %}?type=GROWTH_LOG" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your first update" %}</h4>
                         </a>
                     {% endif %}
                 </div>
