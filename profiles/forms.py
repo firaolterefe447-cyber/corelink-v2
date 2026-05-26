@@ -32,6 +32,16 @@ from profiles.models import (
     CompanyMilestone, CompanyNews, NewsGalleryImage, CompanySocialLink, CompanyContactMethod
 )
 
+# Standard Date Formats to catch almost any way a user types a date
+FLEXIBLE_DATE_FORMATS = [
+    '%Y-%m-%d',      # 2026-12-01
+    '%m/%d/%Y',      # 12/01/2026
+    '%d/%m/%Y',      # 01/12/2026
+    '%b %Y',         # Jan 2026
+    '%B %Y',         # January 2026
+    '%Y-%m',         # 2026-12
+]
+
 # ==============================================================================
 # 1. HIGH-PERFORMANCE MIXINS
 # ==============================================================================
@@ -65,7 +75,6 @@ class TailwindFormMixin:
                 extra_css = f" pl-11 py-3.5 bg-[url('data:image/svg+xml,{self.ICONS['link']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.25rem]"
             elif isinstance(widget, forms.DateInput) or 'date' in field_name:
                 extra_css = f" pl-11 py-3.5 bg-[url('data:image/svg+xml,{self.ICONS['calendar']}')] bg-no-repeat bg-[left_1rem_center] bg-[length:1.25rem]"
-                # Use month picker safely
                 if widget.attrs.get('type') != 'datetime-local' and widget.attrs.get('type') != 'month':
                     widget.attrs['type'] = 'date'
             elif isinstance(widget, forms.Select):
@@ -87,7 +96,7 @@ class TailwindFormMixin:
 
 
 # ==============================================================================
-# 2. THE UNIFIED FORMS (HUMAN & INCLUSIVE UX COPY)
+# 2. THE UNIFIED FORMS
 # ==============================================================================
 
 class UserProfileForm(TailwindFormMixin, forms.ModelForm):
@@ -141,7 +150,6 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
 
 
 class SkillForm(TailwindFormMixin, forms.ModelForm):
-    # Overriding the choices purely in the form so we don't have to touch the database
     PROFICIENCY_CHOICES = [
         ('JUNIOR', ' Beginner / Still Learning'),
         ('SENIOR', 'Proficient / Use it actively'),
@@ -197,9 +205,18 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
 
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
-    # Fix for both old users (exact dates) and new users (month dates)
-    start_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}))
-    end_date = forms.DateField(input_formats=['%Y-%m', '%Y-%m-%d'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}), required=False)
+    # Updated to handle robust standard dates
+    start_date = forms.DateField(
+        input_formats=FLEXIBLE_DATE_FORMATS,
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
+        help_text=_("Select a date from the calendar, or type it as MM/DD/YYYY (e.g. 12/01/2026).")
+    )
+    end_date = forms.DateField(
+        input_formats=FLEXIBLE_DATE_FORMATS,
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
+        required=False,
+        help_text=_("Leave blank if this is your current role.")
+    )
 
     class Meta:
         model = WorkExperience
@@ -219,7 +236,7 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
             'company_name': _("The official name of the business, hospital, or organization."),
             'role_title': _("Your official job title (e.g., Senior Analyst, Medical Officer)."),
             'location_type': _("Indicate if this role was performed on-site, remotely, or in a hybrid format."),
-            'description': _("Highlight your key responsibilities and professional achievements. Using bullet points makes it easier to read."),
+            'description': _("Highlight your key responsibilities and achievements. Using bullet points makes it easier to read."),
         }
 
         widgets = {
@@ -232,36 +249,39 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        # Ensure YYYY-MM gets parsed cleanly into a Date field on the backend
-        for date_field in ['start_date', 'end_date']:
-            val = cleaned_data.get(date_field)
-            if val and isinstance(val, str) and len(val) == 7:
-                cleaned_data[date_field] = datetime.strptime(val, '%Y-%m').date()
+        # Ensure we properly handle the fallback if a user types a weird date format
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        is_current = cleaned_data.get('is_current')
 
-        if cleaned_data.get('is_current'):
+        if is_current:
             cleaned_data['end_date'] = None
-        elif not cleaned_data.get('end_date'):
+        elif not end_date:
             self.add_error('end_date', _("Please provide an end date, or check 'I currently work here'."))
+
+        if start_date and end_date and start_date > end_date:
+            self.add_error('end_date', _("End date cannot be earlier than the start date."))
+
         return cleaned_data
 
 
 class CredentialForm(TailwindFormMixin, forms.ModelForm):
+    # Updated to handle robust standard dates
     issue_date = forms.DateField(
-        input_formats=['%Y-%m', '%Y-%m-%d'],
-        widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month'}),
-        required=False
+        input_formats=FLEXIBLE_DATE_FORMATS,
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
+        required=False,
+        help_text=_("Select a date from the calendar, or type it as MM/DD/YYYY (e.g. 12/01/2026).")
     )
 
     class Meta:
         model = Credential
-        # Using exact database fields, but we will make them look beautiful in the UI
         fields = ['title', 'issuer', 'issue_date', 'reflection', 'url_link', 'file_upload']
 
         labels = {
             'title': _("Degree or Certificate Name"),
             'issuer': _("Issuing Organization"),
             'issue_date': _("Date Received"),
-            # Re-labeling the DB field 'reflection' to 'Description' for a clean UX!
             'reflection': _("Description / What did you learn?"),
             'url_link': _("Verification Link (Optional)"),
             'file_upload': _("Upload Certificate (PDF/Image)"),
@@ -282,29 +302,9 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
 
     def clean_issue_date(self):
         issue_date = self.cleaned_data.get('issue_date')
-        if isinstance(issue_date, str) and len(issue_date) == 7:
-            issue_date = datetime.strptime(issue_date, '%Y-%m').date()
         if issue_date and issue_date > date.today():
             raise forms.ValidationError(_("Date cannot be in the future."))
         return issue_date
-    def clean(self):
-        cleaned_data = super().clean()
-        is_in_progress = cleaned_data.get('is_in_progress')
-        issue_date = cleaned_data.get('issue_date')
-
-        # Ensure YYYY-MM parsing
-        if isinstance(issue_date, str) and len(issue_date) == 7:
-            issue_date = datetime.strptime(issue_date, '%Y-%m').date()
-            cleaned_data['issue_date'] = issue_date
-
-        if issue_date and issue_date > date.today():
-            self.add_error('issue_date', _("Date cannot be in the future."))
-
-        # Smart validation: If they aren't studying for it right now, they MUST provide a date
-        if not is_in_progress and not issue_date:
-            self.add_error('issue_date', _("Please provide an issue date, or check 'I am currently studying for this'."))
-
-        return cleaned_data
 
 
 class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
@@ -338,7 +338,6 @@ class RightNowPostForm(TailwindFormMixin, forms.ModelForm):
 
 
 class ContentPostForm(TailwindFormMixin, forms.ModelForm):
-    """Handles the Diary (Growth Logs, Vision Manifestos, Industry Essays)"""
     class Meta:
         model = ContentPost
         fields = ['post_type', 'category', 'title', 'content', 'media_proof', 'visibility']

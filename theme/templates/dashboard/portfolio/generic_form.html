@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<!-- EasyMDE for beautiful Markdown textareas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 
 <style>
     :root {
@@ -36,7 +38,7 @@
     h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
     /* =========================================
-       PREMIUM INPUT DESIGN (Matches Main Page)
+       PREMIUM INPUT DESIGN
        ========================================= */
     .django-form ul { list-style: none; padding: 0; margin: 0; }
 
@@ -60,6 +62,16 @@
         min-height: 120px !important;
         resize: none !important;
         line-height: 1.6 !important;
+    }
+
+    /* Keep the Date Picker icon inside the input from bleeding */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+        transition: 0.2s;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
     }
 
     .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]):focus,
@@ -105,7 +117,7 @@
     .django-form input[type="checkbox"] { display: none; }
 
     /* =========================================
-       PRIMARY BUTTON (Matches Main Page)
+       PRIMARY BUTTON
        ========================================= */
     .btn-primary-gradient {
         background: linear-gradient(135deg, #0952A5, #073E89);
@@ -118,18 +130,19 @@
         box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
         transform: translateY(-2px);
     }
-    .btn-primary-gradient:active {
-        transform: translateY(0);
-        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
-    }
+
+    /* Make EasyMDE editor match your styling */
+    .editor-toolbar { border: 1.5px solid rgba(226, 232, 240, 0.9) !important; border-bottom: none !important; border-radius: 0.75rem 0.75rem 0 0 !important; background: #f8fafc;}
+    .CodeMirror { border: 1.5px solid rgba(226, 232, 240, 0.9) !important; border-radius: 0 0 0.75rem 0.75rem !important; font-family: var(--font-body) !important; font-size: 14px !important; }
+    .CodeMirror-focused { border-color: rgba(10, 102, 194, 0.45) !important; box-shadow: 0 0 0 3px rgba(10,102,194,0.08) !important; }
 </style>
 
 <main class="w-full min-h-screen py-6 px-4 md:py-12 md:px-0 flex justify-center items-start">
 
     <!-- CLEAN BENTO CARD CONTAINER -->
-    <div class="w-full max-w-[680px] bg-white/95 backdrop-blur-md rounded-[1.25rem] border border-slate-200/90 shadow-[0_1px_4px_rgba(15,23,42,0.06)] overflow-hidden relative z-10">
+    <div class="w-full max-w-[720px] bg-white/95 backdrop-blur-md rounded-[1.25rem] border border-slate-200/90 shadow-[0_1px_4px_rgba(15,23,42,0.06)] overflow-hidden relative z-10">
 
-        <!-- HEADER (Clean & Properly Sized) -->
+        <!-- HEADER -->
         <div class="px-5 sm:px-8 pt-8 pb-6 flex items-center gap-4 border-b border-slate-100">
             <a href="javascript:history.back()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-500 rounded-[0.75rem] flex items-center justify-center transition-transform active:scale-95 shrink-0">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -167,9 +180,9 @@
                     {% for field in form %}
                         {% if not field.is_hidden %}
 
-                            <!-- Determine Column Span -->
+                            <!-- Smarter Column Sizing based on field type and name -->
                             <div class="flex flex-col w-full
-                                {% if field.field.widget.input_type == 'checkbox' or field.field.widget.template_name == 'django/forms/widgets/textarea.html' or field.name == 'title' or field.name == 'name' or field.name == 'company_name' %}
+                                {% if field.field.widget.input_type == 'checkbox' or field.field.widget.template_name == 'django/forms/widgets/textarea.html' or field.name in 'title,name,company_name,bio_narrative,content,main_description,description' %}
                                     col-span-1 md:col-span-2
                                 {% else %}
                                     col-span-1
@@ -206,7 +219,7 @@
                                     </div>
 
                                     {% if field.help_text %}
-                                        <p class="text-[13px] font-medium text-slate-400 mt-2 px-1 leading-relaxed">{{ field.help_text|safe }}</p>
+                                        <p class="text-[13px] font-medium text-slate-500 mt-2 px-1 leading-relaxed">{{ field.help_text|safe }}</p>
                                     {% endif %}
                                 {% endif %}
 
@@ -271,9 +284,9 @@
                         Cancel
                     </a>
 
-                    <button type="submit" id="main-submit-btn" class="btn-primary-gradient px-6 py-3.5 rounded-[0.75rem] text-[14.5px] font-bold flex justify-center items-center gap-2">
-                        <span id="submit-text">Save Changes</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-0.5" id="submit-icon"></i>
+                    <button type="submit" id="main-submit-btn" class="btn-primary-gradient px-8 py-3.5 rounded-[0.75rem] text-[14.5px] font-bold flex justify-center items-center gap-2">
+                        <span id="submit-text">Save Details</span>
+                        <i data-lucide="check" class="w-4 h-4 ml-0.5" id="submit-icon"></i>
                     </button>
                 </div>
             </form>
@@ -281,9 +294,26 @@
     </div>
 </main>
 
+<!-- Load EasyMDE Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // ---------------------------------------------------------
+        // 0. INITIALIZE MARKDOWN EDITORS (For Bio, Logs, Essays)
+        // ---------------------------------------------------------
+        const markdownFields = document.querySelectorAll('.markdown-editor');
+        markdownFields.forEach(field => {
+            new EasyMDE({
+                element: field,
+                spellChecker: false,
+                status: false,
+                toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "guide"],
+                placeholder: field.getAttribute('placeholder') || "Start writing..."
+            });
+        });
 
         // ---------------------------------------------------------
         // 1. CONVERT NATIVE RADIOS TO PREMIUM DROPDOWNS
@@ -330,9 +360,9 @@
         }
 
         // ---------------------------------------------------------
-        // 2. AUTO-EXPANDING TEXTAREAS
+        // 2. AUTO-EXPANDING TEXTAREAS (Ignores Markdown Editors)
         // ---------------------------------------------------------
-        const textareas = document.querySelectorAll('textarea');
+        const textareas = document.querySelectorAll('textarea:not(.markdown-editor)');
         textareas.forEach(textarea => {
             textarea.setAttribute('placeholder', 'Type here...');
             function adjustHeight() {
