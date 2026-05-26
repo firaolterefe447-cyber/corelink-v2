@@ -252,7 +252,7 @@
                                 {% if person.avatar %}
                                     <img src="{{ person.avatar.url }}" alt="{{ person.full_name }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover border-[2.5px] border-white bg-slate-100" loading="lazy">
                                 {% else %}
-                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-[2.5px] border-white bg-blue-50 flex items-center justify-center text-[#0A66C2] font-black text-[12px] md:text-[13px]">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-[2.5px] border-white bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center text-[#0A66C2] font-black text-[14px] md:text-[16px] shadow-inner uppercase">
                                         {{ person.full_name|default:"U"|slice:":1" }}
                                     </div>
                                 {% endif %}
@@ -305,6 +305,49 @@
             </form>
         </div>
 
+        <!-- ✨ NEW: SPOTLIGHT TALENT SECTION -->
+        {% if spotlight_users and not search_query %}
+        <div class="mb-12 relative z-10 anim-smooth-appear" style="animation-delay: 0.15s;">
+            <div class="flex items-center gap-3 mb-5 px-4 md:px-2">
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-600 shadow-sm">
+                    <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                </div>
+                <h2 class="text-[1.2rem] md:text-[1.4rem] font-black text-slate-900 font-heading tracking-tight">Top Talent Spotlight</h2>
+            </div>
+
+            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 px-4 md:px-2 snap-x snap-mandatory">
+                {% for spot in spotlight_users %}
+                <a href="{{ spot.get_absolute_url|default:'#' }}" target="_blank" class="flex-shrink-0 w-[280px] md:w-[320px] bg-white border border-amber-200/60 rounded-2xl p-5 shadow-[0_8px_24px_rgba(245,158,11,0.05)] hover:shadow-[0_12px_32px_rgba(245,158,11,0.12)] transition-all snap-start group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-50/50 to-transparent pointer-events-none"></div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        {% if spot.avatar %}
+                            <img src="{{ spot.avatar.url }}" class="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        {% else %}
+                            <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-100 to-orange-50 border-2 border-white shadow-sm flex items-center justify-center text-amber-600 font-black text-2xl md:text-3xl group-hover:scale-105 transition-transform duration-300 uppercase">
+                                {{ spot.full_name|default:"U"|slice:":1" }}
+                            </div>
+                        {% endif %}
+                        <div class="overflow-hidden flex-1">
+                            <h3 class="font-black text-slate-900 truncate text-[15px] md:text-[16px] leading-tight mb-1">{{ spot.full_name|default:"Unknown User" }}</h3>
+                            <p class="text-[12px] md:text-[13px] text-amber-600 font-bold truncate">
+                                {% if spot.portfolio.headlines.first %}
+                                    {{ spot.portfolio.headlines.first.title }}
+                                {% else %}
+                                    {{ spot.portfolio.field_of_interest|default:"Professional" }}
+                                {% endif %}
+                            </p>
+                            <div class="text-[10.5px] md:text-[11px] text-slate-500 font-bold mt-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-3 h-3 text-amber-500 fill-amber-500/20"></i> {{ spot.portfolio.oracle_score|default:"90" }} AI Score
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- SECTION HEADER -->
         <div class="flex items-center justify-between mb-6 md:mb-10 px-5 md:px-2 border-b border-slate-200/80 pb-3 md:pb-4 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
             <h2 class="text-[1.35rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Network Results" %}</h2>
@@ -342,7 +385,8 @@
                                          class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full object-cover bg-white border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-sm transition-transform duration-300 group-hover/avatar:scale-[1.03]"
                                          loading="lazy">
                                 {% else %}
-                                    <div class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full bg-blue-50 border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-sm flex items-center justify-center font-black text-[#0A66C2] text-3xl md:text-4xl transition-transform duration-300 group-hover/avatar:scale-[1.03]">
+                                    <!-- ✨ BEAUTIFULLY STYLED FALLBACK AVATAR ✨ -->
+                                    <div class="w-[6.5rem] h-[6.5rem] md:w-[8rem] md:h-[8rem] rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 border-[4px] md:border-[5px] border-white relative z-20 ring-1 ring-slate-900/5 shadow-inner flex items-center justify-center font-black text-[#0A66C2] text-4xl md:text-5xl transition-transform duration-300 group-hover/avatar:scale-[1.03] uppercase">
                                         {{ person.full_name|default:"U"|slice:":1" }}
                                     </div>
                                 {% endif %}
@@ -430,7 +474,7 @@
             {% endfor %}
 
             <!-- PAYWALL CTA -->
-            {% if show_paywall and people|length == 20 %}
+            {% if show_paywall and people|length == 50 %}
                 <div class="col-span-full mt-4 md:mt-8 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] p-8 md:p-16 flex flex-col items-center justify-center text-center relative overflow-hidden anim-smooth-appear shadow-xl" style="animation-delay: 0.4s;">
                     <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
