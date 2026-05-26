@@ -65,7 +65,6 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F8FAFC;
-            /* Premium Soft Glow Background */
             background-image:
                 radial-gradient(at 0% 0%, hsla(217,100%,94%,1) 0, transparent 50%),
                 radial-gradient(at 100% 0%, hsla(210,100%,95%,1) 0, transparent 50%);
@@ -79,110 +78,65 @@
             letter-spacing: -0.02em;
         }
 
-        ::selection {
-            background-color: #0A66C2;
-            color: white;
-        }
-
+        ::selection { background-color: #0A66C2; color: white; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
         .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-100 { animation-delay: 100ms; }
-        .animation-delay-200 { animation-delay: 200ms; }
-        .animation-delay-300 { animation-delay: 300ms; }
-
-        /* YouTube Style Top Loading Bar Glow */
-        .top-loader-glow {
-            box-shadow: 0 0 15px 2px rgba(10, 102, 194, 0.9), 0 0 8px 1px rgba(168, 85, 247, 0.8);
-        }
-
+        .top-loader-glow { box-shadow: 0 0 15px 2px rgba(10, 102, 194, 0.9), 0 0 8px 1px rgba(168, 85, 247, 0.8); }
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body x-data="{ scrolled: false, tab: 'overview' }" @scroll.window="scrolled = (window.pageYOffset > 50)">
 
-    <!-- AMAZING YOUTUBE-STYLE TOP LOADING BAR -->
-    <div x-data="{ progress: 0, loading: true }"
-         x-init="
-            let timer = setInterval(() => {
-                progress += (95 - progress) * 0.1;
-            }, 50);
-            window.addEventListener('load', () => {
-                clearInterval(timer);
-                progress = 100;
-                setTimeout(() => loading = false, 400);
-            });
-         "
-         x-show="loading"
-         x-transition:leave="transition-opacity duration-500 ease-in-out"
-         class="fixed top-0 left-0 w-full z-[99999] pointer-events-none h-1 bg-transparent">
-
-        <!-- Animated Bar -->
-        <div class="h-full bg-gradient-to-r from-cyan-400 via-corelink to-purple-500 transition-all duration-200 ease-out top-loader-glow relative"
-             :style="`width: ${progress}%`">
-             <!-- Bright Leading Tip -->
+    <!-- TOP LOADING BAR -->
+    <div x-data="{ progress: 0, loading: true }" x-init="let timer = setInterval(() => { progress += (95 - progress) * 0.1; }, 50); window.addEventListener('load', () => { clearInterval(timer); progress = 100; setTimeout(() => loading = false, 400); });" x-show="loading" x-transition:leave="transition-opacity duration-500 ease-in-out" class="fixed top-0 left-0 w-full z-[99999] pointer-events-none h-1 bg-transparent">
+        <div class="h-full bg-gradient-to-r from-cyan-400 via-corelink to-purple-500 transition-all duration-200 ease-out top-loader-glow relative" :style="`width: ${progress}%`">
              <div class="absolute top-0 right-0 h-full w-24 bg-gradient-to-r from-transparent to-white opacity-90 blur-[2px]"></div>
              <div class="absolute top-0 right-0 h-full w-4 bg-white shadow-[0_0_10px_#fff]"></div>
         </div>
     </div>
 
     <!-- FLOATING TOP NAVIGATION -->
-    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-         :class="scrolled ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm py-3' : 'bg-gradient-to-b from-slate-900/80 to-transparent py-4 sm:py-5'">
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" :class="scrolled ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm py-3' : 'bg-gradient-to-b from-slate-900/80 to-transparent py-4 sm:py-5'">
         <div class="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-8 flex items-center justify-between">
-
             <div class="flex items-center gap-3 sm:gap-4">
-                <!-- HISTORY BACK BUTTON -->
-                <button onclick="history.back()" class="group flex items-center justify-center gap-2 px-4 sm:px-5 h-9 sm:h-10 rounded-full transition-all duration-300 font-bold text-[13px] sm:text-[14px]"
-                   :class="scrolled ? 'bg-white border border-slate-200 shadow-sm hover:bg-slate-50 text-slate-700' : 'bg-black/20 backdrop-blur-md hover:bg-black/40 border border-white/10 text-white'">
+                <button onclick="history.back()" class="group flex items-center justify-center gap-2 px-4 sm:px-5 h-9 sm:h-10 rounded-full transition-all duration-300 font-bold text-[13px] sm:text-[14px]" :class="scrolled ? 'bg-white border border-slate-200 shadow-sm hover:bg-slate-50 text-slate-700' : 'bg-black/20 backdrop-blur-md hover:bg-black/40 border border-white/10 text-white'">
                     <i data-lucide="arrow-left" class="w-4 h-4 transition-colors duration-300"></i>
                     <span>Back</span>
                 </button>
-                <div class="font-heading font-black text-lg sm:text-xl tracking-tight transition-colors duration-300 truncate max-w-[200px] sm:max-w-none"
-                     :class="scrolled ? 'text-slate-900' : 'text-white drop-shadow-lg'">
+                <div class="font-heading font-black text-lg sm:text-xl tracking-tight transition-colors duration-300 truncate max-w-[200px] sm:max-w-none" :class="scrolled ? 'text-slate-900' : 'text-white drop-shadow-lg'">
                     {{ company.name }}
                 </div>
             </div>
-
             <div class="flex items-center gap-3">
-                <!-- CONTACT BRANDING BUTTON -->
-                <a href="#contact" @click="tab = 'overview'; setTimeout(() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'}), 100)" class="flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold text-[13px] sm:text-[14px] transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
-                   :class="scrolled ? 'bg-slate-900 text-white hover:bg-corelink' : 'bg-white text-slate-900 hover:bg-slate-50'">
+                <a href="#contact" @click="tab = 'overview'; setTimeout(() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'}), 100)" class="flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 rounded-full font-bold text-[13px] sm:text-[14px] transition-all duration-300 shadow-md hover:shadow-lg active:scale-95" :class="scrolled ? 'bg-slate-900 text-white hover:bg-corelink' : 'bg-white text-slate-900 hover:bg-slate-50'">
                     Contact
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- CLEAN & PRISTINE HERO COVER SECTION -->
+    <!-- HERO COVER SECTION -->
     <div class="relative w-full h-[30vh] sm:h-[40vh] md:h-[50vh] bg-slate-950 overflow-hidden flex items-center justify-center">
-
         {% if company.cover_image %}
-            <!-- Actual image, perfectly contained so it's never cut off, blurry, or zooming -->
             <img src="{{ company.cover_image.url }}" alt="{{ company.name }} Cover" class="relative z-10 w-full h-full object-contain">
         {% else %}
-            <!-- Abstract Vibrant Fallback -->
             <div class="w-full h-full bg-gradient-to-br from-[#0A66C2] via-indigo-600 to-purple-800 relative z-10">
                 <div class="absolute -top-24 -right-12 w-96 h-96 bg-gradient-to-br from-teal-400 to-emerald-400 rounded-full mix-blend-overlay filter blur-[80px] opacity-70 animate-blob"></div>
                 <div class="absolute -bottom-24 -left-12 w-96 h-96 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full mix-blend-overlay filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
                 <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:32px_32px]"></div>
             </div>
         {% endif %}
-
-        <!-- Clean Top Gradient -->
         <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/60 to-transparent z-20 pointer-events-none"></div>
-
-        <!-- Clean Bottom Fade Overlay -->
         <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent z-20 pointer-events-none"></div>
     </div>
 
     <!-- MAIN CONTENT CONTAINER WITH ALPINE.JS TABS -->
     <main class="max-w-[1000px] mx-auto px-4 sm:px-6 md:px-8 relative z-30 -mt-16 sm:-mt-20 md:-mt-28 pb-24">
 
-        <!-- PROFILE HEADER CARD (Stays visible across all tabs) -->
+        <!-- PROFILE HEADER CARD -->
         <div class="bg-white/80 backdrop-blur-2xl border border-white shadow-2xl shadow-slate-200/50 rounded-[24px] p-5 sm:p-8 md:p-10 flex flex-col md:flex-row gap-5 sm:gap-8 md:gap-10 items-start relative animate-fade-in">
-            <!-- Perfect Square Logo -->
             <div class="aspect-square w-24 sm:w-28 md:w-36 rounded-xl bg-white border-4 border-white shadow-xl shadow-slate-200/60 shrink-0 flex items-center justify-center overflow-hidden -mt-12 sm:-mt-16 md:-mt-20 relative z-30 transition-transform hover:-translate-y-2 duration-500">
                 {% if company.logo %}
                     <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo" class="w-full h-full object-contain p-1.5 sm:p-2 md:p-3">
@@ -190,26 +144,13 @@
                     <span class="font-heading font-black text-4xl sm:text-5xl text-corelink">{{ company.name|slice:":1"|upper }}</span>
                 {% endif %}
             </div>
-
-            <!-- Header Info -->
             <div class="flex-1 w-full pt-2 md:pt-0">
                 <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-5 mb-5">
                     <div>
                         <h1 class="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-slate-900 tracking-tight mb-2 leading-tight">{{ company.name }}</h1>
                         <p class="text-corelink font-bold text-[14px] sm:text-[15px]">{{ company.get_looking_for_display }}</p>
                     </div>
-
-                    {% if company.is_hiring %}
-                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-[11px] sm:text-[12px] font-black uppercase tracking-wider px-3 py-2 sm:px-4 sm:py-2 rounded-xl flex items-center justify-center gap-2.5 self-start shadow-sm shadow-emerald-100/50 w-full md:w-auto">
-                        <span class="relative flex h-2.5 w-2.5">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
-                        Actively Hiring
-                    </span>
-                    {% endif %}
                 </div>
-
                 <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                     {% if company.sector %}
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200 text-[12px] sm:text-[13px] font-semibold text-slate-700 backdrop-blur-sm">
@@ -233,52 +174,27 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             TAB NAVIGATION BAR
-             ========================================== -->
+        <!-- TAB NAVIGATION BAR -->
         <div class="mt-10 sm:mt-12">
             <div class="flex items-center justify-start sm:justify-center mb-10 overflow-x-auto hide-scroll pb-2">
                 <div class="flex space-x-1 p-1.5 bg-white/60 backdrop-blur-xl border border-slate-200/80 rounded-2xl shadow-sm min-w-max">
-
-                    <!-- Overview Tab -->
-                    <button @click="tab = 'overview'"
-                            :class="tab === 'overview' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
-                            class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300">
+                    <button @click="tab = 'overview'" :class="tab === 'overview' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'" class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300">
                         Overview
                     </button>
-
-                    <!-- Updates Tab -->
-                    <button @click="tab = 'updates'"
-                            :class="tab === 'updates' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
-                            class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300 flex items-center gap-2">
+                    <button @click="tab = 'updates'" :class="tab === 'updates' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'" class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300 flex items-center gap-2">
                         Company Updates
-                        {% if news_list %}
-                        <span :class="tab === 'updates' ? 'bg-white/20 text-white' : 'bg-corelink/10 text-corelink'" class="px-2 py-0.5 rounded-md text-[11px] transition-colors">{{ news_list.count }}</span>
-                        {% endif %}
+                        {% if news_list %}<span :class="tab === 'updates' ? 'bg-white/20 text-white' : 'bg-corelink/10 text-corelink'" class="px-2 py-0.5 rounded-md text-[11px] transition-colors">{{ news_list.count }}</span>{% endif %}
                     </button>
-
-                    <!-- Job Posts Tab -->
-                    <button @click="tab = 'jobs'"
-                            :class="tab === 'jobs' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
-                            class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300 flex items-center gap-2">
+                    <button @click="tab = 'jobs'" :class="tab === 'jobs' ? 'bg-corelink text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'" class="px-5 sm:px-8 py-2.5 rounded-xl font-bold text-[14px] sm:text-[15px] transition-all duration-300 flex items-center gap-2">
                         Job Posts
-                        {% if active_jobs %}
-                        <span class="relative flex h-2 w-2 ml-1">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full" :class="tab === 'jobs' ? 'bg-white opacity-40' : 'bg-emerald-400 opacity-75'"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2" :class="tab === 'jobs' ? 'bg-white' : 'bg-emerald-500'"></span>
-                        </span>
-                        {% endif %}
+                        {% if job_list %}<span :class="tab === 'jobs' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-700'" class="px-2 py-0.5 rounded-md text-[11px] transition-colors">{{ job_list.count }}</span>{% endif %}
                     </button>
-
                 </div>
             </div>
 
-            <!-- ==========================================
-                 TAB 1: OVERVIEW
-                 ========================================== -->
+            <!-- TAB 1: OVERVIEW -->
             <div x-show="tab === 'overview'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-10 sm:space-y-12 md:space-y-16">
-
-                <!-- About / Mission -->
+                <!-- Overview Content (Mission, Services, Milestones, Team, Contact) remains unchanged -->
                 {% if company.mission_stmt %}
                 <section>
                     <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
@@ -296,7 +212,6 @@
                 </section>
                 {% endif %}
 
-                <!-- Services -->
                 {% if services %}
                 <section>
                     <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
@@ -328,7 +243,7 @@
                 </section>
                 {% endif %}
 
-                <!-- History -->
+                <!-- Continuing Overview Sections (Milestones, Team, Contacts) -->
                 {% if milestones %}
                 <section>
                     <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
@@ -355,7 +270,6 @@
                 </section>
                 {% endif %}
 
-                <!-- Team -->
                 {% if team_members %}
                 <section>
                     <div class="flex items-center gap-3 mb-5 sm:mb-6 px-1 sm:px-2">
@@ -371,9 +285,7 @@
                                 {% if member.user.avatar %}
                                     <img src="{{ member.user.avatar.url }}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-slate-100 group-hover:ring-corelink/30 transition-all">
                                 {% else %}
-                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold flex items-center justify-center text-lg sm:text-xl ring-2 ring-slate-100 group-hover:ring-corelink/30 transition-all">
-                                        {{ member.user.full_name|slice:":1" }}
-                                    </div>
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold flex items-center justify-center text-lg sm:text-xl ring-2 ring-slate-100 group-hover:ring-corelink/30 transition-all">{{ member.user.full_name|slice:":1" }}</div>
                                 {% endif %}
                             </div>
                             <div class="flex-1 min-w-0">
@@ -386,9 +298,7 @@
                 </section>
                 {% endif %}
 
-                <!-- Contact & Socials -->
                 <div class="pt-6 sm:pt-8 grid gap-6 sm:gap-8 {% if company.socials.exists %}grid-cols-1 lg:grid-cols-2{% else %}grid-cols-1 max-w-[650px] mx-auto{% endif %}">
-                    <!-- Contact Section -->
                     <section id="contact" class="flex flex-col rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10 bg-gradient-to-br from-[#0B1120] via-[#151f38] to-[#1e1b4b] shadow-2xl relative overflow-hidden h-full group border border-white/5">
                         <div class="absolute top-0 right-0 -mt-16 -mr-16 w-56 h-56 bg-blue-500/10 rounded-full blur-[60px] group-hover:bg-blue-500/20 transition-colors duration-700"></div>
                         <div class="absolute bottom-0 left-0 -mb-16 -ml-16 w-56 h-56 bg-purple-500/10 rounded-full blur-[60px] group-hover:bg-purple-500/20 transition-colors duration-700"></div>
@@ -426,8 +336,6 @@
                             {% endif %}
                         </div>
                     </section>
-
-                    <!-- Socials Section -->
                     {% if company.socials.exists %}
                     <section id="socials" class="flex flex-col rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 md:p-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 shadow-2xl shadow-indigo-600/20 border border-white/10 h-full relative overflow-hidden group">
                         <div class="absolute -top-32 -right-32 w-80 h-80 bg-fuchsia-400/30 rounded-full blur-[80px] mix-blend-screen group-hover:scale-110 transition-transform duration-1000"></div>
@@ -451,9 +359,7 @@
                 </div>
             </div>
 
-            <!-- ==========================================
-                 TAB 2: COMPANY UPDATES
-                 ========================================== -->
+            <!-- TAB 2: COMPANY UPDATES -->
             <div x-cloak x-show="tab === 'updates'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <div class="flex items-center gap-3 mb-6 px-2">
                     <div class="w-10 h-10 rounded-xl bg-corelink/10 border border-corelink/20 flex items-center justify-center shrink-0">
@@ -461,7 +367,6 @@
                     </div>
                     <h2 class="font-heading font-bold text-2xl text-slate-900 tracking-tight">Latest Announcements</h2>
                 </div>
-
                 {% if news_list %}
                     <div class="space-y-5">
                         {% for article in news_list %}
@@ -492,7 +397,7 @@
             </div>
 
             <!-- ==========================================
-                 TAB 3: JOB POSTS
+                 TAB 3: ALL JOB POSTS (Updated to handle ALL statuses)
                  ========================================== -->
             <div x-cloak x-show="tab === 'jobs'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 <div class="flex items-center justify-between mb-6 px-2">
@@ -500,67 +405,69 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
                             <i data-lucide="briefcase" class="w-5 h-5 text-emerald-600"></i>
                         </div>
-                        <h2 class="font-heading font-bold text-2xl text-slate-900 tracking-tight">Open Opportunities</h2>
+                        <h2 class="font-heading font-bold text-2xl text-slate-900 tracking-tight">Opportunity Board</h2>
                     </div>
                 </div>
 
-                {% if company.is_hiring %}
-                    {% if active_jobs %}
-                        <div class="grid gap-5">
-                        {% for job in active_jobs %}
-                            <a href="{{ job.get_absolute_url }}" class="group bg-white border border-slate-200 hover:border-emerald-300 rounded-[20px] p-6 shadow-sm hover:shadow-lg transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                                <div class="flex-1">
-                                    <div class="flex flex-wrap items-center gap-3 mb-2">
-                                        <h3 class="font-heading font-bold text-xl text-slate-900 group-hover:text-emerald-600 transition-colors">{{ job.title }}</h3>
-                                        <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">{{ job.get_job_type_display }}</span>
-                                        {% if job.requires_challenge %}
-                                            <span class="bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1"><i data-lucide="award" class="w-3 h-3"></i> Challenge</span>
-                                        {% endif %}
-                                    </div>
+                {% if job_list %}
+                    <div class="grid gap-5">
+                    {% for job in job_list %}
+                        <!-- Visual styling logic based on job status -->
+                        <a href="{{ job.get_absolute_url }}" class="group bg-white border border-slate-200 rounded-[20px] p-6 shadow-sm transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-6
+                            {% if job.status == 'CLOSED' or job.status == 'REJECTED' %}opacity-75 grayscale-[0.2] hover:border-slate-300 hover:shadow-md{% elif job.status == 'PENDING' or job.status == 'DRAFT' %}hover:border-amber-300 hover:shadow-md{% else %}hover:border-emerald-300 hover:shadow-lg{% endif %}">
 
-                                    <p class="text-slate-500 text-[15px] mb-4 line-clamp-2">{{ job.description }}</p>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 class="font-heading font-bold text-xl text-slate-900 {% if job.status == 'ACTIVE' %}group-hover:text-emerald-600{% endif %} transition-colors">{{ job.title }}</h3>
 
-                                    <div class="flex flex-wrap items-center gap-4 text-[13px] font-semibold text-slate-500">
-                                        <span class="flex items-center gap-1.5">
-                                            <i data-lucide="map-pin" class="w-4 h-4"></i>
-                                            {% if job.is_remote %}Remote{% else %}{{ job.location|default:"Addis Ababa" }}{% endif %}
-                                        </span>
-                                        <span class="flex items-center gap-1.5">
-                                            <i data-lucide="clock" class="w-4 h-4"></i>
-                                            Posted {{ job.published_at|default:job.created_at|timesince }} ago
-                                        </span>
-                                        {% if not job.is_open_ended and job.deadline_date %}
-                                        <span class="flex items-center gap-1.5 {% if job.is_urgent %}text-red-500{% endif %}">
-                                            <i data-lucide="calendar" class="w-4 h-4"></i>
-                                            Closes: {{ job.deadline_date|date:"M d, Y" }}
-                                        </span>
-                                        {% endif %}
-                                    </div>
+                                    <!-- Dynamic Job Status Badge -->
+                                    {% if job.status == 'ACTIVE' %}
+                                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">Active</span>
+                                    {% elif job.status == 'PENDING' %}
+                                        <span class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">Pending Admin Approval</span>
+                                    {% elif job.status == 'DRAFT' %}
+                                        <span class="bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">Draft</span>
+                                    {% elif job.status == 'REJECTED' %}
+                                        <span class="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">Rejected</span>
+                                    {% elif job.status == 'CLOSED' %}
+                                        <span class="bg-slate-50 text-slate-500 border border-slate-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">Closed</span>
+                                    {% endif %}
+
+                                    <!-- Job Type -->
+                                    <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">{{ job.get_job_type_display }}</span>
+
+                                    <!-- Challenge Badge -->
+                                    {% if job.requires_challenge %}
+                                        <span class="bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1"><i data-lucide="award" class="w-3 h-3"></i> Challenge</span>
+                                    {% endif %}
                                 </div>
-                                <div class="w-full md:w-auto flex shrink-0">
-                                    <span class="bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl w-full text-center hover:bg-emerald-700 transition-colors shadow-sm">View Details</span>
+
+                                <p class="text-slate-500 text-[15px] mb-4 line-clamp-2">{{ job.description }}</p>
+
+                                <div class="flex flex-wrap items-center gap-4 text-[13px] font-semibold text-slate-500">
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                        {% if job.is_remote %}Remote{% else %}{{ job.location|default:"Addis Ababa" }}{% endif %}
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="clock" class="w-4 h-4"></i>
+                                        Posted {{ job.created_at|date:"M d, Y" }}
+                                    </span>
                                 </div>
-                            </a>
-                        {% endfor %}
-                        </div>
-                    {% else %}
-                        <!-- We are Hiring but no explicit jobs posted state -->
-                        <div class="bg-white border border-slate-200 rounded-[24px] p-10 text-center shadow-sm relative overflow-hidden">
-                            <div class="absolute inset-0 bg-[linear-gradient(to_right,#10b98110_1px,transparent_1px),linear-gradient(to_bottom,#10b98110_1px,transparent_1px)] bg-[size:32px_32px]"></div>
-                            <div class="relative z-10">
-                                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
-                                    <i data-lucide="rocket" class="w-8 h-8"></i>
-                                </div>
-                                <h3 class="font-heading font-bold text-2xl text-slate-900 mb-3">We are actively growing!</h3>
-                                <p class="text-slate-600 text-[16px] max-w-md mx-auto mb-8 leading-relaxed">We are currently looking for incredible talent to join our mission. Reach out directly to learn about open roles.</p>
-                                <button @click="tab = 'overview'; setTimeout(() => document.getElementById('contact').scrollIntoView({behavior: 'smooth'}), 100)" class="bg-slate-900 text-white font-bold px-8 py-3 rounded-xl shadow-md hover:bg-corelink transition-colors">Contact Us</button>
                             </div>
-                        </div>
-                    {% endif %}
 
+                            <!-- Dynamic Call-To-Action Button based on status -->
+                            <div class="w-full md:w-auto flex shrink-0">
+                                <span class="{% if job.status == 'ACTIVE' %}bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm{% elif job.status == 'PENDING' %}bg-amber-500 hover:bg-amber-600 text-white shadow-sm{% else %}bg-slate-200 text-slate-600 hover:bg-slate-300{% endif %} font-bold px-6 py-2.5 rounded-xl w-full text-center transition-colors">
+                                    View Details
+                                </span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                    </div>
                 {% else %}
                     <div class="bg-slate-50 border border-slate-200 border-dashed rounded-[24px] p-10 text-center">
-                        <p class="text-slate-500 font-medium">We aren't actively hiring right now, but we're always open to connecting.</p>
+                        <p class="text-slate-500 font-medium">No opportunities have been created yet.</p>
                     </div>
                 {% endif %}
             </div>

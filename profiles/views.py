@@ -234,11 +234,19 @@ def public_profile_view(request, identifier):
     return render(request, 'profiles/public_portfolio.html', context)
 
 
+from django.shortcuts import render, get_object_or_404
+from .models import Company
+
+
 def company_public_profile(request, slug):
     """Renders the public company page at /p/company/<slug>/"""
     company = get_object_or_404(Company, slug=slug)
     team_members = company.members.filter(is_active=True).select_related('user')
     services = company.services.filter(is_active=True).order_by('order')
+
+    # Grab ALL jobs directly via the related_name 'opportunities' from the JobPost model
+    # We order them by newest first. Since there's no status filter, it grabs Drafts, Pending, Active, etc.
+    job_list = company.opportunities.all().order_by('-created_at')
 
     context = {
         'company': company,
@@ -246,6 +254,9 @@ def company_public_profile(request, slug):
         'services': services,
         'milestones': company.milestones.all().order_by('-year'),
         'news_list': company.news_articles.filter(is_published=True).order_by('-published_date'),
+
+        # Add the job list to the context here so the HTML can see it!
+        'job_list': job_list,
     }
     return render(request, 'profiles/public_company.html', context)
 
