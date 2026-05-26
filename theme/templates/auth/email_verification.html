@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
-
 {% block navbar %}{% endblock %}
-
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
-
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
@@ -66,6 +63,7 @@
     <div class="glass-card w-full max-w-[34rem] p-6 sm:p-8 md:p-10 relative overflow-hidden">
         <div class="absolute -top-14 -right-14 h-36 w-36 rounded-full bg-blue-400/15 blur-2xl pointer-events-none"></div>
         <div class="relative z-10">
+
             <div class="mb-7 text-center">
                 <p class="text-[11px] font-black uppercase tracking-[0.22em] text-blue-700">{% trans "Account Security" %}</p>
                 <h1 class="font-heading mt-2 text-[2rem] font-black tracking-tight text-slate-900">{% trans "Verify Your Email" %}</h1>
@@ -79,7 +77,26 @@
                 {% endif %}
             </div>
 
-            <!-- Django Messages DISABLED -->
+            <!-- Django Messages ENABLED -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="rounded-xl border px-4 py-3 text-center text-[13px] font-bold
+                            {% if message.tags == 'error' %}
+                                bg-red-50 border-red-200 text-red-700
+                            {% elif message.tags == 'success' %}
+                                bg-emerald-50 border-emerald-200 text-emerald-700
+                            {% elif message.tags == 'warning' %}
+                                bg-amber-50 border-amber-200 text-amber-700
+                            {% else %}
+                                bg-blue-50 border-blue-200 text-blue-700
+                            {% endif %}
+                        ">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <div class="space-y-6">
                 <form method="post" class="space-y-3.5">
@@ -123,6 +140,7 @@
                     </p>
                 {% endif %}
             </div>
+
         </div>
     </div>
 </div>
