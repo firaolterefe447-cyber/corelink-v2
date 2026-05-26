@@ -192,7 +192,7 @@ class CustomUser(AbstractUser, TimeStampedModel):
 
     is_verified = models.BooleanField(
         _("Verification Status"),
-        default=False,
+        default=False,  # Reverted to False
         help_text=_("Identity verification completion status"),
     )
     google_sub = models.CharField(

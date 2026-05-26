@@ -349,7 +349,7 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
 
         if 'visibility' in self.fields:
             self.fields['visibility'].label = _("Visibility Status")
-            self.fields['visibility'].widget = forms.RadioSelect()
+            
 
         if current_type == 'GROWTH_LOG':
             self.fields['title'].label = _("Entry Title")
