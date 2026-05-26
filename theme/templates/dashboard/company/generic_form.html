@@ -22,18 +22,22 @@
                 </span>
             </div>
 
-            <!-- Desktop Navigation Links -->
+            <!-- Desktop Navigation Links (The 5 Clean Links) -->
             <nav class="flex flex-col gap-2">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
-                    {% trans "Personal Profile" %}
-                </a>
 
-                <!-- ACTIVE: Back to My Company -->
-                <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
-                    {% trans "Back to Hub" %}
-                </a>
+                {% with first_membership=request.user.company_memberships.first %}
+                    {% if request.user.role == 'FOUNDER' and first_membership %}
+                        <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                            <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                            {% trans "My Company" %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                            {% trans "My profile" %}
+                        </a>
+                    {% endif %}
+                {% endwith %}
 
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
                     <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
@@ -49,10 +53,33 @@
                     <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Opportunities" %}
                 </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
             </nav>
         </div>
 
         <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            {% with first_membership=request.user.company_memberships.first %}
+                {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                    <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>{% trans "Settings" %}</span>
+                    </a>
+                {% endif %}
+            {% endwith %}
+
             <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
                 <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>{% trans "Logout" %}</span>
@@ -65,13 +92,14 @@
 <!-- MOBILE TOP BAR -->
 <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center gap-3 pb-0.5">
+        <!-- Back to Dashboard Navigation -->
         <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </a>
         <span class="font-black text-[18px] text-slate-900 tracking-tight font-heading">{% trans "Editor" %}</span>
     </div>
     <div class="flex items-center gap-3">
-        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
             <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
         </button>
     </div>
@@ -92,9 +120,8 @@
     body {
         font-family: var(--font-body);
         background-color: #F4F7FA;
-        /* Premium Emerald/Teal Glass Background */
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(209, 250, 229, 0.6) 0%, transparent 42%),
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
             radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
             radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
         background-attachment: fixed;
@@ -116,7 +143,7 @@
         overflow: hidden;
     }
 
-    /* Override Django/Tailwind Form Inputs to match Emerald Glassmorphism */
+    /* Override Django/Tailwind Form Inputs to match Blue/Indigo Theme */
     .django-form input:not([type="checkbox"]):not([type="file"]),
     .django-form select,
     .django-form textarea {
@@ -144,14 +171,14 @@
     .django-form select:focus,
     .django-form textarea:focus {
         background: #ffffff !important;
-        border-color: rgba(16, 185, 129, 0.45) !important; /* Emerald Focus */
-        box-shadow: 0 10px 28px -14px rgba(16, 185, 129, 0.35) !important; /* Emerald Focus */
+        border-color: rgba(10, 102, 194, 0.45) !important; /* CoreLink Blue Focus */
+        box-shadow: 0 10px 28px -14px rgba(10, 102, 194, 0.35) !important;
     }
     .django-form textarea { min-height: 140px !important; resize: vertical !important; line-height: 1.6 !important; }
 
     .django-form input[type="checkbox"] {
         width: 1.2rem; height: 1.2rem; border-radius: 0.3rem;
-        accent-color: #10B981; /* Emerald */
+        accent-color: #0A66C2; /* CoreLink Blue */
         cursor: pointer;
     }
 
@@ -176,9 +203,9 @@
     <!-- Center the form in a readable column -->
     <div class="max-w-2xl mx-auto w-full">
 
-        <!-- Standalone Header with ONLY Back Navigation -->
+        <!-- Standalone Header with ONLY Back Navigation to Dashboard -->
         <div class="flex items-center justify-between mb-8 md:mb-10 px-2">
-            <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all shadow-sm active:scale-95 group shrink-0">
+            <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm active:scale-95 group shrink-0">
                 <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
             </a>
 
@@ -206,8 +233,8 @@
 
         <!-- Main Form Glass Card -->
         <div class="glass-card relative group">
-            <!-- Subtle ambient Emerald glow inside the card -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/10 to-teal-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+            <!-- Subtle ambient Blue glow inside the card -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 blur-[60px] rounded-full pointer-events-none"></div>
 
             <form method="post" enctype="multipart/form-data" id="main-form" class="p-6 md:p-10 space-y-7 relative z-10 django-form">
                 {% csrf_token %}
@@ -218,10 +245,10 @@
 
                         <!-- Checkbox Layout -->
                         {% if field.field.widget.input_type == 'checkbox' %}
-                            <label class="flex items-center gap-4 cursor-pointer p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-emerald-200 hover:shadow-sm transition-all group/check">
+                            <label class="flex items-center gap-4 cursor-pointer p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all group/check">
                                 <div class="pt-0.5">{{ field }}</div>
                                 <div>
-                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-emerald-600 transition-colors">{{ field.label }}</span>
+                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-[#0A66C2] transition-colors">{{ field.label }}</span>
                                     {% if field.help_text %}
                                         <span class="block text-[13px] text-slate-500 font-medium mt-1">{{ field.help_text|safe }}</span>
                                     {% endif %}
@@ -271,7 +298,7 @@
                     <div class="pt-6 border-t border-slate-200/80">
                         <div class="mb-5">
                             <label class="block text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] flex items-center gap-2">
-                                <i data-lucide="images" class="w-4 h-4 text-emerald-600"></i> {% trans "Photo and Images" %} <span class="text-slate-400 font-bold tracking-normal normal-case ml-1">({% trans "Optional" %})</span>
+                                <i data-lucide="images" class="w-4 h-4 text-[#0A66C2]"></i> {% trans "Photo and Images" %} <span class="text-slate-400 font-bold tracking-normal normal-case ml-1">({% trans "Optional" %})</span>
                             </label>
                             <p class="text-[13px] text-slate-400 font-medium mt-1.5">{% trans "Upload clear photos representing this product or service. You can add multiple images to build a rich visual gallery that showcases what you offer" %}</p>
                         </div>
@@ -297,7 +324,7 @@
                             {% endif %}
 
                             <!-- ADD MORE BUTTON -->
-                            <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[1.25rem] border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-white/50 hover:bg-emerald-50/50 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-emerald-600 transition-all cursor-pointer shadow-sm group">
+                            <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[1.25rem] border-2 border-dashed border-slate-300 hover:border-blue-500 bg-white/50 hover:bg-blue-50/50 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-[#0A66C2] transition-all cursor-pointer shadow-sm group">
                                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 pointer-events-none transition-transform group-hover:scale-110">
                                     <i data-lucide="plus" class="w-5 h-5"></i>
                                 </div>
@@ -313,7 +340,7 @@
                     <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[13px] font-bold uppercase tracking-wide rounded-xl shadow-sm transition-all text-center flex items-center justify-center gap-2 order-2 sm:order-1 active:scale-95">
                         {% trans "Cancel" %}
                     </a>
-                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[13px] font-bold uppercase tracking-[0.1em] rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2 active:scale-95">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-bold uppercase tracking-[0.1em] rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2 active:scale-95">
                         <i data-lucide="save" id="submit-icon" class="w-4.5 h-4.5"></i> <span id="submit-text">{% trans "Save Entry" %}</span>
                     </button>
                 </div>
@@ -321,6 +348,64 @@
         </div>
     </div>
 </main>
+
+<!-- Mobile Nav Drawer -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
+    <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
+    <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if request.user.role == 'FOUNDER' and first_membership %}
+                <button onclick="window.location.href='{% url 'company_admin_dashboard' slug=first_membership.company.slug %}'" class="w-full text-left px-4 py-3.5 bg-blue-50/70 hover:bg-blue-100/50 rounded-[0.85rem] text-[14.5px] font-bold text-[#0A66C2] flex items-center gap-3.5 transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/60 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "My Company" %}
+                </button>
+            {% else %}
+                <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "My profile" %}
+                </button>
+            {% endif %}
+        {% endwith %}
+
+        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Discover" %}
+        </button>
+
+        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Updates" %}
+        </button>
+
+        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Opportunities" %}
+        </button>
+
+        <button onclick="window.location.href='/workspace/messages/'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Inbox" %}
+        </button>
+
+        <div class="h-px bg-slate-100 my-2 mx-2"></div>
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Settings" %}
+                </button>
+            {% endif %}
+        {% endwith %}
+
+        <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3.5 transition-colors mt-1">
+            <div class="w-8 h-8 rounded-full bg-white border border-rose-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
+            {% trans "Log Out" %}
+        </a>
+    </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -382,13 +467,13 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const div = document.createElement('div');
-                        div.className = 'queued-image-preview img-pop relative group aspect-square rounded-[1.25rem] overflow-hidden border-2 border-emerald-500 shadow-sm bg-white';
+                        div.className = 'queued-image-preview img-pop relative group aspect-square rounded-[1.25rem] overflow-hidden border-2 border-blue-500 shadow-sm bg-white';
                         div.innerHTML = `
                             <img src="${e.target.result}" class="w-full h-full object-cover">
                             <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 hover:text-white text-slate-600 rounded-xl flex items-center justify-center shadow-md backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 z-10">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
-                            <div class="absolute bottom-2 left-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg shadow-sm">NEW</div>
+                            <div class="absolute bottom-2 left-2 bg-[#0A66C2] text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg shadow-sm">NEW</div>
                         `;
                         galleryGrid.insertBefore(div, addMoreBtn);
                     };

@@ -17,10 +17,21 @@
                 <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
             </div>
             <nav class="flex flex-col gap-1.5">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "My profile" %}
-                </a>
+
+                {% with first_membership=request.user.company_memberships.first %}
+                    {% if request.user.role == 'FOUNDER' and first_membership %}
+                        <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-slate-600"></i></div>
+                            {% trans "My Company" %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
+                            {% trans "My profile" %}
+                        </a>
+                    {% endif %}
+                {% endwith %}
+
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
                     <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     {% trans "Discover" %}
@@ -53,10 +64,16 @@
                 <i data-lucide="users" class="w-4 h-4"></i>
                 <span>{% trans "Discover Teams" %}</span>
             </a>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>{% trans "Settings" %}</span>
-            </a>
+
+            {% with first_membership=request.user.company_memberships.first %}
+                {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                    <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>{% trans "Settings" %}</span>
+                    </a>
+                {% endif %}
+            {% endwith %}
+
             <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>{% trans "Logout" %}</span>
@@ -204,12 +221,6 @@
             <a href="{% url 'nexus_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
                 <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover People" %}</span>
             </a>
-
-            <!-- Real link (Commented out until more companies are added)
-            <a href="{% url 'company_nexus' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent text-slate-400 hover:text-slate-800 transition-colors shrink-0">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Companies" %}</span>
-            </a>
-            -->
 
             <!-- Placeholder 'Coming Soon' link -->
             <a href="javascript:void(0)" onclick="showToast('{% trans "Coming soon!" %}')" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-indigo-200 transition-all group shrink-0 top-[1px]">
@@ -449,10 +460,21 @@
 <!-- MOBILE BOTTOM NAV -->
 {% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
-        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My profile</span>
-    </a>
+
+    {% with first_membership=request.user.company_memberships.first %}
+        {% if request.user.role == 'FOUNDER' and first_membership %}
+            <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+                <i data-lucide="building" class="w-6 h-6 stroke-[2.5]"></i>
+                <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My Company</span>
+            </a>
+        {% else %}
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+                <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
+                <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My profile</span>
+            </a>
+        {% endif %}
+    {% endwith %}
+
     <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
         <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full"></div>
         <i data-lucide="compass" class="w-6 h-6 fill-blue-50 stroke-[2.5]"></i>
@@ -486,14 +508,28 @@
 <div id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] z-[210] transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6 opacity-0 pointer-events-none translate-y-full">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</a>
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if request.user.role == 'FOUNDER' and first_membership %}
+                <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-slate-600"></i></div> My Company</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</a>
+            {% endif %}
+        {% endwith %}
+
         <a href="{% url 'nexus_feed' %}" class="w-full text-left px-4 py-3.5 bg-blue-50/50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Discover" %}</a>
         <a href="{% url 'team_nexus' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover Teams" %}</a>
         <a href="{% url 'right_now_feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</a>
         <a href="{% url 'opportunities:feed' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</a>
         <a href="/workspace/messages/" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="mail" class="w-4 h-4 text-rose-500"></i></div> {% trans "Inbox" %}</a>
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
-        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+            {% endif %}
+        {% endwith %}
+
         <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
     </div>
 </div>

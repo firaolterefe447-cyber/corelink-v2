@@ -24,21 +24,20 @@
 
             <!-- Desktop Navigation Links -->
             <nav class="flex flex-col gap-2">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
-                    {% trans "Personal Profile" %}
-                </a>
 
-                <!-- ACTIVE: My Company -->
-                <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-emerald-50/80 text-emerald-600 font-black transition-all border border-emerald-100/50 shadow-[0_2px_15px_rgba(16,185,129,0.08)] text-[15px] group" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
-                    {% trans "My Company" %}
-                </a>
-
-                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="radio" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
-                    {% trans "My Updates" %}
-                </a>
+                {% with first_membership=request.user.company_memberships.first %}
+                    {% if request.user.role == 'FOUNDER' and first_membership %}
+                        <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                            <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                            {% trans "Back to Hub" %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
+                            {% trans "Personal Profile" %}
+                        </a>
+                    {% endif %}
+                {% endwith %}
 
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
                     <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
@@ -72,14 +71,15 @@
         </div>
 
         <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
-                <i data-lucide="globe" class="w-5 h-5"></i>
-                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
-            </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
-                <i data-lucide="settings" class="w-5 h-5"></i>
-                <span>{% trans "Settings" %}</span>
-            </a>
+            {% with first_membership=request.user.company_memberships.first %}
+                {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                    <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>{% trans "Settings" %}</span>
+                    </a>
+                {% endif %}
+            {% endwith %}
+
             <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
                 <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>{% trans "Logout" %}</span>
@@ -90,7 +90,7 @@
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
     <div class="flex items-center gap-3 pb-0.5">
         <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -98,8 +98,8 @@
         <span class="font-black text-[18px] text-slate-900 tracking-tight font-heading">{% trans "Company Media" %}</span>
     </div>
     <div class="flex items-center gap-3">
-        <div class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg font-black text-[12px] shadow-sm flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Hub</div>
-        <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="bg-blue-50 text-[#0A66C2] px-3 py-1 rounded-lg font-black text-[12px] shadow-sm flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Hub</div>
+        <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
             <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
         </button>
@@ -114,7 +114,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -128,7 +128,7 @@
         font-family: var(--font-body);
         background-color: #F4F7FA;
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(209, 250, 229, 0.6) 0%, transparent 42%), /* Emerald tint */
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
             radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
             radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
         background-attachment: fixed;
@@ -164,18 +164,18 @@
         transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
     }
     @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
-    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
+    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.15), 0 4px 6px -2px rgba(10, 102, 194, 0.05); border-color: rgba(203, 213, 225, 1); }
 
     /* Button Utilities */
-    .btn-action { background: #10B981; color: white; font-weight: 800; font-size: 13px; padding: 0.85rem 1.5rem; letter-spacing: 0.05em; border-radius: 1rem; transition: all 0.3s var(--ease-magic); display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(16, 185, 129, 0.4); background: #059669; }
+    .btn-action { background: #0A66C2; color: white; font-weight: 800; font-size: 13px; padding: 0.85rem 1.5rem; letter-spacing: 0.05em; border-radius: 1rem; transition: all 0.3s var(--ease-magic); display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(10, 102, 194, 0.4); background: #0856A8; }
     .btn-action:active { transform: scale(0.96); }
 
-    /* Cropper UI Overrides - Emerald Theme */
-    .cropper-view-box { outline: 3px solid #10B981 !important; box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.85) !important; border-radius: 8px; }
+    /* Cropper UI Overrides - Blue/Indigo Theme */
+    .cropper-view-box { outline: 3px solid #0A66C2 !important; box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.85) !important; border-radius: 8px; }
     .cropper-line { background-color: transparent !important; }
-    .cropper-point { background-color: #FFFFFF !important; border: 2px solid #10B981 !important; width: 14px !important; height: 14px !important; opacity: 1 !important; border-radius: 50% !important; }
-    .cropper-center { display: block !important; width: 8px !important; height: 8px !important; background-color: #10B981 !important; border-radius: 50% !important; border: 2px solid #FFF; opacity: 1 !important; }
+    .cropper-point { background-color: #FFFFFF !important; border: 2px solid #0A66C2 !important; width: 14px !important; height: 14px !important; opacity: 1 !important; border-radius: 50% !important; }
+    .cropper-center { display: block !important; width: 8px !important; height: 8px !important; background-color: #0A66C2 !important; border-radius: 50% !important; border: 2px solid #FFF; opacity: 1 !important; }
 
     /* Animations & Utils */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -190,7 +190,7 @@
 
         <!-- DESKTOP BACK BUTTON -->
         <div class="hidden md:flex w-full mb-6">
-            <a href="{% url 'company_admin_dashboard' company.slug %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-95 group w-max">
+            <a href="{% url 'company_admin_dashboard' company.slug %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50 transition-all active:scale-95 group w-max">
                 <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
                 {% trans "Back to Admin Dashboard" %}
             </a>
@@ -199,11 +199,11 @@
         <!-- COMPACT MISSING LOGO WARNING BANNER -->
         {% if not company.logo %}
         <div class="mb-5 md:mb-8 w-full">
-            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
 
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border border-emerald-200 flex items-center justify-center shrink-0 relative z-10 shadow-sm">
-                    <i data-lucide="building" class="w-6 h-6 text-emerald-600"></i>
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border border-blue-200 flex items-center justify-center shrink-0 relative z-10 shadow-sm">
+                    <i data-lucide="building" class="w-6 h-6 text-[#0A66C2]"></i>
                     <div class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></div>
                 </div>
                 <div class="relative z-10 flex-1">
@@ -233,14 +233,14 @@
                     <!-- CLICKABLE IMAGE PREVIEW (1:1 SQUARE ASPECT RATIO) -->
                     <!-- Mobile: 140x140px | PC: 240x240px -->
                     <label for="id_logo" class="relative mb-6 w-[140px] h-[140px] md:w-60 md:h-60 z-10 mx-auto cursor-pointer block group/preview shrink-0">
-                        <div class="w-full h-full bg-white rounded-3xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(16,185,129,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-emerald-300">
+                        <div class="w-full h-full bg-white rounded-3xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(10,102,194,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
 
                             <!-- Internal Canvas -->
-                            <div class="w-full h-full rounded-2xl md:rounded-[1.5rem] overflow-hidden relative flex items-center justify-center {% if not company.logo %}bg-emerald-50 border-[2px] border-dashed border-emerald-300{% else %}bg-slate-50{% endif %}">
+                            <div class="w-full h-full rounded-2xl md:rounded-[1.5rem] overflow-hidden relative flex items-center justify-center {% if not company.logo %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-50{% endif %}">
                                 {% if company.logo %}
                                     <img src="{{ company.logo.url }}" class="w-full h-full object-contain p-2" alt="{% trans 'Company Logo' %}">
                                 {% else %}
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-emerald-600 bg-emerald-50/50">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
                                         <i data-lucide="building" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
                                         <span class="text-[11px] md:text-[13px] font-black tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
                                     </div>
@@ -255,7 +255,7 @@
                         </div>
 
                         <!-- Floating Affordance Icon -->
-                        <div class="absolute bottom-0 right-0 md:-bottom-2 md:-right-2 bg-white text-emerald-600 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-emerald-600 group-hover/preview:text-white transition-colors">
+                        <div class="absolute bottom-0 right-0 md:-bottom-2 md:-right-2 bg-white text-[#0A66C2] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
                             <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
                         </div>
                     </label>
@@ -287,14 +287,14 @@
 
                     <!-- CLICKABLE IMAGE PREVIEW -->
                     <label for="id_cover" class="relative mb-6 w-full max-w-[340px] md:max-w-full h-[120px] md:h-[240px] z-10 mx-auto flex items-center cursor-pointer block group/preview shrink-0">
-                        <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(16,185,129,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-emerald-300">
+                        <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(10,102,194,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
 
                             <!-- Internal Canvas -->
-                            <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not company.cover_image %}bg-emerald-50 border-[2px] border-dashed border-emerald-300{% else %}bg-slate-50{% endif %}">
+                            <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not company.cover_image %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-50{% endif %}">
                                 {% if company.cover_image %}
                                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover" alt="{% trans 'Cover Banner' %}">
                                 {% else %}
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-emerald-600 bg-emerald-50/50">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
                                         <i data-lucide="image" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
                                         <span class="text-[11px] md:text-[13px] font-black tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
                                     </div>
@@ -309,7 +309,7 @@
                         </div>
 
                         <!-- Floating Affordance Icon -->
-                        <div class="absolute -bottom-2 -right-2 bg-white text-slate-700 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-emerald-600 group-hover/preview:text-white transition-colors">
+                        <div class="absolute -bottom-2 -right-2 bg-white text-slate-700 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
                             <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
                         </div>
                     </label>
@@ -348,13 +348,27 @@
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto pointer-events-auto">
 
-        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Personal Profile" %}</button>
-        <button onclick="window.location.href='{% url 'company_admin_dashboard' company.slug %}'" class="w-full min-h-[44px] text-left px-4 py-3 bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-700 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-emerald-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Company Hub" %}</button>
-        <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="radio" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "My Updates" %}</button>
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if request.user.role == 'FOUNDER' and first_membership %}
+                <button onclick="window.location.href='{% url 'company_admin_dashboard' slug=first_membership.company.slug %}'" class="w-full min-h-[44px] text-left px-4 py-3 bg-blue-50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-blue-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "My Company" %}</button>
+            {% else %}
+                <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> {% trans "My profile" %}</button>
+            {% endif %}
+        {% endwith %}
+
+        <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</button>
+        <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</button>
+        <button onclick="window.location.href='{% url 'opportunities:feed' %}'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div> {% trans "Opportunities" %}</button>
+        <button onclick="window.location.href='/workspace/messages/'" class="w-full min-h-[44px] text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="mail" class="w-4 h-4 text-slate-600"></i></div> {% trans "Inbox" %}</button>
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
-        <button onclick="window.location.href='{% url 'company_public_profile' company.slug %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="external-link" class="w-4 h-4 text-slate-600"></i></div> {% trans "View Public Site" %}</button>
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
+            {% endif %}
+        {% endwith %}
+
         <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
             <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
             <span class="flex-1 flex justify-between items-center">
@@ -367,7 +381,7 @@
 </div>
 
 <!-- ==============================================
-     SMOOTH PROFESSIONAL CROPPER MODAL (Emerald)
+     SMOOTH PROFESSIONAL CROPPER MODAL (Blue)
      ============================================== -->
 <div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
     <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
@@ -386,7 +400,7 @@
         <div class="flex-1 w-full bg-slate-900/5 relative overflow-hidden min-h-0 flex items-center justify-center">
             <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-500">
             <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10">
-                <i data-lucide="loader-2" class="w-8 h-8 text-emerald-600 animate-spin mb-3"></i>
+                <i data-lucide="loader-2" class="w-8 h-8 text-[#0A66C2] animate-spin mb-3"></i>
                 <span class="text-[14px] font-semibold text-slate-600">{% trans "Preparing editor..." %}</span>
             </div>
         </div>
@@ -394,15 +408,15 @@
         <div class="bg-white border-t border-slate-100 p-4 md:p-6 shrink-0 z-20">
             <div class="max-w-md mx-auto space-y-4">
                 <div class="flex justify-center gap-3">
-                    <button type="button" onclick="cropper.zoom(0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-600 rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.zoom(-0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-600 rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.rotate(90)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-600 rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+                    <button type="button" onclick="cropper.zoom(0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
+                    <button type="button" onclick="cropper.zoom(-0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
+                    <button type="button" onclick="cropper.rotate(90)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
                 </div>
                 <div class="grid grid-cols-2 gap-3 md:gap-4">
                     <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 py-3.5 md:py-4 transition-all active:scale-95 text-[14px] md:text-[15px]">
                         {% trans "Cancel" %}
                     </button>
-                    <button type="button" id="save-crop-btn" class="btn-action w-full !py-3.5 md:!py-4 shadow-emerald-500/20">
+                    <button type="button" id="save-crop-btn" class="btn-action w-full !py-3.5 md:!py-4 shadow-blue-500/20">
                         <i data-lucide="check" class="w-4.5 h-4.5"></i> {% trans "Save" %}
                     </button>
                 </div>

@@ -9,26 +9,16 @@
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
 
         <div class="flex-1">
-            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                 <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#10B981] to-teal-500 lowercase">link</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
             </div>
 
             <nav class="flex flex-col gap-1.5">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "Personal Profile" %}
-                </a>
-
                 <!-- ACTIVE: My Company -->
-                <a href="#" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-emerald-50/80 border border-emerald-100/50 text-emerald-600 font-black transition-colors text-[14px]" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/50 flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
+                <a href="#" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     {% trans "My Company" %}
-                </a>
-
-                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="bell-ring" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "My Updates" %}
                 </a>
 
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
@@ -63,14 +53,10 @@
         </div>
 
         <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
                 <i data-lucide="globe" class="w-4 h-4"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>{% trans "Settings" %}</span>
-            </a>
             <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>{% trans "Logout" %}</span>
@@ -84,16 +70,16 @@
 <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
         <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#10B981] to-teal-500 lowercase">link</span>
+        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
         <i data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
     </button>
 </div>
 {% endblock navbar %}
 
 {% block content %}
-<div id="global-page-loader" class="fixed top-0 left-0 h-[4px] bg-gradient-to-r from-emerald-400 via-[#10B981] to-teal-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(16,185,129,0.5);"></div>
+<div id="global-page-loader" class="fixed top-0 left-0 h-[4px] bg-gradient-to-r from-blue-400 via-[#0A66C2] to-blue-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,8 +89,6 @@
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --emerald: #10B981;
-        --emerald-dark: #059669;
     }
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
@@ -112,7 +96,7 @@
         font-family: var(--font-body);
         background-color: #F0F4F8;
         background-image:
-            radial-gradient(circle at 0% 0%, rgba(209, 250, 229, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
             radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
         background-attachment: fixed;
         color: #0F172A;
@@ -139,7 +123,7 @@
     @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3rem; } }
     @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; } }
 
-    /* BENTO CARD (Matched exactly to Profile) */
+    /* BENTO CARD */
     .bento-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
@@ -155,18 +139,18 @@
         background: #ffffff; transition: border-color 0.2s ease, box-shadow 0.2s ease; color: #0f172a;
         font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
     }
-    .premium-input:focus { border-color: rgba(16, 185, 129, 0.45); box-shadow: 0 0 0 3px rgba(16,185,129,0.08); }
+    .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
 
-    /* ACTION BUTTONS (Emerald Theme) */
+    /* ACTION BUTTONS */
     .btn-company-primary, .btn-company-secondary {
         height: 44px; padding: 0 1.25rem; border-radius: 0.75rem; font-size: 14.5px; font-weight: 700;
         display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
         transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
     }
     .btn-company-primary {
-        background: linear-gradient(135deg, #059669, #047857); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+        background: linear-gradient(135deg, #0A66C2, #0856A8); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.28);
     }
-    .btn-company-primary:hover { box-shadow: 0 6px 16px rgba(5, 150, 105, 0.38); transform: translateY(-2px); }
+    .btn-company-primary:hover { box-shadow: 0 6px 16px rgba(10, 102, 194, 0.38); transform: translateY(-2px); }
     .btn-company-primary:active { transform: translateY(0); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); }
 
     .btn-company-secondary { background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; }
@@ -186,22 +170,22 @@
     .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
 
     .btn-add-solid {
-        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem; background: #10B981; color: #ffffff;
+        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem; background: #0A66C2; color: #ffffff;
         font-size: 13px; font-weight: 800; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
         transition: background 0.2s ease; text-decoration: none; white-space: nowrap;
-        box-shadow: 0 2px 6px -2px rgba(16,185,129,0.3); cursor: pointer;
+        box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3); cursor: pointer;
     }
-    .btn-add-solid:hover { background: #059669; }
+    .btn-add-solid:hover { background: #0856A8; }
 
     /* COVER IMAGE & LOGO */
     .cover-container-radius { border-top-left-radius: calc(1rem - 1px); border-top-right-radius: calc(1rem - 1px); }
     @media (min-width: 768px) { .cover-container-radius { border-top-left-radius: calc(1.25rem - 1px); border-top-right-radius: calc(1.25rem - 1px); } }
 
-    .cover-placeholder-forest {
-        display: block; width: 100%; height: 100%; background-color: #061e14; position: relative; overflow: hidden; pointer-events: none;
+    .cover-placeholder-01 {
+        display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
     }
-    .cover-placeholder-forest .glow-tr { position: absolute; top: -30%; right: -20%; width: 80%; height: 160%; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%); border-radius: 50%; }
-    .cover-placeholder-forest .glow-bl { position: absolute; bottom: -30%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-tr { position: absolute; top: -30%; right: -20%; width: 80%; height: 160%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-bl { position: absolute; bottom: -30%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
 
     .logo-box {
         display: flex; align-items: center; justify-content: center; width: 124px; height: 124px;
@@ -211,7 +195,7 @@
     }
     @media (min-width: 640px) { .logo-box { width: 144px; height: 144px; border-radius: 1.5rem; } }
     @media (min-width: 768px) { .logo-box { width: 168px; height: 168px; box-shadow: 0 0 0 6px #ffffff, 0 2px 12px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05); } }
-    .logo-box:hover { box-shadow: 0 0 0 6px #ffffff, 0 4px 16px rgba(16, 185, 129, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); }
+    .logo-box:hover { box-shadow: 0 0 0 6px #ffffff, 0 4px 16px rgba(10, 102, 194, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); }
     .logo-box img { width: 100%; height: 100%; object-fit: contain; background: #ffffff; }
 
     .avatar-overlay {
@@ -241,13 +225,13 @@
                 {% if company.cover_image %}
                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]" alt="Cover">
                 {% else %}
-                    <div class="cover-placeholder-forest">
+                    <div class="cover-placeholder-01">
                         <div class="glow-tr"></div>
                         <div class="glow-bl"></div>
                     </div>
                 {% endif %}
 
-                <div class="absolute top-4 right-4 md:top-5 md:right-5 w-10 h-10 md:w-11 md:h-11 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-600 group-hover:text-emerald-600 group-hover:bg-white shadow-md transition-colors pointer-events-none">
+                <div class="absolute top-4 right-4 md:top-5 md:right-5 w-10 h-10 md:w-11 md:h-11 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-slate-600 group-hover:text-[#0A66C2] group-hover:bg-white shadow-md transition-colors pointer-events-none">
                     <i data-lucide="image" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </div>
             </div>
@@ -265,7 +249,7 @@
                                 <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Edit Logo" %}</span>
                             </div>
                         {% else %}
-                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 text-slate-400 group-hover:from-emerald-50 group-hover:to-emerald-100 transition-colors pointer-events-none">
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 text-slate-400 group-hover:from-blue-50 group-hover:to-blue-100 transition-colors pointer-events-none">
                                 <i data-lucide="building-2" class="w-10 h-10 md:w-14 md:h-14 stroke-[1.5]"></i>
                                 <span class="text-[9px] md:text-[10px] font-black tracking-[0.1em] mt-1">NO LOGO</span>
                             </div>
@@ -284,13 +268,13 @@
                         <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-none mb-1 break-words w-full">
                             {{ company.name }}
                         </h1>
-                        <p class="text-[#10B981] font-bold text-[16px] sm:text-[18px] md:text-[21px] tracking-tight mb-0 break-words w-full uppercase">
+                        <p class="text-[#0A66C2] font-bold text-[16px] sm:text-[18px] md:text-[21px] tracking-tight mb-0 break-words w-full uppercase">
                             {{ company.sector }}
                         </p>
 
                         <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-5 md:mt-7">
                             <span class="flex items-center gap-1.5 text-[13px] md:text-[13.5px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl cursor-default">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
                                 {{ company.location|default:_("Location not set") }}
                             </span>
                             {% if company.operating_since %}
@@ -318,7 +302,7 @@
                 <div class="p-6 sm:p-8 md:p-10 bg-slate-50/60 rounded-[1rem] md:rounded-[1.25rem] border border-slate-200/80 text-left mt-8 md:mt-10 w-full relative z-20">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-bold text-slate-700 text-[13px] md:text-[14px] uppercase tracking-widest cursor-default">{% trans "Mission Statement" %}</h3>
-                        <a href="{% url 'company_edit' company.slug %}" class="text-emerald-600 font-extrabold text-[13px] md:text-[14px] hover:bg-emerald-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5">
+                        <a href="{% url 'company_edit' company.slug %}" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% if company.mission_stmt %}{% trans "Edit" %}{% else %}{% trans "Write Mission" %}{% endif %}</span>
                         </a>
@@ -328,11 +312,11 @@
                         <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
                             {% trans "Define your company's core purpose and long-term vision. Whether you're building software or providing local services, a clear mission helps partners understand your drive." %}
                         </p>
-                        <a href="{% url 'company_edit' company.slug %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none">
+                        <a href="{% url 'company_edit' company.slug %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                             </div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "Define your company mission" %}</h4>
                         </a>
                     {% else %}
                         <div id="mission-container" class="relative">
@@ -340,7 +324,7 @@
                                 <p class="text-[14.5px] sm:text-[15.5px] md:text-[16.5px] text-slate-800 font-medium leading-[1.9] whitespace-pre-line">{{ company.mission_stmt }}</p>
                                 <div id="mission-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none md:hidden" aria-hidden="true"></div>
                             </div>
-                            <button id="mission-expand-btn" onclick="toggleMission()" class="mt-3 text-emerald-600 font-extrabold text-[13.5px] hover:text-emerald-700 flex items-center gap-1.5 cursor-pointer transition-colors md:hidden">
+                            <button id="mission-expand-btn" onclick="toggleMission()" class="mt-3 text-[#0A66C2] font-extrabold text-[13.5px] hover:text-[#0856A8] flex items-center gap-1.5 cursor-pointer transition-colors md:hidden">
                                 <span id="mission-btn-text" class="pointer-events-none">{% trans "Read More" %}</span>
                                 <i id="mission-btn-icon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300 pointer-events-none"></i>
                             </button>
@@ -378,14 +362,14 @@
                             {% for service in services|slice:":4" %}
                             <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 flex justify-between items-center transition-colors cursor-default group/item">
                                 <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ service.name }}</h4>
-                                <a href="{% url 'service_update' service.pk %}" class="text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                <a href="{% url 'service_update' service.pk %}" class="text-slate-400 hover:text-[#0A66C2] opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'service_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "Add your first service" %}</h4>
+                        <a href="{% url 'service_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "Add your first service" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -414,16 +398,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {% for milestone in milestones|slice:":3" %}
                             <div class="p-5 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors cursor-default group/item relative">
-                                <span class="inline-block px-2.5 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[10px] font-black tracking-widest rounded-lg mb-3">{{ milestone.year }}</span>
+                                <span class="inline-block px-2.5 py-1 bg-blue-50 border border-blue-100 text-[#0A66C2] text-[10px] font-black tracking-widest rounded-lg mb-3">{{ milestone.year }}</span>
                                 <h4 class="font-bold text-slate-800 text-[14.5px] leading-snug mb-1">{{ milestone.title }}</h4>
-                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                <a href="{% url 'milestone_update' milestone.pk %}" class="absolute top-4 right-4 text-slate-400 hover:text-[#0A66C2] opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'milestone_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "Log timeline event" %}</h4>
+                        <a href="{% url 'milestone_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "Log timeline event" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -453,25 +437,25 @@
                             {% for article in news|slice:":3" %}
                             <div class="flex flex-col border border-slate-200/80 rounded-xl overflow-hidden bg-white hover:border-slate-300 group/news relative cursor-default">
                                 <div class="absolute top-3 right-3 z-20 flex gap-1.5 opacity-0 group-hover/news:opacity-100 transition-opacity">
-                                    <a href="{% url 'news_update' article.pk %}" class="w-8 h-8 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center text-slate-600 hover:text-emerald-600 shadow-sm"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></a>
+                                    <a href="{% url 'news_update' article.pk %}" class="w-8 h-8 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center text-slate-600 hover:text-[#0A66C2] shadow-sm"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></a>
                                     <a href="{% url 'news_delete' article.pk %}" class="w-8 h-8 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center text-rose-500 hover:text-rose-700 shadow-sm"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></a>
                                 </div>
                                 {% if article.cover_image %}
                                     <div class="h-32 w-full bg-slate-100 overflow-hidden"><img src="{{ article.cover_image.url }}" class="w-full h-full object-cover"></div>
                                 {% else %}
-                                    <div class="h-32 w-full bg-emerald-50/50 border-b border-slate-100 flex items-center justify-center text-emerald-200"><i data-lucide="newspaper" class="w-8 h-8"></i></div>
+                                    <div class="h-32 w-full bg-blue-50/50 border-b border-slate-100 flex items-center justify-center text-blue-200"><i data-lucide="newspaper" class="w-8 h-8"></i></div>
                                 {% endif %}
                                 <div class="p-4 flex-1 flex flex-col">
-                                    <span class="inline-block text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2.5 py-1 rounded-lg mb-2 w-max">{{ article.published_date|date:"M d, Y" }}</span>
+                                    <span class="inline-block text-[10px] font-black text-[#0A66C2] uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-lg mb-2 w-max">{{ article.published_date|date:"M d, Y" }}</span>
                                     <h4 class="font-bold text-slate-900 text-[15px] line-clamp-2 leading-snug">{{ article.title }}</h4>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'news_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
-                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none"><i data-lucide="file-text" class="w-6 h-6"></i></div>
-                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "No Updates Published" %}</h4>
+                        <a href="{% url 'news_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                            <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "No Updates Published" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -505,14 +489,14 @@
                                     <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ contact.label }}</span>
                                     <span class="block text-[14px] font-bold text-slate-800 truncate">{{ contact.value }}</span>
                                 </div>
-                                <a href="{% url 'company_contact_update' contact.pk %}" class="text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                <a href="{% url 'company_contact_update' contact.pk %}" class="text-slate-400 hover:text-[#0A66C2] opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'company_contact_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "Add contact info" %}</h4>
+                        <a href="{% url 'company_contact_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "Add contact info" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -541,19 +525,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {% for social in company.socials.all|slice:":4" %}
                             <div class="flex items-center gap-3.5 p-4 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors cursor-default group/item">
-                                <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 border border-emerald-100 shrink-0"><i data-lucide="link-2" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-[#0A66C2] border border-blue-100 shrink-0"><i data-lucide="link-2" class="w-4 h-4"></i></div>
                                 <div class="overflow-hidden flex-1">
                                     <span class="block text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-0.5">{{ social.platform }}</span>
                                     <span class="block text-[14px] font-bold text-slate-800 truncate">{{ social.value }}</span>
                                 </div>
-                                <a href="{% url 'company_social_update' social.pk %}" class="text-slate-400 hover:text-emerald-600 opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
+                                <a href="{% url 'company_social_update' social.pk %}" class="text-slate-400 hover:text-[#0A66C2] opacity-0 group-hover/item:opacity-100 transition-opacity"><i data-lucide="edit-3" class="w-4 h-4"></i></a>
                             </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'company_social_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-emerald-600 transition-colors pointer-events-none">{% trans "Add social link" %}</h4>
+                        <a href="{% url 'company_social_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-[#0A66C2] transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-[#0A66C2] transition-colors pointer-events-none">{% trans "Add social link" %}</h4>
                         </a>
                     {% endif %}
                 </div>
@@ -627,7 +611,7 @@
                 <div class="relative flex flex-col h-full z-10">
                     <div class="mb-3">
                         <h3 class="text-[1.3rem] md:text-[1.6rem] font-black text-slate-900 tracking-tight leading-tight cursor-default">{% trans "Current Company Needs" %}</h3>
-                        <div class="h-1 w-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-2 md:mt-3"></div>
+                        <div class="h-1 w-12 bg-gradient-to-r from-[#0A66C2] to-blue-500 rounded-full mt-2 md:mt-3"></div>
                     </div>
                     <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-6 md:pr-10 cursor-default">
                         {% trans "Broadcast your current company status and operational needs to the Ethiopian business ecosystem. Signal whether you are scaling operations, raising investment, hiring talent, or seeking strategic partners and B2B clients." %}
@@ -638,26 +622,26 @@
                         <div class="p-4 rounded-xl border border-slate-200/80 bg-white flex items-center justify-between cursor-default">
                             <div>
                                 <h4 class="font-bold text-slate-800 text-[14.5px] flex items-center gap-2">
-                                    <i data-lucide="user-plus" class="w-4 h-4 text-emerald-600"></i> {% trans "We are hiring" %}
+                                    <i data-lucide="user-plus" class="w-4 h-4 text-[#0A66C2]"></i> {% trans "We are hiring" %}
                                 </h4>
                                 <p class="text-[12px] font-semibold text-slate-500 mt-0.5">{% trans "Show 'Hiring' badge on public profile" %}</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="is_hiring_toggle" class="sr-only peer" {% if company.is_hiring %}checked{% endif %}>
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0A66C2]"></div>
                             </label>
                         </div>
                         <div class="relative w-full group">
                             <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1 cursor-default">{% trans "CURRENT OBJECTIVE" %}</label>
                             <div class="relative">
-                                <select id="looking_for_select" class="premium-input cursor-pointer text-slate-700 hover:border-emerald-500 transition-colors w-full bg-white block" style="padding-right:3.5rem; appearance:none;">
+                                <select id="looking_for_select" class="premium-input cursor-pointer text-slate-700 hover:border-[#0A66C2] transition-colors w-full bg-white block" style="padding-right:3.5rem; appearance:none;">
                                     <option value="BUILDING" {% if company.looking_for == 'BUILDING' %}selected{% endif %}>{% trans "Expanding Operations" %}</option>
                                     <option value="FUNDRAISING" {% if company.looking_for == 'FUNDRAISING' %}selected{% endif %}>{% trans "Seeking Investment" %}</option>
                                     <option value="HIRING" {% if company.looking_for == 'HIRING' %}selected{% endif %}>{% trans "Hiring Talent" %}</option>
                                     <option value="PARTNERING" {% if company.looking_for == 'PARTNERING' %}selected{% endif %}>{% trans "Seeking Partners/Co-Founders" %}</option>
                                     <option value="SALES" {% if company.looking_for == 'SALES' %}selected{% endif %}>{% trans "Seeking B2B Clients" %}</option>
                                 </select>
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover:text-emerald-600 transition-colors z-[5010]" aria-hidden="true">
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center pointer-events-none text-slate-400 group-hover:text-[#0A66C2] transition-colors z-[5010]" aria-hidden="true">
                                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </div>
                             </div>
@@ -672,16 +656,16 @@
             <!-- Trust Score -->
             <div class="lg:col-span-4 bento-card p-6 md:p-8 flex flex-col justify-center text-center h-full cursor-default z-20">
                 <div class="w-16 h-16 mx-auto flex items-center justify-center mb-4 pointer-events-none">
-                    <i data-lucide="shield-check" class="w-12 h-12 text-emerald-500"></i>
+                    <i data-lucide="shield-check" class="w-12 h-12 text-[#0A66C2]"></i>
                 </div>
                 <span class="font-black text-[11px] md:text-[12px] tracking-[0.18em] uppercase text-slate-500 mb-2 pointer-events-none">{% trans "Company Trust" %}</span>
                 <span class="font-black text-5xl md:text-6xl text-slate-900 leading-none mb-6 font-heading pointer-events-none">
                      95<span class="text-2xl text-slate-400">%</span>
                 </span>
                 <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden relative mb-5 pointer-events-none">
-                    <div class="absolute top-0 bottom-0 left-0 bg-emerald-500 rounded-full" style="width: 95%;"></div>
+                    <div class="absolute top-0 bottom-0 left-0 bg-[#0A66C2] rounded-full" style="width: 95%;"></div>
                 </div>
-                <p class="text-slate-600 text-[12.5px] font-semibold leading-relaxed bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50 pointer-events-none">
+                <p class="text-slate-600 text-[12.5px] font-semibold leading-relaxed bg-blue-50/50 p-3 rounded-xl border border-blue-100/50 pointer-events-none">
                     {% trans "Complete every section to reach 100%. Fully detailed company profiles are prioritized in our algorithms." %}
                 </p>
             </div>
@@ -764,8 +748,8 @@
 {% if not is_inspector and request.user.is_authenticated %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
 
-    <a href="#" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-emerald-600 relative">
-        <div class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-full"></div>
+    <a href="#" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full"></div>
         <i data-lucide="building" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-black whitespace-nowrap tracking-wide">My company</span>
     </a>
@@ -805,19 +789,9 @@
     <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
     <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
 
-        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
-            {% trans "Personal Profile" %}
-        </button>
-
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'}); closeAllDrawers();" class="w-full text-left px-4 py-3.5 bg-emerald-50/70 hover:bg-emerald-100/50 rounded-[0.85rem] text-[14.5px] font-bold text-emerald-600 flex items-center gap-3.5 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-white border border-emerald-200/60 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'}); closeAllDrawers();" class="w-full text-left px-4 py-3.5 bg-blue-50/70 hover:bg-blue-100/50 rounded-[0.85rem] text-[14.5px] font-bold text-[#0A66C2] flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-blue-200/60 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
             {% trans "Company Hub" %}
-        </button>
-
-        <button onclick="window.location.href='{% url 'collaboration_hub' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="bell-ring" class="w-4 h-4 text-slate-600"></i></div>
-            {% trans "My Updates" %}
         </button>
 
         <div class="h-px bg-slate-100 my-2 mx-2"></div>
@@ -850,11 +824,11 @@
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-emerald-50 border-[2px] border-emerald-500 text-emerald-600{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-emerald-50 border-[2px] border-emerald-500 text-emerald-600{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
@@ -863,7 +837,7 @@
 
 <!-- TOAST -->
 <div id="share-toast" class="fixed bottom-[90px] left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl transition-all duration-300 opacity-0 translate-y-6 z-[300] font-semibold text-[13px] flex items-center gap-2.5 w-max max-w-[90vw] pointer-events-none">
-    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-400 shrink-0"></i>
     <span id="toast-msg">{% trans "Success!" %}</span>
 </div>
 
@@ -1026,7 +1000,7 @@
             icon.classList.add('text-indigo-400');
         } else {
             icon.setAttribute('data-lucide', 'check-circle-2');
-            icon.classList.add('text-emerald-400');
+            icon.classList.add('text-blue-400');
         }
 
         if (typeof lucide !== 'undefined') lucide.createIcons();

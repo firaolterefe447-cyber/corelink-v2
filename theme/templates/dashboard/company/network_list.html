@@ -6,14 +6,14 @@
 <div class="fixed top-6 left-4 md:top-8 md:left-8 z-[100] pointer-events-none">
     <a href="{% url 'company_admin_dashboard' company.slug %}" class="pointer-events-auto flex items-center gap-2.5 px-5 py-2.5 md:px-6 md:py-3 bg-white/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_12px_30px_-8px_rgba(15,23,42,0.12)] rounded-[1.2rem] text-[13.5px] md:text-[14px] font-bold text-slate-600 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all hover:-translate-y-0.5 active:scale-95 group">
         <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
-        <span>{% trans "Back to Hub" %}</span>
+        <span>{% trans "Back" %}</span>
     </a>
 </div>
-{% endblock %}
+{% endblock navbar %}
 
 {% block content %}
-<!-- Universal Page Loader -->
-<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-500 via-emerald-400 to-teal-400 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 14px rgba(16,185,129,0.7), 0 0 4px rgba(16,185,129,0.4);"></div>
+<!-- Universal Page Loader (Matched to Dashboard) -->
+<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-400 via-[#0A66C2] to-blue-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,11 +29,10 @@
 
     body {
         font-family: var(--font-body);
-        background-color: #F4F7FA;
+        background-color: #F0F4F8;
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
-            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
         background-attachment: fixed;
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
@@ -45,25 +44,25 @@
     .bento-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 2rem;
+        border-radius: 1.5rem;
         box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
         position: relative;
         z-index: 10;
         transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
-    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(16, 185, 129, 0.05); border-color: rgba(203, 213, 225, 1); }
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
+    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.1), 0 4px 6px -2px rgba(10, 102, 194, 0.05); border-color: rgba(203, 213, 225, 1); }
 
-    /* High-contrast Emerald Add Button */
+    /* Primary CoreLink Blue Add Button */
     .btn-add-solid {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 48px; padding: 0 1.5rem; border-radius: 1rem; background: #10B981; color: #ffffff;
+        height: 48px; padding: 0 1.5rem; border-radius: 1rem; background: #0A66C2; color: #ffffff;
         font-size: 14px; font-weight: 900; letter-spacing: 0.02em; border: none;
         display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.5);
+        box-shadow: 0 8px 20px -6px rgba(10, 102, 194, 0.4);
     }
-    .btn-add-solid:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(16, 185, 129, 0.6); }
-    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.4); }
+    .btn-add-solid:hover { background: #0856A8; transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(10, 102, 194, 0.5); }
+    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.3); }
 
     /* Smaller version for inline section headers */
     .btn-add-sm {
@@ -75,12 +74,14 @@
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
 </style>
 
-<div class="min-h-screen relative z-10 pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-[1000px] mx-auto anim-smooth-appear">
+<div class="min-h-screen relative z-10 pt-28 pb-20 px-5 sm:px-6 lg:px-8 max-w-[1040px] mx-auto anim-smooth-appear">
 
     <!-- PAGE HEADER -->
     <div class="mb-10 md:mb-12 pl-2">
-        <h1 class="text-[clamp(2rem,4vw,2.8rem)] font-black text-slate-900 tracking-tight leading-none mb-3 font-heading">{% trans "Network & Contacts" %}</h1>
-        <p class="text-[14.5px] md:text-[15.5px] text-slate-500 font-medium leading-relaxed max-w-2xl">
+        <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-black text-slate-900 tracking-tight leading-none mb-3 font-heading">
+            {% trans "Network & Contacts" %}
+        </h1>
+        <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-relaxed max-w-2xl">
             {% trans "Manage how clients, investors, and partners can reach" %} <strong class="text-slate-800">{{ company.name }}</strong>. {% trans "Keep your communication channels and digital footprint up to date." %}
         </p>
     </div>
@@ -88,7 +89,7 @@
     <!-- 1. DIRECT CONTACTS SECTION -->
     <div class="mb-12">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5 px-2">
-            <h2 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Direct Contacts" %}</h2>
+            <h2 class="text-[1.25rem] md:text-[1.4rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Direct Contacts" %}</h2>
             <a href="{% url 'contact_create' %}" class="btn-add-solid btn-add-sm w-full sm:w-auto">
                 <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
                 <span class="pointer-events-none">{% trans "Add Contact" %}</span>
@@ -97,31 +98,31 @@
 
         <div class="bento-card p-4 md:p-6 flex flex-col gap-3">
             {% for contact in contacts %}
-            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-[0_12px_30px_-12px_rgba(16,185,129,0.25)] transition-all duration-400 ease-out z-10 hover:z-20">
+            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_12px_30px_-12px_rgba(10,102,194,0.2)] transition-all duration-400 ease-out z-10 hover:z-20">
 
                 <div class="flex items-center gap-4 flex-1 overflow-hidden">
-                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-[#0A66C2] transition-colors">
                         <i data-lucide="phone" class="w-5 h-5"></i>
                     </div>
                     <div class="overflow-hidden">
                         <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{{ contact.label }}</p>
-                        <p class="font-bold text-slate-900 text-[15.5px] truncate">{{ contact.value }}</p>
+                        <p class="font-bold text-slate-900 text-[14.5px] md:text-[15.5px] truncate">{{ contact.value }}</p>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 shrink-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-slate-100">
-                    <a href="{% url 'contact_edit' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-blue-300 hover:text-[#0A66C2] hover:shadow-md transition-all" title="Edit Contact">
+                    <a href="{% url 'contact_edit' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-[#0A66C2] hover:text-[#0A66C2] hover:shadow-md transition-all" title="{% trans 'Edit Contact' %}">
                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </a>
-                    <a href="{% url 'contact_delete' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="Delete Contact">
+                    <a href="{% url 'contact_delete' contact.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="{% trans 'Delete Contact' %}">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </a>
                 </div>
             </div>
             {% empty %}
-            <div class="p-10 text-center flex flex-col items-center">
-                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400">
+            <div class="p-10 text-center flex flex-col items-center group">
+                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400 group-hover:border-blue-300 group-hover:text-[#0A66C2] group-hover:bg-blue-50 transition-colors">
                     <i data-lucide="book-user" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-[17px] font-bold text-slate-700 mb-1">{% trans "No Contacts Listed" %}</h3>
@@ -134,40 +135,40 @@
     <!-- 2. SOCIAL MEDIA SECTION -->
     <div class="mb-10">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5 px-2">
-            <h2 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Social Media" %}</h2>
+            <h2 class="text-[1.25rem] md:text-[1.4rem] font-black text-slate-900 tracking-tight font-heading">{% trans "Social Media & Links" %}</h2>
             <a href="{% url 'social_create' %}" class="btn-add-solid btn-add-sm w-full sm:w-auto">
                 <i data-lucide="plus" class="w-4.5 h-4.5 pointer-events-none"></i>
-                <span class="pointer-events-none">{% trans "Add Social Link" %}</span>
+                <span class="pointer-events-none">{% trans "Add Link" %}</span>
             </a>
         </div>
 
         <div class="bento-card p-4 md:p-6 flex flex-col gap-3">
             {% for social in socials %}
-            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-emerald-300 hover:shadow-[0_12px_30px_-12px_rgba(16,185,129,0.25)] transition-all duration-400 ease-out z-10 hover:z-20">
+            <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-[1.25rem] bg-white border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_12px_30px_-12px_rgba(10,102,194,0.2)] transition-all duration-400 ease-out z-10 hover:z-20">
 
                 <div class="flex items-center gap-4 flex-1 overflow-hidden">
-                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-500 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-[#0A66C2] transition-colors">
                         <i data-lucide="link-2" class="w-5 h-5"></i>
                     </div>
                     <div class="overflow-hidden pr-2">
                         <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{{ social.platform }}</p>
-                        <a href="{{ social.url }}" target="_blank" class="font-bold text-slate-800 text-[14.5px] truncate hover:text-[#0A66C2] transition-colors block">{{ social.url }}</a>
+                        <a href="{{ social.url }}" target="_blank" class="font-bold text-slate-800 text-[14px] md:text-[14.5px] truncate hover:text-[#0A66C2] transition-colors block">{{ social.url }}</a>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 shrink-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-slate-100">
-                    <a href="{% url 'social_edit' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-blue-300 hover:text-[#0A66C2] hover:shadow-md transition-all" title="Edit Link">
+                    <a href="{% url 'social_edit' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-[#0A66C2] hover:text-[#0A66C2] hover:shadow-md transition-all" title="{% trans 'Edit Link' %}">
                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </a>
-                    <a href="{% url 'social_delete' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="Delete Link">
+                    <a href="{% url 'social_delete' social.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-10 w-full sm:w-10 rounded-[0.85rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all" title="{% trans 'Delete Link' %}">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </a>
                 </div>
             </div>
             {% empty %}
-            <div class="p-10 text-center flex flex-col items-center">
-                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400">
+            <div class="p-10 text-center flex flex-col items-center group">
+                <div class="w-16 h-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center mb-4 text-slate-400 group-hover:border-blue-300 group-hover:text-[#0A66C2] group-hover:bg-blue-50 transition-colors">
                     <i data-lucide="share-2" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-[17px] font-bold text-slate-700 mb-1">{% trans "No Social Links Added" %}</h3>
@@ -180,10 +181,8 @@
 </div>
 
 <script>
-    // Initialize Icons
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
-    // Reused Global Loader Script to maintain UX consistency
     document.addEventListener('DOMContentLoaded', () => {
         const loader = document.getElementById('global-page-loader');
         let loaderInterval;
