@@ -22,9 +22,8 @@
                 </span>
             </div>
 
-            <!-- Desktop Navigation Links (The 5 Clean Links) -->
+            <!-- Desktop Navigation Links -->
             <nav class="flex flex-col gap-2">
-
                 {% with first_membership=request.user.company_memberships.first %}
                     {% if request.user.role == 'FOUNDER' and first_membership %}
                         <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
@@ -137,11 +136,12 @@
         -webkit-backdrop-filter: blur(20px);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 2rem;
+        border-radius: 1.5rem; /* Better scaling for mobile */
         box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
         position: relative;
         overflow: hidden;
     }
+    @media (min-width: 768px) { .glass-card { border-radius: 2rem; } }
 
     /* Override Django/Tailwind Form Inputs to match Blue/Indigo Theme */
     .django-form input:not([type="checkbox"]):not([type="file"]),
@@ -182,9 +182,14 @@
         cursor: pointer;
     }
 
-    /* Animations */
+    /* Animations & Utilities */
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+
+    /* Fix 1: Add missing Drawer & Body Lock utilities so the mobile menu isn't permanently blocking the screen */
+    .drawer-closed { transform: translateY(100%); }
+    .drawer-open { transform: translateY(0); }
+    body.body-lock { overflow: hidden !important; touch-action: none; }
 
     /* Layout canvas spacing */
     .app-canvas {
@@ -205,7 +210,8 @@
 
         <!-- Standalone Header with ONLY Back Navigation to Dashboard -->
         <div class="flex items-center justify-between mb-8 md:mb-10 px-2">
-            <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm active:scale-95 group shrink-0">
+            <!-- Fix 2: Hidden on mobile (hidden md:flex). Mobile already has a fixed top bar back button. Prevent stacking back buttons -->
+            <a href="{% url 'company_admin_dashboard' company.slug %}" class="hidden md:flex w-11 h-11 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl items-center justify-center text-slate-500 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm active:scale-95 group shrink-0">
                 <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform"></i>
             </a>
 
@@ -228,7 +234,8 @@
                 <p class="text-[13.5px] text-slate-500 font-semibold tracking-wide">{% trans "Update your company records." %}</p>
             </div>
 
-            <div class="w-11 h-11 shrink-0"></div> <!-- Spacer for perfect centering -->
+            <!-- Fix 3: Hide the spacer on mobile as well so header centers perfectly on phones -->
+            <div class="hidden md:block w-11 h-11 shrink-0"></div>
         </div>
 
         <!-- Main Form Glass Card -->
@@ -236,7 +243,7 @@
             <!-- Subtle ambient Blue glow inside the card -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-500/5 blur-[60px] rounded-full pointer-events-none"></div>
 
-            <form method="post" enctype="multipart/form-data" id="main-form" class="p-6 md:p-10 space-y-7 relative z-10 django-form">
+            <form method="post" enctype="multipart/form-data" id="main-form" class="p-5 sm:p-6 md:p-10 space-y-7 relative z-10 django-form">
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -245,12 +252,13 @@
 
                         <!-- Checkbox Layout -->
                         {% if field.field.widget.input_type == 'checkbox' %}
-                            <label class="flex items-center gap-4 cursor-pointer p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all group/check">
-                                <div class="pt-0.5">{{ field }}</div>
+                            <!-- Fix 4: changed to items-start and added shrink-0 to prevent squishing checkboxes on narrow screens -->
+                            <label class="flex items-start gap-4 cursor-pointer p-4 sm:p-5 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-[1.25rem] hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all group/check">
+                                <div class="pt-0.5 shrink-0">{{ field }}</div>
                                 <div>
-                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-[#0A66C2] transition-colors">{{ field.label }}</span>
+                                    <span class="block text-[14.5px] font-bold text-slate-800 group-hover/check:text-[#0A66C2] transition-colors leading-tight">{{ field.label }}</span>
                                     {% if field.help_text %}
-                                        <span class="block text-[13px] text-slate-500 font-medium mt-1">{{ field.help_text|safe }}</span>
+                                        <span class="block text-[13px] text-slate-500 font-medium mt-1 leading-snug">{{ field.help_text|safe }}</span>
                                     {% endif %}
                                 </div>
                             </label>
@@ -307,7 +315,7 @@
                         <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
 
                         <!-- Visual Gallery Grid -->
-                        <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 transition-all">
+                        <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 transition-all">
 
                             <!-- EXISTING IMAGES (If Editing) -->
                             {% if form.instance.pk and form.instance.gallery.all %}
@@ -351,7 +359,8 @@
 
 <!-- Mobile Nav Drawer -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
+<!-- Changed prevent-select to select-none for better tailwind compatibility -->
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] select-none p-5">
     <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
     <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
 
@@ -416,7 +425,7 @@
         // ==========================================
         setTimeout(() => {
             const firstInput = document.querySelector('form input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]), form textarea');
-            if (firstInput) {
+            if (firstInput && window.innerWidth > 768) { // Only autofocus on desktop to prevent forced keyboard popup on mobile
                 firstInput.focus();
             }
         }, 300);
