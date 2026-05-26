@@ -169,7 +169,8 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
 
         help_texts = {
             'name': _("Add a specific skill or tool (e.g., Patient Care, Logistics, Python)."),
-            'context': _("Briefly mention where you applied this skill (e.g., 'Managed inventory for a retail branch')."),
+            'context': _(
+                "Explain how you apply this skill, your experience with it, and your proficiency level. Leave it blank if you want."),
         }
 
         widgets = {
@@ -191,16 +192,17 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'title': _("The name of the project, research paper, business plan, or campaign."),
-            'role': _("Your specific position (e.g., Project Manager, Lead Researcher)."),
-            'link': _("A URL where people can view this project live or read the published work."),
-            'main_description': _("Describe what this project is, what problem it solves, and what you achieved."),
+            'title': _(
+                "Your project title. E.g., Patient Care Study, Business Plan, Mobile App, or Python Learning Project."),
+            'role': _("What did you do? (e.g., Lead Researcher, Developer, or Personal/Learning Project)."),
+            'link': _("Optional. A link to see the project live, a document, or a file link."),
+            'main_description': _("Explain what the project is, what you did, and what you achieved."),
         }
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study'}),
             'role': forms.TextInput(attrs={'placeholder': 'e.g., Operations Lead'}),
-            'main_description': forms.Textarea(attrs={'placeholder': 'Describe your approach and results...', 'rows': 5, 'class': 'markdown-editor'}),
+            'main_description': forms.Textarea(attrs={'placeholder': 'Describe your project ....', 'rows': 5, 'class': 'markdown-editor'}),
         }
 
 
@@ -233,10 +235,10 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'company_name': _("The official name of the business, hospital, or organization."),
-            'role_title': _("Your official job title (e.g., Senior Analyst, Medical Officer)."),
-            'location_type': _("Indicate if this role was performed on-site, remotely, or in a hybrid format."),
-            'description': _("Highlight your key responsibilities and achievements. Using bullet points makes it easier to read."),
+            'company_name': _("The name of the company, hospital, organization, or school where you worked."),
+            'role_title': _("Your job title (e.g., Lead Developer, Graphics Designer, Medical Officer, or Intern)."),
+            'location_type': _("Select whether you worked on-site, remotely, or in a hybrid setup."),
+            'description': _("Explain your daily tasks, responsibilities, and achievements."),
         }
 
         widgets = {
@@ -288,10 +290,12 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'title': _("E.g., B.Sc. Nursing, Certified Public Accountant, or AWS Cloud Practitioner."),
-            'issuer': _("The university, licensing board, or training platform."),
-            'reflection': _("Optional. Share what this credential covered or your biggest takeaways."),
-            'file_upload': _("Upload a clear copy of your degree or certificate to improve your profile verification."),
+            'title': _("E.g., Bachelor in Computer Science, Foundations of AI, or Graphics Design."),
+            'issuer': _("The school, online platform, organization, or community that gave you this certificate."),
+            'reflection': _("Optional. Share what you learned or how this certificate helped you grow."),
+            'url_link': _(
+                "Optional. A link to the online certificate, badge, or proof of achievement if you have one."),
+            'file_upload': _("Upload a picture or PDF of your certificate to show your proof of work."),
         }
 
         widgets = {
@@ -363,10 +367,10 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Vision or Goal")
-            self.fields['title'].help_text = _("What is your ultimate objective? (e.g., 'Launch a Tech Startup in 5 Years').")
+            self.fields['title'].help_text = _("Give title you want for your goal ? (e.g., 'My 5 year plan').")
             self.fields['content'].label = _("Detailed Plan")
             self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
-            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'In five years, I intend to...'})
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Eplain here'})
 
         elif current_type == 'ESSAY':
             self.fields.pop('category', None)
