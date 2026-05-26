@@ -328,7 +328,7 @@
                                 {{ spot.full_name|default:"U"|slice:":1" }}
                             </div>
                         {% endif %}
-                        <div class="overflow-hidden flex-1">
+                        <div class="overflow-hidden flex-1 flex flex-col justify-center">
                             <h3 class="font-black text-slate-900 truncate text-[15px] md:text-[16px] leading-tight mb-1">{{ spot.full_name|default:"Unknown User" }}</h3>
                             <p class="text-[12px] md:text-[13px] text-amber-600 font-bold truncate">
                                 {% if spot.portfolio.headlines.first %}
@@ -337,9 +337,6 @@
                                     {{ spot.portfolio.field_of_interest|default:"Professional" }}
                                 {% endif %}
                             </p>
-                            <div class="text-[10.5px] md:text-[11px] text-slate-500 font-bold mt-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="zap" class="w-3 h-3 text-amber-500 fill-amber-500/20"></i> {{ spot.portfolio.oracle_score|default:"90" }} AI Score
-                            </div>
                         </div>
                     </div>
                 </a>
@@ -438,20 +435,23 @@
                             </div>
                         </div>
 
-                        <!-- PERFECT 50/50 GRID BUTTONS -->
+                        <!-- ✨ UPGRADED PERFECT 50/50 GRID BUTTONS ✨ -->
                         <div class="grid grid-cols-2 gap-2.5 md:gap-3 mt-auto pt-2">
-                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-colors active:scale-95">
-                                <i data-lucide="user" class="w-4 h-4 shrink-0"></i>
-                                <span class="truncate">{% trans "Profile" %}</span>
+
+                            <!-- View Profile Button (Ghost/Outline Style) -->
+                            <a href="{{ person.get_absolute_url|default:'#' }}" target="_blank" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
+                                <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
+                                <span class="truncate">{% trans "View Profile" %}</span>
                             </a>
 
+                            <!-- Message Button (Vibrant Premium Gradient) -->
                             {% if request.user.is_authenticated %}
-                                <a href="{% url 'chat_with' person.id %}" class="flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                <a href="{% url 'chat_with' person.id %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
                                     <i data-lucide="message-circle" class="w-4 h-4 text-white/90 shrink-0"></i>
                                     <span class="truncate">{% trans "Message" %}</span>
                                 </a>
                             {% else %}
-                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.35)]">
+                                <button onclick="openLoginModal('{{ person.full_name|escapejs }}')" aria-label="{% trans 'Message user' %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] md:text-[14px] py-3.5 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
                                     <i data-lucide="message-circle" class="w-4 h-4 text-white/90 shrink-0"></i>
                                     <span class="truncate">{% trans "Message" %}</span>
                                 </button>
