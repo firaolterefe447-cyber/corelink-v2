@@ -627,40 +627,43 @@
                     <div id="quick-image-preview-container" class="hidden px-6 pb-4 flex-wrap gap-3"></div>
 
                     <!-- Action Footer -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/50 rounded-b-[1.25rem] gap-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/50 rounded-b-[1.25rem] gap-4 w-full">
 
-                        <!-- Left Side: Tools -->
-                        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                        <!-- Left Side: Tools & Selection -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-3 w-full sm:flex-1 min-w-0">
 
                             <!-- Hidden File Input -->
                             <input type="file" id="quick-image-upload" name="gallery_images" multiple accept="image/*" class="hidden" onchange="previewQuickImages(this)">
 
                             <!-- Attachment Button (Hidden until typing) -->
-                            <button type="button" id="quick-add-image-btn" style="display: none;" onclick="document.getElementById('quick-image-upload').click()" class="items-center gap-1.5 text-[13px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0">
+                            <button type="button" id="quick-add-image-btn" style="display: none;" onclick="document.getElementById('quick-image-upload').click()" class="items-center justify-center gap-1.5 text-[13px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-4 h-[42px] rounded-xl transition-colors shadow-sm shrink-0 w-full sm:w-auto">
                                 <i data-lucide="image" class="w-4 h-4"></i>
                                 <span>{% trans "Add Image" %}</span>
                             </button>
 
                             <!-- 🌟 The Current Objective Dropdown -->
-                            <div class="relative group w-full sm:w-auto flex-1 sm:flex-none">
-                                <select name="current_search" class="appearance-none bg-white border border-slate-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-700 text-[13px] font-bold pl-4 pr-9 py-2 rounded-lg outline-none cursor-pointer shadow-sm transition-all w-full sm:w-auto min-w-[200px]">
-                                    <option value="LEARNING"  {% if portfolio.current_search == 'LEARNING'  %}selected{% endif %}>{% trans "Learning / Studying" %}</option>
-                                    <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Building a Startup" %}</option>
-                                    <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
-                                    <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Networking" %}</option>
-                                    <option value="INTERN"    {% if portfolio.current_search == 'INTERN'    %}selected{% endif %}>{% trans "Seeking Internship" %}</option>
-                                    <option value="FULL_TIME" {% if portfolio.current_search == 'FULL_TIME' %}selected{% endif %}>{% trans "Seeking Full-time Job" %}</option>
-                                    <option value="PART_TIME" {% if portfolio.current_search == 'PART_TIME' %}selected{% endif %}>{% trans "Seeking Part-time Job" %}</option>
-                                    <option value="FUNDING"   {% if portfolio.current_search == 'FUNDING'   %}selected{% endif %}>{% trans "Seeking Funding" %}</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition-colors"></i>
+                            <div class="w-full sm:w-auto sm:max-w-[320px] flex-1 min-w-0 flex flex-col gap-1.5">
+                                <label class="text-[10.5px] font-black uppercase tracking-widest text-slate-500 pl-1 leading-none">{% trans "What are you looking for?" %}</label>
+                                <div class="relative group w-full">
+                                    <select name="current_search" class="appearance-none w-full bg-white border border-slate-200 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-700 text-[13px] font-bold pl-3.5 pr-8 h-[42px] rounded-xl outline-none cursor-pointer shadow-sm transition-all text-ellipsis overflow-hidden whitespace-nowrap">
+                                        <option value="LEARNING"  {% if portfolio.current_search == 'LEARNING'  %}selected{% endif %}>{% trans "Learning / Studying" %}</option>
+                                        <option value="STARTUP"   {% if portfolio.current_search == 'STARTUP'   %}selected{% endif %}>{% trans "Looking for a Startup Team" %}</option>
+                                        <option value="PROJECT"   {% if portfolio.current_search == 'PROJECT'   %}selected{% endif %}>{% trans "Looking for a Project to join" %}</option>
+                                        <option value="MINDSET"   {% if portfolio.current_search == 'MINDSET'   %}selected{% endif %}>{% trans "Meet Like-Minded People" %}</option>
+                                        <option value="INTERN"    {% if portfolio.current_search == 'INTERN'    %}selected{% endif %}>{% trans "Seeking Internship" %}</option>
+                                        <option value="FULL_TIME" {% if portfolio.current_search == 'FULL_TIME' %}selected{% endif %}>{% trans "Seeking Full-time Job" %}</option>
+                                        <option value="PART_TIME" {% if portfolio.current_search == 'PART_TIME' %}selected{% endif %}>{% trans "Seeking Part-time Job" %}</option>
+                                        <option value="FUNDING"   {% if portfolio.current_search == 'FUNDING'   %}selected{% endif %}>{% trans "Seeking Funding" %}</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition-colors"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Right Side: Submit Button -->
-                        <button type="submit" id="quick-submit-btn" class="bg-gradient-to-r from-indigo-500 to-[#0A66C2] hover:from-indigo-600 hover:to-[#0856A8] text-white text-[13.5px] font-bold px-6 py-2.5 rounded-lg shadow-[0_2px_10px_rgba(10,102,194,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-70 w-full sm:w-auto shrink-0">
+                        <button type="submit" id="quick-submit-btn" class="bg-gradient-to-r from-indigo-500 to-[#0A66C2] hover:from-indigo-600 hover:to-[#0856A8] text-white text-[13.5px] font-bold px-6 h-[42px] rounded-xl shadow-[0_2px_10px_rgba(10,102,194,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-70 w-full sm:w-auto shrink-0">
                             <i data-lucide="save" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Save Update" %}</span>
                         </button>
