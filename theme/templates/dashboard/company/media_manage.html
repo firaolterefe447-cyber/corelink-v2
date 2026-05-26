@@ -90,7 +90,7 @@
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm prevent-select">
     <div class="flex items-center gap-3 pb-0.5">
         <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 border border-slate-200 shadow-sm">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
@@ -98,7 +98,7 @@
         <span class="font-black text-[18px] text-slate-900 tracking-tight font-heading">{% trans "Company Media" %}</span>
     </div>
     <div class="flex items-center gap-3">
-        <div class="bg-blue-50 text-[#0A66C2] px-3 py-1 rounded-lg font-black text-[12px] shadow-sm flex items-center gap-1.5"><i data-lucide="image" class="w-3.5 h-3.5"></i> Hub</div>
+        <div class="bg-blue-50 text-[#0A66C2] px-3 py-1 rounded-lg font-black text-[12px] shadow-sm flex items-center gap-1.5"><i data-lucide="building" class="w-3.5 h-3.5"></i> Hub</div>
         <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
             <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
@@ -121,222 +121,213 @@
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
         --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --app-bg: #F4F7FA;
     }
     * { -webkit-tap-highlight-color: transparent; }
 
     body {
         font-family: var(--font-body);
-        background-color: #F4F7FA;
+        background-color: var(--app-bg);
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
-            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+            radial-gradient(circle at 15% 50%, rgba(219, 234, 254, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
         background-attachment: fixed;
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
+        overscroll-behavior-y: none;
     }
 
     h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    /* Scrollbars */
-    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
-    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
-    .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
-    @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; } }
-
-    /* Canvas padding matches profile layout exactly */
-    .app-canvas { width: 100%; position: relative; z-index: 10; padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
-    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
-    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; max-width: 1600px; margin: 0 auto; } }
-    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
-
-    /* Bento Cards */
-    .bento-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 2rem;
-        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
-        position: relative;
-        z-index: 10;
-        transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
+    /* Layout & Padding */
+    .app-canvas {
+        width: 100%; position: relative; z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2.5rem; } }
-    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.15), 0 4px 6px -2px rgba(10, 102, 194, 0.05); border-color: rgba(203, 213, 225, 1); }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1600px; margin: 0 auto; } }
 
-    /* Button Utilities */
-    .btn-action { background: #0A66C2; color: white; font-weight: 800; font-size: 13px; padding: 0.85rem 1.5rem; letter-spacing: 0.05em; border-radius: 1rem; transition: all 0.3s var(--ease-magic); display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(10, 102, 194, 0.4); background: #0856A8; }
-    .btn-action:active { transform: scale(0.96); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s var(--ease-magic) forwards; }
 
-    /* Cropper UI Overrides - Blue/Indigo Theme */
-    .cropper-view-box { outline: 3px solid #0A66C2 !important; box-shadow: 0 0 0 4000px rgba(15, 23, 42, 0.85) !important; border-radius: 8px; }
-    .cropper-line { background-color: transparent !important; }
-    .cropper-point { background-color: #FFFFFF !important; border: 2px solid #0A66C2 !important; width: 14px !important; height: 14px !important; opacity: 1 !important; border-radius: 50% !important; }
-    .cropper-center { display: block !important; width: 8px !important; height: 8px !important; background-color: #0A66C2 !important; border-radius: 50% !important; border: 2px solid #FFF; opacity: 1 !important; }
+    .premium-card {
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.8rem;
+        box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+        transition: all 0.4s var(--ease-magic);
+        overflow: hidden;
+    }
+    @media (min-width: 768px) { .premium-card { border-radius: 2.5rem; } }
 
-    /* Animations & Utils */
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
-    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    /* =========================================
+       NATIVE-APP "MAGIC" CROPPER UI
+       ========================================= */
+    .cropper-bg { background-image: none !important; background-color: #000 !important; }
+
+    /* Cinematic Overlay */
+    .cropper-view-box {
+        outline: none !important;
+        border: 2px solid rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85) !important;
+        border-radius: 0;
+    }
+
+    /* Hide grids for clean look */
+    .cropper-line, .cropper-point, .cropper-dashed, .cropper-center { display: none !important; }
+
+    /* Rounded Square for Company Logos */
+    .is-logo-mode .cropper-view-box { border-radius: 1.5rem !important; }
+
+    /* Responsive drag area */
+    .cropper-drag-box { background-color: transparent !important; }
+
+    /* Custom Zoom Slider Styling - Thick & Touchable for Mobile */
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 0; }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+        background: #ffffff; cursor: pointer; margin-top: -10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5); border: 2px solid #e2e8f0;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px;
+    }
+    input[type=range]:focus { outline: none; }
+
     .drawer-closed { transform: translateY(100%); }
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 60px rgba(0,0,0,0.15); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
-<main class="app-canvas anim-smooth-appear">
-    <div class="max-w-[1200px] mx-auto w-full relative z-10">
+<main class="app-canvas animate-fade-in-up">
 
-        <!-- DESKTOP BACK BUTTON -->
-        <div class="hidden md:flex w-full mb-6">
-            <a href="{% url 'company_admin_dashboard' company.slug %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-blue-50 transition-all active:scale-95 group w-max">
-                <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
-                {% trans "Back to Admin Dashboard" %}
-            </a>
-        </div>
-
-        <!-- COMPACT MISSING LOGO WARNING BANNER -->
-        {% if not company.logo %}
-        <div class="mb-5 md:mb-8 w-full">
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
-
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border border-blue-200 flex items-center justify-center shrink-0 relative z-10 shadow-sm">
-                    <i data-lucide="building" class="w-6 h-6 text-[#0A66C2]"></i>
-                    <div class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></div>
-                </div>
-                <div class="relative z-10 flex-1">
-                    <h3 class="text-[15px] md:text-[18px] font-extrabold text-slate-900 tracking-tight leading-tight font-heading">{% trans "Company Logo Required" %}</h3>
-                    <p class="text-[12.5px] md:text-[14px] text-slate-600 leading-snug mt-1 font-medium line-clamp-2 md:line-clamp-none">
-                        {% trans "Upload a clear logo so clients and candidates can recognize your brand." %}
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <form method="post" enctype="multipart/form-data" class="w-full mb-8">
-            {% csrf_token %}
-            <!-- Hidden Inputs for actual file processing -->
-            <input type="file" name="logo" id="id_logo" accept="image/*" class="hidden" onchange="openCropper(this, 'logo')">
-            <input type="file" name="cover_image" id="id_cover" accept="image/*" class="hidden" onchange="openCropper(this, 'cover')">
-
-            <!-- MODERN ASYMMETRIC GRID FOR PC (Using Bento Cards) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-10 items-stretch">
-
-                <!-- ======================= -->
-                <!-- COMPANY LOGO SECTION -->
-                <!-- ======================= -->
-                <div class="lg:col-span-5 bento-card p-6 md:p-8 flex flex-col items-center text-center relative group/card h-full">
-
-                    <!-- CLICKABLE IMAGE PREVIEW (1:1 SQUARE ASPECT RATIO) -->
-                    <!-- Mobile: 140x140px | PC: 240x240px -->
-                    <label for="id_logo" class="relative mb-6 w-[140px] h-[140px] md:w-60 md:h-60 z-10 mx-auto cursor-pointer block group/preview shrink-0">
-                        <div class="w-full h-full bg-white rounded-3xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(10,102,194,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
-
-                            <!-- Internal Canvas -->
-                            <div class="w-full h-full rounded-2xl md:rounded-[1.5rem] overflow-hidden relative flex items-center justify-center {% if not company.logo %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-50{% endif %}">
-                                {% if company.logo %}
-                                    <img src="{{ company.logo.url }}" class="w-full h-full object-contain p-2" alt="{% trans 'Company Logo' %}">
-                                {% else %}
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
-                                        <i data-lucide="building" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
-                                        <span class="text-[11px] md:text-[13px] font-black tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
-                                    </div>
-                                {% endif %}
-
-                                <!-- Hover Overlay -->
-                                <div class="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
-                                    <i data-lucide="camera" class="w-8 h-8 mb-1"></i>
-                                    <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Floating Affordance Icon -->
-                        <div class="absolute bottom-0 right-0 md:-bottom-2 md:-right-2 bg-white text-[#0A66C2] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
-                            <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
-                        </div>
-                    </label>
-
-                    <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2 font-heading">{% trans "Company Logo" %}</h2>
-                    <p class="text-[13px] md:text-[14px] text-slate-500 mb-6 md:mb-8 max-w-[260px] leading-relaxed font-medium">
-                        {% trans "Large or wide logos are now automatically fitted to the square format instantly." %}
-                    </p>
-
-                    <!-- Logo Actions -->
-                    <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
-                        <label for="id_logo" class="btn-action cursor-pointer w-full !rounded-xl !py-3.5">
-                            <i data-lucide="upload-cloud" class="w-4.5 h-4.5"></i>
-                            <span class="uppercase tracking-wide">{% trans "UPLOAD NEW LOGO" %}</span>
-                        </label>
-
-                        {% if company.logo %}
-                        <button type="submit" name="action" value="remove_logo" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE LOGO" %}</span>
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- ======================= -->
-                <!-- BACKGROUND BANNER SECTION -->
-                <!-- ======================= -->
-                <div class="lg:col-span-7 bento-card p-6 md:p-8 flex flex-col items-center text-center relative group/card h-full">
-
-                    <!-- CLICKABLE IMAGE PREVIEW -->
-                    <label for="id_cover" class="relative mb-6 w-full max-w-[340px] md:max-w-full h-[120px] md:h-[240px] z-10 mx-auto flex items-center cursor-pointer block group/preview shrink-0">
-                        <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 transition-all duration-300 shadow-sm border border-slate-200 relative z-10 group-hover/preview:shadow-[0_12px_40px_rgba(10,102,194,0.15)] group-hover/preview:-translate-y-1 group-hover/preview:border-blue-300">
-
-                            <!-- Internal Canvas -->
-                            <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not company.cover_image %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-50{% endif %}">
-                                {% if company.cover_image %}
-                                    <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover" alt="{% trans 'Cover Banner' %}">
-                                {% else %}
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
-                                        <i data-lucide="image" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
-                                        <span class="text-[11px] md:text-[13px] font-black tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
-                                    </div>
-                                {% endif %}
-
-                                <!-- Hover Overlay -->
-                                <div class="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
-                                    <i data-lucide="image" class="w-8 h-8 mb-1"></i>
-                                    <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Floating Affordance Icon -->
-                        <div class="absolute -bottom-2 -right-2 bg-white text-slate-700 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border border-slate-200 shadow-md z-30 group-hover/preview:bg-[#0A66C2] group-hover/preview:text-white transition-colors">
-                            <i data-lucide="upload" class="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]"></i>
-                        </div>
-                    </label>
-
-                    <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2 font-heading">{% trans "Company Banner" %}</h2>
-                    <p class="text-[13px] md:text-[14px] text-slate-500 mb-6 md:mb-8 max-w-[280px] md:max-w-md mx-auto leading-relaxed font-medium">
-                        {% trans "Upload a wide background banner that represents your corporate identity and team culture." %}
-                    </p>
-
-                    <!-- Banner Actions -->
-                    <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
-                        <label for="id_cover" class="btn-action cursor-pointer w-full !bg-slate-800 hover:!bg-slate-900 !rounded-xl !py-3.5 !shadow-slate-900/20">
-                            <i data-lucide="image" class="w-4.5 h-4.5"></i>
-                            <span class="uppercase tracking-wide">{% trans "UPLOAD NEW BANNER" %}</span>
-                        </label>
-
-                        {% if company.cover_image %}
-                        <button type="submit" name="action" value="remove_cover" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE BANNER" %}</span>
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-
-            </div>
-        </form>
+    <!-- DESKTOP BACK BUTTON -->
+    <div class="hidden md:flex w-full mb-6">
+        <a href="{% url 'company_admin_dashboard' company.slug %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[14px] font-bold text-slate-600 hover:text-[#0A66C2] hover:bg-slate-50 transition-all active:scale-95 group w-max">
+            <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+            {% trans "Back to Hub" %}
+        </a>
     </div>
+
+    <!-- COMPACT MISSING LOGO WARNING BANNER -->
+    {% if not company.logo %}
+    <div class="mb-5 md:mb-8 w-full max-w-5xl mx-auto">
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 flex items-center gap-4 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-[#0A66C2]/10 rounded-full blur-2xl"></div>
+
+            <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border border-blue-200 flex items-center justify-center shrink-0 relative z-10 shadow-sm">
+                <i data-lucide="building" class="w-6 h-6 text-[#0A66C2]"></i>
+                <div class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></div>
+            </div>
+            <div class="relative z-10 flex-1">
+                <h3 class="text-[15px] md:text-[18px] font-extrabold text-slate-900 tracking-tight leading-tight">{% trans "Company Logo Required" %}</h3>
+                <p class="text-[12.5px] md:text-[14px] text-slate-600 leading-snug mt-1 font-medium line-clamp-2 md:line-clamp-none">
+                    {% trans "Upload a clear logo so clients and candidates recognize your brand." %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="premium-card p-5 md:p-10 w-full mb-8 max-w-5xl mx-auto">
+        {% csrf_token %}
+        <input type="file" name="logo" id="id_logo" accept="image/*" class="hidden" onchange="openCropper(this, 'logo')">
+        <input type="file" name="cover_image" id="id_cover" accept="image/*" class="hidden" onchange="openCropper(this, 'cover')">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-8 relative z-10 items-stretch">
+
+            <!-- ====================================
+                 COMPANY LOGO (Rounded Square)
+                 ==================================== -->
+            <div class="lg:col-span-5 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 hover:bg-white hover:border-blue-100 h-full transition-colors">
+
+                <!-- 1:1 SQUARE PREVIEW BOX -->
+                <label for="id_logo" class="relative mb-5 w-[140px] h-[140px] md:w-56 md:h-56 z-10 mx-auto cursor-pointer block group/preview shrink-0">
+                    <div class="w-full h-full bg-white rounded-3xl p-1.5 md:p-2 shadow-sm border border-slate-200 relative z-10 group-hover/preview:border-blue-300 transition-colors">
+                        <div class="w-full h-full rounded-2xl overflow-hidden relative flex items-center justify-center {% if not company.logo %}bg-blue-50 border-[2px] border-dashed border-blue-300{% else %}bg-slate-50{% endif %}">
+                            {% if company.logo %}
+                                <!-- Object contain ensures transparent/wide logos display beautifully -->
+                                <img src="{{ company.logo.url }}" class="w-full h-full object-contain p-2">
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-[#0A66C2] bg-blue-50/50">
+                                    <i data-lucide="building" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
+                                    <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
+                                </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
+                                <i data-lucide="camera" class="w-8 h-8 mb-1"></i>
+                                <span class="text-[12px] font-bold text-center px-2">{% trans "Click to Change" %}</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2">{% trans "Company Logo" %}</h2>
+                <p class="text-[13px] md:text-[14px] text-slate-500 mb-5 md:mb-8 max-w-[260px] leading-relaxed font-medium">
+                    {% trans "Wide or tall logos are now automatically fitted perfectly inside the box." %}
+                </p>
+
+                <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
+                    <label for="id_logo" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-[#0A66C2] text-white py-3.5 px-6 shadow-md hover:bg-[#004182] hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
+                        <i data-lucide="upload-cloud" class="w-4.5 h-4.5"></i>
+                        <span class="uppercase tracking-wide">{% trans "UPLOAD NEW LOGO" %}</span>
+                    </label>
+                    {% if company.logo %}
+                    <button type="submit" name="action" value="remove_logo" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE LOGO" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ====================================
+                 BACKGROUND BANNER (Wide Rect)
+                 ==================================== -->
+            <div class="lg:col-span-7 flex flex-col items-center text-center relative group/card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-50/60 border border-slate-100 hover:bg-white hover:border-slate-200 h-full transition-colors">
+
+                <label for="id_cover" class="relative mb-5 w-full max-w-[340px] md:max-w-full h-[120px] md:h-[240px] z-10 mx-auto flex items-center cursor-pointer block group/preview shrink-0">
+                    <div class="w-full h-full bg-white rounded-2xl md:rounded-[2rem] p-1.5 md:p-2 shadow-sm border border-slate-200 relative z-10 group-hover/preview:border-slate-400 transition-colors">
+                        <div class="w-full h-full rounded-xl md:rounded-[1.5rem] overflow-hidden relative {% if not company.cover_image %}bg-slate-50 border-[2px] border-dashed border-slate-300{% else %}bg-slate-100{% endif %}">
+                            {% if company.cover_image %}
+                                <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
+                                    <i data-lucide="image" class="w-10 h-10 md:w-14 md:h-14 mb-2 opacity-50 stroke-[1.5]"></i>
+                                    <span class="text-[11px] md:text-[13px] font-bold tracking-wider opacity-80 uppercase">{% trans "Upload" %}</span>
+                                </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center text-white opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 z-20">
+                                <i data-lucide="image" class="w-8 h-8 mb-1"></i>
+                                <span class="text-[12px] font-bold">{% trans "Click to Change" %}</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <h2 class="text-[18px] md:text-[24px] font-extrabold text-slate-900 tracking-tight mb-1 md:mb-2">{% trans "Company Banner" %}</h2>
+                <p class="text-[13px] md:text-[14px] text-slate-500 mb-5 md:mb-8 max-w-[280px] md:max-w-md mx-auto leading-relaxed font-medium">
+                    {% trans "Upload a wide background banner that represents your corporate identity and team culture." %}
+                </p>
+
+                <div class="w-full max-w-[260px] mx-auto space-y-2 mt-auto relative z-20">
+                    <label for="id_cover" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-slate-800 text-white py-3.5 px-6 shadow-md hover:bg-slate-900 hover:-translate-y-0.5 transition-all cursor-pointer text-[14px] active:scale-95">
+                        <i data-lucide="image" class="w-4.5 h-4.5"></i>
+                        <span class="uppercase tracking-wide">{% trans "UPLOAD NEW BANNER" %}</span>
+                    </label>
+                    {% if company.cover_image %}
+                    <button type="submit" name="action" value="remove_cover" class="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 py-3 transition-all text-[13.5px] active:scale-95">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> <span class="uppercase tracking-wide">{% trans "REMOVE BANNER" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </form>
 </main>
 
 
@@ -363,61 +354,64 @@
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
-        {% with first_membership=request.user.company_memberships.first %}
-            {% if not request.user.role == 'FOUNDER' or not first_membership %}
-                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
-            {% endif %}
-        {% endwith %}
-
-        <button onclick="toggleMobileLangDrawer()" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="globe" class="w-4 h-4 text-[#0A66C2]"></i></div>
-            <span class="flex-1 flex justify-between items-center">
-                {% trans "Language" %}
-                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
-            </span>
-        </button>
+        <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full min-h-[44px] text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Settings" %}</button>
         <a href="{% url 'logout' %}" class="w-full min-h-[44px] text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Log Out" %}</a>
     </div>
 </div>
 
 <!-- ==============================================
-     SMOOTH PROFESSIONAL CROPPER MODAL (Blue)
+     NATIVE-APP IMMERSIVE CROPPER MODAL (Pitch Black)
      ============================================== -->
-<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
-    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="closeProCropper()"></div>
+<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center opacity-0 transition-opacity duration-300 bg-black">
 
-    <div class="relative w-full max-w-3xl h-full max-h-[750px] bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex flex-col border border-slate-200 z-10 transform scale-95 transition-transform duration-300 overflow-hidden" id="cropper-content">
-        <div class="flex justify-between items-center px-4 py-4 md:px-6 md:py-5 border-b border-slate-100 bg-white shrink-0">
-            <div>
-                <h3 class="text-[17px] md:text-[20px] font-extrabold text-slate-900 tracking-tight nav-heading" id="cropper-title">{% trans "Adjust Image" %}</h3>
-                <p class="text-[12px] md:text-[14px] font-medium text-slate-500 mt-0.5">{% trans "Drag to reposition or pinch to zoom" %}</p>
-            </div>
-            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-11 h-11 flex items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors text-slate-500 hover:text-slate-900 border border-slate-200 active:scale-95">
-                <i data-lucide="x" class="w-5 h-5"></i>
+    <!-- Container: 100% Full Screen on Mobile, Massive Floating Card on PC -->
+    <div class="relative w-full h-[100dvh] md:h-[90vh] md:max-h-[900px] md:max-w-5xl bg-black md:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="cropper-content">
+
+        <!-- Header: Floating over the image -->
+        <div class="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 md:py-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+            <h3 class="text-[18px] md:text-[22px] font-extrabold text-white tracking-tight drop-shadow-lg" id="cropper-title">{% trans "Move and Scale" %}</h3>
+            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-colors text-white pointer-events-auto active:scale-95">
+                <i data-lucide="x" class="w-5 h-5 md:w-6 md:h-6"></i>
             </button>
         </div>
 
-        <div class="flex-1 w-full bg-slate-900/5 relative overflow-hidden min-h-0 flex items-center justify-center">
-            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-500">
-            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-10">
-                <i data-lucide="loader-2" class="w-8 h-8 text-[#0A66C2] animate-spin mb-3"></i>
-                <span class="text-[14px] font-semibold text-slate-600">{% trans "Preparing editor..." %}</span>
+        <!-- Canvas Area: Edge-to-Edge -->
+        <div class="flex-1 w-full h-full relative overflow-hidden bg-black" id="cropper-container-wrapper" style="touch-action: none;">
+            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-700">
+            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <i data-lucide="loader-2" class="w-10 h-10 text-white/50 animate-spin mb-3"></i>
             </div>
         </div>
 
-        <div class="bg-white border-t border-slate-100 p-4 md:p-6 shrink-0 z-20">
-            <div class="max-w-md mx-auto space-y-4">
-                <div class="flex justify-center gap-3">
-                    <button type="button" onclick="cropper.zoom(0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.zoom(-0.1)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
-                    <button type="button" onclick="cropper.rotate(90)" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white hover:bg-blue-50 text-slate-600 hover:text-[#0A66C2] rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"><i data-lucide="rotate-cw" class="w-5 h-5"></i></button>
+        <!-- Footer: Floating Dark Glassmorphism -->
+        <div class="absolute bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-6 px-5 md:pb-8 md:px-10 pointer-events-none">
+            <div class="max-w-2xl mx-auto space-y-6 pointer-events-auto">
+
+                <!-- Tools Row (Rotate + Zoom Slider) -->
+                <div class="flex items-center justify-between gap-4">
+                    <button type="button" onclick="cropper.rotate(-90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Zoom Slider -->
+                    <div class="flex-1 flex items-center gap-3 px-2">
+                        <i data-lucide="image" class="w-4 h-4 text-white/50 shrink-0"></i>
+                        <input type="range" id="zoom-slider" min="0" max="1" step="0.01" value="0" class="w-full block">
+                        <i data-lucide="image" class="w-6 h-6 text-white/80 shrink-0"></i>
+                    </div>
+
+                    <button type="button" onclick="cropper.rotate(90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <i data-lucide="rotate-cw" class="w-5 h-5"></i>
+                    </button>
                 </div>
-                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 py-3.5 md:py-4 transition-all active:scale-95 text-[14px] md:text-[15px]">
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 backdrop-blur-md py-4 md:py-4.5 transition-all active:scale-95 text-[15px]">
                         {% trans "Cancel" %}
                     </button>
-                    <button type="button" id="save-crop-btn" class="btn-action w-full !py-3.5 md:!py-4 shadow-blue-500/20">
-                        <i data-lucide="check" class="w-4.5 h-4.5"></i> {% trans "Save" %}
+                    <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-4 md:py-4.5 shadow-[0_4px_20px_rgba(10,102,194,0.4)] transition-all active:scale-95 text-[15px]">
+                        {% trans "Save & Apply" %}
                     </button>
                 </div>
             </div>
@@ -458,6 +452,8 @@
     let currentMode = 'logo';
     let currentInput = null;
 
+    const zoomSlider = document.getElementById('zoom-slider');
+
     function openCropper(input, mode) {
         currentMode = mode;
         currentInput = input;
@@ -472,8 +468,13 @@
             const cropperImg = document.getElementById('cropper-image');
             const cropperTitle = document.getElementById('cropper-title');
             const loader = document.getElementById('cropper-loader');
+            const wrapper = document.getElementById('cropper-container-wrapper');
 
-            cropperTitle.innerText = mode === 'logo' ? "{% trans 'Adjust Company Logo' %}" : "{% trans 'Adjust Company Banner' %}";
+            cropperTitle.innerText = mode === 'logo' ? "{% trans 'Adjust Company Logo' %}" : "{% trans 'Adjust Banner' %}";
+
+            // Add class for rounded-square overlay when cropping logo
+            if (mode === 'logo') { wrapper.classList.add('is-logo-mode'); }
+            else { wrapper.classList.remove('is-logo-mode'); }
 
             cropperModal.classList.remove('hidden');
             cropperModal.classList.add('flex');
@@ -490,56 +491,63 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                const isLogo = mode === 'logo';
-                const ratio = isLogo ? 1 : 21/9;
+                // Exact 1:1 Aspect ratio for Logo, 21:9 for Cover
+                const ratio = mode === 'logo' ? 1 : (21/9);
 
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    viewMode: 0, // MUST BE 0 to allow zooming OUT completely
+                    viewMode: 0,           // MUST be 0 so users can zoom out to fit wide logos!
                     dragMode: 'move',
-                    autoCropArea: 1,
-                    restore: false,
-                    guides: true,
-                    center: true,
-                    highlight: false,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
+                    autoCropArea: 0.95,    // Massive crop box size
+                    cropBoxMovable: false, // Locked in center like native apps
+                    cropBoxResizable: false, // Cannot be resized by user
                     toggleDragModeOnDblclick: false,
-                    background: true,
-                    wheelZoomRatio: 0.1, // Smooth zoom
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    background: false,     // Disabled to use our pitch-black background
                     ready: function () {
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
 
+                        const cropBoxData = cropper.getCropBoxData();
+                        const imageData = cropper.getImageData();
+
                         // ==========================================
-                        // THE MAGIC AUTO-FIT ALGORITHM FOR BIG LOGOS
+                        // SMART FIT ALGORITHM: Allow slider to zoom out perfectly
                         // ==========================================
-                        if (isLogo) {
-                            const containerData = this.cropper.getContainerData();
-                            const cropBoxData = this.cropper.getCropBoxData();
-                            const imageData = this.cropper.getImageData();
+                        // Calculate minimum scale required to fit the entire image inside the box
+                        const minZoomRatio = Math.min(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
 
-                            // Calculate exactly how much to zoom out so the widest/tallest part fits inside the box
-                            const fitScale = Math.min(
-                                cropBoxData.width / imageData.naturalWidth,
-                                cropBoxData.height / imageData.naturalHeight
-                            ) * 0.95; // 0.95 leaves a perfect 5% margin around the logo
+                        zoomSlider.min = minZoomRatio * 0.9; // Allow going slightly smaller than perfect fit
+                        zoomSlider.max = minZoomRatio * 5;   // Allow heavy zooming in
+                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 200;
 
-                            // Force the zoom out immediately
-                            this.cropper.zoomTo(fitScale);
+                        // Auto-Fit Wide/Tall Logos perfectly with 5% padding
+                        const idealInitialScale = mode === 'logo' ? (minZoomRatio * 0.95) : Math.max(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
 
-                            // Center the image canvas dead-center in the crop box
-                            this.cropper.setCanvasData({
-                                left: (containerData.width - imageData.naturalWidth * fitScale) / 2,
-                                top: (containerData.height - imageData.naturalHeight * fitScale) / 2,
-                            });
-                        }
+                        cropper.zoomTo(idealInitialScale);
+                        zoomSlider.value = idealInitialScale;
+                    },
+                    zoom: function(e) {
+                        zoomSlider.value = e.detail.ratio;
                     }
                 });
-            }, 150);
+            }, 100);
         };
         reader.readAsDataURL(file);
     }
+
+    // Handle Slider Input
+    zoomSlider.addEventListener('input', function() {
+        if (cropper) { cropper.zoomTo(parseFloat(this.value)); }
+    });
 
     function closeProCropper() {
         const cropperModal = document.getElementById('cropper-modal');
@@ -559,13 +567,7 @@
         }, 300);
     }
 
-    window.addEventListener('resize', () => {
-        if (cropper) {
-            clearTimeout(window.resizeTimer);
-            window.resizeTimer = setTimeout(() => { cropper.resize(); }, 100);
-        }
-    });
-
+    // 2-Step Canvas Processing (The Secret to Premium Transparency & Quality)
     document.getElementById('save-crop-btn').addEventListener('click', function() {
         if (!cropper) return;
         const btn = this;
@@ -573,48 +575,78 @@
 
         btn.disabled = true;
         btn.classList.add('opacity-80', 'cursor-not-allowed');
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2"></i>{% trans "Applying..." %}';
         lucide.createIcons();
 
-        const isLogo = currentMode === 'logo';
+        // High DPI Targets
+        const outputWidth = currentMode === 'logo' ? 800 : 1920;
+        const outputHeight = currentMode === 'logo' ? 800 : 822; // 21:9 approx
 
-        const cropOptions = {
-            width: isLogo ? 800 : 1920,
+        // 1. Get raw cropped canvas
+        let originalCanvas = cropper.getCroppedCanvas({
             imageSmoothingEnabled: true,
-            imageSmoothingQuality: 'high',
-            fillColor: isLogo ? 'transparent' : '#ffffff' // Transparent for logos
-        };
+            imageSmoothingQuality: 'high'
+        });
 
-        const mimeType = isLogo ? 'image/png' : 'image/jpeg';
-        const ext = isLogo ? '.png' : '.jpg';
+        // 2. Pristine Destination Canvas
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = outputWidth;
+        finalCanvas.height = outputHeight;
+        const ctx = finalCanvas.getContext('2d');
 
-        cropper.getCroppedCanvas(cropOptions).toBlob((blob) => {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        if (currentMode === 'logo') {
+            // FOR LOGOS: Keep fully transparent background so PNG logos stay clean!
+            ctx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
+        } else {
+            // FOR BANNERS: Fill pure white to prevent any transparency bugs in JPGs
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        }
+
+        // 3. Draw crop over canvas (preserves logo dimensions if zoomed out)
+        ctx.drawImage(originalCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+        // 4. Output: WebP perfectly handles both high-res photos and transparent PNGs natively
+        const mimeType = 'image/webp';
+
+        finalCanvas.toBlob((blob) => {
             if (!blob) {
-                alert('{% trans "Error processing image. Please try another image." %}');
-                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent; return;
+                // Fallback for extremely old browsers
+                const fbMime = currentMode === 'logo' ? 'image/png' : 'image/jpeg';
+                finalCanvas.toBlob((fallbackBlob) => {
+                    uploadBlob(fallbackBlob, btn, originalContent, fbMime);
+                }, fbMime, 0.95);
+                return;
             }
-
-            const file = new File([blob], currentMode + ext, { type: mimeType });
-            const formData = new FormData();
-
-            formData.append(currentInput.name, file);
-
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
-            }).then(response => {
-                if (response.ok) { window.location.reload(); }
-                else {
-                    alert('{% trans "Upload failed. Please try again." %}');
-                    btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
-                }
-            }).catch(err => {
-                console.error(err);
-                alert('{% trans "An unexpected network error occurred." %}');
-                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
-            });
+            uploadBlob(blob, btn, originalContent, mimeType);
         }, mimeType, 0.95);
     });
+
+    function uploadBlob(blob, btn, originalContent, mimeType) {
+        const extMap = {'image/webp': '.webp', 'image/png': '.png', 'image/jpeg': '.jpg'};
+        const file = new File([blob], currentMode + extMap[mimeType], { type: mimeType });
+        const formData = new FormData();
+
+        formData.append(currentInput.name, file);
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+        }).then(response => {
+            if (response.ok) { window.location.reload(); }
+            else {
+                alert('{% trans "Upload failed. Please try again." %}');
+                btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('{% trans "An unexpected network error occurred." %}');
+            btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
+        });
+    }
 </script>
 {% endblock %}
