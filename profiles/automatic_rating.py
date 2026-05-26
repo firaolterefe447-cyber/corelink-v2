@@ -89,9 +89,6 @@ class CoreLinkOracle:
             score += min(company.milestones.count() * 5, 10)  # Needs 2 Milestones for max 10
             score += min(company.news_articles.count() * 2.5, 5)  # Needs 2 Articles for max 5
 
-        # Oracle mathematically enforces an absolute ceiling of 100
-        # A student with 10 projects and no company can hit 100.
-        # A Founder with 0 projects but a massive company can hit 100.
         return min(int(score), 100)
 
     @staticmethod
@@ -128,39 +125,46 @@ class CoreLinkOracle:
             power_score = cls.calculate_power_score(user)
             calculated_rating = cls.map_score_to_rating(power_score)
 
-            # 1. THE ADMIN OVERRIDE SAFEGUARD (FORCE FIELD)
-            if getattr(portfolio, 'is_rating_locked', False):
+            update_fields = []
+            needs_save = False
+
+            # 1. ALWAYS UPDATE RAW SCORE (For Feed Granularity)
+            if getattr(portfolio, 'oracle_score', None) != power_score:
+                portfolio.oracle_score = power_score
+                update_fields.append('oracle_score')
+                needs_save = True
+
+            # 2. CHECK ADMIN OVERRIDES FOR STAR RATING
+            is_locked = getattr(portfolio, 'is_rating_locked', False)
+            is_divine = portfolio.admin_rating == 5
+
+            if is_locked or is_divine:
                 print(
-                    f"[ORACLE SKIPPED] {user.full_name}: Admin Force Field active. Locked at {portfolio.admin_rating} Stars.")
-                return
+                    f"[ORACLE RESTRICTED] {user.full_name}: Star Rating locked by Admin. However, raw AI score updated to {power_score}/100.")
+            else:
+                # Apply Oracle's star judgment if it changed
+                if portfolio.admin_rating != calculated_rating:
+                    old_rating = portfolio.admin_rating
+                    portfolio.admin_rating = calculated_rating
+                    update_fields.append('admin_rating')
+                    needs_save = True
 
-            # 2. THE DIVINE 5-STAR SAFEGUARD
-            if portfolio.admin_rating == 5:
-                print(f"[ORACLE REVERENCE] {user.full_name}: Skipped. Divine 5-Star Admin Rating detected.")
-                return
-
-            # 3. THE AI JUDGMENT
-            print(f"[ORACLE ANALYSIS] Subject: {user.full_name} | Role: {user.role} | System Score: {power_score}/100")
-
-            # Apply Oracle's judgment if the rating has changed
-            if portfolio.admin_rating != calculated_rating:
-                old_rating = portfolio.admin_rating
-                portfolio.admin_rating = calculated_rating
-                portfolio.save(update_fields=['admin_rating'])
-
-                if calculated_rating > old_rating:
-                    print(
-                        f"[ORACLE PROMOTION] Elevated {user.full_name} from {old_rating} to {calculated_rating} Stars!")
+                    if calculated_rating > old_rating:
+                        print(
+                            f"[ORACLE PROMOTION] Elevated {user.full_name} from {old_rating} to {calculated_rating} Stars! (Score: {power_score})")
+                    else:
+                        print(
+                            f"[ORACLE DEMOTION] Downgraded {user.full_name} from {old_rating} to {calculated_rating} Stars. (Score: {power_score})")
                 else:
                     print(
-                        f"[ORACLE DEMOTION] Downgraded {user.full_name} from {old_rating} to {calculated_rating} Stars. (Data decay).")
-            else:
-                print(
-                    f"[ORACLE VERDICT] Maintained {user.full_name} at {calculated_rating} Stars. No change warranted.")
+                        f"[ORACLE VERDICT] {user.full_name} maintained {calculated_rating} Stars. (Score: {power_score})")
+
+            # 3. COMMIT TO DATABASE
+            if needs_save:
+                portfolio.save(update_fields=update_fields)
 
         except User.DoesNotExist:
             print(f"[ORACLE FATAL] Target user {user_id} does not exist.")
         except Exception as e:
-            # Uses standard logging as a fallback in case prints fail in strict WSGI environments
             logger.error(f"[ORACLE SYSTEM FAILURE] Engine crashed on User {user_id}: {str(e)}")
             print(f"[ORACLE SYSTEM FAILURE] Engine crashed on User {user_id}: {str(e)}")

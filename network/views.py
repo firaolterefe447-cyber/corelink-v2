@@ -185,19 +185,23 @@ def nexus_feed(request):
             output_field=FloatField()
         )
 
-    # 💎 2b. TEMPORAL GRAVITY (Freshness & Quality Metrics)
+    # 💎 2b. THE "SMART FEED" GRAVITY (Using Raw AI Score & Freshness)
     scored_users = base_users.annotate(
-        score_avatar=Case(When(avatar='', then=0), default=20, output_field=FloatField()),
-        score_verified=Case(When(is_verified=True, then=15), default=0, output_field=FloatField()),
-
         days_inactive=days_inactive_expr,
         freshness_boost=Greatest(Value(0.0), Value(15.0) - Cast(F('days_inactive'), FloatField()) / 2.0),
 
-        # Fluid Rating System
-        admin_score=Cast(Coalesce('portfolio__admin_rating', Value(0)) * 10, FloatField())
+        # NEW: Pull the direct 1-100 Oracle Score instead of manual avatar calculations
+        raw_ai_score=Cast(Coalesce('portfolio__oracle_score', Value(0)), FloatField())
     ).annotate(
-        total_quality=F('score_avatar') + F('score_verified') + F('admin_score') + F('freshness_boost')
+        # The ultimate ranking value: AI Assessment (1-100) + Recent Activity (0-15)
+        total_quality=F('raw_ai_score') + F('freshness_boost')
     )
+
+    # ✨ NEW: SEPARATE SPOTLIGHT USERS (Top tier talent & pinned users)
+    # We grab them before any text search filters are applied so they can float at the top
+    spotlight_users = scored_users.filter(
+        Q(is_selected=True) | Q(raw_ai_score__gte=85)
+    ).order_by('-is_selected', '-total_quality')[:4]
 
     if raw_query:
         # 🧠 3. AWAKEN THE OMNI-INDUSTRY ORACLE
@@ -283,13 +287,11 @@ def nexus_feed(request):
 
             ).annotate(
                 absolute_score=ExpressionWrapper(
-                    F('platinum_rank') + F('gold_rank') + F('silver_rank') + F('semantic_rank') + F('regex_boost') + F(
-                        'total_quality'),
+                    F('platinum_rank') + F('gold_rank') + F('silver_rank') + F('semantic_rank') + F('regex_boost') + F('total_quality'),
                     output_field=FloatField()
                 )
             ).filter(
-                Q(platinum_rank__gt=0.0) | Q(gold_rank__gt=0.0) | Q(silver_rank__gt=0.0) | Q(semantic_rank__gt=0.0) | Q(
-                    regex_boost__gt=0.0)
+                Q(platinum_rank__gt=0.0) | Q(gold_rank__gt=0.0) | Q(silver_rank__gt=0.0) | Q(semantic_rank__gt=0.0) | Q(regex_boost__gt=0.0)
             ).order_by('-is_selected', '-absolute_score', '-portfolio__last_signal_update', '-date_joined')
 
         else:
@@ -303,9 +305,9 @@ def nexus_feed(request):
     results = results.distinct()
 
     # ==============================================================================
-    # 🔒 TEMPORARY PAYWALL LOCK: Hard limit to top 20 profiles
+    # 🔒 EXTENDED PAYWALL LOCK: Hard limit increased to top 50 profiles
     # ==============================================================================
-    results = results[:20]  # Strictly slice the results to 20
+    results = results[:50]  # <--- UPDATED FROM 20 TO 50
 
     paginator = Paginator(results, 100)
     page_number = request.GET.get('page')
@@ -326,12 +328,15 @@ def nexus_feed(request):
 
     return render(request, 'network/nexus_feed.html', {
         'people': people_page,
+        'spotlight_users': spotlight_users,  # <--- PASSED TO TEMPLATE FOR THE NEW CAROUSEL UI
         'search_query': raw_query,
         'current_role': role_filter,
         'unread_msg_count': unread_count,
         'active_tab': 'people',
-        'show_paywall': True,  # <--- Always show the CTA for now
+        'show_paywall': True,
     })
+
+
 # ==============================================================================
 # 🏢 THE COMPANY NEXUS (INTELLIGENT BUSINESS DISCOVERY)
 # ==============================================================================
@@ -346,7 +351,6 @@ def company_nexus(request):
     objective_filter = request.GET.get('objective', 'ALL')
 
     # 1. Base Queryset & QUALITY ALGORITHM 🏆
-    # 🚨 UPDATED: Filter out banned companies immediately
     base_companies = Company.objects.filter(is_banned_from_nexus=False).prefetch_related(
         'services', 'members__user'
     ).annotate(
@@ -432,11 +436,10 @@ def company_nexus(request):
             )
         ).filter(
             Q(search_rank__gt=0.01) | Q(exact_boost__gt=0.0) | Q(name__icontains=raw_query)
-        ).order_by('-is_selected', '-total_rank', '-created_at') # 🚨 UPDATED: Pinned search results at the top
+        ).order_by('-is_selected', '-total_rank', '-created_at')
 
     else:
         # Default sort: Prioritize the highest quality, most complete profiles first!
-        # 🚨 UPDATED: Pinned companies absolutely first in the default feed
         companies = base_companies.order_by('-is_selected', '-total_company_quality', '-created_at')
 
     # 3. Apply Hard Filters from UI Dropdowns
@@ -472,14 +475,15 @@ def company_nexus(request):
         'current_sector': sector_filter,
         'current_objective': objective_filter,
         'unread_msg_count': unread_count,
-        'active_tab': 'teams',  # Lets UI know to highlight the 'Companies' tab
+        'active_tab': 'teams',
     })
+
+
 # ==============================================================================
 # 📡 2. LIVE SIGNALS (THE GLOBAL POSTS FEED)
 # ==============================================================================
 def nexus_posts(request):
     """The Global Community Board for Live Posts."""
-    # Highly optimized query fetching authors and their UNIFIED PORTFOLIO
     posts = NetworkPost.objects.filter(is_active=True).select_related(
         'author__portfolio'
     ).order_by('-created_at')[:50]
@@ -509,7 +513,6 @@ class NetworkPostDetailView(DetailView):
     context_object_name = 'post'
 
     def get_queryset(self):
-        # Fetch with Unified Profile logic
         return NetworkPost.objects.filter(is_active=True).select_related(
             'author__portfolio'
         )
@@ -545,7 +548,6 @@ class NetworkPostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        # Optional: Auto-archive user's older posts to keep feed clean
         NetworkPost.objects.filter(author=self.request.user, is_active=True).update(is_active=False)
         return super().form_valid(form)
 

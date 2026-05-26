@@ -119,6 +119,10 @@ class UserProfile(TimeStampedModel):
         _("Platform Rating"), default=0,
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
+    oracle_score = models.PositiveSmallIntegerField(
+        _("Raw AI Score"), default=0, db_index=True,
+        help_text="The exact 1-100 score calculated by the Oracle. Used for granular feed sorting."
+    )
     is_rating_locked = models.BooleanField(default=False)
     last_signal_update = models.DateTimeField(default=timezone.now, db_index=True)
 
