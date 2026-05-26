@@ -370,7 +370,10 @@
                 <article class="p-6 md:p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium cursor-default">
                     <div class="flex flex-col gap-1.5 md:gap-2 mb-3 md:mb-4">
                         <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
-                        <span class="inline-block w-max text-[9px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_status_display }}</span>
+                        <!-- Displaying ONLY what the user actually entered in the form -->
+                        {% if skill.proficiency_level %}
+                        <span class="inline-block w-max text-[9px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_proficiency_level_display }}</span>
+                        {% endif %}
                     </div>
                     {% if skill.context %}
                     <p class="text-[13.5px] md:text-[15px] text-slate-600 font-serif-title italic tracking-wide leading-relaxed">"{{ skill.context }}"</p>
