@@ -522,14 +522,15 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Exact 1:1 Aspect ratio for Avatar, 3.2:1 for Cover
-                const ratio = mode === 'avatar' ? 1 : 3.2;
+                // Exact 1:1 Aspect ratio for Avatar, 21:9 for Cover
+                const ratio = mode === 'avatar' ? 1 : (21/9);
 
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    viewMode: 1,
+                    // ViewMode 1 for strict Avatar circle, 0 for flexible Cover Banner zooming
+                    viewMode: mode === 'avatar' ? 1 : 0,
                     dragMode: 'move',
-                    autoCropArea: 0.95,    // MAGIC: Forces the crop circle to be massive (95% of screen width)
+                    autoCropArea: 0.95,    // MAGIC: Forces the crop circle/box to be massive
                     cropBoxMovable: false, // Locked in center like native apps
                     cropBoxResizable: false, // Cannot be resized by user
                     toggleDragModeOnDblclick: false,
@@ -541,23 +542,39 @@
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
 
-                        // Automatic Smart Zoom: Ensure image fills the giant circle perfectly without black edges
                         const cropBoxData = cropper.getCropBoxData();
                         const imageData = cropper.getImageData();
                         const canvasData = cropper.getCanvasData();
 
-                        const minZoomRatio = Math.max(
-                            cropBoxData.width / imageData.naturalWidth,
-                            cropBoxData.height / imageData.naturalHeight
-                        );
+                        if (mode === 'avatar') {
+                            // Avatar zoom logic (strict fitting)
+                            const minZoomRatio = Math.max(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+                            zoomSlider.min = minZoomRatio;
+                            zoomSlider.max = minZoomRatio * 3;
+                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
 
-                        zoomSlider.min = minZoomRatio;
-                        zoomSlider.max = minZoomRatio * 3; // Allow zooming in up to 3x
-                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
+                            cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
+                            zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
+                        } else {
+                            // Cover zoom logic (flexible zoom out fitting)
+                            const minZoomRatio = Math.min(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+                            zoomSlider.min = minZoomRatio * 0.9;
+                            zoomSlider.max = minZoomRatio * 5;
+                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 200;
 
-                        // Force cropper to jump to minimum zoom instantly
-                        cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
-                        zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
+                            const idealInitialScale = Math.max(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+                            cropper.zoomTo(idealInitialScale);
+                            zoomSlider.value = idealInitialScale;
+                        }
                     },
                     zoom: function(e) {
                         // Keep slider in sync if user pinches-to-zoom on mobile
@@ -603,9 +620,9 @@
         btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2"></i>{% trans "Applying..." %}';
         lucide.createIcons();
 
-        // High DPI / Premium Resolution Target
-        const outputWidth = currentMode === 'avatar' ? 800 : 1600;
-        const outputHeight = currentMode === 'avatar' ? 800 : 500;
+        // High DPI / Premium Resolution Target matching Company Banner
+        const outputWidth = currentMode === 'avatar' ? 800 : 1920;
+        const outputHeight = currentMode === 'avatar' ? 800 : 822;
 
         // 1. Get cropped canvas at original unscaled high-res
         let originalCanvas = cropper.getCroppedCanvas({
