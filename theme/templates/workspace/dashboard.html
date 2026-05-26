@@ -20,9 +20,15 @@
 
             <!-- Desktop Navigation Links -->
             <nav class="flex flex-col gap-2">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     My profile
+                </a>
+
+                <!-- ACTIVE: My Application -->
+                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="bell-ring" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    My Application
                 </a>
 
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
@@ -58,7 +64,7 @@
 
         <!-- Actions Bottom -->
         <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
-            <button aria-label="{% trans "Change Language" %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
                 <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
@@ -81,7 +87,7 @@
         <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
         <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans "Open Navigation" %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
         <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
@@ -157,17 +163,9 @@
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
     .btn-action:active { transform: scale(0.96); }
 
-    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; min-h: 44px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
+    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; min-height: 44px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
     .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
     .btn-secondary:active { transform: scale(0.96); }
-
-    .guidance-pill {
-        display: inline-flex; align-items: center; gap: 6px; padding: 0.5rem 1rem; border-radius: 1rem;
-        background: #EFF6FF; border: 1px solid #BFDBFE; color: #0A66C2; font-size: 12.5px; font-weight: 800;
-        transition: all 0.3s var(--ease-magic); margin-top: 0.75rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; min-h: 40px;
-    }
-    .guidance-pill:hover { background: #DBEAFE; color: #1D4ED8; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(10, 102, 194, 0.12); }
-    .guidance-pill:active { transform: translateY(0); }
 
     @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-down { animation: fadeDown 0.6s var(--ease-magic) forwards; }
@@ -205,7 +203,7 @@
 
         <!-- ACTIVE: My Updates & Teams -->
         <a href="{% url 'collaboration_hub' %}" class="relative flex items-center justify-center pb-3.5 border-b-[3px] border-[#0A66C2] text-[#0A66C2] group shrink-0 top-[2px]" aria-current="page">
-            <span class="text-[12.5px] md:text-[14px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "My Updates" %}</span>
+            <span class="text-[12.5px] md:text-[14px] font-black uppercase tracking-widest whitespace-nowrap">{% trans "My Application" %}</span>
         </a>
     </div>
 
@@ -216,16 +214,18 @@
 
         <!-- 1. MY APPLICATIONS -->
         <div id="section-applications" class="bento-card p-6 md:p-8 relative group overflow-hidden animate-up stagger-1">
-            <div class="absolute top-0 right-0 w-[150px] h-[150px] bg-rose-500/5 blur-[50px] rounded-full pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-[150px] h-[150px] bg-blue-500/5 blur-[50px] rounded-full pointer-events-none"></div>
 
             <div class="flex items-start justify-between gap-4 mb-6 relative z-10">
-                <div>
+                <div class="max-w-2xl">
                     <div class="flex items-center gap-2.5 mb-1.5">
                         <h3 class="text-[1.35rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight">{% trans "Applications" %}</h3>
                     </div>
-                    <p class="text-[12.5px] md:text-[14px] text-slate-500 font-medium">{% trans "Track your sent requests." %}</p>
+                    <p class="text-[12.5px] md:text-[14px] text-slate-500 font-medium leading-[1.6]">
+                        {% trans "Track all the applications you applied for on CoreLink. Monitor your progress in real-time and know instantly whether you are under review, waitlisted, invited for an interview, or accepted... smartly." %}
+                    </p>
                 </div>
-                <button onclick="openModal('modal-applications')" class="w-9 h-9 md:w-10 md:h-10 shrink-0 bg-white border border-slate-200 shadow-sm rounded-xl flex items-center justify-center text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all"><i data-lucide="info" class="w-4 h-4"></i></button>
+                <button onclick="openModal('modal-applications')" class="w-9 h-9 md:w-10 md:h-10 shrink-0 bg-white border border-slate-200 shadow-sm rounded-xl flex items-center justify-center text-slate-500 hover:bg-blue-50 hover:text-[#0A66C2] hover:border-blue-200 transition-all"><i data-lucide="info" class="w-4 h-4"></i></button>
             </div>
 
             <div class="relative z-10 flex flex-col">
@@ -233,38 +233,56 @@
                     <div class="space-y-3">
                         {% for app in my_applications %}
                         <!-- Horizontal Row Items -->
-                        <div class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-rose-300 hover:shadow-md transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group/app">
+                        <div class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-blue-300 hover:shadow-md transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group/app">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-rose-500 shrink-0 shadow-sm">
-                                    <i data-lucide="briefcase" class="w-5 h-5"></i>
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-[#0A66C2] shrink-0 shadow-sm overflow-hidden">
+                                    {% if app.job.company.logo %}
+                                        <img src="{{ app.job.company.logo.url }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <i data-lucide="briefcase" class="w-5 h-5"></i>
+                                    {% endif %}
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] truncate max-w-[220px] md:max-w-md group-hover/app:text-rose-600 transition-colors">{{ app.job.title|default:"Job Application" }}</h4>
-                                    <p class="text-[12px] md:text-[13px] font-medium text-slate-500 mt-0.5 flex items-center gap-1.5">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i> {{ app.created_at|date:"M d, Y" }}
-                                    </p>
+                                    <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] truncate max-w-[220px] md:max-w-md group-hover/app:text-[#0A66C2] transition-colors" title="{{ app.job.title }}">{{ app.job.title|default:"Job Application" }}</h4>
+                                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                                        {% if app.job.company %}
+                                            <a href="{% url 'company_public_profile' app.job.company.slug %}" class="text-[12px] md:text-[12.5px] font-semibold text-slate-500 hover:text-slate-800 transition-colors truncate max-w-[120px]">{{ app.job.company.name }}</a>
+                                            <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                        {% endif %}
+                                        <span class="text-[11px] md:text-[12px] font-medium text-slate-400 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> {{ app.created_at|date:"M d, Y" }}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex items-center md:justify-end">
+
+                            <div class="flex items-center justify-between md:justify-end gap-3 mt-2 md:mt-0 pt-3 md:pt-0 border-t border-slate-200/60 md:border-none">
+                                <!-- Smart Premium Status Badges -->
                                 {% if app.status == 'ACCEPTED' or app.status == 'HIRED' %}
-                                    <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] md:text-[11px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> {% trans "Accepted" %}</span>
+                                    <span class="px-2.5 py-1.5 bg-blue-50 text-[#0A66C2] rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-blue-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> {% trans "Accepted" %}</span>
                                 {% elif app.status == 'REJECTED' %}
-                                    <span class="px-3 py-1.5 bg-slate-50 text-slate-500 rounded-lg text-[10px] md:text-[11px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> {% trans "Declined" %}</span>
+                                    <span class="px-2.5 py-1.5 bg-slate-100 text-slate-500 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> {% trans "Declined" %}</span>
+                                {% elif app.status == 'REVIEWING' %}
+                                    <span class="px-2.5 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-indigo-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="eye" class="w-3.5 h-3.5"></i> {% trans "Reviewing" %}</span>
+                                {% elif app.status == 'INTERVIEWING' %}
+                                    <span class="px-2.5 py-1.5 bg-violet-50 text-violet-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-violet-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="video" class="w-3.5 h-3.5"></i> {% trans "Interview" %}</span>
+                                {% elif app.status == 'WAITLISTED' %}
+                                    <span class="px-2.5 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="clock-4" class="w-3.5 h-3.5"></i> {% trans "Waitlisted" %}</span>
                                 {% else %}
-                                    <span class="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-[10px] md:text-[11px] font-black uppercase tracking-widest border border-amber-200 shadow-sm flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> {% trans "Reviewing" %}</span>
+                                    <span class="px-2.5 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="send" class="w-3.5 h-3.5"></i> {% trans "Applied" %}</span>
                                 {% endif %}
+
+                                <a href="{% url 'opportunities:detail' app.job.slug %}" class="btn-secondary h-[34px] px-3 !text-[12px] bg-white border-slate-200 text-slate-600 hover:text-[#0A66C2] hover:border-[#0A66C2]">{% trans "View Job" %}</a>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                 {% else %}
                     <!-- Horizontal Empty State -->
-                    <a href="{% url 'opportunities:feed' %}" class="group/empty w-full min-h-[100px] rounded-2xl border-2 border-dashed border-slate-200 bg-rose-50/20 hover:bg-rose-50 hover:border-rose-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
-                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-rose-100 group-hover/empty:scale-110 transition-transform">
-                            <i data-lucide="briefcase" class="w-5 h-5 text-rose-400"></i>
+                    <a href="{% url 'opportunities:feed' %}" class="group/empty w-full min-h-[100px] rounded-2xl border-2 border-dashed border-slate-200 bg-blue-50/20 hover:bg-blue-50 hover:border-blue-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-blue-100 group-hover/empty:scale-110 transition-transform">
+                            <i data-lucide="briefcase" class="w-5 h-5 text-[#0A66C2]"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-rose-600 transition-colors">{% trans "No applications sent" %}</h4>
+                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-[#0A66C2] transition-colors">{% trans "No applications sent" %}</h4>
                             <p class="text-[12px] md:text-[13px] text-slate-500 mt-0.5">{% trans "Apply to open roles and gigs to see them here." %}</p>
                         </div>
                     </a>
@@ -274,7 +292,7 @@
 
         <!-- 2. TEAMS JOINED -->
         <div id="section-teams-joined" class="bento-card p-6 md:p-8 relative group overflow-hidden animate-up stagger-2">
-            <div class="absolute top-0 right-0 w-[150px] h-[150px] bg-cyan-500/5 blur-[50px] rounded-full pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-[150px] h-[150px] bg-slate-500/5 blur-[50px] rounded-full pointer-events-none"></div>
 
             <div class="mb-6 relative z-10">
                 <div class="flex items-center gap-2.5 mb-1.5">
@@ -288,31 +306,31 @@
                     <div class="space-y-3">
                         {% for team in joined_teams %}
                         <!-- Horizontal Row Items -->
-                        <a href="{% url 'team_detail' team.slug %}" class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-cyan-300 hover:shadow-md transition-all duration-300 flex items-center justify-between group/joined">
+                        <a href="{% url 'team_detail' team.slug %}" class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-md transition-all duration-300 flex items-center justify-between group/joined">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-cyan-600 shrink-0 shadow-sm">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-slate-700 shrink-0 shadow-sm">
                                     <span class="font-black text-[15px] md:text-[16px] uppercase">{{ team.name|make_list|first }}</span>
                                 </div>
                                 <div class="flex flex-col md:flex-row md:items-center md:gap-4">
-                                    <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] group-hover/joined:text-cyan-600 transition-colors truncate max-w-[150px] md:max-w-[250px]">{{ team.name }}</h4>
+                                    <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] group-hover/joined:text-slate-900 transition-colors truncate max-w-[150px] md:max-w-[250px]">{{ team.name }}</h4>
                                     <span class="hidden md:block w-1.5 h-1.5 rounded-full bg-slate-300"></span>
                                     <p class="text-[11px] md:text-[12px] font-black text-slate-400 uppercase tracking-widest mt-0.5 md:mt-0">{% trans "Active Member" %}</p>
                                 </div>
                             </div>
-                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center group-hover/joined:bg-cyan-50 group-hover/joined:border-cyan-200 transition-colors shrink-0">
-                                <i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover/joined:text-cyan-600 group-hover/joined:translate-x-1 transition-transform"></i>
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center group-hover/joined:bg-slate-100 group-hover/joined:border-slate-300 transition-colors shrink-0">
+                                <i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover/joined:text-slate-700 group-hover/joined:translate-x-1 transition-transform"></i>
                             </div>
                         </a>
                         {% endfor %}
                     </div>
                 {% else %}
                     <!-- Horizontal Empty State -->
-                    <a href="{% url 'nexus_feed' %}" class="group/empty w-full min-h-[100px] rounded-2xl border-2 border-dashed border-slate-200 bg-cyan-50/20 hover:bg-cyan-50 hover:border-cyan-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
-                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-cyan-100 group-hover/empty:scale-110 transition-transform">
-                            <i data-lucide="search" class="w-5 h-5 text-cyan-400"></i>
+                    <a href="{% url 'nexus_feed' %}" class="group/empty w-full min-h-[100px] rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/20 hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-slate-100 group-hover/empty:scale-110 transition-transform">
+                            <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-cyan-600 transition-colors">{% trans "No external teams" %}</h4>
+                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-slate-900 transition-colors">{% trans "No external teams" %}</h4>
                             <p class="text-[12px] md:text-[13px] text-slate-500 mt-0.5">{% trans "Find open teams in Discover to join." %}</p>
                         </div>
                     </a>
@@ -322,7 +340,7 @@
 
         <!-- 3. TEAMS I LEAD -->
         <div id="section-teams-lead" class="bento-card p-6 md:p-8 relative group overflow-hidden animate-up stagger-3">
-            <div class="absolute top-0 right-0 w-[200px] h-[200px] bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-[200px] h-[200px] bg-indigo-500/5 blur-[60px] rounded-full pointer-events-none"></div>
 
             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 md:mb-8 relative z-10 border-b border-slate-100 pb-5">
                 <div>
@@ -332,10 +350,10 @@
                     <p class="text-[12.5px] md:text-[14px] text-slate-500 font-medium">{% trans "Initiatives you created and manage." %}</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0">
-                    <button onclick="openModal('modal-teams')" aria-label="{% trans 'Read about Teams' %}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 bg-white hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-all shadow-sm">
+                    <button onclick="openModal('modal-teams')" aria-label="{% trans 'Read about Teams' %}" class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 bg-white hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
                     </button>
-                    <a href="{% url 'submit_team' %}" class="btn-action px-5 py-2 !bg-gradient-to-r !from-emerald-500 !to-teal-600 shadow-emerald-500/20"><i data-lucide="plus" class="w-4 h-4"></i> <span class="whitespace-nowrap">{% trans "Create Team" %}</span></a>
+                    <a href="{% url 'submit_team' %}" class="btn-action px-5 py-2 !bg-gradient-to-r !from-[#0A66C2] !to-indigo-600 shadow-indigo-500/20"><i data-lucide="plus" class="w-4 h-4"></i> <span class="whitespace-nowrap">{% trans "Create Team" %}</span></a>
                 </div>
             </div>
 
@@ -343,22 +361,22 @@
                 {% if my_teams %}
                     <div class="space-y-4">
                         {% for team in my_teams %}
-                        <!-- Horizontal Row Items (Desktop vs Mobile handling) -->
-                        <div class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group/team">
+                        <!-- Horizontal Row Items -->
+                        <div class="p-4 md:p-5 rounded-xl border border-slate-200/70 bg-slate-50/50 hover:bg-white hover:border-indigo-300 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 group/team">
 
                             <!-- Info Left -->
                             <div class="flex items-center gap-4 md:w-[40%]">
                                 <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm shrink-0">
-                                    <span class="font-black text-emerald-600 text-[15px] md:text-[16px] uppercase">{{ team.name|make_list|first }}</span>
+                                    <span class="font-black text-indigo-600 text-[15px] md:text-[16px] uppercase">{{ team.name|make_list|first }}</span>
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] truncate max-w-[150px] md:max-w-full group-hover/team:text-emerald-600 transition-colors">{{ team.name }}</h4>
+                                        <h4 class="font-bold text-slate-800 text-[14px] md:text-[15px] truncate max-w-[150px] md:max-w-full group-hover/team:text-indigo-600 transition-colors">{{ team.name }}</h4>
                                         <span class="px-2 py-0.5 bg-white border border-slate-200 text-slate-600 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0 md:hidden shadow-sm">
                                             {{ team.get_status_display|default:"Active" }}
                                         </span>
                                     </div>
-                                    <p class="text-[11px] md:text-[12px] font-black text-emerald-500 uppercase tracking-widest mt-1">{{ team.get_team_type_display }}</p>
+                                    <p class="text-[11px] md:text-[12px] font-black text-indigo-500 uppercase tracking-widest mt-1">{{ team.get_team_type_display }}</p>
                                 </div>
                             </div>
 
@@ -375,7 +393,7 @@
 
                             <!-- Action Right -->
                             <div class="flex items-center justify-end md:w-[30%] mt-2 md:mt-0">
-                                <a href="{% url 'manage_team' team.slug %}" class="w-full md:w-auto text-[13px] font-bold text-slate-700 hover:text-emerald-700 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 px-5 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                                <a href="{% url 'manage_team' team.slug %}" class="w-full md:w-auto text-[13px] font-bold text-slate-700 hover:text-indigo-700 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 px-5 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
                                     {% trans "Manage" %} <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                 </a>
                             </div>
@@ -384,12 +402,12 @@
                     </div>
                 {% else %}
                     <!-- Horizontal Empty State -->
-                    <a href="{% url 'submit_team' %}" class="group/empty w-full min-h-[120px] rounded-2xl border-2 border-dashed border-slate-200 bg-emerald-50/20 hover:bg-emerald-50 hover:border-emerald-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
-                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-emerald-100 group-hover/empty:scale-110 transition-transform">
-                            <i data-lucide="users" class="w-5 h-5 text-emerald-500"></i>
+                    <a href="{% url 'submit_team' %}" class="group/empty w-full min-h-[120px] rounded-2xl border-2 border-dashed border-slate-200 bg-indigo-50/20 hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-sm transition-all duration-300 p-6 flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-indigo-100 group-hover/empty:scale-110 transition-transform">
+                            <i data-lucide="users" class="w-5 h-5 text-indigo-500"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-emerald-600 transition-colors">{% trans "No Teams Built" %}</h4>
+                            <h4 class="font-bold text-slate-700 text-[14px] md:text-[15px] group-hover/empty:text-indigo-600 transition-colors">{% trans "No Teams Built" %}</h4>
                             <p class="text-[12px] md:text-[13px] text-slate-500 mt-0.5">{% trans "Create a team to gather people around your idea." %}</p>
                         </div>
                     </a>
@@ -411,7 +429,7 @@
     <div class="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-[0_24px_60px_rgba(0,0,0,0.15)] flex flex-col max-h-[90vh] modal-content overflow-hidden border border-slate-100">
         <div class="px-6 sm:px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
             <h2 id="teams-title" class="text-[1.2rem] sm:text-[1.4rem] font-black text-slate-900 flex items-center gap-3 tracking-tight">
-                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-inner border border-emerald-200"><i data-lucide="shield" class="w-5 h-5"></i></div>
+                <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center shadow-inner border border-indigo-200"><i data-lucide="shield" class="w-5 h-5"></i></div>
                 {% trans "Collaborative Spaces for Every Project" %}
             </h2>
             <button onclick="closeModal('modal-teams')" aria-label="{% trans 'Close' %}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 transition-colors border border-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -419,8 +437,8 @@
         <div class="p-6 sm:p-8 overflow-y-auto custom-scroll bg-slate-50/50 space-y-4">
 
             <!-- Item 1 -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-emerald-200 transition-colors">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0 text-emerald-600 border border-emerald-100 shadow-inner"><i data-lucide="users" class="w-5 h-5"></i></div>
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-indigo-200 transition-colors">
+                <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0 text-indigo-600 border border-indigo-100 shadow-inner"><i data-lucide="users" class="w-5 h-5"></i></div>
                 <div>
                     <h3 class="text-[16px] font-black text-slate-900 mb-1.5 tracking-tight">{% trans "A Hub for Collaboration" %}</h3>
                     <p class="text-[14px] text-slate-500 font-medium leading-relaxed">{% trans "Teams are created for people to collaborate on startups, businesses, projects, or shared learning goals. Whether you are looking to launch an initiative, host an event, or build a complex project, this is the space to gather the right talent. By defining your mission and specifying the exact roles you need like a designer, a writer, or a technical expert, you can find the specific people required to move your idea forward." %}</p>
@@ -437,8 +455,8 @@
             </div>
 
             <!-- Item 3 -->
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-blue-200 transition-colors">
-                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0 text-[#0A66C2] border border-blue-100 shadow-inner"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-slate-300 transition-colors">
+                <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 text-slate-600 border border-slate-200 shadow-inner"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
                 <div>
                     <h3 class="text-[16px] font-black text-slate-900 mb-1.5 tracking-tight">{% trans "Review and Assemble Your Team" %}</h3>
                     <p class="text-[14px] text-slate-500 font-medium leading-relaxed">{% trans "You maintain full control over who joins your workspace. You can read through every application and visit the applicants' profiles to review their past work and current progress. This transparency allows you to identify and accept the individuals who best fit your team’s specific needs, enabling you to bring the right people together and start working in a dedicated space." %}</p>
@@ -458,23 +476,23 @@
     <div class="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-[0_24px_60px_rgba(0,0,0,0.15)] flex flex-col max-h-[90vh] modal-content overflow-hidden border border-slate-100">
         <div class="px-6 sm:px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
             <h2 id="app-title" class="text-[1.2rem] sm:text-[1.4rem] font-black text-slate-900 flex items-center gap-3 tracking-tight">
-                <div class="w-10 h-10 bg-rose-100 text-rose-500 rounded-xl flex items-center justify-center shadow-inner border border-rose-200"><i data-lucide="send" class="w-5 h-5"></i></div>
+                <div class="w-10 h-10 bg-blue-100 text-[#0A66C2] rounded-xl flex items-center justify-center shadow-inner border border-blue-200"><i data-lucide="send" class="w-5 h-5"></i></div>
                 {% trans "Application Tracker" %}
             </h2>
             <button onclick="closeModal('modal-applications')" aria-label="{% trans 'Close' %}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 transition-colors border border-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         <div class="p-6 sm:p-8 overflow-y-auto custom-scroll bg-slate-50/50 space-y-4">
 
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-amber-200 transition-colors">
-                <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0 text-amber-600 border border-amber-100 shadow-inner"><i data-lucide="eye" class="w-5 h-5"></i></div>
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-indigo-200 transition-colors">
+                <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0 text-indigo-600 border border-indigo-100 shadow-inner"><i data-lucide="eye" class="w-5 h-5"></i></div>
                 <div>
                     <h3 class="text-[16px] font-black text-slate-900 mb-1.5 tracking-tight">{% trans "Track Everything" %}</h3>
                     <p class="text-[14px] text-slate-500 font-medium leading-relaxed">{% trans "When you apply for a job, a gig, or a spot in someone's team, it shows up here. You'll never have to guess if your application went through." %}</p>
                 </div>
             </div>
 
-            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-emerald-200 transition-colors">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0 text-emerald-600 border border-emerald-100 shadow-inner"><i data-lucide="bell-ring" class="w-5 h-5"></i></div>
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row gap-5 items-start hover:border-blue-200 transition-colors">
+                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0 text-[#0A66C2] border border-blue-100 shadow-inner"><i data-lucide="bell-ring" class="w-5 h-5"></i></div>
                 <div>
                     <h3 class="text-[16px] font-black text-slate-900 mb-1.5 tracking-tight">{% trans "Real-Time Status" %}</h3>
                     <p class="text-[14px] text-slate-500 font-medium leading-relaxed">{% trans "Watch your status change from 'Reviewing' to 'Accepted' in real-time. Remember, hirers will check your profile before accepting you, so keep your professional status updated!" %}</p>
@@ -534,15 +552,15 @@
 
         <!-- Smart Page Jump Links -->
         <button onclick="scrollToSection('section-applications')" class="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
-            <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="send" class="w-4 h-4 text-rose-500"></i></div>
+            <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 shadow-sm flex items-center justify-center"><i data-lucide="send" class="w-4 h-4 text-[#0A66C2]"></i></div>
             {% trans "My Applications" %}
         </button>
         <button onclick="scrollToSection('section-teams-joined')" class="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
-            <div class="w-8 h-8 rounded-lg bg-cyan-50 border border-cyan-100 shadow-sm flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-cyan-600"></i></div>
+            <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-slate-700"></i></div>
             {% trans "Teams I've Joined" %}
         </button>
         <button onclick="scrollToSection('section-teams-lead')" class="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
-            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm flex items-center justify-center"><i data-lucide="shield" class="w-4 h-4 text-emerald-600"></i></div>
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 shadow-sm flex items-center justify-center"><i data-lucide="shield" class="w-4 h-4 text-indigo-600"></i></div>
             {% trans "Teams I Lead" %}
         </button>
 

@@ -7,9 +7,8 @@
 
 {% block navbar %}
 {% if request.user.is_authenticated %}
-
 <!-- ==============================================
-     LEFT SIDEBAR NAVIGATION (PC) - MATCHES GLOBAL
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
      ============================================== -->
 <aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
@@ -30,6 +29,12 @@
                 <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
                     <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     My profile
+                </a>
+
+                <!-- ACTIVE: My Application (Since Teams belongs here) -->
+                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-indigo-50/80 text-indigo-600 font-black transition-all border border-indigo-100/50 shadow-[0_2px_15px_rgba(79,70,229,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-indigo-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="shield" class="w-4 h-4 text-indigo-600"></i></div>
+                    My Application
                 </a>
 
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
@@ -88,7 +93,7 @@
         <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
         <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
         <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
@@ -104,105 +109,134 @@
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --bg-color: #F8FAFC;
+        --app-bg: #F8FAFC;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
     * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: var(--font-body); background-color: var(--bg-color); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    /* LAYOUT: Matching the Global Feed canvas */
+    /* Elegant Desktop Scrollbars */
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+    @media (max-width: 767px) {
+        .custom-scroll::-webkit-scrollbar { display: none; }
+        .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+
+    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
     .app-canvas {
         width: 100%;
         position: relative;
         z-index: 10;
         padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
 
-    @media (min-width: 768px) {
-        .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
+    /* BENTO CARD DESIGN (Aligned with global feed) */
+    .bento-card {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px -10px rgba(15, 23, 42, 0.05);
+        transition: all 0.4s var(--ease-magic);
+        overflow: hidden;
     }
-    @media (min-width: 1024px) {
-        .auth-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
-    }
-    @media (min-width: 1280px) {
-        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; }
-    }
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
 
-    /* BENTO CARD DESIGN (Using CoreLink Blue Palette) */
-    .bento-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-
-    .canvas-editor input[type="text"] {
-        width: 100%; border: 1px solid #E2E8F0; border-radius: 0.75rem; background: #F8FAFC; padding: 1rem 1.25rem;
-        font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; outline: none; transition: all 0.2s;
-    }
-    .canvas-editor input[type="text"]::placeholder { color: #94A3B8; font-weight: 600; }
-    .canvas-editor input[type="text"]:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
-
-    .canvas-editor textarea {
-        width: 100%; border: 1px solid #E2E8F0; border-radius: 0.75rem; background: #F8FAFC; padding: 1.25rem;
-        font-family: var(--font-body); font-size: 1.05rem; font-weight: 400; color: #334155; line-height: 1.7; min-height: 150px; resize: none; overflow: hidden; outline: none; transition: all 0.2s;
-    }
-    .canvas-editor textarea::placeholder { color: #94A3B8; font-weight: 400; }
-    .canvas-editor textarea:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
-
-    .control-panel select, .control-panel input[type="url"], .control-panel input[type="text"] {
-        width: 100%; border: 1px solid #E2E8F0; border-radius: 0.75rem; padding: 0.85rem 1.15rem;
-        font-size: 14px; font-weight: 600; color: #334155; background: #F8FAFC; outline: none; transition: all 0.2s;
-    }
-    .control-panel select:focus, .control-panel input[type="url"]:focus, .control-panel input[type="text"]:focus { border-color: #0A66C2; background: #ffffff; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
-    .control-panel select { appearance: none; cursor: pointer; padding-right: 2.5rem; }
-
-    .btn-action { background: linear-gradient(to right, #0A66C2, #4F46E5); color: white; font-weight: 700; padding: 1rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.2); width: 100%; font-size: 15px; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.3); }
+    /* UNIFIED BUTTON STYLES (CoreLink Indigo/Emerald Theme for Teams) */
+    .btn-action { background: linear-gradient(135deg, #4F46E5, #3730A3); color: white; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; min-height: 44px; width: 100%; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(79, 70, 229, 0.35); }
     .btn-action:active { transform: scale(0.96); }
 
-    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 700; padding: 1rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; width: 100%; font-size: 15px; }
-    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #F8FAFC; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
+    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; min-height: 44px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; width: 100%; }
+    .btn-secondary:hover { border-color: #4F46E5; color: #4F46E5; background: #EEF2FF; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
+    .btn-secondary:active { transform: scale(0.96); }
+
+    /* EDITOR INPUT STYLES */
+    .canvas-editor input[type="text"] {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1rem 1.25rem;
+        font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; outline: none; transition: all 0.2s;
+    }
+    .canvas-editor input[type="text"]::placeholder { color: #94A3B8; font-weight: 600; }
+    .canvas-editor input[type="text"]:focus { background: #ffffff; border-color: #4F46E5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+    .canvas-editor textarea {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1.25rem;
+        font-family: var(--font-body); font-size: 1.05rem; font-weight: 500; color: #334155; line-height: 1.7; min-height: 140px; resize: none; overflow: hidden; outline: none; transition: all 0.2s;
+    }
+    .canvas-editor textarea::placeholder { color: #94A3B8; font-weight: 500; }
+    .canvas-editor textarea:focus { background: #ffffff; border-color: #4F46E5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+    .control-panel select, .control-panel input[type="url"], .control-panel input[type="text"] {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 0.95rem 1.15rem;
+        font-size: 14px; font-weight: 600; color: #334155; background: #F8FAFC; outline: none; transition: all 0.2s;
+    }
+    .control-panel select:focus, .control-panel input[type="url"]:focus, .control-panel input[type="text"]:focus { border-color: #4F46E5; background: #ffffff; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+    .control-panel select { appearance: none; cursor: pointer; padding-right: 2.5rem; }
 
     @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-down { animation: fadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-fade-down { animation: fadeDown 0.6s var(--ease-magic) forwards; }
 
     /* Drawer Utils */
     .drawer-closed { transform: translateY(100%); }
-    .drawer-open { transform: translateY(0); }
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
     .body-lock { overflow: hidden !important; touch-action: none; }
 </style>
 
-<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} animate-fade-down">
+<main class="app-canvas animate-fade-down">
 
     <!-- WRAPPER: Limits form width for a clean centralized reading/writing experience -->
-    <div class="max-w-4xl mx-auto w-full relative z-10">
+    <div class="max-w-5xl mx-auto w-full relative z-10">
 
         <!-- Header Controls (Back & Tag) -->
-        <div class="mb-8 flex items-center justify-between">
-            <a href="{% url 'collaboration_hub' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:text-[#0A66C2] hover:border-blue-300 hover:shadow-sm transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Updates & Teams" %}
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+            <!-- SMART BACK NAVIGATION: Relies on browser history to return exactly to the previous page (My Applications/Teams) -->
+            <a href="#" onclick="window.history.back(); return false;" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 hover:shadow-sm transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)] w-max">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
             </a>
 
-            <span class="px-3 py-1.5 bg-blue-50 text-[#0A66C2] rounded-lg text-[12px] font-black tracking-wide shadow-sm border border-blue-100 uppercase">
+            <span class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-black tracking-widest shadow-sm border border-indigo-100 uppercase w-max">
                 {% if form.instance.pk %}{% trans "Editing Team" %}{% else %}{% trans "New Team" %}{% endif %}
             </span>
         </div>
 
-        <!-- Header Context -->
-        <div class="mb-10 max-w-3xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-3">
-                {% if form.instance.pk %}{% trans "Update Team Console" %}{% else %}{% trans "Build Your Team" %}{% endif %}
-            </h1>
-            <p class="text-[14.5px] md:text-[16px] text-slate-500 font-medium leading-relaxed">
-                {% trans "Draft your mission, define the roles you need, and launch your team into the Discover feed. Make it compelling to attract the best talent." %}
+        <!-- HERO SECTION (Matches the global App visual language) -->
+        <div class="bento-card p-6 md:p-10 flex flex-col relative overflow-hidden bg-gradient-to-br from-white via-white to-indigo-50/40 border-indigo-200/60 shadow-[0_4px_20px_rgba(79,70,229,0.06)] mb-8 md:mb-10 z-30">
+            <!-- Subtle Background Glows -->
+            <div class="absolute -top-32 -right-32 w-[400px] h-[400px] bg-indigo-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+            <div class="absolute -bottom-32 -left-32 w-[300px] h-[300px] bg-emerald-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+
+            <div class="relative z-10 flex items-center gap-4 mb-3">
+                <div class="w-12 h-12 rounded-xl bg-indigo-100/50 border border-indigo-200 flex items-center justify-center text-indigo-600 shrink-0">
+                    <i data-lucide="shield" class="w-6 h-6"></i>
+                </div>
+                <h1 class="font-heading text-[1.75rem] md:text-[2.2rem] font-extrabold text-slate-900 tracking-[-0.03em] leading-none">
+                    {% if form.instance.pk %}{% trans "Update Team Console" %}{% else %}{% trans "Build Your Team" %}{% endif %}
+                </h1>
+            </div>
+            <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-[1.7] md:pr-10 max-w-3xl relative z-10">
+                {% trans "Draft your mission, define the exact roles you need, and launch your team into the Discover feed. Make your vision compelling to attract the best talent on CoreLink." %}
             </p>
         </div>
 
         <!-- THE EDITOR GRID -->
-        <form method="post" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+        <form method="post" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-20">
             {% csrf_token %}
 
             {% if form.errors %}
-            <div class="lg:col-span-12 p-4 bg-rose-50 border border-rose-200 rounded-2xl">
-                <p class="text-[14px] font-bold text-rose-700 mb-2">{% trans "Please correct the following errors:" %}</p>
-                {{ form.errors }}
+            <div class="lg:col-span-12 p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-4">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="text-[14px] font-bold text-rose-800 mb-1">{% trans "Please correct the following errors:" %}</p>
+                    <div class="text-[13px] font-medium text-rose-600">{{ form.errors }}</div>
+                </div>
             </div>
             {% endif %}
 
@@ -212,43 +246,45 @@
             <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
 
                 <!-- Card 1: Team Name -->
-                <div class="bento-card bg-white flex flex-col shadow-sm border-slate-200/80 overflow-hidden">
-                    <div class="bg-gradient-to-r from-blue-50/80 to-indigo-50/50 border-b border-slate-100 px-6 sm:px-8 py-5">
-                        <h2 class="text-[18px] font-black text-slate-900 tracking-tight mb-1 nav-heading">
-                            {% trans "Define Your Team" %}
+                <div class="bento-card bg-white flex flex-col shadow-sm overflow-hidden">
+                    <div class="bg-gradient-to-r from-slate-50/80 to-indigo-50/30 border-b border-slate-100 px-6 sm:px-8 py-5">
+                        <h2 class="text-[17px] font-black text-slate-900 tracking-tight mb-1 nav-heading flex items-center gap-2">
+                            <i data-lucide="type" class="w-4 h-4 text-indigo-500"></i> {% trans "Define Your Team" %}
                         </h2>
-                        <p class="text-[13.5px] text-slate-600 font-medium leading-relaxed">
-                            {% trans "Give your team a clear, memorable name that reflects your goals." %}
-                        </p>
+                        <p class="text-[13px] text-slate-500 font-medium">{% trans "Give your team a clear, memorable name that reflects your goals." %}</p>
                     </div>
 
                     <div class="canvas-editor px-6 sm:px-8 py-6 sm:py-8">
-                        <label class="block text-[14px] font-bold text-slate-800 mb-2">{% trans "Team Name" %}</label>
+                        <label class="block text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">{% trans "Team Name" %}</label>
                         {{ form.name }}
                         {% if form.name.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.name.errors.0 }}</p>{% endif %}
                     </div>
                 </div>
 
                 <!-- Card 2: Mission Statement -->
-                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm border-slate-200/80 canvas-editor flex flex-col">
-                    <label class="block text-[14px] font-bold text-slate-800 mb-2">{% trans "Mission & Vision" %}</label>
+                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
+                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                        <i data-lucide="target" class="w-4 h-4 text-emerald-500"></i> {% trans "Mission & Vision" %}
+                    </label>
                     {{ form.mission }}
                     {% if form.mission.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.mission.errors.0 }}</p>{% endif %}
 
-                    <div class="mt-4 flex items-start sm:items-center gap-2 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <i data-lucide="info" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-0.5 sm:mt-0"></i>
-                        <span>{% trans "Pro tip: Be clear about the problem you are solving to attract passionate members." %}</span>
+                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5 sm:mt-0"></i>
+                        <span><strong class="font-bold text-slate-800">{% trans "Pro tip:" %}</strong> {% trans "Be clear about the problem you are solving to attract passionate members." %}</span>
                     </div>
                 </div>
 
                 <!-- Card 3: Roles Needed -->
-                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm border-slate-200/80 canvas-editor flex flex-col">
-                    <label class="block text-[14px] font-bold text-slate-800 mb-2">{% trans "Who Are You Looking For?" %}</label>
+                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
+                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                        <i data-lucide="users" class="w-4 h-4 text-blue-500"></i> {% trans "Who Are You Looking For?" %}
+                    </label>
                     {{ form.roles_needed }}
                     {% if form.roles_needed.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.roles_needed.errors.0 }}</p>{% endif %}
 
-                    <div class="mt-4 flex items-start sm:items-center gap-2 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <i data-lucide="users" class="w-4 h-4 text-[#0A66C2] shrink-0 mt-0.5 sm:mt-0"></i>
+                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-indigo-500 shrink-0 mt-0.5 sm:mt-0"></i>
                         <span>{% trans "List specific skills, experience levels, or roles like 'UI Designer' or 'Backend Engineer'." %}</span>
                     </div>
                 </div>
@@ -260,45 +296,45 @@
             <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 control-panel">
 
                 <!-- Settings Card -->
-                <div class="bento-card p-6 bg-white space-y-6 shadow-sm border-slate-200/80">
-                    <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100">
-                        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#0A66C2]"></i>
+                <div class="bento-card p-6 bg-white space-y-6 shadow-sm">
+                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                        <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="settings-2" class="w-4 h-4 text-slate-600"></i>
                         </div>
-                        <h3 class="text-[16px] font-extrabold text-slate-900 tracking-tight">{% trans "Team Settings" %}</h3>
+                        <h3 class="text-[17px] font-black text-slate-900 tracking-tight">{% trans "Settings" %}</h3>
                     </div>
 
                     <!-- Team Category -->
                     <div class="space-y-1.5">
                         <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Team Category" %}</label>
-                        <p class="text-[12px] text-slate-500 font-medium mb-1.5 leading-tight">{% trans "What is the primary objective of this team?" %}</p>
-                        <div class="relative group/select mt-1.5">
+                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "What is the primary objective of this team?" %}</p>
+                        <div class="relative group/select">
                             {{ form.team_type }}
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-hover/select:text-[#0A66C2] transition-colors"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-hover/select:text-indigo-600 transition-colors"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
                         </div>
-                        {% if form.team_type.errors %}<p class="text-rose-500 text-[12px] font-bold">{{ form.team_type.errors.0 }}</p>{% endif %}
+                        {% if form.team_type.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.team_type.errors.0 }}</p>{% endif %}
                     </div>
 
                     <!-- External Link -->
-                    <div class="space-y-1.5 pt-4 border-t border-slate-50">
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
                         <label class="text-[13.5px] font-bold text-slate-800 tracking-tight flex items-center justify-between mb-1">
-                            {% trans "Group Chat Link" %} <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[11px]">{% trans "Optional" %}</span>
+                            {% trans "Group Chat Link" %} <span class="bg-slate-100 border border-slate-200 text-slate-500 px-2 py-0.5 rounded-md text-[10px] uppercase font-black tracking-widest">{% trans "Optional" %}</span>
                         </label>
-                        <p class="text-[12px] text-slate-500 font-medium mb-1.5 leading-tight">{% trans "Telegram, Discord, or Slack invite link for approved members." %}</p>
-                        <div class="relative mt-2">
+                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "Telegram, Discord, or Slack invite link for approved members." %}</p>
+                        <div class="relative">
                             <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><i data-lucide="link" class="w-4 h-4"></i></div>
                             <div class="pl-8">{{ form.telegram_link }}</div>
                         </div>
-                        {% if form.telegram_link.errors %}<p class="text-rose-500 text-[12px] font-bold">{{ form.telegram_link.errors.0 }}</p>{% endif %}
+                        {% if form.telegram_link.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.telegram_link.errors.0 }}</p>{% endif %}
                     </div>
                 </div>
 
                 <!-- Publishing Card -->
-                <div class="bento-card p-6 bg-gradient-to-b from-blue-50/50 to-white border-blue-100 shadow-[0_10px_40px_rgba(10,102,194,0.06)] sticky top-[calc(6rem+env(safe-area-inset-top))]">
+                <div class="bento-card p-6 bg-gradient-to-b from-indigo-50/50 to-white border-indigo-100 shadow-[0_10px_40px_rgba(79,70,229,0.06)] sticky top-[calc(6rem+env(safe-area-inset-top))]">
 
-                    <div class="flex items-start gap-3 mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-sm">
-                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
-                            <i data-lucide="rocket" class="w-5 h-5 text-[#0A66C2]"></i>
+                    <div class="flex items-start gap-3 mb-6 bg-white p-4 rounded-xl border border-indigo-100 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0 border border-indigo-100">
+                            <i data-lucide="rocket" class="w-5 h-5 text-indigo-600"></i>
                         </div>
                         <div>
                             <h4 class="text-[14.5px] font-bold text-slate-900 mb-1">{% trans "Ready to Launch?" %}</h4>
@@ -320,7 +356,8 @@
                                 <i data-lucide="rocket" class="w-4 h-4"></i> {% trans "Launch Team" %}
                             {% endif %}
                         </button>
-                        <a href="{% url 'collaboration_hub' %}" class="btn-secondary">
+                        <!-- Back Cancel Button using browser history -->
+                        <a href="#" onclick="window.history.back(); return false;" class="btn-secondary">
                             {% trans "Cancel" %}
                         </a>
                     </div>
@@ -369,10 +406,16 @@
      MOBILE NAVIGATION & LANG DRAWERS
      ============================================== -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 shrink-0"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'collaboration_hub' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Updates & Teams" %}</a>
+
+        <!-- Replaced hardcoded URL with browser history back -->
+        <a href="#" onclick="window.history.back(); return false;" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div>
+            {% trans "Back" %}
+        </a>
+
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
         <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Go to My Profile" %}</a>
         <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
@@ -389,17 +432,17 @@
 
 <!-- Language Drawer -->
 <div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
-    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,env(safe-area-inset-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden shrink-0"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6 shrink-0">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full flex-1 overflow-y-auto custom-scroll">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-indigo-50 border border-indigo-100 text-indigo-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
             {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-indigo-50 border border-indigo-100 text-indigo-600 shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
             <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
             {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
@@ -424,7 +467,6 @@
         // Auto-Resizing Textareas for a smooth writing experience
         const textareas = document.querySelectorAll('.canvas-editor textarea');
         textareas.forEach(ta => {
-            // Set initial height
             ta.setAttribute('style', 'height:' + (ta.scrollHeight) + 'px;overflow-y:hidden;');
             ta.addEventListener("input", function() {
                 this.style.height = 0;
@@ -453,10 +495,12 @@
         const bd = document.getElementById('mobile-nav-backdrop');
         if (dw.classList.contains('drawer-closed')) {
             closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
+            setTimeout(() => {
+                bd.classList.replace('opacity-0', 'opacity-100');
+                bd.classList.remove('pointer-events-none');
+                dw.classList.replace('drawer-closed', 'drawer-open');
+                document.body.classList.add('body-lock');
+            }, 10);
         } else { closeAllDrawers(); }
     }
 
@@ -465,10 +509,12 @@
         const bd = document.getElementById('mobile-lang-backdrop');
         if (dw.classList.contains('drawer-closed')) {
             closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
+            setTimeout(() => {
+                bd.classList.replace('opacity-0', 'opacity-100');
+                bd.classList.remove('pointer-events-none');
+                dw.classList.replace('drawer-closed', 'drawer-open');
+                document.body.classList.add('body-lock');
+            }, 10);
         } else { closeAllDrawers(); }
     }
 </script>
