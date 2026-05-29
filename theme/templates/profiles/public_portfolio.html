@@ -8,13 +8,16 @@
 <meta property="og:title" content="{{ user.display_name }} | Personal Portfolio">
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
 <meta property="og:description" content="{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
-<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% if user.cover_image %}{{ user.get_cover_image_url }}{% else %}{% static 'images/default-cover.jpg' %}{% endif %}">
+
+<!-- MAGIC OPENGRAPH IMAGE TAGS -->
+<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ user.display_name }}">
 <meta name="twitter:description" content="{{ profile.bio_narrative|truncatechars:120 }}">
-<meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% if user.cover_image %}{{ user.get_cover_image_url }}{% else %}{% static 'images/default-cover.jpg' %}{% endif %}">
+<meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}">
 {% endblock %}
 
 {% block navbar %}
@@ -424,15 +427,11 @@
         </section>
         {% endif %}
 
-        <!-- ==========================================
-             MY FOCUS HISTORY (Dynamic Right Now Feed)
-             Note: THIS WILL LOOP THROUGH ALL POSTS IN THE DATABASE!
-        =========================================== -->
+        <!-- MY FOCUS HISTORY -->
         {% if right_now_posts %}
         <section id="focus-history" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">My Focus History</h2>
             <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
-                <!-- THE FOR LOOP: This grabs EVERY published post! -->
                 {% for post in right_now_posts %}
                     {% if post.body_narrative %}
                     <article class="relative group">
@@ -446,7 +445,7 @@
 
                         <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.body_narrative }}</p>
 
-                        <!-- Beautiful Masonry-like Image Gallery -->
+                        <!-- Image Gallery -->
                         {% if post.gallery.all %}
                             <div class="mt-5 md:mt-6 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
                                 {% for media in post.gallery.all %}
@@ -463,12 +462,10 @@
         </section>
         {% endif %}
 
-        <!-- ==========================================
-             SPLIT CONTENT SECTIONS (Dynamic)
-        =========================================== -->
+        <!-- SPLIT CONTENT SECTIONS -->
         {% if content_posts %}
 
-        <!-- GOALS (Vision Block) -->
+        <!-- GOALS -->
         <section id="goals" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">My Goal</h2>
             <div class="grid gap-8">
@@ -493,7 +490,7 @@
             </div>
         </section>
 
-        <!-- THOUGHTS (Essays) -->
+        <!-- THOUGHTS -->
         <section id="thoughts" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Industry Thoughts</h2>
             <div class="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -516,7 +513,7 @@
             </div>
         </section>
 
-        <!-- PROGRESS (Growth Logs) -->
+        <!-- PROGRESS -->
         <section id="progress" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Daily Progress</h2>
             <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">

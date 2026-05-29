@@ -1340,3 +1340,126 @@ class CompanySocialUpdateView(CompanyContextMixin, UpdateView):
     template_name = 'dashboard/company/generic_form.html'
     success_url = reverse_lazy('manage_company_network')
 
+
+import io
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from PIL import Image, ImageDraw, ImageFont
+
+from profiles.models.new_unified_profile import UserProfile
+
+User = get_user_model()
+
+
+def profile_og_image(request, identifier):
+    """Generates a dynamic OpenGraph image with Cover AND Avatar."""
+
+    portfolio = UserProfile.objects.filter(slug=identifier).first()
+    if portfolio:
+        target_user = portfolio.user
+    else:
+        target_user = get_object_or_404(User, corelink_id=identifier)
+        portfolio = getattr(target_user, 'portfolio', None)
+
+    # 1. Create a blank canvas
+    base_img = Image.new("RGB", (1200, 630), "#F8FAFC")
+    draw = ImageDraw.Draw(base_img)
+
+    # 2. Draw the Cover Image
+    if target_user.cover_image:
+        try:
+            cover = Image.open(target_user.cover_image.file)
+            cover = cover.resize((1200, 380), Image.Resampling.LANCZOS)
+            base_img.paste(cover, (0, 0))
+        except Exception:
+            draw.rectangle([(0, 0), (1200, 380)], fill="#040F23")
+    else:
+        draw.rectangle([(0, 0), (1200, 380)], fill="#040F23")
+
+    # 3. Draw the Bottom White Card
+    draw.rectangle([(0, 380), (1200, 630)], fill="#ffffff")
+    draw.line([(0, 380), (1200, 380)], fill="#E2E8F0", width=4)
+
+    # ==========================================
+    # 4. DRAW THE CIRCULAR PROFILE PICTURE
+    # ==========================================
+    if target_user.avatar:
+        try:
+            avatar = Image.open(target_user.avatar.file).convert("RGBA")
+            avatar = avatar.resize((240, 240), Image.Resampling.LANCZOS)
+
+            mask = Image.new('L', (240, 240), 0)
+            mask_draw = ImageDraw.Draw(mask)
+            mask_draw.ellipse((0, 0, 240, 240), fill=255)
+
+            border_size = 260
+            border_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
+            border_draw = ImageDraw.Draw(border_img)
+            border_draw.ellipse((0, 0, border_size, border_size), fill="#ffffff")
+
+            base_img.paste(border_img, (70, 250), border_img)
+            base_img.paste(avatar, (80, 260), mask)
+        except Exception:
+            pass
+    else:
+        border_size = 260
+        border_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
+        border_draw = ImageDraw.Draw(border_img)
+        border_draw.ellipse((0, 0, border_size, border_size), fill="#ffffff")
+        base_img.paste(border_img, (70, 250), border_img)
+
+        inner_circle = Image.new("RGBA", (240, 240), (0, 0, 0, 0))
+        inner_draw = ImageDraw.Draw(inner_circle)
+        inner_draw.ellipse((0, 0, 240, 240), fill="#E2E8F0")
+        base_img.paste(inner_circle, (80, 260), inner_circle)
+
+    # ==========================================
+    # 5. BULLETPROOF HUGE FONT FINDER
+    # ==========================================
+    font_name_obj = None
+    font_title_obj = None
+
+    inter_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Inter_18pt-Bold.ttf')
+
+    try:
+        # First, try to load Inter
+        font_name_obj = ImageFont.truetype(inter_path, 80)
+        font_title_obj = ImageFont.truetype(inter_path, 40)
+        print("✅ SUCCESS: Inter Font Loaded!")
+    except Exception:
+        try:
+            # If Inter fails, use Windows Arial (GUARANTEED HUGE TEXT)
+            font_name_obj = ImageFont.truetype("arial.ttf", 80)
+            font_title_obj = ImageFont.truetype("arial.ttf", 40)
+            print("✅ SUCCESS: Windows Arial Font Loaded!")
+        except Exception:
+            # Absolute worst-case scenario (will never happen on Windows)
+            font_name_obj = ImageFont.load_default()
+            font_title_obj = ImageFont.load_default()
+            print("❌ WARNING: Default font used.")
+
+    # 6. Get the Text
+    display_name = getattr(target_user, 'full_name', target_user.username)
+
+    headline_text = "CoreLink Professional"
+    if portfolio:
+        headline = portfolio.headlines.first()
+        if headline:
+            headline_text = headline.title
+        elif target_user.role:
+            headline_text = target_user.get_role_display()
+
+    if len(headline_text) > 65:
+        headline_text = headline_text[:62] + "..."
+
+    # 7. Paint the HUGE Text onto the image
+    draw.text((360, 420), display_name, fill="#0F172A", font=font_name_obj)
+    draw.text((360, 520), headline_text, fill="#0A66C2", font=font_title_obj)
+
+    # 8. Export the image
+    buffer = io.BytesIO()
+    base_img.save(buffer, format="JPEG", quality=95)
+    return HttpResponse(buffer.getvalue(), content_type="image/jpeg")
