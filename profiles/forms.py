@@ -347,46 +347,62 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
         fields = ['post_type', 'category', 'title', 'content', 'media_proof', 'visibility']
 
     def __init__(self, *args, **kwargs):
+        # Extract post_type passed from the view (for GET requests)
         self.requested_type = kwargs.pop('post_type', None)
         super().__init__(*args, **kwargs)
-        current_type = self.requested_type or (self.instance.post_type if self.instance and self.instance.pk else None)
+
+        # Determine the current type
+        current_type = self.requested_type
+
+        # Fallback 1: Check if this is an existing instance being edited
+        if not current_type and self.instance and self.instance.pk:
+            current_type = self.instance.post_type
+
+        # Fallback 2: Check POST data during form submission
+        if not current_type and self.is_bound:
+            current_type = self.data.get('post_type')
 
         if 'visibility' in self.fields:
             self.fields['visibility'].label = _("Visibility Status")
-            
 
         if current_type == 'GROWTH_LOG':
             self.fields['title'].label = _("Entry Title")
             self.fields['title'].help_text = _("Give your log a quick title (e.g., 'Week 1 of Project Deployment').")
             self.fields['content'].label = _("Notes & Observations")
-            self.fields['content'].help_text = _("A place to document your daily progress, challenges overcome, or important notes.")
-            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Today I learned...'})
+            self.fields['content'].help_text = _(
+                "A place to document your daily progress, challenges overcome, or important notes.")
+            self.fields['content'].widget.attrs.update(
+                {'class': 'markdown-editor', 'placeholder': 'Today I learned...'})
 
         elif current_type == 'VISION_BLOCK':
+            # Remove fields not needed for vision block
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Vision or Goal")
             self.fields['title'].help_text = _("Give title you want for your goal ? (e.g., 'My 5 year plan').")
             self.fields['content'].label = _("Detailed Plan")
-            self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
-            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Eplain here'})
+            self.fields['content'].help_text = _(
+                "Outline a long-term goal. Where do you see your career or industry heading in the future?")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Explain here'})
 
         elif current_type == 'ESSAY':
+            # Remove fields not needed for essays
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Article Title")
             self.fields['title'].help_text = _("An engaging headline for your article or thought-leadership post.")
             self.fields['content'].label = _("Article Content")
-            self.fields['content'].help_text = _("Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
-            self.fields['content'].widget.attrs.update({'class': 'markdown-editor min-h-[300px]', 'placeholder': 'Start writing...'})
+            self.fields['content'].help_text = _(
+                "Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
+            self.fields['content'].widget.attrs.update(
+                {'class': 'markdown-editor min-h-[300px]', 'placeholder': 'Start writing...'})
 
-        if current_type:
+        # Securely pass the type as a hidden input so it gets submitted
+        if current_type and 'post_type' in self.fields:
             self.fields['post_type'].widget = forms.HiddenInput()
             self.fields['post_type'].initial = current_type
-
-
 class LiveOpportunityForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = LiveOpportunity
