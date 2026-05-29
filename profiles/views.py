@@ -1356,7 +1356,7 @@ User = get_user_model()
 
 
 def profile_og_image(request, identifier):
-    """Generates a Premium Light-Mode OpenGraph image with 3D Pop."""
+    """Generates a dynamic OpenGraph image with Cover AND Avatar."""
 
     portfolio = UserProfile.objects.filter(slug=identifier).first()
     if portfolio:
@@ -1365,107 +1365,87 @@ def profile_og_image(request, identifier):
         target_user = get_object_or_404(User, corelink_id=identifier)
         portfolio = getattr(target_user, 'portfolio', None)
 
-    # 1. CREATE CANVAS
-    base_img = Image.new("RGB", (1200, 630), "#FFFFFF")
+    # 1. Create a blank canvas
+    base_img = Image.new("RGB", (1200, 630), "#F8FAFC")
     draw = ImageDraw.Draw(base_img)
 
-    # 2. DRAW THE COVER IMAGE (Top 340 pixels)
+    # 2. Draw the Cover Image
     if target_user.cover_image:
         try:
             cover = Image.open(target_user.cover_image.file)
-            cover = cover.resize((1200, 340), Image.Resampling.LANCZOS)
+            cover = cover.resize((1200, 380), Image.Resampling.LANCZOS)
             base_img.paste(cover, (0, 0))
         except Exception:
-            draw.rectangle([(0, 0), (1200, 340)], fill="#040F23")
+            draw.rectangle([(0, 0), (1200, 380)], fill="#040F23")
     else:
-        draw.rectangle([(0, 0), (1200, 340)], fill="#040F23")
+        draw.rectangle([(0, 0), (1200, 380)], fill="#040F23")
 
-    # 3. DRAW THE BOTTOM WHITE CARD & BRAND LINE
-    draw.rectangle([(0, 340), (1200, 630)], fill="#ffffff")
-
-    # The Magic CoreLink Blue Ribbon (Divider)
-    draw.line([(0, 340), (1200, 340)], fill="#0A66C2", width=8)
+    # 3. Draw the Bottom White Card
+    draw.rectangle([(0, 380), (1200, 630)], fill="#ffffff")
+    draw.line([(0, 380), (1200, 380)], fill="#E2E8F0", width=4)
 
     # ==========================================
-    # 4. DRAW THE FLOATING 3D AVATAR
+    # 4. DRAW THE CIRCULAR PROFILE PICTURE
     # ==========================================
-    avatar_size = 240
-    border_size = 260
-
-    # Positioning (Perfectly centered on the blue line)
-    avatar_x = 80
-    avatar_y = 210  # 340 - 130
-
     if target_user.avatar:
         try:
             avatar = Image.open(target_user.avatar.file).convert("RGBA")
-            avatar = avatar.resize((avatar_size, avatar_size), Image.Resampling.LANCZOS)
+            avatar = avatar.resize((240, 240), Image.Resampling.LANCZOS)
 
-            mask = Image.new('L', (avatar_size, avatar_size), 0)
+            mask = Image.new('L', (240, 240), 0)
             mask_draw = ImageDraw.Draw(mask)
-            mask_draw.ellipse((0, 0, avatar_size, avatar_size), fill=255)
+            mask_draw.ellipse((0, 0, 240, 240), fill=255)
 
-            # 4a. Draw the "Drop Shadow" (A light gray circle slightly offset down)
-            shadow_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
-            shadow_draw = ImageDraw.Draw(shadow_img)
-            shadow_draw.ellipse((0, 0, border_size, border_size), fill="#CBD5E1")
-            base_img.paste(shadow_img, (avatar_x, avatar_y + 8), shadow_img)  # Offset by 8px
-
-            # 4b. Draw the crisp white border
+            border_size = 260
             border_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
             border_draw = ImageDraw.Draw(border_img)
             border_draw.ellipse((0, 0, border_size, border_size), fill="#ffffff")
-            base_img.paste(border_img, (avatar_x, avatar_y), border_img)
 
-            # 4c. Paste the actual avatar
-            base_img.paste(avatar, (avatar_x + 10, avatar_y + 10), mask)
-
+            base_img.paste(border_img, (70, 250), border_img)
+            base_img.paste(avatar, (80, 260), mask)
         except Exception:
             pass
     else:
-        # Fallback if no avatar exists
-        shadow_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
-        shadow_draw = ImageDraw.Draw(shadow_img)
-        shadow_draw.ellipse((0, 0, border_size, border_size), fill="#CBD5E1")
-        base_img.paste(shadow_img, (avatar_x, avatar_y + 8), shadow_img)
-
+        border_size = 260
         border_img = Image.new("RGBA", (border_size, border_size), (0, 0, 0, 0))
         border_draw = ImageDraw.Draw(border_img)
         border_draw.ellipse((0, 0, border_size, border_size), fill="#ffffff")
-        base_img.paste(border_img, (avatar_x, avatar_y), border_img)
+        base_img.paste(border_img, (70, 250), border_img)
 
-        inner_circle = Image.new("RGBA", (avatar_size, avatar_size), (0, 0, 0, 0))
+        inner_circle = Image.new("RGBA", (240, 240), (0, 0, 0, 0))
         inner_draw = ImageDraw.Draw(inner_circle)
-        inner_draw.ellipse((0, 0, avatar_size, avatar_size), fill="#E2E8F0")
-        base_img.paste(inner_circle, (avatar_x + 10, avatar_y + 10), inner_circle)
+        inner_draw.ellipse((0, 0, 240, 240), fill="#E2E8F0")
+        base_img.paste(inner_circle, (80, 260), inner_circle)
 
     # ==========================================
-    # 5. BULLETPROOF HUGE FONT FINDER
+    # 5. BULLETPROOF HUGE FONT FINDER (LINUX SAFE)
     # ==========================================
     font_name_obj = None
     font_title_obj = None
-    font_watermark_obj = None
 
     try:
+        # Ask Django to find the exact path to the file in cPanel
         font_path = finders.find('fonts/Inter_18pt-Bold.ttf')
+
+        # If finders fails, look directly in the cPanel static root
         if not font_path and hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
             backup_path = os.path.join(settings.STATIC_ROOT, 'fonts', 'Inter_18pt-Bold.ttf')
             if os.path.exists(backup_path):
                 font_path = backup_path
 
+        # If it found the path, make it HUGE
         if font_path:
             font_name_obj = ImageFont.truetype(font_path, 80)
             font_title_obj = ImageFont.truetype(font_path, 40)
-            font_watermark_obj = ImageFont.truetype(font_path, 26)  # Smaller font for watermark
             print("SUCCESS: Inter Font Loaded!")
         else:
             raise Exception("Font file missing from server")
 
     except Exception as e:
         print("WARNING: Font failed to load - " + str(e))
+        # Absolute worst-case scenario (Tiny text)
         font_name_obj = ImageFont.load_default()
         font_title_obj = ImageFont.load_default()
-        font_watermark_obj = ImageFont.load_default()
 
     # ==========================================
     # 6. GET THE TEXT
@@ -1480,20 +1460,14 @@ def profile_og_image(request, identifier):
         elif target_user.role:
             headline_text = target_user.get_role_display()
 
-    if len(headline_text) > 60:
-        headline_text = headline_text[:57] + "..."
+    if len(headline_text) > 65:
+        headline_text = headline_text[:62] + "..."
 
     # ==========================================
-    # 7. PAINT THE TEXT
+    # 7. PAINT THE HUGE TEXT
     # ==========================================
-    # Draw Name (Dark Slate)
-    draw.text((370, 395), display_name, fill="#0F172A", font=font_name_obj)
-
-    # Draw Headline (CoreLink Blue)
-    draw.text((370, 495), headline_text, fill="#0A66C2", font=font_title_obj)
-
-    # Draw Watermark (Bottom Right, Light Gray)
-    draw.text((980, 560), "corelink.et", fill="#94A3B8", font=font_watermark_obj)
+    draw.text((360, 420), display_name, fill="#0F172A", font=font_name_obj)
+    draw.text((360, 520), headline_text, fill="#0A66C2", font=font_title_obj)
 
     # ==========================================
     # 8. EXPORT IMAGE
