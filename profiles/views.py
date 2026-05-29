@@ -1347,6 +1347,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles import finders
 from PIL import Image, ImageDraw, ImageFont
 
 from profiles.models.new_unified_profile import UserProfile
@@ -1417,31 +1418,38 @@ def profile_og_image(request, identifier):
         base_img.paste(inner_circle, (80, 260), inner_circle)
 
     # ==========================================
-    # 5. BULLETPROOF HUGE FONT FINDER
+    # 5. BULLETPROOF HUGE FONT FINDER (LINUX SAFE)
     # ==========================================
     font_name_obj = None
     font_title_obj = None
 
-    inter_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Inter_18pt-Bold.ttf')
-
     try:
-        # First, try to load Inter
-        font_name_obj = ImageFont.truetype(inter_path, 80)
-        font_title_obj = ImageFont.truetype(inter_path, 40)
-        print("✅ SUCCESS: Inter Font Loaded!")
-    except Exception:
-        try:
-            # If Inter fails, use Windows Arial (GUARANTEED HUGE TEXT)
-            font_name_obj = ImageFont.truetype("arial.ttf", 80)
-            font_title_obj = ImageFont.truetype("arial.ttf", 40)
-            print("✅ SUCCESS: Windows Arial Font Loaded!")
-        except Exception:
-            # Absolute worst-case scenario (will never happen on Windows)
-            font_name_obj = ImageFont.load_default()
-            font_title_obj = ImageFont.load_default()
-            print("❌ WARNING: Default font used.")
+        # Ask Django to find the exact path to the file in cPanel
+        font_path = finders.find('fonts/Inter_18pt-Bold.ttf')
 
-    # 6. Get the Text
+        # If finders fails, look directly in the cPanel static root
+        if not font_path and hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
+            backup_path = os.path.join(settings.STATIC_ROOT, 'fonts', 'Inter_18pt-Bold.ttf')
+            if os.path.exists(backup_path):
+                font_path = backup_path
+
+        # If it found the path, make it HUGE
+        if font_path:
+            font_name_obj = ImageFont.truetype(font_path, 80)
+            font_title_obj = ImageFont.truetype(font_path, 40)
+            print("SUCCESS: Inter Font Loaded!")
+        else:
+            raise Exception("Font file missing from server")
+
+    except Exception as e:
+        print("WARNING: Font failed to load - " + str(e))
+        # Absolute worst-case scenario (Tiny text)
+        font_name_obj = ImageFont.load_default()
+        font_title_obj = ImageFont.load_default()
+
+    # ==========================================
+    # 6. GET THE TEXT
+    # ==========================================
     display_name = getattr(target_user, 'full_name', target_user.username)
 
     headline_text = "CoreLink Professional"
@@ -1455,11 +1463,15 @@ def profile_og_image(request, identifier):
     if len(headline_text) > 65:
         headline_text = headline_text[:62] + "..."
 
-    # 7. Paint the HUGE Text onto the image
+    # ==========================================
+    # 7. PAINT THE HUGE TEXT
+    # ==========================================
     draw.text((360, 420), display_name, fill="#0F172A", font=font_name_obj)
     draw.text((360, 520), headline_text, fill="#0A66C2", font=font_title_obj)
 
-    # 8. Export the image
+    # ==========================================
+    # 8. EXPORT IMAGE
+    # ==========================================
     buffer = io.BytesIO()
     base_img.save(buffer, format="JPEG", quality=95)
     return HttpResponse(buffer.getvalue(), content_type="image/jpeg")
