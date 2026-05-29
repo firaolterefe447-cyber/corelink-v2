@@ -12,8 +12,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
-<!-- EasyMDE for beautiful Markdown textareas -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 
 <style>
     :root {
@@ -58,9 +56,10 @@
         appearance: none;
     }
 
+    /* CLEAN BIG TEXT AREA */
     .django-form textarea {
-        min-height: 120px !important;
-        resize: none !important;
+        min-height: 180px !important; /* Made significantly taller */
+        resize: vertical !important;
         line-height: 1.6 !important;
     }
 
@@ -130,11 +129,6 @@
         box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
         transform: translateY(-2px);
     }
-
-    /* Make EasyMDE editor match your styling */
-    .editor-toolbar { border: 1.5px solid rgba(226, 232, 240, 0.9) !important; border-bottom: none !important; border-radius: 0.75rem 0.75rem 0 0 !important; background: #f8fafc;}
-    .CodeMirror { border: 1.5px solid rgba(226, 232, 240, 0.9) !important; border-radius: 0 0 0.75rem 0.75rem !important; font-family: var(--font-body) !important; font-size: 14px !important; }
-    .CodeMirror-focused { border-color: rgba(10, 102, 194, 0.45) !important; box-shadow: 0 0 0 3px rgba(10,102,194,0.08) !important; }
 </style>
 
 <main class="w-full min-h-screen py-6 px-4 md:py-12 md:px-0 flex justify-center items-start">
@@ -171,7 +165,6 @@
 
         <!-- FORM BODY -->
         <div class="px-5 sm:px-8 py-6 md:py-8 bg-slate-50/30">
-            <!-- ADDED NOVALIDATE HERE TO FIX SILENT ERRORS -->
             <form method="post" enctype="multipart/form-data" id="main-form" class="django-form flex flex-col gap-6" novalidate>
                 {% csrf_token %}
 
@@ -295,30 +288,9 @@
     </div>
 </main>
 
-<!-- Load EasyMDE Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
-
-        // ---------------------------------------------------------
-        // 0. INITIALIZE MARKDOWN EDITORS (For Bio, Logs, Essays)
-        // ---------------------------------------------------------
-        const markdownFields = document.querySelectorAll('.markdown-editor');
-        markdownFields.forEach(field => {
-            // FIX: Remove HTML required attribute to prevent browser blocking hidden fields
-            field.removeAttribute('required');
-
-            new EasyMDE({
-                element: field,
-                forceSync: true, // FIX: Ensure text typed in Editor is pushed to actual form on submit
-                spellChecker: false,
-                status: false,
-                toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "guide"],
-                placeholder: field.getAttribute('placeholder') || "Start writing..."
-            });
-        });
 
         // ---------------------------------------------------------
         // 1. CONVERT NATIVE RADIOS TO PREMIUM DROPDOWNS
@@ -365,17 +337,20 @@
         }
 
         // ---------------------------------------------------------
-        // 2. AUTO-EXPANDING TEXTAREAS (Ignores Markdown Editors)
+        // 2. AUTO-EXPANDING TEXTAREAS (Applies to all text areas now)
         // ---------------------------------------------------------
-        const textareas = document.querySelectorAll('textarea:not(.markdown-editor)');
+        const textareas = document.querySelectorAll('textarea');
         textareas.forEach(textarea => {
-            textarea.setAttribute('placeholder', 'Type here...');
+            // Remove the required attribute just to be completely safe from invisible blocks
+            textarea.removeAttribute('required');
+
             function adjustHeight() {
                 textarea.style.height = 'auto';
                 textarea.style.height = (textarea.scrollHeight + 2) + 'px';
             }
             textarea.addEventListener('input', adjustHeight);
-            setTimeout(adjustHeight, 50);
+            // Wait slightly for DOM to settle before first adjustment
+            setTimeout(adjustHeight, 100);
         });
 
         // ---------------------------------------------------------
@@ -388,7 +363,7 @@
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
 
-                // FIX: Delay button disable to allow form submission to register correctly
+                // Delay button disable to allow form submission to register correctly
                 setTimeout(() => {
                     btn.disabled = true;
                     btn.style.opacity = '0.8';
