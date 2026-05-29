@@ -171,7 +171,8 @@
 
         <!-- FORM BODY -->
         <div class="px-5 sm:px-8 py-6 md:py-8 bg-slate-50/30">
-            <form method="post" enctype="multipart/form-data" id="main-form" class="django-form flex flex-col gap-6">
+            <!-- ADDED NOVALIDATE HERE TO FIX SILENT ERRORS -->
+            <form method="post" enctype="multipart/form-data" id="main-form" class="django-form flex flex-col gap-6" novalidate>
                 {% csrf_token %}
 
                 <!-- SMART GRID: Inputs flow naturally -->
@@ -306,8 +307,12 @@
         // ---------------------------------------------------------
         const markdownFields = document.querySelectorAll('.markdown-editor');
         markdownFields.forEach(field => {
+            // FIX: Remove HTML required attribute to prevent browser blocking hidden fields
+            field.removeAttribute('required');
+
             new EasyMDE({
                 element: field,
+                forceSync: true, // FIX: Ensure text typed in Editor is pushed to actual form on submit
                 spellChecker: false,
                 status: false,
                 toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "guide"],
@@ -378,17 +383,20 @@
         // ---------------------------------------------------------
         const mainForm = document.getElementById('main-form');
         if (mainForm) {
-            mainForm.addEventListener('submit', function() {
+            mainForm.addEventListener('submit', function(e) {
                 const btn = document.getElementById('main-submit-btn');
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
 
-                btn.disabled = true;
-                btn.style.opacity = '0.8';
-                text.innerText = 'Saving...';
-                icon.setAttribute('data-lucide', 'loader-2');
-                icon.classList.add('animate-spin');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
+                // FIX: Delay button disable to allow form submission to register correctly
+                setTimeout(() => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.8';
+                    text.innerText = 'Saving...';
+                    icon.setAttribute('data-lucide', 'loader-2');
+                    icon.classList.add('animate-spin');
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }, 10);
             });
         }
 
