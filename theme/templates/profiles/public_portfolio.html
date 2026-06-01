@@ -10,14 +10,14 @@
 <meta property="og:description" content="{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
 
 <!-- MAGIC OPENGRAPH IMAGE TAGS -->
-<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}">
+<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}?v={% now 'U' %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ user.display_name }}">
 <meta name="twitter:description" content="{{ profile.bio_narrative|truncatechars:120 }}">
-<meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}">
+<meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}?v={% now 'U' %}">
 {% endblock %}
 
 {% block navbar %}
