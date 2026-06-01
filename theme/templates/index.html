@@ -373,7 +373,7 @@
   .mission-block {
     text-align: center;
     max-width: 900px;
-    margin: 0 auto 100px;
+    margin: 0 auto 80px;
   }
   .sec-title {
     font-family: var(--font-display);
@@ -399,151 +399,49 @@
     text-wrap: balance;
   }
 
-  /* --- TYPOGRAPHY FOCUSED BENTO GRID --- */
-  .bento-grid {
+  /* --- CLEAN CARDS GRID --- */
+  .clean-cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     margin-bottom: 100px;
   }
 
-  .bento-card {
+  .clean-card {
     background: #ffffff;
     border: 1px solid var(--border);
     border-radius: var(--r-2xl);
-    padding: 56px;
+    padding: 48px 40px;
     box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
     transition: transform 0.5s var(--ease-out), box-shadow 0.5s ease, border-color 0.5s ease;
     position: relative;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
   }
-  .bento-card:hover {
+  .clean-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 24px 60px rgba(10, 102, 194, 0.12), 0 4px 12px rgba(10,102,194,0.06);
     border-color: rgba(10, 102, 194, 0.3);
   }
 
-  .bento-card::before {
+  .clean-card::before {
     content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%;
-    background: radial-gradient(circle, rgba(10,102,194,0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(10,102,194,0.04) 0%, transparent 70%);
     z-index: 1; pointer-events: none; transition: transform 0.8s var(--ease-out);
   }
-  .bento-card:hover::before { transform: scale(1.3); }
-  .bento-card.alt::before { background: radial-gradient(circle, rgba(6,182,212,0.05) 0%, transparent 70%); top: auto; bottom: -50%; left: -50%; right: auto; }
-
-  .bento-subtitle {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: 16px;
-    display: block;
-    position: relative; z-index: 2;
+  .clean-card:nth-child(2)::before {
+    background: radial-gradient(circle, rgba(6,182,212,0.04) 0%, transparent 70%);
   }
-  .bento-card.alt .bento-subtitle { color: var(--cyan); }
+  .clean-card:hover::before { transform: scale(1.3); }
 
-  .bento-title {
-    font-family: var(--font-display);
-    font-size: 2.8rem;
-    font-style: italic;
-    color: var(--ink);
-    margin-bottom: 24px;
-    line-height: 1.1;
-    position: relative; z-index: 2;
-    transition: color 0.3s;
-  }
-  .bento-card:hover .bento-title { color: var(--blue); }
-  .bento-card.alt:hover .bento-title { color: var(--cyan); }
-
-  .bento-text { position: relative; z-index: 2; margin-bottom: 40px; }
-  .bento-text p {
-    font-size: 15.5px;
+  .clean-card p {
+    position: relative;
+    z-index: 2;
+    font-size: 1.05rem;
     color: var(--ink-muted);
     line-height: 1.8;
     font-weight: 400;
-    margin-bottom: 16px;
-  }
-  .bento-text p:last-child { margin-bottom: 0; }
-
-  .bento-list {
-    margin-top: auto;
-    padding-top: 32px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px 24px;
-    list-style: none;
-    position: relative; z-index: 2;
-  }
-  .bento-list::before {
-    content: '';
-    position: absolute; top: 0; left: 0; width: 60px;
-    height: 2px; background: var(--blue); opacity: 0.3;
-  }
-  .bento-card.alt .bento-list::before { background: var(--cyan); }
-
-  .bento-list li {
-    display: flex; align-items: flex-start; gap: 10px;
-    font-size: 14.5px; font-weight: 600; color: var(--ink);
-  }
-  .bento-list li::before {
-    content: '—';
-    color: var(--blue);
-    font-weight: 300;
-  }
-  .bento-card.alt .bento-list li::before { color: var(--cyan); }
-
-  .bento-card.full-width {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 80px;
-    align-items: center;
-    padding: 72px;
-  }
-  .bento-card.full-width .bento-content {
-    display: flex;
-    flex-direction: column;
-  }
-  .bento-card.full-width .bento-text { margin-bottom: 0; }
-
-  .large-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    list-style: none;
-    position: relative; z-index: 2;
-    padding-top: 0; margin-top: 0;
-  }
-  .large-list::before { display: none; }
-  .large-list li {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3vw, 2.5rem);
-    font-style: italic;
-    color: var(--ink);
-    font-weight: 400;
-    padding: 24px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 24px;
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
-  .large-list li:hover {
-    transform: translateX(10px);
-    color: var(--blue);
-  }
-  .large-list li:first-child { padding-top: 0; }
-  .large-list li:last-child { border-bottom: none; padding-bottom: 0; }
-  .large-list li::before { display: none; }
-  .large-list li span {
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 800;
-    font-style: normal;
-    color: var(--blue);
-    letter-spacing: 0.1em;
-    opacity: 0.6;
+    margin: 0;
   }
 
   /* ==========================================================================
@@ -658,8 +556,7 @@
     .nav-center { display: none; }
     .mobile-menu-btn { display: block; }
 
-    .bento-card.full-width { grid-template-columns: 1fr; gap: 48px; padding: 48px; }
-    .bento-grid { grid-template-columns: 1fr; }
+    .clean-cards-grid { grid-template-columns: 1fr; gap: 24px; }
 
     /* Adapt Footer Grid */
     .footer-main { grid-template-columns: 1fr 1fr; gap: 40px; }
@@ -676,8 +573,7 @@
     .hero-h1 { font-size: clamp(2.8rem, 11vw, 4rem); line-height: 1; }
 
     .main-canvas { padding: 60px 20px 0; border-radius: 24px 24px 0 0; }
-    .bento-card, .bento-card.full-width { padding: 32px 24px; }
-    .bento-list { grid-template-columns: 1fr; }
+    .clean-card { padding: 32px 24px; }
 
     .footer-inner { padding: 60px 20px 24px; }
     .footer-main { grid-template-columns: 1fr; gap: 40px; }
@@ -706,7 +602,6 @@
 
     <div class="nav-center">
       <a href="{% url 'nexus_feed' %}" class="nav-link">{% trans "Discover Talent" %}</a>
-      <!-- Added Our Mission pointing to main narrative section, removed Companies -->
       <a href="#main-content" class="nav-link">{% trans "Our Mission" %}</a>
     </div>
 
@@ -782,7 +677,6 @@
         <span>{% trans "Discover Talent" %}</span>
         <svg class="m-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
       </a>
-      <!-- Replaced Companies link with Our Mission -->
       <a href="#main-content" class="m-nav-link" @click="mobileMenuOpen = false">
         <span>{% trans "Our Mission" %}</span>
         <svg class="m-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
@@ -895,63 +789,26 @@
     <div class="mission-block reveal">
       <h2 class="sec-title">{% blocktrans %}Built to Unite Ethiopia's <br> Professional Family.{% endblocktrans %}</h2>
       <div class="sec-desc-large">
-        <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. We are a space for innovation, creating real opportunities for our country's emerging talent and connecting them to the exact places they need to grow." %}</p>
-        <p>{% trans "We are the living network that Ethiopia has been waiting for. We provide powerful digital visibility and optimization for Ethiopian-based businesses and companies, ensuring that every connection made is a step forward for the nation as a whole." %}</p>
+        <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
       </div>
     </div>
 
-    <!-- The 3-Part Typography Bento Grid -->
-    <div class="bento-grid reveal-stagger">
+    <!-- The 3 Clean Narrative Cards -->
+    <div class="clean-cards-grid reveal-stagger">
 
-      <!-- Card 1: Meet Your Match (Full Width) -->
-      <div class="bento-card full-width">
-        <div class="bento-content">
-          <span class="bento-subtitle">{% trans "Network" %}</span>
-          <h3 class="bento-title">{% trans "Meet Your Match." %}</h3>
-          <div class="bento-text">
-            <p>{% trans "Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
-          </div>
-        </div>
-        <ul class="large-list">
-          <li><span>01.</span> {% trans "Co-founders" %}</li>
-          <li><span>02.</span> {% trans "Peers & Mentors" %}</li>
-          <li><span>03.</span> {% trans "Job Opportunities" %}</li>
-          <li><span>04.</span> {% trans "Collaborators" %}</li>
-        </ul>
+      <!-- Card 1 -->
+      <div class="clean-card">
+        <p>{% trans "CoreLink Ethiopia is an Ethiopian-based professional and talent hub building a community of Ethiopian students, emerging talent, and established professionals rooted in proof of work, collaboration, and continuous growth." %}</p>
       </div>
 
-      <!-- Card 2: For Business (Half) -->
-      <div class="bento-card alt">
-        <span class="bento-subtitle">{% trans "For Business" %}</span>
-        <h3 class="bento-title">{% trans "Your Business, Discoverable by the World." %}</h3>
-        <div class="bento-text">
-          <p>{% trans "Ethiopian startups, companies, businesses, and organizations build their profile on CoreLink by listing their services, telling their story, and making themselves discoverable, by both local and international clients." %}</p>
-          <p>{% trans "No more relying on scattered word of mouth. Your digital storefront is live, searchable, and always working. Clients can browse your service catalog, read about your expertise, and contact you directly, from anywhere in the world." %}</p>
-          <p>{% trans "And when it is time to grow your team, you can instantly search our verified talent pool and find the exact professional your business needs, in your city, at the right moment." %}</p>
-        </div>
-        <ul class="bento-list">
-          <li>{% trans "Business Profile" %}</li>
-          <li>{% trans "Service Catalog" %}</li>
-          <li>{% trans "Local & Global Reach" %}</li>
-          <li>{% trans "Hire Verified Talent" %}</li>
-        </ul>
+      <!-- Card 2 -->
+      <div class="clean-card">
+        <p>{% trans "Our platform optimizes the Ethiopian professional ecosystem by replacing unverified self-claims with a structured, verified digital database to ensure everyone connects with the exact places they need to grow." %}</p>
       </div>
 
-      <!-- Card 3: For Talent (Half) -->
-      <div class="bento-card">
-        <span class="bento-subtitle">{% trans "For Talent" %}</span>
-        <h3 class="bento-title">{% trans "Your Proof of Work, Seen by the Right People." %}</h3>
-        <div class="bento-text">
-          <p>{% trans "Ethiopian talent deserves a professional identity that goes beyond a PDF. CoreLink gives professionals, developers, designers, researchers, strategists, the space to build a deep profile that shows the world exactly what they are capable of." %}</p>
-          <p>{% trans "Link your GitHub projects, upload design portfolios, publish your research, and let your proof of work speak louder than any resume ever could." %}</p>
-          <p>{% trans "With that profile live on CoreLink, you are no longer waiting. Local companies find you. International opportunities reach you. Whether you are looking for full-time roles, freelance work, or meaningful collaborations, our system connects your skills to the right doors, automatically." %}</p>
-        </div>
-        <ul class="bento-list">
-          <li>{% trans "Deep Portfolio" %}</li>
-          <li>{% trans "Proof of Work" %}</li>
-          <li>{% trans "Local Opportunities" %}</li>
-          <li>{% trans "International Reach" %}</li>
-        </ul>
+      <!-- Card 3 -->
+      <div class="clean-card">
+        <p>{% trans "We empower individuals to build credible digital identities and gain direct access to the right opportunities that truly match their capabilities. By fostering these meaningful connections and collaborations, we are driving national economic velocity and building a better future for Ethiopian talent and established professionals from every field." %}</p>
       </div>
 
     </div>
