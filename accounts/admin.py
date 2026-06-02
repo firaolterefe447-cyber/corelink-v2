@@ -46,7 +46,14 @@ def get_user_profile(user):
 # 1. CUSTOM FORMS
 # =========================================================
 
-class CustomUserChangeForm(UserChangeForm):
+class CustomUserChangeForm(forms.ModelForm):
+    # 1. ADDED: Direct password input to fix the broken UUID reset link
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        required=False,
+        help_text=_("Leave blank to keep current password. Type a new one here to reset it.")
+    )
+
     admin_rating = forms.IntegerField(
         min_value=0, max_value=5, required=False,
         label=_("Profile Admin Rating"),
@@ -87,7 +94,16 @@ class CustomUserChangeForm(UserChangeForm):
                     "User does not have an active Unified Portfolio yet. Cannot set rating.")
                 self.fields['is_rating_locked'].help_text = _("Portfolio required to lock rating.")
 
-
+    # 2. ADDED: This safely hashes the new password before saving to the database
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if self.cleaned_data.get("password"):
+            user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+            if hasattr(self, 'save_m2m'):
+                self.save_m2m()
+        return user
 class StaffUserForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(),
