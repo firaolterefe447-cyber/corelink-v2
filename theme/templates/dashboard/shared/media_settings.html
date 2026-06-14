@@ -522,60 +522,79 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Exact Ratio alignment to prevent stretching distortion on save
                 const exactCoverRatio = 1920 / 822;
                 const ratio = mode === 'avatar' ? 1 : exactCoverRatio;
 
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    // ViewMode 3 strictly locks the image so you cannot drag it outside the crop box
-                    viewMode: 3,
+                    // ViewMode 1 restored for Avatar (Big Circle)
+                    // ViewMode 3 kept for Cover (Locked Edges)
+                    viewMode: mode === 'avatar' ? 1 : 3,
                     dragMode: 'move',
-                    autoCropArea: 1, // Maximize crop box immediately
-                    cropBoxMovable: false, // Locked in center like native apps
-                    cropBoxResizable: false, // Cannot be resized by user
+                    // AutoCropArea 0.95 restored for Avatar
+                    // AutoCropArea 1.0 kept for Cover
+                    autoCropArea: mode === 'avatar' ? 0.95 : 1,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
                     toggleDragModeOnDblclick: false,
                     guides: false,
                     center: false,
                     highlight: false,
-                    background: false,     // Disabled to use our pitch-black background
+                    background: false,
                     ready: function () {
                         loader.classList.add('hidden');
                         cropperImg.classList.add('opacity-100');
 
                         const cropBoxData = cropper.getCropBoxData();
                         const imageData = cropper.getImageData();
+                        const canvasData = cropper.getCanvasData();
 
-                        // Math.max forces "object-fit: cover" behavior
-                        // Making it mathematically impossible to have transparent/white empty borders
-                        const minZoomRatio = Math.max(
-                            cropBoxData.width / imageData.naturalWidth,
-                            cropBoxData.height / imageData.naturalHeight
-                        );
+                        if (mode === 'avatar') {
+                            // RESTORED ORIGINAL AVATAR ZOOM LOGIC
+                            const minZoomRatio = Math.max(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+                            zoomSlider.min = minZoomRatio;
+                            zoomSlider.max = minZoomRatio * 3;
+                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
 
-                        zoomSlider.min = minZoomRatio;
-                        zoomSlider.max = minZoomRatio * 3; // Allow up to 3x zoom
-                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
+                            cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
+                            zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
+                        } else {
+                            // FIXED FLAWLESS COVER ZOOM LOGIC
+                            const minZoomRatio = Math.max(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+                            zoomSlider.min = minZoomRatio;
+                            zoomSlider.max = minZoomRatio * 3;
+                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
 
-                        // Snap to perfect fill on load
-                        cropper.zoomTo(minZoomRatio);
-                        zoomSlider.value = minZoomRatio;
-                    },
-                    zoom: function(e) {
-                        const cropBoxData = cropper.getCropBoxData();
-                        const imageData = cropper.getImageData();
-                        const minZoomRatio = Math.max(
-                            cropBoxData.width / imageData.naturalWidth,
-                            cropBoxData.height / imageData.naturalHeight
-                        );
-
-                        // Intercept pinch-to-zoom on touch devices to prevent zooming smaller than bounds
-                        if (e.detail.ratio < minZoomRatio) {
-                            e.preventDefault(); // Stop zoom
                             cropper.zoomTo(minZoomRatio);
                             zoomSlider.value = minZoomRatio;
-                        } else {
+                        }
+                    },
+                    zoom: function(e) {
+                        if (mode === 'avatar') {
+                            // Restored Original Avatar Zoom Event
                             zoomSlider.value = e.detail.ratio;
+                        } else {
+                            // Fixed Cover Lock Zoom Event
+                            const cropBoxData = cropper.getCropBoxData();
+                            const imageData = cropper.getImageData();
+                            const minZoomRatio = Math.max(
+                                cropBoxData.width / imageData.naturalWidth,
+                                cropBoxData.height / imageData.naturalHeight
+                            );
+
+                            if (e.detail.ratio < minZoomRatio) {
+                                e.preventDefault();
+                                cropper.zoomTo(minZoomRatio);
+                                zoomSlider.value = minZoomRatio;
+                            } else {
+                                zoomSlider.value = e.detail.ratio;
+                            }
                         }
                     }
                 });
