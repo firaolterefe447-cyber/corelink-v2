@@ -522,15 +522,16 @@
             if (cropper) { cropper.destroy(); cropper = null; }
 
             setTimeout(() => {
-                // Exact 1:1 Aspect ratio for Avatar, 21:9 for Cover
-                const ratio = mode === 'avatar' ? 1 : (21/9);
+                // Exact Ratio alignment to prevent stretching distortion on save
+                const exactCoverRatio = 1920 / 822;
+                const ratio = mode === 'avatar' ? 1 : exactCoverRatio;
 
                 cropper = new Cropper(cropperImg, {
                     aspectRatio: ratio,
-                    // ViewMode 1 for strict Avatar circle, 0 for flexible Cover Banner zooming
-                    viewMode: mode === 'avatar' ? 1 : 0,
+                    // ViewMode 3 strictly locks the image so you cannot drag it outside the crop box
+                    viewMode: 3,
                     dragMode: 'move',
-                    autoCropArea: 0.95,    // MAGIC: Forces the crop circle/box to be massive
+                    autoCropArea: 1, // Maximize crop box immediately
                     cropBoxMovable: false, // Locked in center like native apps
                     cropBoxResizable: false, // Cannot be resized by user
                     toggleDragModeOnDblclick: false,
@@ -544,41 +545,38 @@
 
                         const cropBoxData = cropper.getCropBoxData();
                         const imageData = cropper.getImageData();
-                        const canvasData = cropper.getCanvasData();
 
-                        if (mode === 'avatar') {
-                            // Avatar zoom logic (strict fitting)
-                            const minZoomRatio = Math.max(
-                                cropBoxData.width / imageData.naturalWidth,
-                                cropBoxData.height / imageData.naturalHeight
-                            );
-                            zoomSlider.min = minZoomRatio;
-                            zoomSlider.max = minZoomRatio * 3;
-                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
+                        // Math.max forces "object-fit: cover" behavior
+                        // Making it mathematically impossible to have transparent/white empty borders
+                        const minZoomRatio = Math.max(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
 
-                            cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
-                            zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
-                        } else {
-                            // Cover zoom logic (flexible zoom out fitting)
-                            const minZoomRatio = Math.min(
-                                cropBoxData.width / imageData.naturalWidth,
-                                cropBoxData.height / imageData.naturalHeight
-                            );
-                            zoomSlider.min = minZoomRatio * 0.9;
-                            zoomSlider.max = minZoomRatio * 5;
-                            zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 200;
+                        zoomSlider.min = minZoomRatio;
+                        zoomSlider.max = minZoomRatio * 3; // Allow up to 3x zoom
+                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
 
-                            const idealInitialScale = Math.max(
-                                cropBoxData.width / imageData.naturalWidth,
-                                cropBoxData.height / imageData.naturalHeight
-                            );
-                            cropper.zoomTo(idealInitialScale);
-                            zoomSlider.value = idealInitialScale;
-                        }
+                        // Snap to perfect fill on load
+                        cropper.zoomTo(minZoomRatio);
+                        zoomSlider.value = minZoomRatio;
                     },
                     zoom: function(e) {
-                        // Keep slider in sync if user pinches-to-zoom on mobile
-                        zoomSlider.value = e.detail.ratio;
+                        const cropBoxData = cropper.getCropBoxData();
+                        const imageData = cropper.getImageData();
+                        const minZoomRatio = Math.max(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
+
+                        // Intercept pinch-to-zoom on touch devices to prevent zooming smaller than bounds
+                        if (e.detail.ratio < minZoomRatio) {
+                            e.preventDefault(); // Stop zoom
+                            cropper.zoomTo(minZoomRatio);
+                            zoomSlider.value = minZoomRatio;
+                        } else {
+                            zoomSlider.value = e.detail.ratio;
+                        }
                     }
                 });
             }, 100);
@@ -620,7 +618,7 @@
         btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2"></i>{% trans "Applying..." %}';
         lucide.createIcons();
 
-        // High DPI / Premium Resolution Target matching Company Banner
+        // High DPI / Premium Resolution Target matching Company Banner perfectly
         const outputWidth = currentMode === 'avatar' ? 800 : 1920;
         const outputHeight = currentMode === 'avatar' ? 800 : 822;
 
