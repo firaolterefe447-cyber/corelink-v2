@@ -307,6 +307,12 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         widget=forms.EmailInput(attrs={"placeholder": "example@domain.com"}),
         required=True,
     )
+    telegram_handle = forms.CharField(
+        label=_("Telegram Username"),
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "@username"}),
+    )
 
     class Meta:
         model = CustomUser
@@ -351,6 +357,7 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.first_name = first_name
         user.last_name = last_name
         user.full_name = f"{first_name} {last_name}".strip()
+        user.telegram_handle = (self.cleaned_data.get("telegram_handle") or "").strip()
 
         user.is_verified = role_type in ["EXPERT", "VISIONARY"]
         user.is_active = True
