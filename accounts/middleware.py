@@ -52,3 +52,15 @@ class EmailVerificationRequiredMiddleware:
                 return redirect("email_verification")
 
         return self.get_response(request)
+from django.utils.cache import add_never_cache_headers
+
+class DisableClientCachingMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        # Apply no-cache headers to all dynamic HTML or API requests
+        if response.has_header('Content-Type') and 'text/html' in response['Content-Type'] or 'application/json' in response['Content-Type']:
+            add_never_cache_headers(response)
+        return response
