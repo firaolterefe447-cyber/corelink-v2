@@ -318,15 +318,13 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         required=False,
         widget=forms.FileInput(),
     )
-    cover_image = forms.ImageField(
-        label=_("Cover Image"),
-        required=False,
-        widget=forms.FileInput(),
-    )
+
+    # --- COVER IMAGE FIELD REMOVED ---
 
     class Meta:
         model = CustomUser
-        fields = ["phone_number", "email"]
+        # ✅ FIX: "avatar" is now included here so Django saves it!
+        fields = ["phone_number", "email", "avatar"]
 
     def clean_phone_number(self):
         phone = normalize_eth_phone(self.cleaned_data.get("phone_number", ""))
@@ -358,6 +356,7 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         return email
 
     def save_user(self, role_type):
+        # Because 'avatar' is in Meta.fields, super().save() will handle it natively.
         user = super().save(commit=False)
         user.role = role_type
         user.set_password(self.cleaned_data["password"])
@@ -369,17 +368,16 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.full_name = f"{first_name} {last_name}".strip()
         user.telegram_handle = (self.cleaned_data.get("telegram_handle") or "").strip()
 
-        # Handle image uploads
+        # Fallback manual assignment just to be 100% safe
         if self.cleaned_data.get("avatar"):
             user.avatar = self.cleaned_data["avatar"]
-        if self.cleaned_data.get("cover_image"):
-            user.cover_image = self.cleaned_data["cover_image"]
+
+        # --- COVER IMAGE SAVING LOGIC REMOVED ---
 
         user.is_verified = role_type in ["EXPERT", "VISIONARY"]
         user.is_active = True
         user.save()
         return user
-
 
 class UnifiedOnboardingForm(BaseRegistrationForm):
     ROLE_CHOICES = [
