@@ -1,3 +1,5 @@
+<!-- START OF FILE Paste June 22, 2026 - 9:25AM -->
+
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -14,13 +16,15 @@
     <meta property="og:title" content="Join CoreLink | Ethiopia's Professional Network">
     <meta property="og:description" content="Build your deep-dive professional identity, discover local opportunities, and connect with verified professionals in Ethiopia.">
 {% endif %}
-<!-- Optional: Add a default share image if you have one in static files -->
-<!-- <meta property="og:image" content="{% static 'images/corelink-preview.png' %}"> -->
 {% endblock %}
 
 {% block navbar %}{% endblock %}
 
 {% block content %}
+<!-- External Libraries for Cropping -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -255,6 +259,90 @@
     /* ── ENTER ANIMATION ── */
     @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     .page-wrapper { animation: fade-up 0.6s var(--ease-out-expo) both; }
+
+    /* ── CROPPER STYLES ── */
+    .cropper-bg { background-image: none !important; background-color: #000 !important; }
+    .cropper-view-box {
+        outline: none !important;
+        border: 2px solid rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85) !important;
+        border-radius: 50% !important; /* Force circular crop area */
+    }
+    .cropper-line, .cropper-point, .cropper-dashed, .cropper-center { display: none !important; }
+    .cropper-drag-box { background-color: transparent !important; }
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 0; }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+        background: #ffffff; cursor: pointer; margin-top: -10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5); border: 2px solid #e2e8f0;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px;
+    }
+    input[type=range]:focus { outline: none; }
+
+    /* ── CIRCULAR AVATAR UPLOAD PREVIEW ── */
+    .avatar-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .avatar-upload-preview {
+        width: 140px;
+        height: 140px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #f8fafc;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .avatar-upload-preview:hover {
+        border-color: var(--blue);
+        background: #f0f9ff;
+        box-shadow: 0 10px 20px -5px rgba(10, 102, 194, 0.2);
+        transform: translateY(-2px);
+    }
+    .avatar-upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .avatar-upload-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    .avatar-upload-preview:hover .avatar-upload-placeholder {
+        color: var(--blue);
+    }
+    .avatar-upload-preview.has-image .avatar-upload-placeholder {
+        display: none;
+    }
+    .avatar-edit-overlay {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        background: rgba(10, 102, 194, 0.85);
+        color: white;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-align: center;
+        padding: 5px 0 8px;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    .avatar-upload-preview.has-image:hover .avatar-edit-overlay {
+        opacity: 1;
+    }
 </style>
 
 <!-- TOP LOADING BAR -->
@@ -529,6 +617,26 @@
                         <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Registering person details" %}</h3>
                     </div>
 
+                    <!-- 10. Circular Profile Image Upload -->
+                    <div class="field-group col-span-2" id="avatar-field">
+                        <div class="avatar-upload-container">
+                            <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden" onchange="openCropper(this)">
+                            <div class="avatar-upload-preview" id="avatar-preview" onclick="document.getElementById('id_avatar').click()">
+                                <div class="avatar-upload-placeholder">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="width: 32px; height: 32px; margin-bottom: 4px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                    </svg>
+                                    <span style="font-size: 13px; font-weight: 700;">{% trans "Upload Photo" %}</span>
+                                </div>
+                                <img id="avatar-preview-img" style="display: none;">
+                                <div class="avatar-edit-overlay">{% trans "Change Photo" %}</div>
+                            </div>
+                            <span class="field-hint" style="margin-top: 0.75rem; display: block;">{% trans "Optional: Upload a professional profile picture." %}</span>
+                            {% if form.avatar.errors %}<span class="field-error" style="margin-top: 0.5rem;">{{ form.avatar.errors }}</span>{% endif %}
+                        </div>
+                    </div>
+
                 </div>
                 <!-- ========================================== -->
 
@@ -540,6 +648,78 @@
         {% trans "Already have an account?" %}
         <a href="{% url 'login' %}">{% trans "Log in" %}</a>
     </p>
+</div>
+
+<!-- ==============================================
+     NATIVE-APP IMMERSIVE CROPPER MODAL
+     ============================================== -->
+<div id="cropper-modal" class="fixed inset-0 z-[150] hidden items-center justify-center opacity-0 transition-opacity duration-300 bg-black">
+
+    <div class="relative w-full h-[100dvh] md:h-[90vh] md:max-h-[800px] md:max-w-4xl bg-black md:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="cropper-content">
+
+        <!-- Header -->
+        <div class="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 md:py-6 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+            <h3 class="text-[18px] md:text-[22px] font-extrabold text-white tracking-tight drop-shadow-lg">{% trans "Move and Scale Photo" %}</h3>
+            <button type="button" onclick="closeProCropper()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition-colors text-white pointer-events-auto active:scale-95">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 20px; height: 20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="flex-1 w-full h-full relative overflow-hidden bg-black" id="cropper-container-wrapper" style="touch-action: none;">
+            <img id="cropper-image" src="" class="block max-w-full max-h-full opacity-0 transition-opacity duration-700">
+            <div id="cropper-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <svg class="animate-spin" fill="none" viewBox="0 0 24 24" style="width: 40px; height: 40px; color: rgba(255,255,255,0.5);">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="absolute bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black via-black/95 to-transparent pt-16 pb-6 px-5 md:pb-8 md:px-10 pointer-events-none">
+            <div class="max-w-2xl mx-auto space-y-6 pointer-events-auto">
+
+                <!-- Tools Row -->
+                <div class="flex items-center justify-between gap-4">
+                    <button type="button" onclick="cropper.rotate(-90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                        </svg>
+                    </button>
+
+                    <!-- Zoom Slider -->
+                    <div class="flex-1 flex items-center gap-3 px-2">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 16px; height: 16px; color: rgba(255,255,255,0.5);">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <input type="range" id="zoom-slider" min="0" max="1" step="0.01" value="0" class="w-full block">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 24px; height: 24px; color: rgba(255,255,255,0.8);">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+
+                    <button type="button" onclick="cropper.rotate(90)" class="w-11 h-11 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-all active:scale-95 shadow-sm">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="closeProCropper()" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 backdrop-blur-md py-4 md:py-4.5 transition-all active:scale-95 text-[15px]">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="button" id="save-crop-btn" class="flex items-center justify-center gap-2 rounded-2xl font-bold bg-[#0A66C2] text-white hover:bg-[#004182] py-4 md:py-4.5 shadow-[0_4px_20px_rgba(10,102,194,0.4)] transition-all active:scale-95 text-[15px]">
+                        {% trans "Save Photo" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -567,7 +747,6 @@
         setTimeout(() => { bar.style.opacity = '0'; }, 350);
     }
 
-    // Run on initial page load
     startBar();
     window.addEventListener('load', finishBar);
 
@@ -617,13 +796,11 @@
         if (!selectedRole) return;
         const isFounder = selectedRole === 'FOUNDER';
 
-        // Targets
         const s2 = document.getElementById('step2-grid');
         const s3 = document.getElementById('step3-space-y');
         const s4 = document.getElementById('step4-dynamic-area');
         const storage = document.getElementById('unused-fields');
 
-        // Fields
         const regFields = document.getElementById('registering-person-fields');
         const locField = document.getElementById('city-location-field');
         const compField = document.getElementById('company-field');
@@ -633,48 +810,37 @@
         const indPath = document.getElementById('path-individual');
         const fndRole = document.getElementById('founder-role-field');
         const founderHeader = document.getElementById('founder-names-header');
+        const avatarField = document.getElementById('avatar-field');
 
-        // Location Hint toggles
         const hintInd = document.getElementById('hint-location-individual');
         const hintComp = document.getElementById('hint-location-company');
 
         if (isFounder) {
-            // STEP 2: Company Name, Location, Sector
             s2.appendChild(compField);
             s2.appendChild(locField);
             s2.appendChild(sectorField);
-
-            // STEP 3: Company Mission isolated
             s3.appendChild(compBio);
-
-            // STEP 4: Registering Person + Role in company
             s4.appendChild(founderHeader);
             s4.appendChild(regFields);
-            regFields.appendChild(fndRole); // Append directly inside the person grid
+            regFields.appendChild(fndRole);
+            s4.appendChild(avatarField);
 
             document.getElementById('founder-divider').style.display = 'block';
 
-            // Clean up unused individual fields
             storage.appendChild(indPath);
             storage.appendChild(indBio);
 
             if (hintInd) hintInd.style.display = 'none';
             if (hintComp) hintComp.style.display = 'block';
-
         } else {
-            // STEP 2: Registering Person details
             s2.appendChild(regFields);
-
-            // STEP 3: Location, Professional Identity, Institution
             s3.appendChild(locField);
             s3.appendChild(indPath);
-
-            // STEP 4: About Me
             s4.appendChild(indBio);
+            s4.appendChild(avatarField);
 
             document.getElementById('founder-divider').style.display = 'none';
 
-            // Clean up unused company fields
             storage.appendChild(founderHeader);
             storage.appendChild(compField);
             storage.appendChild(sectorField);
@@ -694,38 +860,27 @@
 
     /* ── DOM READY : ERROR RECOVERY & URL AUTO-ROUTING ── */
     document.addEventListener('DOMContentLoaded', function () {
-
-        // 1. Check if there are form errors from a previous submission
         const firstErr = document.querySelector('.field-error');
         const roleInput = document.getElementById('{{ form.selected_role.id_for_label }}');
         const currentRole = roleInput ? roleInput.value : '';
 
         if (firstErr) {
-            // Restore dynamic field layouts based on the hidden input role
             applyRoleLayout(currentRole);
-
-            // Jump directly to the step containing the error
             const errStep = firstErr.closest('.form-step');
             if (errStep) showStep(parseInt(errStep.id.split('-')[1]));
-        }
-        else {
-            // 2. Fresh Load - Check URL parameters for auto-routing
+        } else {
             const urlParams = new URLSearchParams(window.location.search);
             const userType = urlParams.get('type');
 
             if (userType === 'talent' || userType === 'individual') {
-                setRole('EXPERT'); // Auto-select Talent and jump to step 2
-            }
-            else if (userType === 'company' || userType === 'business') {
-                setRole('FOUNDER'); // Auto-select Company and jump to step 2
-            }
-            else {
-                // Prepare layout natively without jumping to Step 2
+                setRole('EXPERT');
+            } else if (userType === 'company' || userType === 'business') {
+                setRole('FOUNDER');
+            } else {
                 applyRoleLayout('EXPERT');
             }
         }
 
-        /* ── FULL PAGE SUBMIT LOADER ── */
         const form   = document.getElementById('onboarding-form');
         const loader = document.getElementById('full-page-loader');
 
@@ -745,6 +900,163 @@
             }
         });
     });
+
+    /* ── SIMPLIFIED AVATAR CROPPER LOGIC ── */
+    let cropper = null;
+    let currentInput = null;
+    const zoomSlider = document.getElementById('zoom-slider');
+
+    window.openCropper = function(input) {
+        currentInput = input;
+        if (!input.files || !input.files.length) return;
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const cropperModal = document.getElementById('cropper-modal');
+            const cropperContent = document.getElementById('cropper-content');
+            const cropperImg = document.getElementById('cropper-image');
+            const loader = document.getElementById('cropper-loader');
+
+            cropperModal.classList.remove('hidden');
+            cropperModal.classList.add('flex');
+            void cropperModal.offsetWidth;
+            cropperModal.classList.remove('opacity-0');
+            cropperContent.classList.remove('scale-95');
+            cropperContent.classList.add('scale-100');
+            document.body.style.overflow = 'hidden';
+
+            cropperImg.src = e.target.result;
+            cropperImg.classList.remove('opacity-100');
+            loader.classList.remove('hidden');
+
+            if (cropper) { cropper.destroy(); cropper = null; }
+
+            setTimeout(() => {
+                cropper = new Cropper(cropperImg, {
+                    aspectRatio: 1, // Always 1:1 for Avatar
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.95,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    toggleDragModeOnDblclick: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    background: false,
+                    ready: function () {
+                        loader.classList.add('hidden');
+                        cropperImg.classList.add('opacity-100');
+
+                        const cropBoxData = cropper.getCropBoxData();
+                        const imageData = cropper.getImageData();
+                        const canvasData = cropper.getCanvasData();
+
+                        const minZoomRatio = Math.max(
+                            cropBoxData.width / imageData.naturalWidth,
+                            cropBoxData.height / imageData.naturalHeight
+                        );
+                        zoomSlider.min = minZoomRatio;
+                        zoomSlider.max = minZoomRatio * 3;
+                        zoomSlider.step = (zoomSlider.max - zoomSlider.min) / 100;
+
+                        cropper.zoomTo(Math.max(minZoomRatio, canvasData.width / imageData.naturalWidth));
+                        zoomSlider.value = cropper.getImageData().width / imageData.naturalWidth;
+                    },
+                    zoom: function(e) {
+                        zoomSlider.value = e.detail.ratio;
+                    }
+                });
+            }, 100);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    zoomSlider.addEventListener('input', function() {
+        if (cropper) { cropper.zoomTo(parseFloat(this.value)); }
+    });
+
+    window.closeProCropper = function() {
+        const cropperModal = document.getElementById('cropper-modal');
+        const cropperContent = document.getElementById('cropper-content');
+
+        cropperModal.classList.add('opacity-0');
+        cropperContent.classList.remove('scale-100');
+        cropperContent.classList.add('scale-95');
+
+        setTimeout(() => {
+            cropperModal.classList.add('hidden');
+            cropperModal.classList.remove('flex');
+            document.body.style.overflow = '';
+            if (currentInput) currentInput.value = '';
+            if (cropper) { cropper.destroy(); cropper = null; }
+            currentInput = null;
+        }, 300);
+    }
+
+    document.getElementById('save-crop-btn').addEventListener('click', function() {
+        if (!cropper) return;
+        const btn = this;
+        const originalContent = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        btn.innerHTML = '<svg class="animate-spin inline-block mr-2" fill="none" viewBox="0 0 24 24" style="width: 20px; height: 20px;"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>{% trans "Saving..." %}';
+
+        let originalCanvas = cropper.getCroppedCanvas({
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
+        });
+
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = 800;
+        finalCanvas.height = 800;
+        const ctx = finalCanvas.getContext('2d');
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        ctx.drawImage(originalCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+        finalCanvas.toBlob((blob) => {
+            if (!blob) {
+                finalCanvas.toBlob((fallbackBlob) => {
+                    processCroppedBlob(fallbackBlob, btn, originalContent, 'image/jpeg');
+                }, 'image/jpeg', 0.95);
+                return;
+            }
+            processCroppedBlob(blob, btn, originalContent, 'image/webp');
+        }, 'image/webp', 0.95);
+    });
+
+    function processCroppedBlob(blob, btn, originalContent, mimeType) {
+        const extension = mimeType === 'image/webp' ? '.webp' : '.jpg';
+        const file = new File([blob], 'avatar' + extension, { type: mimeType });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        currentInput.files = dataTransfer.files;
+
+        const preview = document.getElementById('avatar-preview');
+        const previewImg = document.getElementById('avatar-preview-img');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+            preview.classList.add('has-image');
+        };
+        reader.readAsDataURL(blob);
+
+        closeProCropper();
+
+        btn.disabled = false;
+        btn.classList.remove('opacity-80', 'cursor-not-allowed');
+        btn.innerHTML = originalContent;
+    }
 })();
 </script>
 {% endblock %}

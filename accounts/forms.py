@@ -313,6 +313,16 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "@username"}),
     )
+    avatar = forms.ImageField(
+        label=_("Profile Picture"),
+        required=False,
+        widget=forms.FileInput(),
+    )
+    cover_image = forms.ImageField(
+        label=_("Cover Image"),
+        required=False,
+        widget=forms.FileInput(),
+    )
 
     class Meta:
         model = CustomUser
@@ -358,6 +368,12 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.last_name = last_name
         user.full_name = f"{first_name} {last_name}".strip()
         user.telegram_handle = (self.cleaned_data.get("telegram_handle") or "").strip()
+
+        # Handle image uploads
+        if self.cleaned_data.get("avatar"):
+            user.avatar = self.cleaned_data["avatar"]
+        if self.cleaned_data.get("cover_image"):
+            user.cover_image = self.cleaned_data["cover_image"]
 
         user.is_verified = role_type in ["EXPERT", "VISIONARY"]
         user.is_active = True
@@ -419,7 +435,8 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
                 "rows": 4,
             }
         ),
-        help_text=_("Share your story. This will act as the bio on your public portfolio."),
+        help_text=_("Share your story. This will act as the bio on your public portfolio. Minimum 150 characters."),
+        min_length=150,
     )
 
     # ---------------------------------------------------------
