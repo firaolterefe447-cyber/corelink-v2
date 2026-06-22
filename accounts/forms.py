@@ -470,7 +470,8 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
             if not inst_name:
                 self.add_error("institution_name", _("Please specify your institution or enter 'Self-Learning'."))
             else:
-                institution, _ = Institution.objects.get_or_create(
+                # ✅ FIX: Changed '_' to 'created' to prevent overwriting the translation function
+                institution, created = Institution.objects.get_or_create(
                     name__iexact=inst_name,
                     defaults={"name": inst_name, "is_verified": False},
                 )
@@ -485,7 +486,6 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
                 self.add_error("sector", _("Please specify your industry sector."))
 
         return cleaned_data
-
     def save(self, commit=True):
         with transaction.atomic():
             role = self.cleaned_data.get("selected_role") or "EXPERT"
