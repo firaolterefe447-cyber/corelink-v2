@@ -279,64 +279,41 @@ class AvatarUpdateForm(TailwindFormMixin, forms.ModelForm):
 # ==============================================================================
 
 
-class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
-    first_name = forms.CharField(
-        label=_("First Name"),
-        max_length=150,
-        widget=forms.TextInput(attrs={"placeholder": "First Name"}),
-    )
-    last_name = forms.CharField(
-        label=_("Last Name"),
-        max_length=150,
-        widget=forms.TextInput(attrs={"placeholder": "Last Name"}),
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "4 digit PIN "}),
-        label=_("Password"),
-    )
-    confirm_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
-        label=_("Confirm Password"),
-    )
-    phone_number = forms.CharField(
-        label=_("Phone Number"),
-        widget=forms.TextInput(attrs={"placeholder": "09... or +86..."}),
-    )
-    email = forms.EmailField(
-        label=_("Email Address"),
-        widget=forms.EmailInput(attrs={"placeholder": "example@domain.com"}),
-        required=True,
-    )
-    telegram_handle = forms.CharField(
-        label=_("Telegram Username"),
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={"placeholder": "@username"}),
-    )
-    avatar = forms.ImageField(
-        label=_("Profile Picture"),
-        required=False,
-        widget=forms.FileInput(),
-    )
+import base64
+import uuid
+from django.core.files.base import ContentFile
 
-    # --- COVER IMAGE FIELD REMOVED ---
+
+class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
+    first_name = forms.CharField(label=_("First Name"), max_length=150,
+                                 widget=forms.TextInput(attrs={"placeholder": "First Name"}))
+    last_name = forms.CharField(label=_("Last Name"), max_length=150,
+                                widget=forms.TextInput(attrs={"placeholder": "Last Name"}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "4 digit PIN "}), label=_("Password"))
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
+                                       label=_("Confirm Password"))
+    phone_number = forms.CharField(label=_("Phone Number"),
+                                   widget=forms.TextInput(attrs={"placeholder": "09... or +86..."}))
+    email = forms.EmailField(label=_("Email Address"),
+                             widget=forms.EmailInput(attrs={"placeholder": "example@domain.com"}), required=True)
+    telegram_handle = forms.CharField(label=_("Telegram Username"), max_length=100, required=False,
+                                      widget=forms.TextInput(attrs={"placeholder": "@username"}))
+
+    avatar = forms.ImageField(label=_("Profile Picture"), required=False, widget=forms.FileInput())
+
+    # ✅ NEW: Hidden text field to carry the cropped image data safely
+    avatar_base64 = forms.CharField(required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = CustomUser
-        # ✅ FIX: "avatar" is now included here so Django saves it!
-        fields = ["phone_number", "email", "avatar"]
+        fields = ["phone_number", "email"]
 
     def clean_phone_number(self):
         phone = normalize_eth_phone(self.cleaned_data.get("phone_number", ""))
-
-        # Validate E.164 format: Starts with '+' followed by 7 to 15 digits
         if not (phone.startswith("+") and phone[1:].isdigit() and 7 <= len(phone[1:]) <= 15):
             raise ValidationError(_("Invalid Format. Use 09..., 07..., or include your country code (e.g., +86...)."))
-
         if CustomUser.objects.filter(phone_number=phone).exists():
-            raise ValidationError(
-                _("This phone number is already registered. Please login.")
-            )
+            raise ValidationError(_("This phone number is already registered. Please login."))
         return phone
 
     def clean(self):
@@ -350,13 +327,10 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         if email:
             email = email.lower().strip()
             if CustomUser.objects.filter(email=email).exists():
-                raise ValidationError(
-                    _("This email is already registered. Please login.")
-                )
+                raise ValidationError(_("This email is already registered. Please login."))
         return email
 
     def save_user(self, role_type):
-        # Because 'avatar' is in Meta.fields, super().save() will handle it natively.
         user = super().save(commit=False)
         user.role = role_type
         user.set_password(self.cleaned_data["password"])
@@ -368,11 +342,19 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.full_name = f"{first_name} {last_name}".strip()
         user.telegram_handle = (self.cleaned_data.get("telegram_handle") or "").strip()
 
-        # Fallback manual assignment just to be 100% safe
-        if self.cleaned_data.get("avatar"):
+        # ✅ THE MAGIC: Decode the Base64 text string back into a real image file!
+        avatar_b64 = self.cleaned_data.get("avatar_base64")
+        if avatar_b64 and ";base64," in avatar_b64:
+            try:
+                format_str, imgstr = avatar_b64.split(';base64,')
+                ext = format_str.split('/')[-1]
+                # Create a unique filename
+                filename = f"avatar_{uuid.uuid4().hex[:8]}.{ext}"
+                user.avatar.save(filename, ContentFile(base64.b64decode(imgstr)), save=False)
+            except Exception as e:
+                logger.error(f"Failed to decode base64 avatar: {e}")
+        elif self.cleaned_data.get("avatar"):
             user.avatar = self.cleaned_data["avatar"]
-
-        # --- COVER IMAGE SAVING LOGIC REMOVED ---
 
         user.is_verified = role_type in ["EXPERT", "VISIONARY"]
         user.is_active = True
