@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static i18n %}
 
@@ -864,6 +862,48 @@
 
     /* ── DOM READY : ERROR RECOVERY & URL AUTO-ROUTING ── */
     document.addEventListener('DOMContentLoaded', function () {
+
+        // --- NEW CODE: QUIETLY ENFORCE LENGTH WITH CUSTOM MESSAGES ---
+        function enforceQuietValidation(containerId, isCompany) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const textarea = container.querySelector('textarea');
+            if (!textarea) return;
+
+            // Enforce required and minlength behind the scenes
+            textarea.setAttribute('required', 'required');
+            textarea.setAttribute('minlength', '150');
+
+            // Clear the custom error when they start typing so they aren't blocked
+            textarea.addEventListener('input', function() {
+                this.setCustomValidity('');
+            });
+
+            // Intercept the browser's default error message and replace it with ours
+            textarea.addEventListener('invalid', function(e) {
+                const len = this.value.trim().length;
+
+                if (len === 0) {
+                    this.setCustomValidity(
+                        isCompany
+                        ? "Please write something about your company."
+                        : "Please write a little bit about yourself."
+                    );
+                } else if (len < 150) {
+                    this.setCustomValidity(
+                        isCompany
+                        ? "Please explain your company a bit more. A detailed mission helps you stand out!"
+                        : "Please explain a bit more about yourself. A good profile helps you connect better!"
+                    );
+                }
+            });
+        }
+
+        // Apply it to Individual Bio and Company Bio
+        enforceQuietValidation('path-individual-bio', false);
+        enforceQuietValidation('path-company-bio', true);
+        // -------------------------------------------------------------
+
         const firstErr = document.querySelector('.field-error');
         const roleInput = document.getElementById('{{ form.selected_role.id_for_label }}');
         const currentRole = roleInput ? roleInput.value : '';
