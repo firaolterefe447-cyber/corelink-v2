@@ -852,6 +852,19 @@
             if (hintInd) hintInd.style.display = 'block';
             if (hintComp) hintComp.style.display = 'none';
         }
+
+        // === SURGICAL FIX: DISABLE HIDDEN FIELDS TO ALLOW SUBMISSION ===
+        // 1. Enable all form inputs first to reset their state
+        document.querySelectorAll('#onboarding-form input, #onboarding-form select, #onboarding-form textarea').forEach(el => {
+            el.disabled = false;
+        });
+
+        // 2. Disable ONLY the inputs that are currently hidden inside 'unused-fields'
+        if (storage) {
+            storage.querySelectorAll('input, select, textarea').forEach(el => {
+                el.disabled = true;
+            });
+        }
     }
 
     window.setRole = function (role) {
