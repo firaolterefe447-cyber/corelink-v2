@@ -268,8 +268,8 @@
 
     @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-    .drawer-open  { transform: translateY(0); }
-    .drawer-closed { transform: translateY(100%); }
+    .drawer-open  { transform: translate3d(0, 0, 0); }
+    .drawer-closed { transform: translate3d(0, 100%, 0); }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
@@ -1173,7 +1173,7 @@
 {% endif %}
 
 <!-- BIO EDITOR MODAL -->
-<div id="bio-editor-backdrop" onclick="closeBioEditor()" class="fixed inset-0 bg-slate-900/50 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm"></div>
+<div id="bio-editor-backdrop" onclick="closeBioEditor()" class="fixed inset-0 bg-slate-900/50 z-[200] opacity-0 pointer-events-none transition-opacity duration-300"></div>
 <div id="bio-editor-wrapper" class="fixed inset-0 z-[210] flex items-end justify-center md:items-center pointer-events-none opacity-0 transition-opacity duration-300 px-0 md:px-4">
     <div id="bio-editor-modal" class="bg-white w-full md:max-w-2xl h-[82vh] md:h-[480px] rounded-t-[1.25rem] md:rounded-[1rem] shadow-2xl flex flex-col overflow-hidden transform translate-y-full md:translate-y-8 md:scale-95 transition-all duration-300 ease-out border border-slate-200">
         <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100">
@@ -1211,8 +1211,8 @@
 </div>
 
 <!-- MOBILE NAV DRAWER -->
-<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="will-change-transform md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
     <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
     <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
 
@@ -1280,8 +1280,8 @@
 </div>
 
 <!-- LANGUAGE DRAWER -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[320px] bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] md:rounded-t-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-6">
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="will-change-transform fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[320px] bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] md:rounded-t-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
     <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
     <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
