@@ -228,9 +228,23 @@ class ApplicationRequestInline(TabularInline):
     model = ApplicationRequest
     extra = 0
     tab = True
-    readonly_fields = ['submission_data', 'created_at']
-    fields = ['role_type', 'status', 'cv_file', 'admin_notes', 'created_at']
-    can_delete = True
+
+    # 1. We make 'cv_file' completely readonly so the dangerous 'Clear' checkbox disappears.
+    # 2. We add our custom 'safe_download_cv' button.
+    readonly_fields = ['submission_data', 'created_at', 'safe_download_cv', 'cv_file']
+
+    # Put the safe button exactly where you want it
+    fields = ['role_type', 'status', 'safe_download_cv', 'admin_notes', 'created_at']
+    can_delete = False  # Prevents accidentally deleting the whole row in the inline
+
+    @display(description=_("CV Action"))
+    def safe_download_cv(self, obj):
+        if obj.cv_file:
+            return format_html(
+                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">⬇️ Open CV</a>',
+                obj.cv_file.url
+            )
+        return mark_safe('<span style="color: #9ca3af; font-size: 11px; font-weight: bold;">NO CV</span>')
 
 
 class CityInline(TabularInline):
@@ -489,13 +503,28 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 # 4. SECONDARY ADMINS
 # =========================================================
 
+
 @admin.register(ApplicationRequest)
 class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-created_at',)
-    list_display = ['user', 'role_type', 'status_badge', 'display_cv', 'created_at']
+
+    # Put the big button right in the list view too!
+    list_display = ['user', 'role_type', 'status_badge', 'download_cv_btn', 'created_at']
     list_filter = ['status', 'role_type', 'created_at']
     search_fields = ['user__full_name', 'user__phone_number']
-    readonly_fields = ['submission_data']
+
+    # Make the actual file field readonly to kill the delete checkbox
+    readonly_fields = ['submission_data', 'created_at', 'download_cv_btn', 'cv_file']
+
+    # We redesign the page layout to put the Button at the absolute TOP
+    fieldsets = (
+        (_("🚨 Quick Actions"), {
+            "fields": ('download_cv_btn', 'status'),
+        }),
+        (_("Application Details"), {
+            "fields": ('user', 'role_type', 'admin_notes', 'submission_data', 'created_at')
+        }),
+    )
 
     @display(description=_("Status"))
     def status_badge(self, obj):
@@ -508,13 +537,20 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
         )
 
     @display(description=_("CV Document"))
-    def display_cv(self, obj):
+    def download_cv_btn(self, obj):
+        """
+        Creates a massive, unmissable, safe download button.
+        """
         if obj.cv_file:
-            return format_html('<a href="{}" target="_blank" style="color: #2563eb; font-weight: bold;">📄 View CV</a>',
-                               obj.cv_file.url)
-        return mark_safe('<span style="color: #9ca3af; font-size: 11px;">No CV</span>')
-
-
+            return format_html(
+                '<a href="{}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background-color: #0A66C2; color: white; border-radius: 8px; font-weight: 800; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
+                '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>'
+                'View & Download CV'
+                '</a>',
+                obj.cv_file.url
+            )
+        return mark_safe(
+            '<span style="color: #ef4444; font-weight: bold; padding: 10px; background: #fef2f2; border-radius: 6px; display: inline-block;">No CV Attached to this application.</span>')
 @admin.register(CommunityContributor)
 class CommunityContributorAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-created_at',)
