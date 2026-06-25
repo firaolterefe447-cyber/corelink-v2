@@ -1,7 +1,9 @@
+import csv
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserChangeForm
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -40,6 +42,71 @@ def get_user_profile(user):
     except ObjectDoesNotExist:
         pass
     return None
+
+
+# =========================================================
+# EXPORT ACTION: CSV DATA EXPORT
+# =========================================================
+@admin.action(description=_("Export Selected Users to CSV"))
+def export_users_to_csv(modeladmin, request, queryset):
+    """
+    Generates a clean CSV file containing the user's Name,
+    Profile URL, Title, Phone, Email, and Telegram.
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
+    response.write(u'\ufeff'.encode('utf8'))  # BOM for Excel compatibility with special characters
+
+    writer = csv.writer(response)
+
+    # Write the Header Row
+    writer.writerow([
+        'Full Name',
+        'Profile Link',
+        'Professional Title',
+        'Phone Number',
+        'Email',
+        'Telegram Handle'
+    ])
+
+    # Performance optimization: prefetch the portfolio and headlines
+    queryset = queryset.select_related('portfolio').prefetch_related('portfolio__headlines')
+
+    for user in queryset:
+        # 1. Safely extract the Professional Title
+        title = "No Title Provided"
+        profile = get_user_profile(user)
+        if profile:
+            primary_headline = profile.headlines.filter(is_primary=True).first()
+            if primary_headline:
+                title = primary_headline.title
+            else:
+                first_headline = profile.headlines.first()
+                if first_headline:
+                    title = first_headline.title
+
+        # 2. Safely generate the absolute URL
+        try:
+            profile_path = user.get_absolute_url()
+            full_url = request.build_absolute_uri(profile_path)
+        except Exception:
+            full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
+
+        # 3. Clean null values
+        email = user.email if user.email else "N/A"
+        telegram = user.telegram_handle if user.telegram_handle else "N/A"
+
+        # 4. Write the row
+        writer.writerow([
+            user.display_name,
+            full_url,
+            title,
+            user.phone_number,
+            email,
+            telegram
+        ])
+
+    return response
 
 
 # =========================================================
@@ -104,6 +171,8 @@ class CustomUserChangeForm(forms.ModelForm):
             if hasattr(self, 'save_m2m'):
                 self.save_m2m()
         return user
+
+
 class StaffUserForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(),
@@ -181,6 +250,9 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     add_form = CustomUserAdminCreationForm
     form = CustomUserChangeForm
     ordering = ('-date_joined',)
+
+    # ADDED THE EXPORT ACTION HERE
+    actions = [export_users_to_csv]
 
     list_display = [
         'display_header',
