@@ -12,7 +12,8 @@ from django.utils.translation import gettext_lazy as _
 # UNFOLD IMPORTS (Strictly Unfold - No Django Overrides)
 # =========================================================
 from unfold.admin import ModelAdmin, TabularInline
-from unfold.decorators import display
+# ADDED 'action' to decorators for the top button
+from unfold.decorators import display, action
 
 # =========================================================
 # INTERNAL IMPORTS
@@ -42,71 +43,6 @@ def get_user_profile(user):
     except ObjectDoesNotExist:
         pass
     return None
-
-
-# =========================================================
-# EXPORT ACTION: CSV DATA EXPORT
-# =========================================================
-@admin.action(description=_("Export Selected Users to CSV"))
-def export_users_to_csv(modeladmin, request, queryset):
-    """
-    Generates a clean CSV file containing the user's Name,
-    Profile URL, Title, Phone, Email, and Telegram.
-    """
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
-    response.write(u'\ufeff'.encode('utf8'))  # BOM for Excel compatibility with special characters
-
-    writer = csv.writer(response)
-
-    # Write the Header Row
-    writer.writerow([
-        'Full Name',
-        'Profile Link',
-        'Professional Title',
-        'Phone Number',
-        'Email',
-        'Telegram Handle'
-    ])
-
-    # Performance optimization: prefetch the portfolio and headlines
-    queryset = queryset.select_related('portfolio').prefetch_related('portfolio__headlines')
-
-    for user in queryset:
-        # 1. Safely extract the Professional Title
-        title = "No Title Provided"
-        profile = get_user_profile(user)
-        if profile:
-            primary_headline = profile.headlines.filter(is_primary=True).first()
-            if primary_headline:
-                title = primary_headline.title
-            else:
-                first_headline = profile.headlines.first()
-                if first_headline:
-                    title = first_headline.title
-
-        # 2. Safely generate the absolute URL
-        try:
-            profile_path = user.get_absolute_url()
-            full_url = request.build_absolute_uri(profile_path)
-        except Exception:
-            full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
-
-        # 3. Clean null values
-        email = user.email if user.email else "N/A"
-        telegram = user.telegram_handle if user.telegram_handle else "N/A"
-
-        # 4. Write the row
-        writer.writerow([
-            user.display_name,
-            full_url,
-            title,
-            user.phone_number,
-            email,
-            telegram
-        ])
-
-    return response
 
 
 # =========================================================
@@ -161,7 +97,6 @@ class CustomUserChangeForm(forms.ModelForm):
                     "User does not have an active Unified Portfolio yet. Cannot set rating.")
                 self.fields['is_rating_locked'].help_text = _("Portfolio required to lock rating.")
 
-    # 2. ADDED: This safely hashes the new password before saving to the database
     def save(self, commit=True):
         user = super().save(commit=False)
         if self.cleaned_data.get("password"):
@@ -229,13 +164,9 @@ class ApplicationRequestInline(TabularInline):
     extra = 0
     tab = True
 
-    # 1. We make 'cv_file' completely readonly so the dangerous 'Clear' checkbox disappears.
-    # 2. We add our custom 'safe_download_cv' button.
     readonly_fields = ['submission_data', 'created_at', 'safe_download_cv', 'cv_file']
-
-    # Put the safe button exactly where you want it
     fields = ['role_type', 'status', 'safe_download_cv', 'admin_notes', 'created_at']
-    can_delete = False  # Prevents accidentally deleting the whole row in the inline
+    can_delete = False
 
     @display(description=_("CV Action"))
     def safe_download_cv(self, obj):
@@ -265,8 +196,75 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     form = CustomUserChangeForm
     ordering = ('-date_joined',)
 
-    # ADDED THE EXPORT ACTION HERE
-    actions = [export_users_to_csv]
+    # =========================================================
+    # NEW: TOP-LEVEL SAFE EXPORT BUTTON (No Dropdown needed)
+    # =========================================================
+    changelist_actions = ("export_csv_action",)
+
+    @action(description=_("📥 Export All Users to CSV"), url_path="export-all-users")
+    def export_csv_action(self, request):
+        """
+        Safely generates the CSV. Moved to the top of the page as a dedicated button.
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
+        response.write(u'\ufeff'.encode('utf8'))  # BOM for Excel compatibility
+
+        writer = csv.writer(response)
+
+        # Header Row
+        writer.writerow([
+            'Full Name',
+            'Profile Link',
+            'Professional Title',
+            'Phone Number',
+            'Email',
+            'Telegram Handle'
+        ])
+
+        # Fetch all active users, optimized queries
+        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
+
+        for user in queryset:
+            # Extract Title
+            title = "No Title Provided"
+            profile = get_user_profile(user)
+            if profile:
+                primary_headline = profile.headlines.filter(is_primary=True).first()
+                if primary_headline:
+                    title = primary_headline.title
+                else:
+                    first_headline = profile.headlines.first()
+                    if first_headline:
+                        title = first_headline.title
+
+            # Extract URL
+            try:
+                profile_path = user.get_absolute_url()
+                full_url = request.build_absolute_uri(profile_path)
+            except Exception:
+                full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
+
+            # Clean Values
+            email = user.email if user.email else "N/A"
+            telegram = user.telegram_handle if user.telegram_handle else "N/A"
+
+            # EXCEL FIX: Prepending '="' forces Excel to read it as a text string instead of scientific math
+            phone = f'="{user.phone_number}"' if user.phone_number else "N/A"
+
+            # Write Row
+            writer.writerow([
+                user.display_name,
+                full_url,
+                title,
+                phone,
+                email,
+                telegram
+            ])
+
+        return response
+
+    # ---------------------------------------------------------
 
     list_display = [
         'display_header',
@@ -353,7 +351,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # PERFORMANCE FIX: Replaced legacy profiles with the single 'portfolio' relation
         return qs.select_related('portfolio')
 
     def save_model(self, request, obj, form, change):
@@ -381,9 +378,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             if update_fields:
                 profile.save(update_fields=update_fields)
 
-    # --- 🎯 UI FIXES: FORCE WRAPPING AND STOP ROW CLICK ---
-
-    # INJECTING CSS HERE: This keeps the columns permanently sticky to the top when scrolling without touching settings!
     STICKY_HEADER_CSS = mark_safe(
         str(_("User Identity")) +
         '<style>'
@@ -397,7 +391,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     def display_header(self, obj):
         image_url = obj.avatar.url if obj.avatar else f"https://ui-avatars.com/api/?name={obj.full_name}&background=EBF4FF&color=7F9CF5"
 
-        # Company Badge Logic
         company_html = ""
         memberships = obj.company_memberships.filter(is_active=True).select_related('company')
         if memberships.exists():
@@ -406,13 +399,11 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         elif str(getattr(obj, 'role', '')).upper() == 'FOUNDER':
             company_html = '<div style="font-size: 10px; font-weight: bold; color: #854d0e; margin-top: 2px;">👑 Independent Founder</div>'
 
-        # Fetch the exact absolute URL defined in your models.py
         try:
             profile_url = obj.get_absolute_url()
         except Exception:
             profile_url = f"/profile/{obj.corelink_id or obj.id}/"
 
-        # Sleek, professional View Profile link with SVG embedded indicator
         link_html = f'''
             <div style="margin-top: 8px;">
                 <a href="{profile_url}" target="_blank" onclick="event.stopPropagation();" 
@@ -425,7 +416,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             </div>
         '''
 
-        # Enforced max-width: 250px so it forces the table to shrink
         return format_html(
             '''
             <div style="display: flex; align-items: flex-start; gap: 10px; min-width: 180px; max-width: 250px; white-space: normal;">
@@ -448,7 +438,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         phone = obj.phone_number or '<span style="color: #9ca3af;">No Phone</span>'
         email = obj.email or '<span style="color: #9ca3af;">No Email</span>'
 
-        # Enforced max-width: 200px and word-wrap to prevent table stretching
         return format_html(
             '<div style="font-size: 11px; line-height: 1.5; min-width: 140px; max-width: 200px; white-space: normal; word-wrap: break-word;">'
             '<strong>📞</strong> {}<br>'
@@ -503,20 +492,16 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 # 4. SECONDARY ADMINS
 # =========================================================
 
-
 @admin.register(ApplicationRequest)
 class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-created_at',)
 
-    # Put the big button right in the list view too!
     list_display = ['user', 'role_type', 'status_badge', 'download_cv_btn', 'created_at']
     list_filter = ['status', 'role_type', 'created_at']
     search_fields = ['user__full_name', 'user__phone_number']
 
-    # Make the actual file field readonly to kill the delete checkbox
     readonly_fields = ['submission_data', 'created_at', 'download_cv_btn', 'cv_file']
 
-    # We redesign the page layout to put the Button at the absolute TOP
     fieldsets = (
         (_("🚨 Quick Actions"), {
             "fields": ('download_cv_btn', 'status'),
@@ -538,9 +523,6 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
 
     @display(description=_("CV Document"))
     def download_cv_btn(self, obj):
-        """
-        Creates a massive, unmissable, safe download button.
-        """
         if obj.cv_file:
             return format_html(
                 '<a href="{}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background-color: #0A66C2; color: white; border-radius: 8px; font-weight: 800; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
@@ -551,6 +533,8 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
             )
         return mark_safe(
             '<span style="color: #ef4444; font-weight: bold; padding: 10px; background: #fef2f2; border-radius: 6px; display: inline-block;">No CV Attached to this application.</span>')
+
+
 @admin.register(CommunityContributor)
 class CommunityContributorAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-created_at',)
