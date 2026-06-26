@@ -151,7 +151,17 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
         return cv
 
 
+# ==============================================================================
+# UPGRADED: DYNAMIC CONTEXT-AWARE PROJECT FORM FOR ALL 13 PROFESSIONS
+# ==============================================================================
 class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
+    """
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║         DYNAMIC CONTEXT-AWARE PROJECT FORM FOR ALL 13 PROFESSIONS            ║
+    ║   Every field adapts based on selected category. Users always feel guided.   ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
+    """
+    
     class Meta:
         model = PortfolioProject
         fields = ['category', 'title', 'role', 'link', 'main_description']
@@ -165,55 +175,15 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'category': _("Select the industry or field this project belongs to."),
-            'title': _("Your project title."),
-            'role': _("What did you do?"),
-            'link': _("A link to see the project live."),
-            'main_description': _("Explain what the project is, what you did, and what you achieved."),
+            'category': _("Select your industry. The form will customize itself to match your profession."),
+            'title': _("Project title."),
+            'role': _("Your specific contribution."),
+            'link': _("Optional link to live demo, GitHub, publication, or proof."),
+            'main_description': _("Describe the project, problem, approach, and impact."),
         }
 
         widgets = {
-            'category': forms.Select(attrs={'class': 'w-full'}),
-            'title': forms.TextInput(attrs={'placeholder': 'Enter title...'}),
-            'role': forms.TextInput(attrs={'placeholder': 'Enter your role...'}),
-            'main_description': forms.Textarea(
-                attrs={'placeholder': 'Describe your project...', 'rows': 5, 'class': 'markdown-editor'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Simply change the empty label text for the category dropdown
-        choices = list(self.fields['category'].choices)
-        if choices[0][0] in ('', None):
-            choices[0] = ('', '--- Select an Industry / Field ---')
-        self.fields['category'].choices = choices
-# ==============================================================================
-# UPGRADED: SURGICALLY UPDATED PROJECT SECTION (Dynamic UI Ready)
-# ==============================================================================
-class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = PortfolioProject
-        fields = ['category', 'title', 'role', 'link', 'main_description']
-
-        labels = {
-            'category': _("Industry / Field of Work"),
-            'title': _("Project Title"),
-            'role': _("Your Role"),
-            'link': _("Live Link or Document (Optional)"),
-            'main_description': _("Project Description"),
-        }
-
-        help_texts = {
-            'category': _("Select the industry or field this project belongs to."),
-            'title': _("Your project title."),
-            'role': _("What did you do?"),
-            'link': _("A link to see the project live."),
-            'main_description': _("Explain what the project is, what you did, and what you achieved."),
-        }
-
-        widgets = {
-            'category': forms.Select(attrs={'class': 'w-full'}),
+            'category': forms.Select(attrs={'class': 'w-full', 'id': 'id_category_select'}),
             'title': forms.TextInput(attrs={'placeholder': 'Enter title...'}),
             'role': forms.TextInput(attrs={'placeholder': 'Enter your role...'}),
             'main_description': forms.Textarea(attrs={'placeholder': 'Describe your project...', 'rows': 5, 'class': 'markdown-editor'}),
@@ -222,19 +192,59 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 1. ALWAYS inject the placeholder option at the very top for this form.
+        # 1. ALWAYS inject the placeholder option at the very top
         choices = list(self.fields['category'].choices)
-        # Filter out existing blanks/Nones so we don't have duplicate empty options
         choices = [c for c in choices if str(c[0]).strip() not in ('', 'None')]
         self.fields['category'].choices = [('', '--- Select an Industry / Field ---')] + choices
 
-        # 2. 🎯 BULLETPROOF OVERRIDE FOR NEW ENTRIES
-        # Explicitly tell Django to start with the blank choice, overriding the model's default.
+        # 2. Bulletproof override for new entries
         if not self.instance.pk:
             self.initial['category'] = ''
             self.fields['category'].initial = ''
             if hasattr(self.instance, 'category'):
                 self.instance.category = None
+    
+    def clean_title(self):
+        """Ensure title is meaningful and not too generic."""
+        title = self.cleaned_data.get('title', '').strip()
+        if not title:
+            raise ValidationError(_("Project title is required."))
+        if len(title) < 5:
+            raise ValidationError(_("Project title should be at least 5 characters. Be specific!"))
+        if len(title) > 200:
+            raise ValidationError(_("Project title should be under 200 characters."))
+        return title
+    
+    def clean_main_description(self):
+        """Ensure meaningful project description."""
+        desc = self.cleaned_data.get('main_description', '').strip()
+        if not desc:
+            raise ValidationError(_("Project description is required. Tell us what you did and why it matters."))
+        if len(desc) < 30:
+            raise ValidationError(_("Description should be at least 30 characters. Share more details!"))
+        if len(desc) > 5000:
+            raise ValidationError(_("Description should be under 5000 characters."))
+        return desc
+    
+    def clean_role(self):
+        """Validate role field."""
+        role = self.cleaned_data.get('role', '').strip()
+        if role and len(role) < 3:
+            raise ValidationError(_("Role should be at least 3 characters or leave it blank."))
+        return role
+    
+    def clean_link(self):
+        """Validate URL if provided."""
+        link = self.cleaned_data.get('link', '').strip()
+        if link:
+            if not link.startswith(('http://', 'https://')):
+                link = f"https://{link}"
+            try:
+                from django.core.validators import URLValidator
+                URLValidator()(link)
+            except ValidationError:
+                raise ValidationError(_("Please provide a valid URL starting with http:// or https://"))
+        return link
 
 
 # ==============================================================================

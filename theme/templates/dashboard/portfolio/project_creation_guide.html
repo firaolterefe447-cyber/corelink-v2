@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<style>
+    #mobile-navbar, .default-navbar { display: none !important; }
+</style>
+{% endblock navbar %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --blue: #0A66C2;
+        --emerald: #10B981;
+    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+    body {
+        font-family: var(--font-body);
+        background: linear-gradient(135deg, #F0F4F8 0%, #E0E7FF 50%, #F0FDF4 100%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+    .btn-primary { background: linear-gradient(135deg, #0952A5, #073E89); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28); transition: all 0.2s ease; }
+    .btn-primary:hover { box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38); transform: translateY(-2px); }
+
+    .category-card {
+        background: white; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s ease;
+        display: flex; align-items: center; gap: 16px;
+    }
+    .category-card:hover { border-color: var(--blue); box-shadow: 0 8px 24px rgba(10, 102, 194, 0.12); transform: translateY(-2px); }
+    .category-card.selected { background: rgba(10, 102, 194, 0.05); border-color: var(--blue); }
+
+    .category-icon { width: 48px; height: 48px; background: rgba(10, 102, 194, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .category-card.selected .category-icon { background: rgba(10, 102, 194, 0.2); }
+
+    .guide-section {
+        background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid var(--blue);
+    }
+    .guide-section h3 { margin: 0 0 12px 0; color: var(--blue); font-size: 16px; }
+    .guide-section p { margin: 0 0 8px 0; color: #64748B; line-height: 1.6; font-size: 14px; }
+    .guide-section ul { margin: 12px 0 0 0; padding-left: 20px; list-style: none; }
+    .guide-section li { position: relative; padding-left: 12px; margin-bottom: 8px; color: #64748B; font-size: 14px; }
+    .guide-section li:before { content: '✓'; position: absolute; left: 0; color: var(--emerald); font-weight: 700; }
+
+    .example-box {
+        background: #F8FAFC; border-left: 3px solid #94A3B8; padding: 12px 16px; margin: 12px 0; border-radius: 6px; font-size: 13px; color: #475569; font-style: italic;
+    }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-slide-in { animation: slideIn 0.4s ease forwards; }
+
+    .header-hero {
+        background: linear-gradient(135deg, rgba(10, 102, 194, 0.1) 0%, rgba(16, 185, 129, 0.08) 100%);
+        padding: 40px 20px; text-align: center; border-radius: 16px; margin-bottom: 32px;
+    }
+    .header-hero h1 { font-size: 36px; margin: 0 0 12px 0; color: #0F172A; }
+    .header-hero p { font-size: 16px; color: #64748B; margin: 0; }
+</style>
+
+<main class="w-full min-h-screen py-8 px-4 md:py-12 md:px-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- HERO SECTION -->
+        <div class="header-hero anim-slide-in">
+            <h1>📋 {% trans "Project Upload Guide" %}</h1>
+            <p>{% trans "Learn how to create an impressive project that highlights your expertise." %}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- LEFT: CATEGORY SELECTOR -->
+            <div class="lg:col-span-1">
+                <div style="background: white; border-radius: 12px; padding: 24px; border: 1px solid #E2E8F0; position: sticky; top: 20px;">
+                    <h3 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; text-transform: uppercase; color: #64748B;">Select Your Field</h3>
+
+                    <div id="category-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="category-card selected" data-category="SOFTWARE_DATA">
+                            <div class="category-icon">💻</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Software & AI</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Apps, ML Models, Data</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="HARDWARE_ROBOTICS">
+                            <div class="category-icon">🤖</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Hardware</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Robotics, IoT, Electronics</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="MEDICAL_CLINICAL">
+                            <div class="category-icon">🏥</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Healthcare</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Research, Clinical</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="SCIENCE_RESEARCH">
+                            <div class="category-icon">🔬</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Science</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Lab Research, Experiments</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="LEGAL_POLICY">
+                            <div class="category-icon">⚖️</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Legal</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Cases, Policy, Legislation</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="DESIGN_UX">
+                            <div class="category-icon">🎨</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Design</div>
+                                <div style="font-size: 12px; color: #94A3B8;">UI/UX, Product, Graphics</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="ARCHITECTURE_CIVIL">
+                            <div class="category-icon">🏗️</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Architecture</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Buildings, Infrastructure</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="ARTS_CREATIVE">
+                            <div class="category-icon">🎬</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Arts & Creative</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Film, Music, Photography</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="BUSINESS_FINANCE">
+                            <div class="category-icon">💼</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Business</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Startups, Finance, Ventures</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="MARKETING_MEDIA">
+                            <div class="category-icon">📢</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Marketing</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Campaigns, Media, PR</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="EDUCATION_TRAINING">
+                            <div class="category-icon">📚</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Education</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Courses, Training, Programs</div>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="OPERATIONS_TRADES">
+                            <div class="category-icon">🔧</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 14px; color: #0F172A;">Operations</div>
+                                <div style="font-size: 12px; color: #94A3B8;">Trades, Supply Chain, Food</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: GUIDE CONTENT -->
+            <div class="lg:col-span-2" id="guide-content">
+                <div class="guide-section anim-slide-in">
+                    <h3>💻 Software, AI & Data Science</h3>
+                    <p><strong>Who This Is For:</strong> Software engineers, data scientists, machine learning engineers, developers, DevOps specialists, full-stack engineers.</p>
+
+                    <h4 style="margin-top: 16px; margin-bottom: 8px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li><strong>Project Name:</strong> Official app/software name (not generic)</li>
+                        <li><strong>Tech Stack:</strong> List exact technologies used (React, Django, TensorFlow, AWS)</li>
+                        <li><strong>Your Role:</strong> Frontend, Backend, Full-Stack, ML Engineer, DevOps</li>
+                        <li><strong>GitHub/Demo:</strong> Working code repository or live deployment link</li>
+                        <li><strong>Impact:</strong> Performance metrics, user numbers, system scalability, revenue impact</li>
+                        <li><strong>Visuals:</strong> App screenshots, architecture diagrams, performance graphs</li>
+                    </ul>
+
+                    <div class="example-box">
+                        <strong>✓ Example:</strong> "E-commerce Platform - Built full-stack React+Django app processing 100K+ daily transactions. Optimized database queries reducing page load from 3s to 400ms. 95% uptime with AWS auto-scaling. Currently $50K MRR."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="{% url 'project_create' %}" class="btn-primary" style="display: inline-block; font-size: 16px; padding: 14px 28px;">
+                ✨ {% trans "Start Creating Your Project" %}
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const categoryCards = document.querySelectorAll('.category-card');
+        const guideContent = document.getElementById('guide-content');
+
+        const guides = {
+            'SOFTWARE_DATA': `
+                <div class="guide-section anim-slide-in">
+                    <h3>💻 Software, AI & Data Science</h3>
+                    <p><strong>Who This Is For:</strong> Software engineers, data scientists, ML engineers, full-stack developers, DevOps specialists.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Official app/software name with version (specific, not generic)</li>
+                        <li>Exact tech stack (React, Python, TensorFlow, AWS, PostgreSQL, etc.)</li>
+                        <li>Your specific role (Frontend, Backend, ML, Full-Stack, DevOps)</li>
+                        <li>GitHub repository link or live demo URL</li>
+                        <li>Performance metrics: requests/sec, latency, uptime, user numbers</li>
+                        <li>Business impact: revenue, growth rate, users acquired</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Analytics Dashboard v3 - Built React+TypeScript frontend with D3 visualizations. Python FastAPI backend processing 50K events/sec. Real-time dashboards for 500+ enterprise clients. 99.9% uptime. $2M ARR."
+                    </div>
+                </div>
+            `,
+            'HARDWARE_ROBOTICS': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🤖 Hardware, Engineering & Robotics</h3>
+                    <p><strong>Who This Is For:</strong> Hardware engineers, roboticists, electrical engineers, mechanical engineers, embedded systems specialists.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Project name and version</li>
+                        <li>Your role (Lead Designer, Electronics, Firmware, Mechanical)</li>
+                        <li>Key technologies (Arduino, ROS, PCB design, embedded systems)</li>
+                        <li>Component list and specs</li>
+                        <li>Performance specs: speed, accuracy, power consumption, range</li>
+                        <li>Challenges solved and innovations made</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "6-DOF Robotic Arm - Lead hardware engineer. Custom aluminum frame, 12-axis servo control. ±2mm repeatability at 1m reach. 500W peak power, 50Hz control loop. Real-time sensor fusion from IMU+encoders. Autonomous path planning. Patent pending."
+                    </div>
+                </div>
+            `,
+            'MEDICAL_CLINICAL': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🏥 Medicine, Healthcare & Biotech</h3>
+                    <p><strong>Who This Is For:</strong> Physicians, researchers, clinical coordinators, lab scientists, healthcare administrators.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Official study title and phase (Phase I, II, III, Observational)</li>
+                        <li>Your role and medical specialty (MD, PhD, certified in specialty)</li>
+                        <li>Patient cohort size and demographics (N=X, age range, gender)</li>
+                        <li>Study design and methodology</li>
+                        <li>Primary outcomes and statistical significance (p-values, confidence intervals)</li>
+                        <li>Publication status (published, in review, preprint)</li>
+                        <li>Clinical impact and practice implications</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Cardiac Rhythm Device Trial - Lead Investigator, MD, Cardiologist. Double-blind RCT with 500 patients (age 60-80). Device improved symptom-free days by 40% vs control (p&lt;0.001). Published in Circulation 2024. Impacts 50K+ annual implantations."
+                    </div>
+                </div>
+            `,
+            'SCIENCE_RESEARCH': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🔬 Academic Science & Lab Research</h3>
+                    <p><strong>Who This Is For:</strong> Research scientists, PhD students, postdocs, laboratory directors, principal investigators.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Research title and hypothesis</li>
+                        <li>Experimental design and methodology</li>
+                        <li>Sample size and statistical methods</li>
+                        <li>Major findings and breakthroughs</li>
+                        <li>Publication status and citations</li>
+                        <li>Grants received</li>
+                        <li>Field impact and future directions</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Novel Protein Folding Mechanism - Used cryo-EM to discover 10x faster folding rate. 200-sample cohort. Findings validated by 50+ labs. Published in Nature 2024. 500+ citations. Grant: $2M NIH."
+                    </div>
+                </div>
+            `,
+            'LEGAL_POLICY': `
+                <div class="guide-section anim-slide-in">
+                    <h3>⚖️ Law, Public Policy & Government</h3>
+                    <p><strong>Who This Is For:</strong> Lawyers, policy advisors, government officials, judges, legal scholars.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Official case name or legislation title</li>
+                        <li>Your role and court/jurisdiction</li>
+                        <li>Legal issues and precedents involved</li>
+                        <li>Your strategy and key arguments</li>
+                        <li>Final outcome (verdict, settlement, policy adoption)</li>
+                        <li>Impact on law or regulation</li>
+                        <li>Public record links (PACER, government databases)</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Tech Patent Defense - Lead Counsel, Federal District Court. Argued invalidity under Alice precedent. 3-year litigation. Case dismissed on summary judgment, saving client $5M. Precedent now cited in 20+ patent cases."
+                    </div>
+                </div>
+            `,
+            'DESIGN_UX': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🎨 UI/UX, Product & Graphic Design</h3>
+                    <p><strong>Who This Is For:</strong> Product designers, UX researchers, UI designers, interaction designers, art directors.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Project name and scope</li>
+                        <li>Your role and primary tools (Figma, Adobe, Sketch)</li>
+                        <li>User research conducted (interviews, surveys, usability tests)</li>
+                        <li>Design process and key iterations</li>
+                        <li>Design system created (if applicable)</li>
+                        <li>Measurable outcomes (conversion increase, engagement metrics, NPS)</li>
+                        <li>Interactive Figma prototype or live link</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "FinTech App Redesign - Lead Product Designer. 20 user interviews identified checkout friction. Reduced steps 8→3. A/B tested: 35% conversion increase, $500K ARR impact. Created 80-component design system. 4.8★ app store rating."
+                    </div>
+                </div>
+            `,
+            'ARCHITECTURE_CIVIL': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🏗️ Architecture & Civil Engineering</h3>
+                    <p><strong>Who This Is For:</strong> Architects, structural engineers, civil engineers, urban planners, construction managers.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Building/project name and location</li>
+                        <li>Your role (Lead Architect, Structural Engineer, PM)</li>
+                        <li>Project scale (sqft, number of floors, cost)</li>
+                        <li>Architectural concept and design innovation</li>
+                        <li>Engineering systems (structural, HVAC, MEP)</li>
+                        <li>Certifications (LEED, WELL, ADA compliance)</li>
+                        <li>Timeline and budget (under/over?)</li>
+                        <li>Awards received</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Eco-Tower Downtown - Lead Architect. 245K sqft mixed-use tower. Double-skin facade reduces energy 40%. LEED Platinum + WELL Gold. $200M budget, completed 6 months early, $50M under budget. AIA award winner."
+                    </div>
+                </div>
+            `,
+            'ARTS_CREATIVE': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🎬 Film, Music, Photography & Fine Arts</h3>
+                    <p><strong>Who This Is For:</strong> Directors, photographers, musicians, animators, visual artists, content creators.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Artwork/project title</li>
+                        <li>Your role (Director, Photographer, Musician, etc.)</li>
+                        <li>Medium and techniques used</li>
+                        <li>Creative concept and inspiration</li>
+                        <li>Production details and timeline</li>
+                        <li>Audience reception (views, followers, reviews)</li>
+                        <li>Exhibitions or publications</li>
+                        <li>Awards or recognition received</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Urban Isolation Series - Photography project exploring human connection in cities. 50 cities, 5000+ images. Exhibited at MoMA, Tate Modern, Tokyo Museum. Published in 8 international magazines. 500K social followers. Finalist: World Press Photo."
+                    </div>
+                </div>
+            `,
+            'BUSINESS_FINANCE': `
+                <div class="guide-section anim-slide-in">
+                    <h3>💼 Business, Finance & Startups</h3>
+                    <p><strong>Who This Is For:</strong> Founders, CEOs, startup operators, investors, business analysts, executives.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-want: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Business/company name and brief description</li>
+                        <li>Your role and responsibilities</li>
+                        <li>Business model and revenue streams</li>
+                        <li>Market opportunity and TAM</li>
+                        <li>Growth metrics (ARR, MRR, customer count, NPS, retention)</li>
+                        <li>Funding raised and investors</li>
+                        <li>Team size and key hires</li>
+                        <li>Exit or major milestones (acquisition, IPO, profitability)</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "B2B SaaS Platform - Co-Founder & CEO. $2M ARR, 150+ customers, 95% retention. Raised $5M Series A from Tier-1 VCs. Built team 0→50. 250% YoY growth. Recently acquired by Google for $X."
+                    </div>
+                </div>
+            `,
+            'MARKETING_MEDIA': `
+                <div class="guide-section anim-slide-in">
+                    <h3>📢 Marketing, Journalism & Media</h3>
+                    <p><strong>Who This Is For:</strong> Marketers, journalists, PR professionals, content strategists, growth hackers, brand managers.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Campaign/article/publication name</li>
+                        <li>Your role and scope</li>
+                        <li>Target audience and channels used</li>
+                        <li>Key messaging and creative approach</li>
+                        <li>Content produced (articles, videos, designs)</li>
+                        <li>Reach and engagement metrics (impressions, clicks, shares)</li>
+                        <li>Business results (leads, sales, brand awareness)</li>
+                        <li>Awards or recognition received</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Product Launch Campaign - Marketing Lead. Integrated campaign across 8 channels. 5M+ impressions, 250K clicks. Generated 50K qualified leads, $5M attributed revenue. Won 3 marketing awards. Featured in AdWeek, Forbes."
+                    </div>
+                </div>
+            `,
+            'EDUCATION_TRAINING': `
+                <div class="guide-section anim-slide-in">
+                    <h3>📚 Education, Curriculum & Training</h3>
+                    <p><strong>Who This Is For:</strong> Educators, trainers, curriculum designers, instructors, learning program directors.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Course/program name and subject</li>
+                        <li>Your role (Instructor, Curriculum Designer, Program Director)</li>
+                        <li>Learning outcomes and objectives</li>
+                        <li>Course format and delivery method</li>
+                        <li>Student demographics and enrollment</li>
+                        <li>Completion and pass rates</li>
+                        <li>Student outcomes (jobs, promotions, salary increase)</li>
+                        <li>Testimonials and reviews</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Advanced Python Bootcamp - Lead Instructor. 500+ professionals trained. 95% completion rate, 4.9/5.0 avg rating. 80% got promotions or new roles within 6 months. Generated $500K revenue. Used by 15 Fortune 500 companies."
+                    </div>
+                </div>
+            `,
+            'OPERATIONS_TRADES': `
+                <div class="guide-section anim-slide-in">
+                    <h3>🔧 Operations, Culinary & Skilled Trades</h3>
+                    <p><strong>Who This Is For:</strong> Operations managers, chefs, supply chain leaders, construction supervisors, trade specialists.</p>
+                    <h4 style="margin-top: 16px; color: #0F172A; font-weight: 600;">What to Include:</h4>
+                    <ul>
+                        <li>Project/business name</li>
+                        <li>Your role (Operations Manager, Executive Chef, Site Supervisor)</li>
+                        <li>Scope (team size, location, budget)</li>
+                        <li>Operational systems and processes implemented</li>
+                        <li>Efficiency improvements and cost savings</li>
+                        <li>Quality metrics and certifications</li>
+                        <li>Customer/client outcomes and satisfaction</li>
+                        <li>Awards or recognition received</li>
+                    </ul>
+                    <div class="example-box">
+                        ✓ "Flagship Restaurant Opening - Executive Chef & Operations Lead. Hired/trained 50-person kitchen. 4.8★ rating (500+ reviews). 96% repeat customer rate. Operations efficiency 35% above industry. Michelin recommendation."
+                    </div>
+                </div>
+            `
+        };
+
+        categoryCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                categoryCards.forEach(c => c.classList.remove('selected'));
+                // Add selected class to clicked card
+                this.classList.add('selected');
+
+                // Update guide content
+                const category = this.dataset.category;
+                if (guides[category]) {
+                    guideContent.innerHTML = guides[category];
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}
+

@@ -449,6 +449,11 @@ class ExperienceDeleteView(PortfolioSecurityMixin, DeleteView):
     success_url = reverse_lazy('manage_experiences')
 
 # --- PROJECTS (WITH GALLERY HANDLING) ---
+@login_required
+def project_creation_guide(request):
+    """Display interactive project creation guide for all professions."""
+    return render(request, 'dashboard/portfolio/project_creation_guide.html')
+
 class ProjectListView(PortfolioSecurityMixin, ListView):
     model = PortfolioProject
     template_name = 'dashboard/portfolio/project_list.html'
@@ -465,21 +470,40 @@ class ProjectCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
             portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
             form.instance.profile = portfolio
             self.object = form.save()
+            
             # Handle multiple file uploads for the gallery (images and PDFs)
+            uploaded_count = 0
             for file in self.request.FILES.getlist('gallery_images'):
-                if file.name.lower().endswith('.pdf'):
-                    ProjectGallery.objects.create(
-                        project=self.object,
-                        asset_type='DOCUMENT',
-                        document_file=file
-                    )
-                else:
-                    ProjectGallery.objects.create(
-                        project=self.object,
-                        asset_type='IMAGE',
-                        image=file
-                    )
-        messages.success(self.request, "Project saved.")
+                try:
+                    # Validate file size (10MB max)
+                    if file.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {file.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{file.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    # Auto-detect file type
+                    if file.name.lower().endswith('.pdf'):
+                        ProjectGallery.objects.create(
+                            project=self.object,
+                            asset_type='DOCUMENT',
+                            document_file=file
+                        )
+                    else:
+                        ProjectGallery.objects.create(
+                            project=self.object,
+                            asset_type='IMAGE',
+                            image=file
+                        )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {file.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{file.name}': {str(e)}")
+                    continue
+        
+        msg = f"Project created successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} file(s) added."
+        messages.success(self.request, msg)
         return redirect(self.get_success_url())
 
 class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
@@ -491,25 +515,43 @@ class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save()
+            
             # Handle adding new gallery files (images and PDFs)
+            uploaded_count = 0
             for file in self.request.FILES.getlist('gallery_images'):
-                if file.name.lower().endswith('.pdf'):
-                    ProjectGallery.objects.create(
-                        project=self.object,
-                        asset_type='DOCUMENT',
-                        document_file=file
-                    )
-                else:
-                    ProjectGallery.objects.create(
-                        project=self.object,
-                        asset_type='IMAGE',
-                        image=file
-                    )
+                try:
+                    # Validate file size (10MB max)
+                    if file.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {file.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{file.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    if file.name.lower().endswith('.pdf'):
+                        ProjectGallery.objects.create(
+                            project=self.object,
+                            asset_type='DOCUMENT',
+                            document_file=file
+                        )
+                    else:
+                        ProjectGallery.objects.create(
+                            project=self.object,
+                            asset_type='IMAGE',
+                            image=file
+                        )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {file.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{file.name}': {str(e)}")
+                    continue
+            
             # Handle deleting selected gallery images
             if delete_ids := self.request.POST.getlist('delete_images'):
                 ProjectGallery.objects.filter(id__in=delete_ids, project=self.object).delete()
 
-        messages.success(self.request, "Project updated.")
+        msg = "Project updated successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} new file(s) added."
+        messages.success(self.request, msg)
         return redirect(self.get_success_url())
 
 class ProjectDeleteView(PortfolioSecurityMixin, DeleteView):

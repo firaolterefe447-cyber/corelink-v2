@@ -59,6 +59,7 @@ path('p/<str:identifier>/og-image/', views.profile_og_image, name='profile_og_im
 
     # E. Portfolio Projects
     path('dashboard/projects/', views.ProjectListView.as_view(), name='manage_projects'),
+    path('dashboard/projects/guide/', views.project_creation_guide, name='project_guide'),
     path('dashboard/projects/new/', views.ProjectCreateView.as_view(), name='project_create'),
     path('dashboard/projects/<uuid:pk>/edit/', views.ProjectUpdateView.as_view(), name='project_edit'),
     path('dashboard/projects/<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='project_delete'),
