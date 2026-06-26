@@ -12,7 +12,6 @@ from django.utils.translation import gettext_lazy as _
 # UNFOLD IMPORTS (Strictly Unfold - No Django Overrides)
 # =========================================================
 from unfold.admin import ModelAdmin, TabularInline
-# ADDED 'action' to decorators for the top button
 from unfold.decorators import display, action
 
 # =========================================================
@@ -37,7 +36,6 @@ def get_user_profile(user):
     Replaces all legacy role-based profile checks.
     """
     try:
-        # Relies on the related_name='portfolio' from UserProfile
         if hasattr(user, 'portfolio'):
             return user.portfolio
     except ObjectDoesNotExist:
@@ -50,7 +48,6 @@ def get_user_profile(user):
 # =========================================================
 
 class CustomUserChangeForm(forms.ModelForm):
-    # 1. ADDED: Direct password input to fix the broken UUID reset link
     password = forms.CharField(
         widget=forms.PasswordInput(),
         required=False,
@@ -197,14 +194,15 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-date_joined',)
 
     # =========================================================
-    # NEW: TOP-LEVEL SAFE EXPORT BUTTON (No Dropdown needed)
+    # NEW: UNFOLD SPECIFIC TOP-LEVEL ACTION BUTTON
     # =========================================================
-    changelist_actions = ("export_csv_action",)
+    # This places the button at the top right of the table, entirely out of the dropdown
+    actions_list = ["export_all_users_csv"]
 
-    @action(description=_("📥 Export All Users to CSV"), url_path="export-all-users")
-    def export_csv_action(self, request):
+    @action(description=_("📥 Export All Users to CSV"))
+    def export_all_users_csv(self, request):
         """
-        Safely generates the CSV. Moved to the top of the page as a dedicated button.
+        Safely generates the CSV of ALL users without needing to select checkboxes.
         """
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
@@ -222,7 +220,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             'Telegram Handle'
         ])
 
-        # Fetch all active users, optimized queries
+        # Fetch all users, optimized
         queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
 
         for user in queryset:
@@ -238,7 +236,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     if first_headline:
                         title = first_headline.title
 
-            # Extract URL
+            # Extract URL safely
             try:
                 profile_path = user.get_absolute_url()
                 full_url = request.build_absolute_uri(profile_path)
@@ -249,7 +247,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             email = user.email if user.email else "N/A"
             telegram = user.telegram_handle if user.telegram_handle else "N/A"
 
-            # EXCEL FIX: Prepending '="' forces Excel to read it as a text string instead of scientific math
+            # EXCEL FIX: Prepending '="' forces Excel to read it as a text string (keeps the +251 formatting)
             phone = f'="{user.phone_number}"' if user.phone_number else "N/A"
 
             # Write Row
@@ -321,7 +319,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 'is_hero_avatar_selected',
                 'is_home_profile_selected',
             ),
-            "description": "Control exactly who appears on the public landing page (Hero avatars and Talent Network cards).",
+            "description": "Control exactly who appears on the public landing page.",
             "classes": ["collapse"]
         }),
         (_("🛡️ Feed Control & Moderation"), {
@@ -463,7 +461,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 
         return format_html('<div style="min-width: 90px;">{}{}</div>', mark_safe(role_badge), mark_safe(rating_html))
 
-    # --- LOCKDOWN LOGIC ---
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
             return [
