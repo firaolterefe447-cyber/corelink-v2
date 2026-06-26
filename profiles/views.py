@@ -465,9 +465,20 @@ class ProjectCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
             portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
             form.instance.profile = portfolio
             self.object = form.save()
-            # Handle multiple image uploads for the gallery
-            for image in self.request.FILES.getlist('gallery_images'):
-                ProjectGallery.objects.create(project=self.object, image=image)
+            # Handle multiple file uploads for the gallery (images and PDFs)
+            for file in self.request.FILES.getlist('gallery_images'):
+                if file.name.lower().endswith('.pdf'):
+                    ProjectGallery.objects.create(
+                        project=self.object,
+                        asset_type='DOCUMENT',
+                        document_file=file
+                    )
+                else:
+                    ProjectGallery.objects.create(
+                        project=self.object,
+                        asset_type='IMAGE',
+                        image=file
+                    )
         messages.success(self.request, "Project saved.")
         return redirect(self.get_success_url())
 
@@ -480,9 +491,20 @@ class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save()
-            # Handle adding new gallery images
-            for image in self.request.FILES.getlist('gallery_images'):
-                ProjectGallery.objects.create(project=self.object, image=image)
+            # Handle adding new gallery files (images and PDFs)
+            for file in self.request.FILES.getlist('gallery_images'):
+                if file.name.lower().endswith('.pdf'):
+                    ProjectGallery.objects.create(
+                        project=self.object,
+                        asset_type='DOCUMENT',
+                        document_file=file
+                    )
+                else:
+                    ProjectGallery.objects.create(
+                        project=self.object,
+                        asset_type='IMAGE',
+                        image=file
+                    )
             # Handle deleting selected gallery images
             if delete_ids := self.request.POST.getlist('delete_images'):
                 ProjectGallery.objects.filter(id__in=delete_ids, project=self.object).delete()

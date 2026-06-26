@@ -547,10 +547,33 @@
                             {% for project in projects|slice:":4" %}
                             <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/img cursor-pointer">
                                 {% if project.gallery.first %}
-                                    <img src="{{ project.gallery.first.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-end p-4 pointer-events-none" aria-hidden="true">
-                                        <span class="text-[13px] text-white font-bold line-clamp-2 leading-snug">{{ project.title }}</span>
-                                    </div>
+                                    {% with asset=project.gallery.first %}
+                                        {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                            <img src="{{ asset.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-end p-4 pointer-events-none" aria-hidden="true">
+                                                <span class="text-[13px] text-white font-bold line-clamp-2 leading-snug">{{ project.title }}</span>
+                                            </div>
+                                        {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                                            <div class="w-full h-full bg-gradient-to-br from-red-50 to-orange-50 flex flex-col items-center justify-center p-4">
+                                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-red-100 mb-2">
+                                                    <i data-lucide="file-text" class="w-5 h-5 text-red-500"></i>
+                                                </div>
+                                                <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">PDF</span>
+                                            </div>
+                                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                                            <div class="w-full h-full bg-gradient-to-br from-purple-50 to-blue-50 flex flex-col items-center justify-center p-4">
+                                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-purple-100 mb-2">
+                                                    <i data-lucide="external-link" class="w-5 h-5 text-purple-500"></i>
+                                                </div>
+                                                <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Link</span>
+                                            </div>
+                                        {% else %}
+                                            <img src="{{ asset.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-end p-4 pointer-events-none" aria-hidden="true">
+                                                <span class="text-[13px] text-white font-bold line-clamp-2 leading-snug">{{ project.title }}</span>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
                                 {% else %}
                                     <div class="w-full h-full bg-slate-50 flex flex-col items-start justify-end p-4 hover:bg-blue-50/50 transition-colors border-t-4 border-[#0A66C2] pointer-events-none">
                                         <h4 class="font-bold text-slate-800 text-[14px] line-clamp-3 leading-snug">{{ project.title }}</h4>
