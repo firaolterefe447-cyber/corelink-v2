@@ -568,13 +568,12 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
 
         help_texts = {
             'name': _("Add a specific skill or tool (e.g., Patient Care, Logistics, Python)."),
-            'context': _(
-                "Explain how you apply this skill, your experience with it, and your proficiency level. Leave it blank if you want."),
+            'context': "",
         }
 
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 2,
+            'context': forms.Textarea(attrs={'placeholder': 'Describe how you apply this skill...', 'rows': 2,
                                              'class': 'advanced-field'}),
         }
 
