@@ -202,12 +202,18 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # =========================================================
     # EXPORT ACTION: SMART EXCEL EXPORT
     # =========================================================
+    # =========================================================
+    # EXPORT ACTION: SMART EXCEL EXPORT (WITH PDF STYLING)
+    # =========================================================
     @action(description=_("📥 Export All Users to Excel"), url_path="export-all-users")
     def export_all_users_csv(self, request):
         """
-        Generates a true .XLSX Excel file.
-        Automatically expands columns and creates clickable links natively.
+        Generates a true .XLSX Excel file engineered for PDF conversion.
+        Adds borders, header colors, and landscape print settings.
         """
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
 
@@ -215,14 +221,34 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         worksheet = workbook.active
         worksheet.title = 'Talent Pool'
 
-        # 1. Write Header Row & Make it Bold
+        # --- STYLE DEFINITIONS ---
+        # Dark Blue Header with White Text
+        header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
+        header_font = Font(color="FFFFFF", bold=True, size=12)
+
+        # Light gray borders for every cell so it looks like a real grid in PDF
+        thin_border = Border(
+            left=Side(style='thin', color='CBD5E1'),
+            right=Side(style='thin', color='CBD5E1'),
+            top=Side(style='thin', color='CBD5E1'),
+            bottom=Side(style='thin', color='CBD5E1')
+        )
+
+        # Center align everything vertically
+        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=False)
+
+        # 1. WRITE HEADER ROW
         headers = ['Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Email', 'Telegram Handle']
         worksheet.append(headers)
 
+        # Apply styles to Header Row
         for cell in worksheet[1]:
-            cell.font = Font(bold=True)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.border = thin_border
+            cell.alignment = cell_alignment
 
-        # Fetch all users, optimized
+        # Fetch all users
         queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
 
         for user in queryset:
@@ -238,7 +264,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     if first_headline:
                         title = first_headline.title
 
-            # Extract URL
+            # Extract URL safely
             try:
                 profile_path = user.get_absolute_url()
                 full_url = request.build_absolute_uri(profile_path)
@@ -267,16 +293,24 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             ]
             worksheet.append(row)
 
-            # Make URLs Clickable
+            # Apply Styles and Links to the new row
             current_row = worksheet.max_row
-            worksheet.cell(row=current_row, column=2).hyperlink = full_url
-            worksheet.cell(row=current_row, column=2).style = "Hyperlink"
+            for col_idx in range(1, 7):  # Columns 1 to 6
+                cell = worksheet.cell(row=current_row, column=col_idx)
+                cell.border = thin_border
+                cell.alignment = cell_alignment
 
-            if telegram != "N/A":
-                worksheet.cell(row=current_row, column=6).hyperlink = telegram
-                worksheet.cell(row=current_row, column=6).style = "Hyperlink"
+                # Make URLs Clickable natively in Excel
+                if col_idx == 2:  # Profile Link
+                    cell.hyperlink = full_url
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border  # Reapply border after styling as hyperlink
+                elif col_idx == 6 and telegram != "N/A":  # Telegram Link
+                    cell.hyperlink = telegram
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border
 
-        # 2. Auto-adjust column widths
+        # 2. AUTO-ADJUST COLUMN WIDTHS
         for col in worksheet.columns:
             max_length = 0
             column_letter = col[0].column_letter
@@ -288,6 +322,12 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     pass
             adjusted_width = min(max_length + 2, 50)
             worksheet.column_dimensions[column_letter].width = adjusted_width
+
+        # 3. PDF PAGE SETUP (The Magic Trick)
+        # This tells Excel: "When printing or saving to PDF, make it Landscape and fit it all on one page wide."
+        worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
+        worksheet.page_setup.fitToWidth = 1
+        worksheet.page_setup.fitToHeight = 0  # 0 means let it flow to as many pages down as needed
 
         workbook.save(response)
         return response
