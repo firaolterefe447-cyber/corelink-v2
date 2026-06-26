@@ -199,16 +199,21 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # This places the button at the top right of the table, entirely out of the dropdown
     actions_list = ["export_all_users_csv"]
 
-    @action(description=_("📥 Export All Users to CSV"))
+    # =========================================================
+    # EXPORT ACTION: CSV DATA EXPORT (WITH CLICKABLE LINKS)
+    # =========================================================
+    @action(description=_("📥 Export All Users to CSV"), url_path="export-all-users")
     def export_all_users_csv(self, request):
         """
-        Safely generates the CSV of ALL users without needing to select checkboxes.
+        Safely generates the CSV of ALL users.
+        Injects Excel/Google Sheets HYPERLINK formulas to make
+        Profiles and Telegram handles instantly clickable!
         """
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
         response.write(u'\ufeff'.encode('utf8'))  # BOM for Excel compatibility
 
-        writer = csv.writer(response)
+        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
 
         # Header Row
         writer.writerow([
@@ -217,7 +222,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             'Professional Title',
             'Phone Number',
             'Email',
-            'Telegram Handle'
+            'Telegram Action'
         ])
 
         # Fetch all users, optimized
@@ -236,32 +241,42 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     if first_headline:
                         title = first_headline.title
 
-            # Extract URL safely
+            # 1. EXCEL MAGIC: Clickable Profile URL
             try:
                 profile_path = user.get_absolute_url()
                 full_url = request.build_absolute_uri(profile_path)
             except Exception:
                 full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
 
-            # Clean Values
-            email = user.email if user.email else "N/A"
-            telegram = user.telegram_handle if user.telegram_handle else "N/A"
+            # This creates a blue clickable link in Excel that says "Open Profile"
+            clickable_profile = f'=HYPERLINK("{full_url}", "Open Profile")'
 
-            # EXCEL FIX: Prepending '="' forces Excel to read it as a text string (keeps the +251 formatting)
+            # 2. EXCEL MAGIC: Clickable Telegram Link
+            if user.telegram_handle:
+                # Remove the '@' if the user typed it, so we can make a clean web link
+                clean_tg = user.telegram_handle.replace("@", "").strip()
+                # This opens Telegram Web or the App directly to their DM!
+                clickable_telegram = f'=HYPERLINK("https://t.me/{clean_tg}", "Message @{clean_tg}")'
+            else:
+                clickable_telegram = "No Telegram"
+
+            # Clean Email
+            email = user.email if user.email else "No Email"
+
+            # Phone (Keep the formatting fix)
             phone = f'="{user.phone_number}"' if user.phone_number else "N/A"
 
             # Write Row
             writer.writerow([
                 user.display_name,
-                full_url,
+                clickable_profile,
                 title,
                 phone,
                 email,
-                telegram
+                clickable_telegram
             ])
 
         return response
-
     # ---------------------------------------------------------
 
     list_display = [
