@@ -1,5 +1,3 @@
-import openpyxl
-from openpyxl.styles import Font
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserChangeForm
@@ -197,60 +195,81 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # =========================================================
     # NEW: UNFOLD SPECIFIC TOP-LEVEL ACTION BUTTON
     # =========================================================
-    actions_list = ["export_all_users_csv"]
+    actions_list = ["export_users_html"]
 
     # =========================================================
-    # EXPORT ACTION: SMART EXCEL EXPORT
+    # EXPORT ACTION: SMART HTML EXPORT (Clickable & PDF Ready)
     # =========================================================
-    # =========================================================
-    # EXPORT ACTION: SMART EXCEL EXPORT (WITH PDF STYLING)
-    # =========================================================
-    # =========================================================
-    # EXPORT ACTION: SMART EXCEL EXPORT (WITH PERFECT PDF SCALING)
-    # =========================================================
-    @action(description=_("📥 Export All Users to Excel"), url_path="export-all-users")
-    def export_all_users_csv(self, request):
+    @action(description=_("📥 Open HTML Database Report"), url_path="export-users-html")
+    def export_users_html(self, request):
         """
-        Generates a true .XLSX Excel file engineered for PDF conversion.
-        Forces columns to fit on one landscape page without cutting off.
+        Generates a standalone, beautiful HTML page.
+        Bypasses Excel limitations. Links strictly open in new tabs.
+        Can be easily printed to PDF via browser.
         """
-        import openpyxl
-        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
+        html_content = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>CoreLink | Executive Talent Report</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0F172A; padding: 40px; margin: 0; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .header h1 { color: #0A66C2; font-weight: 800; font-size: 28px; margin: 0; letter-spacing: -0.5px; }
+                .header p { color: #64748B; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
-        workbook = openpyxl.Workbook()
-        worksheet = workbook.active
-        worksheet.title = 'Talent Pool'
+                .table-wrapper { background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #E2E8F0; }
+                table { width: 100%; border-collapse: collapse; text-align: left; }
+                th { background-color: #0A66C2; color: #FFFFFF; padding: 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+                td { padding: 14px 16px; border-bottom: 1px solid #E2E8F0; font-size: 14px; color: #334155; }
+                tr:last-child td { border-bottom: none; }
+                tr:nth-child(even) { background-color: #F8FAFC; }
+                tr:hover { background-color: #F0F6FF; }
 
-        # --- STYLE DEFINITIONS ---
-        header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
-        header_font = Font(color="FFFFFF", bold=True, size=12)
+                .btn { display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; text-decoration: none; text-transform: uppercase; transition: all 0.2s; }
+                .btn-profile { background-color: #EBF4FD; color: #0A66C2; border: 1px solid #BFDBFE; }
+                .btn-profile:hover { background-color: #0A66C2; color: #FFFFFF; }
+                .btn-tg { background-color: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+                .btn-tg:hover { background-color: #16A34A; color: #FFFFFF; }
+                .btn-disabled { background-color: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
 
-        thin_border = Border(
-            left=Side(style='thin', color='CBD5E1'),
-            right=Side(style='thin', color='CBD5E1'),
-            top=Side(style='thin', color='CBD5E1'),
-            bottom=Side(style='thin', color='CBD5E1')
-        )
+                /* Print Styles for when you hit Ctrl+P to save as PDF */
+                @media print {
+                    body { padding: 0; background-color: white; }
+                    .table-wrapper { box-shadow: none; border: none; }
+                    th { background-color: #F1F5F9 !important; color: #0F172A !important; -webkit-print-color-adjust: exact; }
+                    .btn { border: 1px solid #CBD5E1; color: #0F172A; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>CORELINK ETHIOPIA</h1>
+                <p>Executive Talent Database Report</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Title / Expertise</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Portfolio</th>
+                            <th>Direct Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        """
 
-        # CRITICAL FIX: wrap_text=True stops URLs from pushing everything off the page
-        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
-
-        # 1. WRITE HEADER ROW
-        headers = ['Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Email', 'Telegram Handle']
-        worksheet.append(headers)
-
-        for cell in worksheet[1]:
-            cell.font = header_font
-            cell.fill = header_fill
-            cell.border = thin_border
-            cell.alignment = cell_alignment
-
-        # Fetch all users
+        # Fetch all users, optimized
         queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
 
+        # Generate the Rows
         for user in queryset:
             title = "No Title Provided"
             profile = get_user_profile(user)
@@ -269,71 +288,40 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             except Exception:
                 full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
 
-            email = user.email if user.email else "N/A"
-            phone = str(user.phone_number) if user.phone_number else "N/A"
+            # Clean Values
+            email = user.email if user.email else "<span style='color:#94A3B8'>N/A</span>"
+            phone = user.phone_number if user.phone_number else "<span style='color:#94A3B8'>N/A</span>"
+
+            # Button Logic
+            profile_btn = f'<a href="{full_url}" target="_blank" class="btn btn-profile">View Profile</a>'
 
             if user.telegram_handle:
                 clean_tg = user.telegram_handle.replace("@", "").strip()
-                telegram = f"https://t.me/{clean_tg}"
+                telegram_btn = f'<a href="https://t.me/{clean_tg}" target="_blank" class="btn btn-tg">Message @{clean_tg}</a>'
             else:
-                telegram = "N/A"
+                telegram_btn = f'<span class="btn btn-disabled">No Telegram</span>'
 
-            row = [
-                user.display_name,
-                full_url,
-                title,
-                phone,
-                email,
-                telegram
-            ]
-            worksheet.append(row)
+            html_content += f"""
+                        <tr>
+                            <td><strong>{user.display_name}</strong></td>
+                            <td>{title}</td>
+                            <td>{phone}</td>
+                            <td>{email}</td>
+                            <td>{profile_btn}</td>
+                            <td>{telegram_btn}</td>
+                        </tr>
+            """
 
-            # Apply Styles
-            current_row = worksheet.max_row
-            for col_idx in range(1, 7):
-                cell = worksheet.cell(row=current_row, column=col_idx)
-                cell.border = thin_border
-                cell.alignment = cell_alignment
+        html_content += """
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>
+        """
 
-                # Links
-                if col_idx == 2:
-                    cell.hyperlink = full_url
-                    cell.style = "Hyperlink"
-                    cell.border = thin_border
-                    cell.alignment = cell_alignment  # Reapply wrapping after hyperlink style
-                elif col_idx == 6 and telegram != "N/A":
-                    cell.hyperlink = telegram
-                    cell.style = "Hyperlink"
-                    cell.border = thin_border
-                    cell.alignment = cell_alignment
+        return HttpResponse(html_content, content_type='text/html')
 
-        # 2. AUTO-ADJUST COLUMN WIDTHS (WITH A HARD CAP)
-        for col in worksheet.columns:
-            max_length = 0
-            column_letter = col[0].column_letter
-            for cell in col:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
-            # CRITICAL FIX: Hard cap width at 35 so it never stretches off the PDF page
-            adjusted_width = min(max_length + 2, 35)
-            worksheet.column_dimensions[column_letter].width = adjusted_width
-
-        # 3. PDF PAGE SETUP (The Ironclad Lock)
-        # Narrow margins to fit more data
-        worksheet.page_margins.left = 0.2
-        worksheet.page_margins.right = 0.2
-
-        # The Master Switch to force everything onto 1 page wide
-        worksheet.sheet_properties.pageSetUpPr.fitToPage = True
-        worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
-        worksheet.page_setup.fitToWidth = 1
-        worksheet.page_setup.fitToHeight = 0
-
-        workbook.save(response)
-        return response
     # ---------------------------------------------------------
 
     list_display = [
@@ -594,10 +582,7 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
     def download_cv_btn(self, obj):
         if obj.cv_file:
             return format_html(
-                '<a href="{}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background-color: #0A66C2; color: white; border-radius: 8px; font-weight: 800; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
-                '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>'
-                'View & Download CV'
-                '</a>',
+                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">⬇️ Open CV</a>',
                 obj.cv_file.url
             )
         return mark_safe(
