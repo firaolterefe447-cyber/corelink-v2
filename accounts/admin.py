@@ -1,4 +1,5 @@
-import csv
+import openpyxl
+from openpyxl.styles import Font
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserChangeForm
@@ -28,7 +29,7 @@ from .models import (
 
 
 # =========================================================
-# HELPER: DYNAMIC PROFILE RESOLVER (UPDATED FOR UNIFIED ARCHITECTURE)
+# HELPER: DYNAMIC PROFILE RESOLVER
 # =========================================================
 def get_user_profile(user):
     """
@@ -196,34 +197,30 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # =========================================================
     # NEW: UNFOLD SPECIFIC TOP-LEVEL ACTION BUTTON
     # =========================================================
-    # This places the button at the top right of the table, entirely out of the dropdown
     actions_list = ["export_all_users_csv"]
 
     # =========================================================
-    # EXPORT ACTION: CSV DATA EXPORT (WITH CLICKABLE LINKS)
+    # EXPORT ACTION: SMART EXCEL EXPORT
     # =========================================================
-    @action(description=_("📥 Export All Users to CSV"), url_path="export-all-users")
+    @action(description=_("📥 Export All Users to Excel"), url_path="export-all-users")
     def export_all_users_csv(self, request):
         """
-        Safely generates the CSV of ALL users.
-        Injects Excel/Google Sheets HYPERLINK formulas to make
-        Profiles and Telegram handles instantly clickable!
+        Generates a true .XLSX Excel file.
+        Automatically expands columns and creates clickable links natively.
         """
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="corelink_talent_export.csv"'
-        response.write(u'\ufeff'.encode('utf8'))  # BOM for Excel compatibility
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
 
-        writer = csv.writer(response, quoting=csv.QUOTE_MINIMAL)
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Talent Pool'
 
-        # Header Row
-        writer.writerow([
-            'Full Name',
-            'Profile Link',
-            'Professional Title',
-            'Phone Number',
-            'Email',
-            'Telegram Action'
-        ])
+        # 1. Write Header Row & Make it Bold
+        headers = ['Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Email', 'Telegram Handle']
+        worksheet.append(headers)
+
+        for cell in worksheet[1]:
+            cell.font = Font(bold=True)
 
         # Fetch all users, optimized
         queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
@@ -241,42 +238,60 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     if first_headline:
                         title = first_headline.title
 
-            # 1. EXCEL MAGIC: Clickable Profile URL
+            # Extract URL
             try:
                 profile_path = user.get_absolute_url()
                 full_url = request.build_absolute_uri(profile_path)
             except Exception:
                 full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
 
-            # This creates a blue clickable link in Excel that says "Open Profile"
-            clickable_profile = f'=HYPERLINK("{full_url}", "Open Profile")'
+            # Clean Values
+            email = user.email if user.email else "N/A"
+            phone = str(user.phone_number) if user.phone_number else "N/A"
 
-            # 2. EXCEL MAGIC: Clickable Telegram Link
+            # Extract Telegram
             if user.telegram_handle:
-                # Remove the '@' if the user typed it, so we can make a clean web link
                 clean_tg = user.telegram_handle.replace("@", "").strip()
-                # This opens Telegram Web or the App directly to their DM!
-                clickable_telegram = f'=HYPERLINK("https://t.me/{clean_tg}", "Message @{clean_tg}")'
+                telegram = f"https://t.me/{clean_tg}"
             else:
-                clickable_telegram = "No Telegram"
+                telegram = "N/A"
 
-            # Clean Email
-            email = user.email if user.email else "No Email"
-
-            # Phone (Keep the formatting fix)
-            phone = f'="{user.phone_number}"' if user.phone_number else "N/A"
-
-            # Write Row
-            writer.writerow([
+            # Write Data Row
+            row = [
                 user.display_name,
-                clickable_profile,
+                full_url,
                 title,
                 phone,
                 email,
-                clickable_telegram
-            ])
+                telegram
+            ]
+            worksheet.append(row)
 
+            # Make URLs Clickable
+            current_row = worksheet.max_row
+            worksheet.cell(row=current_row, column=2).hyperlink = full_url
+            worksheet.cell(row=current_row, column=2).style = "Hyperlink"
+
+            if telegram != "N/A":
+                worksheet.cell(row=current_row, column=6).hyperlink = telegram
+                worksheet.cell(row=current_row, column=6).style = "Hyperlink"
+
+        # 2. Auto-adjust column widths
+        for col in worksheet.columns:
+            max_length = 0
+            column_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            worksheet.column_dimensions[column_letter].width = adjusted_width
+
+        workbook.save(response)
         return response
+
     # ---------------------------------------------------------
 
     list_display = [
