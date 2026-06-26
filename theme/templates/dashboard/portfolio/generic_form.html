@@ -195,20 +195,15 @@
     /* =========================================
        MOBILE-SPECIFIC OPTIMIZATIONS
        ========================================= */
-
-    /* Improve touch targets on mobile */
     @media (max-width: 640px) {
-        /* Ensure min 44x44px touch targets */
         button, a, input[type="submit"], input[type="button"], input[type="reset"],
         .btn-primary-gradient, .toggle-wrapper, .radio-pill-group label {
             min-height: 44px;
             min-width: 44px;
         }
 
-        /* Better spacing for mobile forms */
         .django-form { gap: 1rem !important; }
 
-        /* Remove hover effects on mobile (use active instead) */
         .btn-primary-gradient:hover {
             transform: none;
             box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
@@ -219,58 +214,40 @@
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* Mobile-friendly toggle */
-        .toggle-wrapper:active {
-            background: #f0f4f8;
-        }
+        .toggle-wrapper:active { background: #f0f4f8; }
 
-        /* Better radio pill buttons on mobile */
         .radio-pill-group label:active {
             background: rgba(10, 102, 194, 0.08);
             transform: scale(0.98);
         }
 
-        /* Prevent text selection on buttons */
         button, .btn-primary-gradient, .toggle-wrapper, .radio-pill-group label {
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Better input focus states on mobile */
         input:focus, select:focus, textarea:focus {
             outline: none;
-            font-size: 16px !important; /* Prevent zoom on iOS */
+            font-size: 16px !important;
         }
 
-        /* Reduce excessive shadows on mobile */
         body { box-shadow: none; }
 
-        /* Keyboard safe area for notched phones */
         @supports(padding: max(0px)) {
             main { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
         }
     }
 
-    /* Landscape mobile optimization */
     @media (max-width: 640px) and (orientation: landscape) {
         main { min-height: auto; }
         .toggle-wrapper { padding: 12px 16px; min-height: 48px; }
         .django-form textarea { min-height: 100px; }
     }
 
-    /* Smooth scrolling */
     html { scroll-behavior: smooth; }
 
-    /* Better link/button focus states for accessibility */
     @media (prefers-reduced-motion: reduce) {
         * { transition: none !important; animation: none !important; }
-    }
-
-    /* Haptic feedback indicator (for supported devices) */
-    @media (hover: none) and (pointer: coarse) {
-        button, input[type="submit"], .btn-primary-gradient, .toggle-wrapper {
-            /* Mobile - no hover state, use active instead */
-        }
     }
 </style>
 
@@ -312,11 +289,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-x-5 md:gap-y-6" id="form-grid">
                     {% for field in form %}
                         {% if not field.is_hidden %}
-                            <!--
-                              THE ULTIMATE ONBOARDING CHECK:
-                              If the form HAS a 'category' field, it is guaranteed to be a Project.
-                              It hides all fields natively if it's a new instance.
-                            -->
                             <div class="flex flex-col w-full dynamic-reveal
                                 {% if field.field.widget.input_type == 'checkbox' or field.field.widget.template_name == 'django/forms/widgets/textarea.html' or field.name in 'title,name,company_name,bio_narrative,content,main_description,description,category' %}
                                     col-span-1 md:col-span-2
@@ -356,7 +328,7 @@
                                     </div>
 
                                     {% if field.help_text %}
-                                        <p class="text-[12px] sm:text-[13px] font-medium text-slate-500 mt-1.5 px-0.5 leading-snug field-help" id="help-{{ field.name }}">💡 {{ field.help_text|safe }}</p>
+                                        <p class="text-[12px] sm:text-[13px] font-medium text-slate-500 mt-1.5 px-0.5 leading-snug field-help" id="help-{{ field.name }}">{{ field.help_text|safe }}</p>
                                     {% endif %}
                                 {% endif %}
 
@@ -441,9 +413,8 @@
         // DYNAMIC PROGRESSIVE DISCLOSURE FOR PROJECTS
         // =========================================================
         const isEditMode = {% if form.instance.pk %}true{% else %}false{% endif %};
-        const categoryInput = document.getElementById('id_category');
+        const categoryInput = document.getElementById('id_category_select');
 
-        // Check if Category Input exists. If yes, it's definitely the Project Form!
         if (categoryInput) {
 
             // Ultimate protection: Ensure the browser selects the placeholder visually
@@ -451,97 +422,96 @@
                 categoryInput.selectedIndex = 0;
             }
 
+            // ADD EXPLICIT HELP TEXT TO THE CATEGORY DROPDOWN
+            const categoryWrapper = categoryInput.closest('[data-field-name="category"]');
+            if (categoryWrapper) {
+                let catHelp = categoryWrapper.querySelector('.field-help');
+                if (!catHelp) {
+                    catHelp = document.createElement('p');
+                    catHelp.className = 'text-[12px] sm:text-[13px] font-medium text-slate-500 mt-1.5 px-0.5 leading-snug field-help';
+                    categoryInput.parentNode.appendChild(catHelp);
+                }
+                catHelp.innerText = "Choosing your industry customizes the rest of the form below to ask for the exact details and files that matter most in your specific profession.";
+            }
+
+            // HIGHLY EXPLICIT, "EXPLAIN-LIKE-I'M-5" HELP TEXTS FOR EVERY FIELD
             const contentMaps = {
                 'SOFTWARE_DATA': {
-                    title: { label: "App or Project Name", help: "The official name of your software, app, AI model, or data project. Examples: 'ChainGuard (Ethereum Security)', 'DocFlow (Document Processing AI)', 'Analytics Dashboard v2'.", place: "E.g., E-commerce Platform, ML Model" },
-                    role: { label: "Tech Stack & Your Role", help: "Specify the technologies you used (React, Python, TensorFlow, AWS, etc.) and your specific contribution (Frontend, Backend, ML Engineer, DevOps, Full Stack, etc.). This shows your technical expertise.", place: "E.g., Full Stack Developer (React, Django, PostgreSQL)" },
-                    link: { label: "GitHub Repo or Live Demo", help: "Provide a link to your code repository (GitHub, GitLab), live deployment (Heroku, Vercel), or interactive demo. This lets people try your work!", place: "https://github.com/username/project or https://demo.example.com" },
-                    desc: { label: "Technical Architecture & Outcome", help: "What problem did you solve? Describe your approach, tech decisions, challenges you overcame, and measurable results (performance, user adoption, revenue impact, etc.). Numbers matter!", place: "Built a microservice handling 10K+ req/s. Optimized query time by 60%, reducing DB costs by $500/month..." },
-                    gallery: { label: "Code & Architecture", help: "Upload app screenshots, code snippets, architecture diagrams, system design documents, performance graphs, or deployment dashboards. High-quality images (min 1200px wide recommended).", btn: "Add Image/PDF", accept: "image/*,.pdf" }
-                },
-                'HARDWARE_ROBOTICS': {
-                    title: { label: "Hardware / Robotics Project", help: "The official name of your hardware project, robotics system, or IoT device. Examples: 'Autonomous Delivery Bot v3', 'Smart Water Monitor', 'Industrial Arm Controller'.", place: "E.g., Autonomous Drone, Prosthetic Limb" },
-                    role: { label: "Your Role & Expertise", help: "Your specific role (Lead Engineer, Electronics Designer, Firmware Developer, Mechanical Designer) and key technologies used (Arduino, ROS, CAD, embedded systems, etc.).", place: "E.g., Hardware Lead Engineer (PCB Design, ROS, Embedded C++)" },
-                    link: { label: "Project Demo or GitHub", help: "Link to video demo, GitHub repository with schematics, product page, press coverage, or project documentation.", place: "https://github.com/username/robotics-project or https://youtu.be/xxxxx" },
-                    desc: { label: "System Design & Performance", help: "Explain the hardware components, system architecture, control algorithms, power consumption, accuracy/speed metrics, and real-world performance. Include challenges overcome and innovations made.", place: "Designed a 6-DOF robotic arm with ±2mm accuracy, 50Hz control loop, processing real-time sensor fusion from 12 sensors..." },
-                    gallery: { label: "Hardware Photos & Schematics", help: "Upload high-quality photos of your prototype in action, PCB layouts, CAD renderings, wiring diagrams, sensor visualizations, or test results. PDFs for technical schematics.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
+                    title: { label: "App or Project Name", help: "Official name of your software, app, AI model, or data project.", place: "E.g., E-commerce Platform, ML Model" },
+                    role: { label: "Tech Stack & Your Role", help: "Technologies used (React, Python, AWS, etc.) and your specific contribution.", place: "E.g., Full Stack Developer (React, Django)" },
+                    link: { label: "GitHub Repo or Live Demo", help: "Link to code repository or live deployment.", place: "https://github.com/username/project" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Screenshots & Architecture", help: "Upload app screenshots, architecture diagrams, or code snippets.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
                 },
                 'MEDICAL_CLINICAL': {
-                    title: { label: "Research / Clinical Project", help: "Official title of your research study, clinical trial, medical device project, or public health initiative. Examples: 'Phase II Cardiac Rhythm Device Trial', 'COVID-19 Vaccine Safety Study'.", place: "E.g., Phase II Neurology Trial, Diabetes Management Study" },
-                    role: { label: "Your Medical Role & Specialty", help: "Your medical specialty (Cardiology, Neurology, etc.) and specific role (Lead Investigator, Co-Investigator, Clinical Coordinator, Data Analyst, Resident, etc.). This shows your clinical authority.", place: "E.g., Lead Investigator, MD, Cardiologist; or Clinical Research Coordinator" },
-                    link: { label: "DOI / PubMed / ClinicalTrials Link", help: "Link to published paper on PubMed, DOI link to journal article, ClinicalTrials.gov entry, or institutional repository. Publicly accessible links only.", place: "https://pubmed.ncbi.nlm.nih.gov/xxxxx or https://doi.org/10.1234/xxxx" },
-                    desc: { label: "Methodology, Patient Cohort & Findings", help: "Explain patient population (N=X, demographics), study design (RCT, observational, etc.), methodology, statistical analysis, primary & secondary outcomes, and clinical significance. Include impact on practice.", place: "RCT with 400 patients (age 45-75) comparing treatment A vs B. Primary outcome: 30% reduction in symptoms (p<0.001). Results published in NEJM, impacting clinical guidelines..." },
-                    gallery: { label: "Research Evidence & Data", help: "Upload PDF research papers, clinical protocols, data tables, statistical analysis outputs, IRB approvals, patient safety reports, or manuscript figures. Ensure HIPAA compliance (de-identified).", btn: "Upload PDF/Image", accept: ".pdf,image/*" }
+                    title: { label: "Research or Trial Title", help: "Official title of your clinical trial, research study, or medical initiative.", place: "E.g., Phase II Neurology Trial" },
+                    role: { label: "Your Specialty & Role", help: "Medical specialty and specific role (Lead Investigator, Clinical Coordinator, etc.).", place: "E.g., Lead Investigator, Cardiologist" },
+                    link: { label: "DOI / PubMed / ClinicalTrials", help: "Link to published paper on PubMed, DOI, or ClinicalTrials.gov entry.", place: "https://pubmed.ncbi.nlm.nih.gov/xxxxx" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Research Papers & Data", help: "Upload PDF lab reports, published papers, or charts. HIPAA compliant.", btn: "Upload PDF/Image", accept: ".pdf,image/*" }
                 },
                 'LEGAL_POLICY': {
-                    title: { label: "Case / Legislation / Policy Title", help: "Official case name, statute name, or policy document title. Examples: 'Smith v. Johnson (Supreme Court)', 'Digital Privacy Act 2024', 'Healthcare Reform Initiative'.", place: "E.g., Smith v. State, Tech Regulation 2024" },
-                    role: { label: "Your Legal Role & Jurisdiction", help: "Your legal role (Lead Counsel, Junior Partner, Policy Advisor, Law Clerk) and jurisdiction/court (NY Federal District, EU Parliament, etc.). Shows your legal standing.", place: "E.g., Lead Counsel, Federal District Court; or Policy Advisor, EU Commission" },
-                    link: { label: "Public Case / Legislative Link", help: "Link to court docket (PACER), official legislation database, government website, or news coverage. Ensure publicly available sources.", place: "https://www.uscourts.gov/casenum or https://eur-lex.europa.eu" },
-                    desc: { label: "Legal Issues, Strategy & Outcome", help: "Explain the legal questions involved, your litigation strategy or policy approach, key arguments presented, precedents cited, and final outcome (verdict, settlement, policy adoption). Include impact.", place: "Represented tech startup in patent infringement defense. Successfully argued invalidity of competing patents under Alice/Bilski precedent. Case dismissed on summary judgment, saving client $2M in legal costs..." },
-                    gallery: { label: "Legal Documents (Redacted)", help: "Upload redacted PDFs of legal briefs, motions, policy proposals, court filings, or case summaries. ALWAYS ensure confidentiality—redact client names and sensitive details.", btn: "Upload PDF", accept: ".pdf" }
-                },
-                'SCIENCE_RESEARCH': {
-                    title: { label: "Research Project / Experiment", help: "Title of your research project, experiment, or publication. Examples: 'Novel Photosynthesis Mechanism in C3 Plants', 'Quantum Computing Error Correction'.", place: "E.g., Novel Photosynthesis Mechanism" },
-                    role: { label: "Your Role & Discipline", help: "Your scientific role (Lead Researcher, Principal Investigator, Lab Technician) and discipline (Physics, Chemistry, Biology, etc.). Shows your expertise level.", place: "E.g., Lead Researcher, PhD in Materials Science" },
-                    link: { label: "Publication / Preprint Link", help: "Link to published paper, arXiv preprint, institutional repository, or press coverage. Publicly accessible preferred.", place: "https://arxiv.org/abs/xxxx or https://nature.com/articles/xxxxx" },
-                    desc: { label: "Research Question, Methods & Results", help: "State your hypothesis/research question, experimental design, sample size, methodology, major findings, and implications for the field. Include breakthrough moments and citations by other researchers.", place: "Using X-ray crystallography on sample set N=50, we discovered a novel binding mechanism with 10^-12 M affinity, 20x higher than previous best. Cited in 150+ papers within 3 years..." },
-                    gallery: { label: "Research Data & Visualizations", help: "Upload microscopy images, spectra graphs, statistical plots, simulation results, lab photos, or supplementary figures. PDFs for technical appendices or data tables.", btn: "Upload Image/PDF", accept: "image/*,.pdf" }
+                    title: { label: "Case or Policy Title", help: "Official case name, statute name, or policy document title.", place: "E.g., Smith v. State, Tech Regulation 2024" },
+                    role: { label: "Your Role & Jurisdiction", help: "Legal role (Lead Counsel, Policy Advisor) and jurisdiction/court.", place: "E.g., Lead Counsel, Federal District Court" },
+                    link: { label: "Public Record Link", help: "Link to court docket (PACER) or official news coverage.", place: "https://www.uscourts.gov/casenum" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Legal Briefs & Documents", help: "Upload redacted PDFs of legal briefs, motions, or policy proposals.", btn: "Upload PDF", accept: ".pdf" }
                 },
                 'DESIGN_UX': {
-                    title: { label: "Design Project / Campaign", help: "Name of your design project, rebrand, or campaign. Examples: 'FinTech App Redesign', 'Corporate Identity System', 'E-commerce UX Overhaul'.", place: "E.g., FinTech App Redesign, Brand Refresh" },
-                    role: { label: "Your Design Role & Tools", help: "Your role (Product Designer, UX/UI Designer, Visual Designer, Art Director, Design Lead) and tools used (Figma, Adobe XD, Sketch, Protopie, etc.).", place: "E.g., Lead Product Designer using Figma, Adobe Creative Suite" },
-                    link: { label: "Figma / Behance / Portfolio", help: "Link to interactive Figma prototype, Behance/Dribbble portfolio, design case study, or live website. Ideally something people can interact with.", place: "https://figma.com/file/xxxxx or https://yourportfolio.com/project" },
-                    desc: { label: "Design Process & Results", help: "Describe the problem & users, research conducted (interviews, surveys, analytics), design iterations, key design decisions, and measurable outcomes (conversion uplift, engagement, NPS, retention, etc.). Show impact!", place: "Conducted 20 user interviews identifying checkout friction. Redesigned flow reducing steps from 8 to 3. A/B test showed 35% conversion increase, $500K annual revenue impact..." },
-                    gallery: { label: "Wireframes, Mockups & Components", help: "Upload UI mockups, user journey maps, wireframes, component libraries, before/after comparisons, or interaction videos. Recommended: 2x resolution for retina displays (2400px+).", btn: "Add Image/Video", accept: "image/*,.mp4,.webm" }
+                    title: { label: "Design Project Name", help: "Name of your design project, rebrand, or campaign.", place: "E.g., FinTech App Redesign, Brand Refresh" },
+                    role: { label: "Your Role & Tools", help: "Role (UX Researcher, Product Designer) and tools used (Figma, Adobe XD).", place: "E.g., Lead Product Designer (Figma)" },
+                    link: { label: "Figma or Portfolio Link", help: "Link to Figma prototype, Behance portfolio, or live website.", place: "https://figma.com/file/xxxxx" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Wireframes & Mockups", help: "Upload UI designs, user journey maps, or wireframes.", btn: "Add Image", accept: "image/*" }
                 },
                 'ARCHITECTURE_CIVIL': {
-                    title: { label: "Building / Infrastructure Project", help: "Official name of building, bridge, infrastructure project, or urban development. Examples: 'Downtown Eco-Tower', 'Riverside Transit Hub', 'Smart City District'.", place: "E.g., Downtown Commercial Tower, Sustainable Housing Complex" },
-                    role: { label: "Your Role & Discipline", help: "Your specific role (Lead Architect, Design Principal, Structural Engineer, Site Manager, Project Director) and disciplines involved (architecture, structural, MEP, sustainability, etc.).", place: "E.g., Lead Architect & Design Principal; or Structural Engineer, Lead" },
-                    link: { label: "Press / Awards / 3D Tour", help: "Link to press coverage, architectural awards (AIA, RIBA), 3D walkthroughs, project website, or sustainability certifications.", place: "https://example.com/project or https://3dtour.example.com" },
-                    desc: { label: "Project Scope, Innovation & Outcome", help: "Explain project scale (sqft, budget, timeline), architectural concept, engineering solutions (structural system, HVAC, sustainability), regulatory challenges overcome, certifications (LEED, Passivhaus), and completed status/occupancy.", place: "245,000 sqft mixed-use tower. Achieved LEED Platinum + WELL Gold. Innovative double-skin facade reduces energy by 40%. Completed ahead of schedule, $50M under budget..." },
-                    gallery: { label: "Renders, Photos & Technical", help: "Upload architectural renderings, 3D models, construction photos, floor plans, technical drawings, detail sections, or completed building photos. High-res (300dpi). PDFs for technical sets.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
+                    title: { label: "Building or Project Name", help: "Name of building, bridge, infrastructure project, or urban development.", place: "E.g., Downtown Commercial Tower" },
+                    role: { label: "Your Role & Discipline", help: "Role (Lead Architect, Structural Engineer) and disciplines involved.", place: "E.g., Lead Architect & Design Principal" },
+                    link: { label: "3D Tour or Press Link", help: "Link to 3D walkthrough, architectural awards, or press coverage.", place: "https://example.com/project" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Blueprints & Renders", help: "Upload renderings, CAD exports, site photos, or technical floor plans.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
                 },
                 'BUSINESS_FINANCE': {
-                    title: { label: "Business Initiative / Venture", help: "Name of your business, startup, investment, or corporate initiative. Examples: 'SaaS Platform Launch', 'Series A Fundraising', 'Market Expansion to APAC'.", place: "E.g., SaaS Startup, Market Expansion" },
-                    role: { label: "Your Role & Scope", help: "Your role (Founder, CEO, VP Operations, CFO, Investment Manager) and scope of responsibility (team size, budget managed, markets, etc.).", place: "E.g., Co-Founder & CEO, built team from 0 to 50; or CFO managing $50M portfolio" },
-                    link: { label: "Website / Press / Pitch", help: "Link to company website, TechCrunch article, Crunchbase profile, pitch deck, or investor relations page.", place: "https://yourcompany.com or https://techcrunch.com/xxxxx" },
-                    desc: { label: "Business Model, Growth & Impact", help: "Explain your business model, market opportunity, competitive advantage, revenue model, growth metrics (ARR, customer count, retention rate), and fundraising/exits achieved. Show unit economics.", place: "B2B SaaS platform. $2M ARR, 150+ customers, 95% retention. Raised $5M Series A from Tier 1 VCs. YoY growth: 250%. Profitable. Recently acquired by Google..." },
-                    gallery: { label: "Business Metrics & Proof", help: "Upload dashboard screenshots showing MRR, customer growth charts, press mentions, product screenshots, team photos, or office/event photos. Redact sensitive financials.", btn: "Add Image", accept: "image/*" }
+                    title: { label: "Business or Startup Name", help: "Name of business, startup, investment, or corporate initiative.", place: "E.g., SaaS Startup, Market Expansion" },
+                    role: { label: "Your Role & Scope", help: "Role (Founder, CEO, Investment Manager) and scope of responsibility.", place: "E.g., Co-Founder & CEO" },
+                    link: { label: "Website or Pitch Deck", help: "Link to company website, Crunchbase profile, or pitch deck.", place: "https://yourcompany.com" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Metrics & Dashboards", help: "Upload growth charts, MRR dashboards, press mentions, or product photos.", btn: "Add Image", accept: "image/*" }
                 },
                 'MARKETING_MEDIA': {
-                    title: { label: "Campaign / Publication Title", help: "Name of marketing campaign, media project, or publication. Examples: 'Product Launch Campaign', 'Investigative Journalism Series', 'Brand Awareness Initiative'.", place: "E.g., Product Launch, Brand Campaign" },
-                    role: { label: "Your Role & Medium", help: "Your role (Marketing Lead, Journalist, Content Strategist, Creative Director) and medium (digital, print, video, PR, social, etc.).", place: "E.g., Marketing Lead, Digital Strategy; or Investigative Journalist" },
-                    link: { label: "Campaign / Article Link", help: "Link to published article, campaign landing page, portfolio, news outlet, or documentary. Should show final published work.", place: "https://publication.com/article or https://campaign.com" },
-                    desc: { label: "Strategy, Reach & Impact", help: "Describe your strategy, target audience, channels used, key messaging, content produced, and measurable results (impressions, engagement, leads, sales, awards won). Show ROI.", place: "Designed integrated campaign reaching 5M+ people across 8 channels. Generated 250K qualified leads, $2M in attributed revenue. Won 3 marketing awards. Featured in Forbes, AdWeek..." },
-                    gallery: { label: "Campaign Assets & Results", help: "Upload ad creative, published articles, social media screenshots, campaign analytics, email designs, video stills, or awards/recognition. Show the work and proof.", btn: "Add Image", accept: "image/*" }
+                    title: { label: "Campaign or Publication", help: "Name of marketing campaign, media project, or publication.", place: "E.g., Product Launch, Brand Campaign" },
+                    role: { label: "Your Role & Medium", help: "Role (Marketing Lead, Creative Director) and medium (Digital, Print, Video, PR).", place: "E.g., Marketing Lead, Digital Strategy" },
+                    link: { label: "Live Campaign Link", help: "Link to published article, campaign landing page, or video.", place: "https://campaign.com" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Campaign Assets", help: "Upload ad creatives, social media screenshots, or campaign analytics.", btn: "Add Image", accept: "image/*" }
                 },
                 'ARTS_CREATIVE': {
-                    title: { label: "Artwork / Film / Performance", help: "Title of artwork, film, photography series, music project, or performance. Examples: 'Urban Isolation Series', 'Indie Film Documentary', 'Jazz Fusion Album'.", place: "E.g., Summer Fashion Editorial, Art Installation" },
-                    role: { label: "Your Creative Role", help: "Your role (Director, Photographer, Musician, Illustrator, Animator, Art Director, Producer, etc.). Multiple roles okay.", place: "E.g., Director & Cinematographer; or Photographer & Post-Production" },
-                    link: { label: "YouTube / Vimeo / Portfolio Link", help: "Link to your work on YouTube, Vimeo, Spotify, ArtStation, your website, or gallery/museum page. Somewhere viewers can experience the work.", place: "https://youtube.com/watch?v=xxxxx or https://yourartistsite.com" },
-                    desc: { label: "Creative Vision & Reception", help: "Explain the inspiration, concept, artistic medium/techniques, creative process, audience reception, awards/exhibitions, and personal artistic goals achieved. Tell the story behind the work.", place: "Photography series exploring urban isolation through color psychology and geometry. Exhibited at MoMA and Tate Modern. Published in 5 international photography magazines. 100K+ social followers..." },
-                    gallery: { label: "Portfolio & Press", help: "Upload high-resolution artwork stills, film frames, performance photos, behind-the-scenes content, reviews/critiques, or press mentions. Recommended: 300dpi for gallery-quality.", btn: "Add Media", accept: "image/*,.mp4,.webm" }
+                    title: { label: "Artwork or Film Title", help: "Title of artwork, film, photography series, music project, or performance.", place: "E.g., Summer Fashion Editorial" },
+                    role: { label: "Your Creative Role", help: "Role (Director, Photographer, Illustrator, Animator, Art Director, Producer).", place: "E.g., Director & Cinematographer" },
+                    link: { label: "YouTube or Portfolio Link", help: "Link to work on YouTube, Vimeo, Spotify, ArtStation, or portfolio website.", place: "https://youtube.com/watch?v=xxxxx" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Portfolio Stills", help: "Upload artwork stills, film frames, performance photos, or behind-the-scenes content.", btn: "Add Media", accept: "image/*" }
                 },
                 'EDUCATION_TRAINING': {
-                    title: { label: "Course / Program / Curriculum", help: "Name of educational course, training program, curriculum, or learning initiative you created. Examples: 'Advanced Python Bootcamp', 'K-12 Science Curriculum', 'Corporate Leadership Academy'.", place: "E.g., Python Bootcamp, Leadership Training Program" },
-                    role: { label: "Your Educational Role", help: "Your role (Course Instructor, Curriculum Designer, Training Manager, Educator, Program Director, etc.) and student/audience type.", place: "E.g., Lead Instructor for 200+ students; or Curriculum Designer for K-12" },
-                    link: { label: "Course Platform / Reviews", help: "Link to course on Udemy, Coursera, internal platform, course evaluations, student testimonials, or curriculum documentation.", place: "https://udemy.com/course/xxxxx or internal platform link" },
-                    desc: { label: "Learning Outcomes & Impact", help: "Describe learning objectives, teaching methodology, course modules, student demographics, completion/pass rates, career outcomes of graduates, and testimonials. Show impact.", place: "Taught 500+ professionals advanced Python. 95% completion rate, 4.9/5.0 avg rating. 80% got promotions or new jobs within 6 months. Generated $500K in revenue..." },
-                    gallery: { label: "Course Materials & Results", help: "Upload sample course content, student work examples, testimonial screenshots, completion certificates, career outcome data, or classroom photos. Show proof of learning.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
+                    title: { label: "Course or Curriculum Name", help: "Name of educational course, training program, or curriculum you created.", place: "E.g., Python Bootcamp" },
+                    role: { label: "Your Educational Role", help: "Role (Course Instructor, Curriculum Designer) and student/audience type.", place: "E.g., Lead Instructor for 200+ students" },
+                    link: { label: "Course Platform Link", help: "Link to course on Udemy, Coursera, or internal platform.", place: "https://udemy.com/course/xxxxx" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Course Materials", help: "Upload sample syllabus PDFs, student testimonials, or classroom photos.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
                 },
                 'OPERATIONS_TRADES': {
-                    title: { label: "Operations / Project / Process", help: "Name of operations project, supply chain initiative, kitchen concept, construction project, or trade project. Examples: 'Distribution Center Optimization', 'Michelin-Star Restaurant Opening', 'Power Plant Retrofit'.", place: "E.g., Restaurant Opening, Supply Chain Redesign" },
-                    role: { label: "Your Operational Role", help: "Your role (Operations Manager, Chef, Site Manager, Logistics Lead, Supervisor, Crew Lead, etc.) and team/scope managed.", place: "E.g., Operations Manager for 200-person team; or Executive Chef" },
-                    link: { label: "Business Link / Reviews", help: "Link to business website, Google Reviews, Yelp, press coverage, industry recognition, or published case study.", place: "https://businessname.com or https://google.com/maps?xxxxx" },
-                    desc: { label: "Process, Metrics & Results", help: "Describe operational scope, systems implemented, efficiency improvements (%, cost savings, time reduction), quality metrics, team management, awards/recognition, and customer/client outcomes.", place: "Managed opening of flagship restaurant. Hired & trained 50-person kitchen team. Achieved 4.8★ rating on OpenTable with 96% repeat customer rate. Operations efficiency 35% above industry standard..." },
-                    gallery: { label: "Operations & Results", help: "Upload facility/project photos, team photos, menu/process documentation, customer testimonials, recognition awards, or operational dashboards. Show the work and team.", btn: "Add Image", accept: "image/*" }
+                    title: { label: "Project or Process Name", help: "Name of operations project, supply chain initiative, or trade project.", place: "E.g., Supply Chain Redesign" },
+                    role: { label: "Your Operational Role", help: "Role (Operations Manager, Site Lead, Executive Chef) and team/scope managed.", place: "E.g., Operations Manager for 200-person team" },
+                    link: { label: "Business Link", help: "Link to business website, Google Reviews, Yelp, or press coverage.", place: "https://businessname.com" },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Operations Photos", help: "Upload facility photos, team photos, process documentation, or operational dashboards.", btn: "Add Image", accept: "image/*" }
                 },
                 'DEFAULT': {
-                    title: { label: "Project Title", help: "Clear, professional name of your project, case study, or initiative.", place: "Enter project title..." },
+                    title: { label: "Project Title", help: "Clear, professional name of your project or initiative.", place: "Enter project title..." },
                     role: { label: "Your Role", help: "Your specific contribution and responsibilities in this project.", place: "E.g., Project Manager, Lead Developer" },
-                    link: { label: "Reference Link (Optional)", help: "Link to live demo, publication, documentation, or any external resource.", place: "https://..." },
-                    desc: { label: "Project Description", help: "Problem → Solution → Impact. Explain what problem you tackled, your approach, obstacles overcome, and measurable results achieved.", place: "Describe your project in detail..." },
-                    gallery: { label: "Project Evidence & Assets", help: "Upload images (screenshots, photos, diagrams) or PDF documents (reports, papers, briefs) proving your work and results.", btn: "Add File", accept: "image/*,.pdf" }
+                    link: { label: "Reference Link (Optional)", help: "Link to live demo, publication, or external resource.", place: "https://..." },
+                    main_description: { label: "Explain Your Project or Research", help: "", place: "Describe your project in detail..." },
+                    gallery: { label: "Project Evidence & Assets", help: "Upload images or PDF documents proving your work and results.", btn: "Add File", accept: "image/*,.pdf" }
                 }
             };
 
@@ -647,30 +617,7 @@
             });
         }
 
-        // 2. Auto-Bullet Formatter for Textareas
-        const autoBulletAreas = document.querySelectorAll('textarea.auto-bullet');
-        autoBulletAreas.forEach(textarea => {
-            textarea.addEventListener('focus', function() {
-                if (this.value.trim() === '') {
-                    this.value = '• ';
-                }
-            });
-
-            textarea.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const cursorPos = this.selectionStart;
-                    const textBefore = this.value.substring(0, cursorPos);
-                    const textAfter  = this.value.substring(cursorPos);
-
-                    this.value = textBefore + '\n• ' + textAfter;
-                    this.selectionStart = this.selectionEnd = cursorPos + 3;
-                    this.dispatchEvent(new Event('input'));
-                }
-            });
-        });
-
-        // 3. Auto-expand textareas with mobile optimization
+        // 2. Auto-expand textareas with mobile optimization
         const textareas = document.querySelectorAll('textarea');
         textareas.forEach(textarea => {
             textarea.removeAttribute('required');
@@ -807,51 +754,6 @@
             };
         }
 
-        // =========================================================
-        // MOBILE GUIDANCE SYSTEM - Shows tips when form loads
-        // =========================================================
-        // Detect if on mobile
-        const isMobile = window.innerWidth <= 640;
-
-        if (isMobile) {
-            // Add field-specific guidance on focus
-            const allInputs = document.querySelectorAll('input, textarea, select');
-            allInputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    const wrapper = this.closest('[data-field-name]');
-                    if (wrapper) {
-                        const helpText = wrapper.querySelector('.field-help');
-                        if (helpText) {
-                            helpText.style.opacity = '1';
-                            helpText.style.transform = 'scale(1)';
-                            helpText.style.transition = 'all 0.2s ease';
-                        }
-                    }
-                });
-            });
-        }
-
-        // Add character counters for textareas on mobile
-        if (isMobile) {
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    let counter = this.closest('[data-field-name]')?.querySelector('.char-counter');
-                    if (!counter) {
-                        counter = document.createElement('div');
-                        counter.className = 'char-counter text-[11px] text-slate-400 mt-1 px-0.5';
-                        this.closest('[data-field-name]')?.appendChild(counter);
-                    }
-                    const max = this.maxLength || 5000;
-                    const current = this.value.length;
-                    const percent = Math.round((current / max) * 100);
-                    const color = percent < 50 ? 'text-slate-400' : percent < 80 ? 'text-amber-500' : 'text-rose-500';
-                    counter.innerHTML = `${current} / ${max} characters ${percent}%`;
-                    counter.className = `char-counter text-[11px] ${color} mt-1 px-0.5 font-medium`;
-                });
-            });
-        }
     });
 </script>
 {% endblock %}
-
