@@ -178,13 +178,16 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
             'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 2, 'class': 'advanced-field'}),
         }
 
-
+# ==============================================================================
+# UPGRADED: SURGICALLY UPDATED PROJECT SECTION (Dynamic UI Ready)
+# ==============================================================================
 class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = PortfolioProject
-        fields = ['title', 'role', 'link', 'main_description']
+        fields = ['category', 'title', 'role', 'link', 'main_description']
 
         labels = {
+            'category': _("Industry / Field of Work"),
             'title': _("Project Title"),
             'role': _("Your Role"),
             'link': _("Live Link or Document (Optional)"),
@@ -192,74 +195,165 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'title': _(
-                "Your project title. E.g., Patient Care Study, Business Plan, Mobile App, or Python Learning Project."),
-            'role': _("What did you do? (e.g., Lead Researcher, Developer, or Personal/Learning Project)."),
-            'link': _("Optional. A link to see the project live, a document, or a file link."),
+            'category': _("Select the industry or field this project belongs to."),
+            'title': _("Your project title."),
+            'role': _("What did you do?"),
+            'link': _("A link to see the project live."),
             'main_description': _("Explain what the project is, what you did, and what you achieved."),
         }
 
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., Regional Water Access Study'}),
-            'role': forms.TextInput(attrs={'placeholder': 'e.g., Operations Lead'}),
-            'main_description': forms.Textarea(attrs={'placeholder': 'Describe your project ....', 'rows': 5, 'class': 'markdown-editor'}),
+            'category': forms.Select(attrs={'class': 'w-full'}),
+            'title': forms.TextInput(attrs={'placeholder': 'Enter title...'}),
+            'role': forms.TextInput(attrs={'placeholder': 'Enter your role...'}),
+            'main_description': forms.Textarea(
+                attrs={'placeholder': 'Describe your project...', 'rows': 5, 'class': 'markdown-editor'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 🎯 BULLETPROOF OVERRIDE
+        if not self.instance.pk:
+            # 1. Force wipe the database default from Django's memory
+            self.initial['category'] = None
+            self.instance.category = None
+
+            # 2. Inject a true placeholder option at the very top
+            choices = list(self.fields['category'].choices)
+            choices = [c for c in choices if c[0] not in ('', None)]
+            self.fields['category'].choices = [('', '--- Select an Industry / Field ---')] + choices
+
+import datetime
+from django import forms
+from django.utils.translation import gettext_lazy as _
+from django.utils.safestring import mark_safe  # <-- ADD THIS IMPORT
+
+
+# ==============================================================================
+# LINKEDIN-STYLE MONTH/YEAR DATE PICKER
+# ==============================================================================
+class MonthYearWidget(forms.MultiWidget):
+    def __init__(self, attrs=None):
+        # Generate Months
+        months = [(str(i).zfill(2), datetime.date(2000, i, 1).strftime('%B')) for i in range(1, 13)]
+        months.insert(0, ('', 'Month'))
+
+        # Generate Years (Current Year + 5 down to 1950)
+        current_year = datetime.date.today().year
+        years = [(str(y), str(y)) for y in range(current_year + 5, 1950, -1)]
+        years.insert(0, ('', 'Year'))
+
+        # Standard styling applied to the inner selects
+        select_classes = "block w-full bg-white border border-slate-200 rounded-xl text-[14px] font-semibold text-slate-800 px-4 py-3.5 appearance-none cursor-pointer"
+
+        widgets = (
+            forms.Select(attrs={'class': select_classes}, choices=months),
+            forms.Select(attrs={'class': select_classes}, choices=years),
+        )
+        super().__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            if isinstance(value, str):
+                try:
+                    year, month, _ = value.split('-')
+                    return [month, year]
+                except ValueError:
+                    pass
+            elif isinstance(value, datetime.date):
+                return [str(value.month).zfill(2), str(value.year)]
+        return [None, None]
+
+    def render(self, name, value, attrs=None, renderer=None):
+        value = self.decompress(value)
+        final_attrs = self.build_attrs(attrs)
+        id_ = final_attrs.get('id', name)
+
+        month_html = self.widgets[0].render(name + '_0', value[0], dict(final_attrs, id=id_ + '_0'), renderer)
+        year_html = self.widgets[1].render(name + '_1', value[1], dict(final_attrs, id=id_ + '_1'), renderer)
+
+        label_text = 'Start' if 'start' in name else 'End'
+
+        # WE WRAP THE RETURN IN mark_safe SO DJANGO RENDERS IT AS REAL HTML
+        return mark_safe(f'''
+        <div class="flex gap-3 w-full mt-1">
+            <div class="w-1/2 flex flex-col gap-1.5">
+                <label for="{id_}_0" class="text-[13px] font-semibold text-slate-600 ml-1">{label_text} month</label>
+                <div class="relative">{month_html}</div>
+            </div>
+            <div class="w-1/2 flex flex-col gap-1.5">
+                <label for="{id_}_1" class="text-[13px] font-semibold text-slate-600 ml-1">{label_text} year*</label>
+                <div class="relative">{year_html}</div>
+            </div>
+        </div>
+        ''')
+
+
+class MonthYearField(forms.MultiValueField):
+    widget = MonthYearWidget
+
+    def __init__(self, **kwargs):
+        fields = (forms.CharField(required=False), forms.CharField(required=False))
+        super().__init__(fields=fields, **kwargs)
+
+    def compress(self, data_list):
+        if data_list and len(data_list) == 2 and data_list[0] and data_list[1]:
+            try:
+                return datetime.date(int(data_list[1]), int(data_list[0]), 1)
+            except ValueError:
+                return None
+        return None
 
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
-    # Updated to handle robust standard dates
-    start_date = forms.DateField(
-        input_formats=FLEXIBLE_DATE_FORMATS,
-        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
-        help_text=_("Select a date from the calendar, or type it as MM/DD/YYYY (e.g. 12/01/2026).")
-    )
-    end_date = forms.DateField(
-        input_formats=FLEXIBLE_DATE_FORMATS,
-        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
-        required=False,
-        help_text=_("Leave blank if this is your current role.")
-    )
+    # LinkedIn-Style Timeline Fields
+    start_date = MonthYearField(label=_("Timeline"), required=True)
+    end_date = MonthYearField(label=_(" "), required=False, help_text=_("Leave blank if this is your current role."))
 
     class Meta:
         model = WorkExperience
-        fields = ['company_name', 'role_title', 'location_type', 'start_date', 'end_date', 'is_current', 'description']
+
+        # --- THE MAGIC HAPPENS HERE ---
+        # We moved 'description' up, and put location and dates at the very end
+        fields = ['company_name', 'role_title', 'description', 'location_type', 'start_date', 'end_date', 'is_current']
 
         labels = {
             'company_name': _("Organization Name"),
             'role_title': _("Your Title"),
             'location_type': _("Location Setup"),
-            'start_date': _("Start Date"),
-            'end_date': _("End Date"),
             'is_current': _("I currently work here"),
             'description': _("Role Description"),
         }
 
         help_texts = {
             'company_name': _("The name of the company, hospital, organization, or school where you worked."),
-            'role_title': _("Your job title (e.g., Lead Developer, Graphics Designer, Medical Officer, or Intern)."),
-            'location_type': _("Select whether you worked on-site, remotely, or in a hybrid setup."),
-            'description': _("Explain your daily tasks, responsibilities, and achievements."),
+            'description': _("Press 'Enter' to automatically create a new bullet point."),
         }
 
         widgets = {
             'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank'}),
             'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Logistics Officer or Clinic Supervisor'}),
-            'location_type': forms.RadioSelect(),
-            'description': forms.Textarea(attrs={'placeholder': '• Coordinated daily operations\n• Managed a team of 15 staff members', 'rows': 4}),
+            'location_type': forms.RadioSelect(attrs={'class': 'radio-pill-group'}),
+            'description': forms.Textarea(
+                attrs={'placeholder': '• Coordinated daily operations...\n• Managed a team of 15 members...', 'rows': 5,
+                       'class': 'auto-bullet'}),
         }
 
     def clean(self):
         cleaned_data = super().clean()
 
-        # Ensure we properly handle the fallback if a user types a weird date format
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
         is_current = cleaned_data.get('is_current')
 
+        if not start_date:
+            self.add_error('start_date', _("Please select a start month and year."))
+
         if is_current:
             cleaned_data['end_date'] = None
         elif not end_date:
-            self.add_error('end_date', _("Please provide an end date, or check 'I currently work here'."))
+            self.add_error('end_date', _("Please provide an end month and year, or check 'I currently work here'."))
 
         if start_date and end_date and start_date > end_date:
             self.add_error('end_date', _("End date cannot be earlier than the start date."))
@@ -403,6 +497,8 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
         if current_type and 'post_type' in self.fields:
             self.fields['post_type'].widget = forms.HiddenInput()
             self.fields['post_type'].initial = current_type
+
+
 class LiveOpportunityForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = LiveOpportunity
@@ -670,20 +766,32 @@ class CompanyContactMethodForm(TailwindFormMixin, forms.ModelForm):
             'value': _("The actual phone number, email address, or physical address clients should use."),
         }
 
-
+# ==============================================================================
+# UPGRADED: SURGICALLY UPDATED GALLERY/ASSET SECTION
+# ==============================================================================
 class ProjectGalleryImageForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ProjectGallery
-        fields = ['image', 'caption']
+        fields = ['asset_type', 'image', 'document_file', 'external_url', 'caption']
 
         labels = {
+            'asset_type': _("Type of Evidence"),
             'image': _("Upload Image"),
-            'caption': _("Image Caption"),
+            'document_file': _("Upload PDF Document"),
+            'external_url': _("Embed / External Link"),
+            'caption': _("Caption or Title"),
         }
 
         help_texts = {
-            'image': _("Upload a high-quality image demonstrating your project or work."),
-            'caption': _("A brief description of what this image shows (e.g., 'Final Dashboard UI' or 'Field Operation Day 1')."),
+            'asset_type': _("Select whether you are uploading an image, a PDF document, or pasting an external link."),
+            'image': _("Upload a high-quality image (JPG, PNG) demonstrating your work."),
+            'document_file': _("Upload a PDF document, research paper, legal brief, or case file."),
+            'external_url': _("Paste a link to a YouTube video, Figma file, Spotify podcast, etc."),
+            'caption': _("A brief description of what this asset shows (e.g., 'Final Dashboard UI' or 'Field Operation Day 1')."),
+        }
+
+        widgets = {
+            'asset_type': forms.Select(attrs={'class': 'w-full'}),
         }
 
 

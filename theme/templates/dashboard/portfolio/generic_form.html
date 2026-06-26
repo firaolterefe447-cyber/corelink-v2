@@ -56,22 +56,14 @@
         appearance: none;
     }
 
-    /* CLEAN BIG TEXT AREA */
     .django-form textarea {
-        min-height: 180px !important; /* Made significantly taller */
+        min-height: 180px !important;
         resize: vertical !important;
         line-height: 1.6 !important;
     }
 
-    /* Keep the Date Picker icon inside the input from bleeding */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        cursor: pointer;
-        opacity: 0.6;
-        transition: 0.2s;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator:hover {
-        opacity: 1;
-    }
+    input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: 0.2s; }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
     .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]):focus,
     .django-form select:focus,
@@ -80,7 +72,6 @@
         box-shadow: 0 0 0 3px rgba(10,102,194,0.08) !important;
     }
 
-    /* Custom Dropdown Arrow */
     .django-form select {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
         background-position: right 1rem center !important;
@@ -88,6 +79,24 @@
         background-size: 1.2em !important;
         padding-right: 2.5rem !important;
         cursor: pointer;
+    }
+
+    /* =========================================
+       RADIO PILL UI (For Location Types)
+       ========================================= */
+    .radio-pill-group {
+        display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%;
+    }
+    .radio-pill-group label {
+        flex: 1; text-align: center; background: #f8fafc; border: 1.5px solid rgba(226, 232, 240, 0.9);
+        border-radius: 0.75rem; padding: 0.75rem 1rem; cursor: pointer;
+        font-size: 13.5px; font-weight: 700; color: #64748b; transition: all 0.2s ease;
+        position: relative; overflow: hidden;
+    }
+    .radio-pill-group input[type="radio"] { display: none !important; }
+    .radio-pill-group label:has(input[type="radio"]:checked) {
+        background: rgba(10, 102, 194, 0.05); border-color: #0A66C2; color: #0A66C2;
+        box-shadow: 0 2px 8px rgba(10,102,194,0.1);
     }
 
     /* =========================================
@@ -116,7 +125,7 @@
     .django-form input[type="checkbox"] { display: none; }
 
     /* =========================================
-       PRIMARY BUTTON
+       PRIMARY BUTTON & ANIMATIONS
        ========================================= */
     .btn-primary-gradient {
         background: linear-gradient(135deg, #0952A5, #073E89);
@@ -129,11 +138,21 @@
         box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
         transform: translateY(-2px);
     }
+
+    /* USED FOR DYNAMIC REVEAL */
+    .dynamic-reveal {
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .hidden-state {
+        opacity: 0 !important;
+        transform: translateY(15px) !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        visibility: hidden !important;
+    }
 </style>
 
 <main class="w-full min-h-screen py-6 px-4 md:py-12 md:px-0 flex justify-center items-start">
-
-    <!-- CLEAN BENTO CARD CONTAINER -->
     <div class="w-full max-w-[720px] bg-white/95 backdrop-blur-md rounded-[1.25rem] border border-slate-200/90 shadow-[0_1px_4px_rgba(15,23,42,0.06)] overflow-hidden relative z-10">
 
         <!-- HEADER -->
@@ -159,7 +178,7 @@
                         {% if form.instance.pk %}Edit Details{% else %}New Entry{% endif %}
                     {% endif %}
                 </h1>
-                <p class="text-[13.5px] text-slate-500 font-medium mt-0.5">Refine your profile details below.</p>
+                <p class="text-[13.5px] text-slate-500 font-medium mt-0.5" id="form-subtitle">Refine your profile details below.</p>
             </div>
         </div>
 
@@ -168,27 +187,31 @@
             <form method="post" enctype="multipart/form-data" id="main-form" class="django-form flex flex-col gap-6" novalidate>
                 {% csrf_token %}
 
-                <!-- SMART GRID: Inputs flow naturally -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-6">
-
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-6" id="form-grid">
                     {% for field in form %}
                         {% if not field.is_hidden %}
-
-                            <!-- Smarter Column Sizing based on field type and name -->
-                            <div class="flex flex-col w-full
-                                {% if field.field.widget.input_type == 'checkbox' or field.field.widget.template_name == 'django/forms/widgets/textarea.html' or field.name in 'title,name,company_name,bio_narrative,content,main_description,description' %}
+                            <!--
+                              THE ULTIMATE ONBOARDING CHECK:
+                              If the form HAS a 'category' field, it is guaranteed to be a Project.
+                              It hides all fields natively if it's a new instance.
+                            -->
+                            <div class="flex flex-col w-full dynamic-reveal
+                                {% if field.field.widget.input_type == 'checkbox' or field.field.widget.template_name == 'django/forms/widgets/textarea.html' or field.name in 'title,name,company_name,bio_narrative,content,main_description,description,category' %}
                                     col-span-1 md:col-span-2
                                 {% else %}
                                     col-span-1
-                                {% endif %}">
+                                {% endif %}
+                                {% if 'category' in form.fields and not form.instance.pk and field.name != 'category' %}
+                                    hidden-state
+                                {% endif %}"
+                                data-field-name="{{ field.name }}">
 
-                                <!-- CHECKBOX (Rendered as tactile iOS Toggle) -->
                                 {% if field.field.widget.input_type == 'checkbox' %}
                                     <label class="toggle-wrapper group">
                                         <div class="pr-4">
-                                            <span class="block text-[14px] font-bold text-slate-800 group-hover:text-[#0A66C2] transition-colors">{{ field.label }}</span>
+                                            <span class="block text-[14px] font-bold text-slate-800 group-hover:text-[#0A66C2] transition-colors field-label">{{ field.label }}</span>
                                             {% if field.help_text %}
-                                                <span class="block text-[13px] text-slate-500 font-medium mt-0.5 leading-relaxed">{{ field.help_text|safe }}</span>
+                                                <span class="block text-[13px] text-slate-500 font-medium mt-0.5 leading-relaxed field-help">{{ field.help_text|safe }}</span>
                                             {% endif %}
                                         </div>
                                         <div>
@@ -196,11 +219,9 @@
                                             <div class="toggle-switch"></div>
                                         </div>
                                     </label>
-
-                                <!-- STANDARD TEXT / SELECT / TEXTAREA / RADIOS (Clean labels) -->
                                 {% else %}
                                     <div class="flex items-center justify-between mb-2">
-                                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest px-1" for="{{ field.id_for_label }}">
+                                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest px-1 field-label" for="{{ field.id_for_label }}">
                                             {{ field.label }}
                                         </label>
                                         {% if not field.field.required and field.name != "is_current" %}
@@ -208,16 +229,15 @@
                                         {% endif %}
                                     </div>
 
-                                    <div class="relative w-full">
+                                    <div class="relative w-full field-input-wrapper">
                                         {{ field }}
                                     </div>
 
                                     {% if field.help_text %}
-                                        <p class="text-[13px] font-medium text-slate-500 mt-2 px-1 leading-relaxed">{{ field.help_text|safe }}</p>
+                                        <p class="text-[13px] font-medium text-slate-500 mt-2 px-1 leading-relaxed field-help">{{ field.help_text|safe }}</p>
                                     {% endif %}
                                 {% endif %}
 
-                                <!-- Elegant Error Handling -->
                                 {% if field.errors %}
                                     <div class="bg-rose-50/80 rounded-xl p-3 mt-2 border border-rose-100 flex items-start gap-2.5">
                                         <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
@@ -234,50 +254,53 @@
                     {% endfor %}
                 </div>
 
-                <!-- PREMIUM MULTI-IMAGE GALLERY (If Project) -->
-                {% if 'project' in request.resolver_match.url_name %}
-                    <div class="pt-6 mt-2 border-t border-slate-200/80">
+                <!-- UNIVERSAL ASSET VAULT GALLERY -->
+                {% if 'category' in form.fields %}
+                    <div class="pt-6 mt-2 border-t border-slate-200/80 dynamic-reveal {% if not form.instance.pk %}hidden-state{% endif %}" id="gallery-section" data-field-name="gallery">
                         <div class="mb-4">
-                            <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-widest">Visual Evidence</h3>
-                            <p class="text-[13px] text-slate-500 font-medium">Upload high-quality imagery to showcase this work.</p>
+                            <h3 class="text-[14px] font-bold text-slate-800 uppercase tracking-widest" id="gallery-label">Project Assets & Evidence</h3>
+                            <p class="text-[13px] text-slate-500 font-medium" id="gallery-help">Upload images or PDF documents to visually showcase this work.</p>
                         </div>
 
-                        <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
+                        <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*,.pdf" class="hidden">
 
                         <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <!-- Existing Images -->
                             {% if form.instance.pk and form.instance.gallery.all %}
                                 {% for media in form.instance.gallery.all %}
                                 <div class="relative group aspect-square rounded-[0.85rem] overflow-hidden bg-slate-100 border border-slate-200" id="existing-wrapper-{{ media.pk }}">
-                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover">
+                                    {% if media.image %}
+                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover">
+                                    {% elif media.document_file %}
+                                        <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
+                                            <i data-lucide="file-text" class="w-8 h-8 mb-2"></i>
+                                            <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">PDF Document</span>
+                                        </div>
+                                    {% elif media.external_url %}
+                                        <div class="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-500">
+                                            <i data-lucide="link" class="w-8 h-8 mb-2"></i>
+                                            <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">Link</span>
+                                        </div>
+                                    {% endif %}
                                     <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
-
                                     <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                                        <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="w-10 h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 group-hover:scale-100" id="btn-{{ media.pk }}">
+                                        <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="w-10 h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 group-hover:scale-100">
                                             <i data-lucide="trash-2" class="w-5 h-5"></i>
                                         </button>
                                     </div>
                                 </div>
                                 {% endfor %}
                             {% endif %}
-
-                            <!-- Dropzone Add Button -->
                             <button type="button" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-[0.85rem] bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center gap-2 text-slate-400 hover:text-slate-600 transition-colors border-2 border-dashed border-slate-200 hover:border-blue-300">
-                                <div class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400">
-                                    <i data-lucide="plus" class="w-5 h-5"></i>
-                                </div>
-                                <span class="text-[12px] font-bold">Add Photo</span>
+                                <div class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400"><i data-lucide="plus" class="w-5 h-5"></i></div>
+                                <span class="text-[12px] font-bold" id="gallery-btn-text">Add File</span>
                             </button>
                         </div>
                     </div>
                 {% endif %}
 
                 <!-- TACTILE SUBMIT FOOTER -->
-                <div class="pt-6 mt-4 border-t border-slate-200/80 flex items-center justify-between">
-                    <a href="javascript:history.back()" class="text-[14px] font-bold text-slate-500 hover:text-slate-800 transition-colors px-2">
-                        Cancel
-                    </a>
-
+                <div class="pt-6 mt-4 border-t border-slate-200/80 flex items-center justify-between dynamic-reveal {% if 'category' in form.fields and not form.instance.pk %}hidden-state{% endif %}" id="submit-section">
+                    <a href="javascript:history.back()" class="text-[14px] font-bold text-slate-500 hover:text-slate-800 transition-colors px-2">Cancel</a>
                     <button type="submit" id="main-submit-btn" class="btn-primary-gradient px-8 py-3.5 rounded-[0.75rem] text-[14.5px] font-bold flex justify-center items-center gap-2">
                         <span id="submit-text">Save Details</span>
                         <i data-lucide="check" class="w-4 h-4 ml-0.5" id="submit-icon"></i>
@@ -292,22 +315,150 @@
     document.addEventListener("DOMContentLoaded", function() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        // ---------------------------------------------------------
-        // 1. CONVERT NATIVE RADIOS TO PREMIUM DROPDOWNS
-        // ---------------------------------------------------------
-        const allRadios = document.querySelectorAll('.django-form input[type="radio"]');
+        // =========================================================
+        // DYNAMIC PROGRESSIVE DISCLOSURE FOR PROJECTS
+        // =========================================================
+        const isEditMode = {% if form.instance.pk %}true{% else %}false{% endif %};
+        const categoryInput = document.getElementById('id_category');
+
+        // Check if Category Input exists. If yes, it's definitely the Project Form!
+        if (categoryInput) {
+
+            // Ultimate protection: Ensure the browser selects the placeholder visually
+            if (!isEditMode) {
+                categoryInput.selectedIndex = 0;
+            }
+
+            const contentMaps = {
+                'SOFTWARE_DATA': {
+                    title: { label: "App or Project Name", help: "E.g., E-commerce Platform, Machine Learning Model.", place: "E.g., Logistics App" },
+                    role: { label: "Tech Stack & Your Role", help: "E.g., Full Stack Dev (React, Python).", place: "E.g., Lead Backend Developer" },
+                    link: { label: "GitHub Repo or Live Demo", help: "Link to your repository or live application.", place: "https://github.com/..." },
+                    desc: { label: "Technical Architecture & Outcome", help: "Explain the problem you solved, your technical approach, and the final result.", place: "I built a microservice architecture..." },
+                    gallery: { label: "Screenshots & Diagrams", help: "Upload app screenshots or architecture diagrams.", btn: "Add Image", accept: "image/*" }
+                },
+                'MEDICAL_CLINICAL': {
+                    title: { label: "Research or Trial Title", help: "E.g., Phase II Neurology Trial, Public Health Survey.", place: "E.g., Regional Malaria Study" },
+                    role: { label: "Your Specialty / Role", help: "E.g., Lead Researcher, Clinical Coordinator.", place: "E.g., Data Analyst" },
+                    link: { label: "DOI or Publication Link", help: "Link to the published paper if available.", place: "https://doi.org/..." },
+                    desc: { label: "Methodology & Findings", help: "Explain the patient cohort, clinical method, and final findings.", place: "We tested 400 patients using..." },
+                    gallery: { label: "Research Papers & Data", help: "Upload PDF lab reports, clinical data, or charts.", btn: "Upload PDF", accept: ".pdf,image/*" }
+                },
+                'LEGAL_POLICY': {
+                    title: { label: "Case Name or Policy Title", help: "E.g., Smith v. State, 2024 Tech Regulation Draft.", place: "E.g., Commercial Tech Merger" },
+                    role: { label: "Your Role & Jurisdiction", help: "E.g., Lead Counsel, NY Supreme Court.", place: "E.g., Junior Partner" },
+                    link: { label: "Public Record Link", help: "Link to public filings or news articles (Optional).", place: "https://..." },
+                    desc: { label: "Case Details & Outcome", help: "Explain the legal precedent, your strategy, and the verdict/result.", place: "The client was facing..." },
+                    gallery: { label: "Legal Briefs & Documents", help: "Upload redacted PDFs of case files or policy drafts.", btn: "Upload PDF", accept: ".pdf" }
+                },
+                'DESIGN_UX': {
+                    title: { label: "Project or Campaign Name", help: "E.g., FinTech Rebrand, Mobile App Redesign.", place: "E.g., Bank UI Overhaul" },
+                    role: { label: "Your Role & Tools Used", help: "E.g., Lead Product Designer (Figma).", place: "E.g., UX Researcher" },
+                    link: { label: "Figma or Portfolio Link", help: "Link to your prototype or live site.", place: "https://figma.com/..." },
+                    desc: { label: "Design Process & Impact", help: "Explain user pain points, your design process, and conversion improvements.", place: "Users were dropping off at checkout..." },
+                    gallery: { label: "Design Mockups & Screens", help: "Upload high-quality images of your final designs.", btn: "Add Image", accept: "image/*" }
+                },
+                'ARCHITECTURE_CIVIL': {
+                    title: { label: "Building / Project Name", help: "E.g., Downtown Commercial Tower.", place: "E.g., City Bridge Extension" },
+                    role: { label: "Your Role", help: "E.g., Lead Architect, Structural Engineer.", place: "E.g., Site Supervisor" },
+                    link: { label: "Press or 3D Tour Link", help: "Link to an article or interactive 3D model.", place: "https://..." },
+                    desc: { label: "Project Scope & Outcome", help: "Explain the materials used, zoning challenges, and the final build.", place: "The client requested an eco-friendly..." },
+                    gallery: { label: "Blueprints & Renders", help: "Upload architectural renders, CAD exports, or site photos.", btn: "Add Image/PDF", accept: "image/*,.pdf" }
+                },
+                'ARTS_CREATIVE': {
+                    title: { label: "Artwork / Film / Campaign", help: "E.g., Summer Fashion Shoot, Indie Short Film.", place: "E.g., Short Documentary" },
+                    role: { label: "Your Role", help: "E.g., Director of Photography, Illustrator.", place: "E.g., Video Editor" },
+                    link: { label: "YouTube / Vimeo / Spotify Link", help: "Paste an external link to your media.", place: "https://youtube.com/..." },
+                    desc: { label: "Creative Vision", help: "Explain the inspiration, medium, and the creative process behind the work.", place: "This project explores..." },
+                    gallery: { label: "Portfolio Gallery", help: "Upload high-res images, digital art, or behind-the-scenes photos.", btn: "Add Media", accept: "image/*" }
+                },
+                'DEFAULT': {
+                    title: { label: "Project Title", help: "The name of your project, case, or study.", place: "Enter title..." },
+                    role: { label: "Your Role", help: "What was your specific contribution?", place: "Enter role..." },
+                    link: { label: "Reference Link (Optional)", help: "Link to a live demo, publication, or document.", place: "https://..." },
+                    desc: { label: "Project Description", help: "Explain the problem, your methodology, and the outcome.", place: "Describe your work..." },
+                    gallery: { label: "Project Assets & Evidence", help: "Upload images or PDF documents to visually showcase this work.", btn: "Add File", accept: "image/*,.pdf" }
+                }
+            };
+
+            const fieldsToToggle = ['title', 'role', 'link', 'main_description'];
+            const gallerySection = document.getElementById('gallery-section');
+            const submitSection = document.getElementById('submit-section');
+            const subtitle = document.getElementById('form-subtitle');
+
+            function applyDynamicUI() {
+                const val = categoryInput.value;
+                const map = contentMaps[val] || contentMaps['DEFAULT'];
+
+                // IF NO CATEGORY IS SELECTED (ONBOARDING MODE)
+                if (!val) {
+                    subtitle.innerText = "Select an industry below to reveal the project form.";
+                    fieldsToToggle.forEach(f => {
+                        const el = document.querySelector(`[data-field-name="${f}"]`);
+                        if(el) el.classList.add('hidden-state');
+                    });
+                    if(gallerySection) gallerySection.classList.add('hidden-state');
+                    if(submitSection) submitSection.classList.add('hidden-state');
+                    return;
+                }
+
+                // IF CATEGORY IS SELECTED (EXPAND FORM)
+                subtitle.innerText = "Fill out the details below. We've customized the form for your industry.";
+
+                fieldsToToggle.forEach(f => {
+                    const el = document.querySelector(`[data-field-name="${f}"]`);
+                    if(el) {
+                        el.classList.remove('hidden-state');
+
+                        if(map[f]) {
+                            const label = el.querySelector('.field-label');
+                            const help = el.querySelector('.field-help');
+                            const input = el.querySelector('input, textarea');
+
+                            if(label) label.innerText = map[f].label;
+                            if(help) help.innerText = map[f].help;
+                            if(input && map[f].place) input.placeholder = map[f].place;
+                        }
+                    }
+                });
+
+                if(gallerySection) {
+                    gallerySection.classList.remove('hidden-state');
+                    const gLabel = document.getElementById('gallery-label');
+                    const gHelp = document.getElementById('gallery-help');
+                    const gBtnText = document.getElementById('gallery-btn-text');
+                    const gUpload = document.getElementById('gallery-upload');
+
+                    if(gLabel) gLabel.innerText = map.gallery.label;
+                    if(gHelp) gHelp.innerText = map.gallery.help;
+                    if(gBtnText) gBtnText.innerText = map.gallery.btn;
+                    if(gUpload) gUpload.accept = map.gallery.accept;
+                }
+
+                if(submitSection) {
+                    submitSection.classList.remove('hidden-state');
+                }
+            }
+
+            categoryInput.addEventListener('change', applyDynamicUI);
+            applyDynamicUI(); // Run once on load to establish the state
+        }
+
+        // =========================================================
+        // OTHER LOGIC (Radios, Auto-expand Textareas, Image Uploads)
+        // =========================================================
+
+        // 1. Convert ONLY unthemed radios to selects (Ignore our new Pill Groups)
+        const allRadios = document.querySelectorAll('.django-form input[type="radio"]:not(.radio-pill-group input)');
         if (allRadios.length > 0) {
             const radioGroups = {};
-
             allRadios.forEach(radio => {
                 if (!radioGroups[radio.name]) radioGroups[radio.name] = [];
                 radioGroups[radio.name].push(radio);
             });
-
             Object.keys(radioGroups).forEach(name => {
                 const radios = radioGroups[name];
                 const container = radios[0].closest('.relative.w-full') || radios[0].parentElement;
-
                 const select = document.createElement('select');
                 select.name = name;
                 select.id = 'id_' + name;
@@ -316,54 +467,63 @@
                 radios.forEach(radio => {
                     const option = document.createElement('option');
                     option.value = radio.value;
-
                     let labelText = radio.value;
                     const parentLabel = radio.closest('label');
-                    if (parentLabel) {
-                        labelText = parentLabel.textContent.trim();
-                    } else {
+                    if (parentLabel) labelText = parentLabel.textContent.trim();
+                    else {
                         const forLabel = document.querySelector(`label[for="${radio.id}"]`);
                         if (forLabel) labelText = forLabel.textContent.trim();
                     }
-
                     option.textContent = labelText || '---------';
                     if (radio.checked) option.selected = true;
                     select.appendChild(option);
                 });
-
                 container.innerHTML = '';
                 container.appendChild(select);
             });
         }
 
-        // ---------------------------------------------------------
-        // 2. AUTO-EXPANDING TEXTAREAS (Applies to all text areas now)
-        // ---------------------------------------------------------
+        // 2. Auto-Bullet Formatter for Textareas
+        const autoBulletAreas = document.querySelectorAll('textarea.auto-bullet');
+        autoBulletAreas.forEach(textarea => {
+            textarea.addEventListener('focus', function() {
+                if (this.value.trim() === '') {
+                    this.value = '• ';
+                }
+            });
+
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const cursorPos = this.selectionStart;
+                    const textBefore = this.value.substring(0, cursorPos);
+                    const textAfter  = this.value.substring(cursorPos);
+
+                    this.value = textBefore + '\n• ' + textAfter;
+                    this.selectionStart = this.selectionEnd = cursorPos + 3;
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+        });
+
+        // 3. Auto-expand textareas
         const textareas = document.querySelectorAll('textarea');
         textareas.forEach(textarea => {
-            // Remove the required attribute just to be completely safe from invisible blocks
             textarea.removeAttribute('required');
-
             function adjustHeight() {
                 textarea.style.height = 'auto';
                 textarea.style.height = (textarea.scrollHeight + 2) + 'px';
             }
             textarea.addEventListener('input', adjustHeight);
-            // Wait slightly for DOM to settle before first adjustment
             setTimeout(adjustHeight, 100);
         });
 
-        // ---------------------------------------------------------
-        // 3. SUBMIT BUTTON ANIMATION
-        // ---------------------------------------------------------
         const mainForm = document.getElementById('main-form');
         if (mainForm) {
             mainForm.addEventListener('submit', function(e) {
                 const btn = document.getElementById('main-submit-btn');
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
-
-                // Delay button disable to allow form submission to register correctly
                 setTimeout(() => {
                     btn.disabled = true;
                     btn.style.opacity = '0.8';
@@ -375,35 +535,33 @@
             });
         }
 
-        // ---------------------------------------------------------
-        // 4. CURRENT JOB DATE TOGGLE (Fades out end date elegantly)
-        // ---------------------------------------------------------
+        // =========================================================
+        // "I CURRENTLY WORK HERE" CHECKBOX LOGIC
+        // =========================================================
         const isCurrentCheckbox = document.getElementById('id_is_current');
-        const endDateInput = document.getElementById('id_end_date');
-        if (isCurrentCheckbox && endDateInput) {
-            const wrapper = endDateInput.closest('.flex-col');
+        const endDateWrapper = document.querySelector('[data-field-name="end_date"]');
+
+        if (isCurrentCheckbox && endDateWrapper) {
             function toggleEndDate() {
                 if (isCurrentCheckbox.checked) {
-                    endDateInput.value = '';
-                    wrapper.style.opacity = '0.3';
-                    wrapper.style.pointerEvents = 'none';
-                    wrapper.style.filter = 'grayscale(100%)';
+                    const selects = endDateWrapper.querySelectorAll('select');
+                    selects.forEach(s => s.value = '');
+
+                    endDateWrapper.style.opacity = '0.4';
+                    endDateWrapper.style.pointerEvents = 'none';
+                    endDateWrapper.style.filter = 'grayscale(100%)';
                 } else {
-                    wrapper.style.opacity = '1';
-                    wrapper.style.pointerEvents = 'auto';
-                    wrapper.style.filter = 'none';
+                    endDateWrapper.style.opacity = '1';
+                    endDateWrapper.style.pointerEvents = 'auto';
+                    endDateWrapper.style.filter = 'none';
                 }
             }
             toggleEndDate();
             isCurrentCheckbox.addEventListener('change', toggleEndDate);
         }
 
-        // ---------------------------------------------------------
-        // 5. GALLERY UPLOAD LOGIC
-        // ---------------------------------------------------------
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
-
         if (fileInput && galleryGrid) {
             let queuedFiles = [];
             fileInput.addEventListener('change', function(e) {
@@ -421,10 +579,18 @@
                 queuedFiles.forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
+                        const isImage = file.type.startsWith('image/');
+                        const innerPreview = isImage
+                            ? `<img src="${e.target.result}" class="w-full h-full object-cover">`
+                            : `<div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                 <span class="text-[10px] font-bold uppercase truncate px-2 max-w-full">${file.name}</span>
+                               </div>`;
+
                         const div = document.createElement('div');
                         div.className = 'queued-image relative group aspect-square rounded-[0.85rem] overflow-hidden shadow-sm bg-white border-2 border-[#0A66C2]';
                         div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-full object-cover">
+                            ${innerPreview}
                             <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-slate-600 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100 z-10">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>

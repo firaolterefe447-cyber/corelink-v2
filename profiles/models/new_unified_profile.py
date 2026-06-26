@@ -282,50 +282,102 @@ class Skill(models.Model):
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLUSTER 4: PROOF OF WORK & EXPRESSION
-# Human Context: Where users prove they can actually do the work, not just 
-# talk about it. Portfolios, long-form thoughts, and visual evidence.
+# Human Context: The Universal Evidence Library. Upgraded to support every
+# profession on earth (Law, Medicine, Tech, Art) while strictly preserving
+# 100% of legacy data for hundreds of thousands of live users.
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class PortfolioProject(TimeStampedModel):
-    """The ultimate proof-of-work display."""
+    """The ultimate proof-of-work display. Upgraded for universal professional support."""
+
+    class Category(models.TextChoices):
+        SOFTWARE_DATA = 'SOFTWARE_DATA', _('Software, AI & Data Science')
+        HARDWARE_ROBOTICS = 'HARDWARE_ROBOTICS', _('Hardware, Engineering & Robotics')
+        MEDICAL_CLINICAL = 'MEDICAL_CLINICAL', _('Medicine, Healthcare & Biotech')
+        LEGAL_POLICY = 'LEGAL_POLICY', _('Law, Public Policy & Gov')
+        SCIENCE_RESEARCH = 'SCIENCE_RESEARCH', _('Academic Science & Lab Research')
+        DESIGN_UX = 'DESIGN_UX', _('UI/UX, Product & Graphic Design')
+        ARCHITECTURE_CIVIL = 'ARCHITECTURE_CIVIL', _('Architecture & Civil Engineering')
+        BUSINESS_FINANCE = 'BUSINESS_FINANCE', _('Business, Finance & Startups')
+        MARKETING_MEDIA = 'MARKETING_MEDIA', _('Marketing, Journalism & Media')
+        ARTS_CREATIVE = 'ARTS_CREATIVE', _('Film, Music, Photography & Fine Arts')
+        EDUCATION_TRAINING = 'EDUCATION_TRAINING', _('Education, Curriculum & Training')
+        OPERATIONS_TRADES = 'OPERATIONS_TRADES', _('Operations, Culinary & Skilled Trades')
+        OTHER = 'OTHER', _('Interdisciplinary / Niche')
+
     class ProjectContext(models.TextChoices):
         PRACTICE = 'PRACTICE', _('Learning / Bootcamp Project')
         REAL_WORLD = 'REAL_WORLD', _('Real-world / Client Project')
         STARTUP = 'STARTUP', _('Startup / Own Company')
+        PUBLISHED = 'PUBLISHED', _('Published / Peer-Reviewed')  # NEW: Added safely for researchers
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='projects')
 
+    # --- 1. NEW FUTURIST FIELDS (Added safely with defaults) ---
+    category = models.CharField(
+        max_length=30, choices=Category.choices, default=Category.OTHER, db_index=True,
+        help_text=_("The core industry of this project.")
+    )
+    meta_attributes = models.JSONField(
+        _("Domain Specific Data"), default=dict, blank=True,
+        help_text=_(
+            "Stores infinite profession-specific inputs natively (e.g., {'jurisdiction': 'NY'} or {'tech_stack': ['React']})")
+    )
+
+    # --- 2. LEGACY DATA (STRICTLY PRESERVED - DO NOT ALTER) ---
     title = models.CharField(max_length=200)
     context = models.CharField(max_length=20, choices=ProjectContext.choices, default=ProjectContext.PRACTICE)
-
     role = models.CharField(max_length=100, blank=True)
     client_name = models.CharField(max_length=200, blank=True)
-
     problem_statement = models.TextField(blank=True, null=True)
     solution_narrative = models.TextField(blank=True, null=True)
     main_description = models.TextField(_("Main Description"), blank=True)
-
     link = models.URLField(_("Live Link / GitHub"), max_length=500, blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['order', '-created_at']
 
+    def __str__(self):
+        return f"[{self.get_category_display()}] {self.title}"
+
 
 class ProjectGallery(models.Model):
+    """Upgraded to a Universal Asset Vault (Accepts Images, PDFs, and Embeds)."""
+
+    class AssetType(models.TextChoices):
+        IMAGE = 'IMAGE', _('Visual / Screenshot')
+        DOCUMENT = 'DOCUMENT', _('PDF Document / Research Paper / Case File')
+        EMBED = 'EMBED', _('External Embed (Figma, YouTube, Spotify)')
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(PortfolioProject, on_delete=models.CASCADE, related_name='gallery')
-    image = models.ImageField(upload_to=project_image_path)
+
+    # --- 1. NEW ASSET FIELDS (Safely Added) ---
+    asset_type = models.CharField(max_length=20, choices=AssetType.choices, default=AssetType.IMAGE)
+    document_file = models.FileField(
+        upload_to=project_image_path, blank=True, null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['pdf'])]
+    )
+    external_url = models.URLField(max_length=500, blank=True, null=True)
+
+    # --- 2. LEGACY FIELDS (PRESERVED) ---
+    # Relaxed to blank/null=True so future PDF uploads don't crash demanding an image.
+    image = models.ImageField(upload_to=project_image_path, blank=True, null=True)
     caption = models.CharField(max_length=200, blank=True)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['order']
 
+    def __str__(self):
+        return f"Asset for {self.project.title}"
+
 
 class ContentPost(TimeStampedModel):
     """The unified publishing block adapting to Logs, Essays, and Vision Manifestos."""
+
     class PostType(models.TextChoices):
         GROWTH_LOG = 'GROWTH_LOG', _('Daily Growth Log')
         ESSAY = 'ESSAY', _('Deep Thought / Essay')
