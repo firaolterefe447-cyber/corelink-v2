@@ -205,11 +205,14 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # =========================================================
     # EXPORT ACTION: SMART EXCEL EXPORT (WITH PDF STYLING)
     # =========================================================
+    # =========================================================
+    # EXPORT ACTION: SMART EXCEL EXPORT (WITH PERFECT PDF SCALING)
+    # =========================================================
     @action(description=_("📥 Export All Users to Excel"), url_path="export-all-users")
     def export_all_users_csv(self, request):
         """
         Generates a true .XLSX Excel file engineered for PDF conversion.
-        Adds borders, header colors, and landscape print settings.
+        Forces columns to fit on one landscape page without cutting off.
         """
         import openpyxl
         from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
@@ -222,11 +225,9 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         worksheet.title = 'Talent Pool'
 
         # --- STYLE DEFINITIONS ---
-        # Dark Blue Header with White Text
         header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
         header_font = Font(color="FFFFFF", bold=True, size=12)
 
-        # Light gray borders for every cell so it looks like a real grid in PDF
         thin_border = Border(
             left=Side(style='thin', color='CBD5E1'),
             right=Side(style='thin', color='CBD5E1'),
@@ -234,14 +235,13 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             bottom=Side(style='thin', color='CBD5E1')
         )
 
-        # Center align everything vertically
-        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=False)
+        # CRITICAL FIX: wrap_text=True stops URLs from pushing everything off the page
+        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
         # 1. WRITE HEADER ROW
         headers = ['Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Email', 'Telegram Handle']
         worksheet.append(headers)
 
-        # Apply styles to Header Row
         for cell in worksheet[1]:
             cell.font = header_font
             cell.fill = header_fill
@@ -252,7 +252,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
 
         for user in queryset:
-            # Extract Title
             title = "No Title Provided"
             profile = get_user_profile(user)
             if profile:
@@ -264,25 +263,21 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     if first_headline:
                         title = first_headline.title
 
-            # Extract URL safely
             try:
                 profile_path = user.get_absolute_url()
                 full_url = request.build_absolute_uri(profile_path)
             except Exception:
                 full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
 
-            # Clean Values
             email = user.email if user.email else "N/A"
             phone = str(user.phone_number) if user.phone_number else "N/A"
 
-            # Extract Telegram
             if user.telegram_handle:
                 clean_tg = user.telegram_handle.replace("@", "").strip()
                 telegram = f"https://t.me/{clean_tg}"
             else:
                 telegram = "N/A"
 
-            # Write Data Row
             row = [
                 user.display_name,
                 full_url,
@@ -293,24 +288,26 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             ]
             worksheet.append(row)
 
-            # Apply Styles and Links to the new row
+            # Apply Styles
             current_row = worksheet.max_row
-            for col_idx in range(1, 7):  # Columns 1 to 6
+            for col_idx in range(1, 7):
                 cell = worksheet.cell(row=current_row, column=col_idx)
                 cell.border = thin_border
                 cell.alignment = cell_alignment
 
-                # Make URLs Clickable natively in Excel
-                if col_idx == 2:  # Profile Link
+                # Links
+                if col_idx == 2:
                     cell.hyperlink = full_url
                     cell.style = "Hyperlink"
-                    cell.border = thin_border  # Reapply border after styling as hyperlink
-                elif col_idx == 6 and telegram != "N/A":  # Telegram Link
+                    cell.border = thin_border
+                    cell.alignment = cell_alignment  # Reapply wrapping after hyperlink style
+                elif col_idx == 6 and telegram != "N/A":
                     cell.hyperlink = telegram
                     cell.style = "Hyperlink"
                     cell.border = thin_border
+                    cell.alignment = cell_alignment
 
-        # 2. AUTO-ADJUST COLUMN WIDTHS
+        # 2. AUTO-ADJUST COLUMN WIDTHS (WITH A HARD CAP)
         for col in worksheet.columns:
             max_length = 0
             column_letter = col[0].column_letter
@@ -320,18 +317,23 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                         max_length = len(str(cell.value))
                 except:
                     pass
-            adjusted_width = min(max_length + 2, 50)
+            # CRITICAL FIX: Hard cap width at 35 so it never stretches off the PDF page
+            adjusted_width = min(max_length + 2, 35)
             worksheet.column_dimensions[column_letter].width = adjusted_width
 
-        # 3. PDF PAGE SETUP (The Magic Trick)
-        # This tells Excel: "When printing or saving to PDF, make it Landscape and fit it all on one page wide."
+        # 3. PDF PAGE SETUP (The Ironclad Lock)
+        # Narrow margins to fit more data
+        worksheet.page_margins.left = 0.2
+        worksheet.page_margins.right = 0.2
+
+        # The Master Switch to force everything onto 1 page wide
+        worksheet.sheet_properties.pageSetUpPr.fitToPage = True
         worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
         worksheet.page_setup.fitToWidth = 1
-        worksheet.page_setup.fitToHeight = 0  # 0 means let it flow to as many pages down as needed
+        worksheet.page_setup.fitToHeight = 0
 
         workbook.save(response)
         return response
-
     # ---------------------------------------------------------
 
     list_display = [
