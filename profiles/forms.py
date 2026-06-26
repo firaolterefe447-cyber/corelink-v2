@@ -5,12 +5,14 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 """
 import logging
+import datetime
+from datetime import date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from datetime import date, datetime
+from django.utils.safestring import mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +51,9 @@ FLEXIBLE_DATE_FORMATS = [
 class TailwindFormMixin:
     """Injects Tailwind CSS classes securely. Icons cached at class level."""
     ICONS = {
-        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
+        'mail': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
         'link': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' /%3E%3C/svg%3E",
-        'calendar': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E",
+        'calendar': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E",
         'chevron': "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E",
     }
 
@@ -149,38 +151,6 @@ class UserProfileForm(TailwindFormMixin, forms.ModelForm):
         return cv
 
 
-class SkillForm(TailwindFormMixin, forms.ModelForm):
-    PROFICIENCY_CHOICES = [
-        ('JUNIOR', ' Beginner / Still Learning'),
-        ('SENIOR', 'Proficient / Use it actively'),
-        ('MASTER', ' Expert / Can mentor others'),
-    ]
-    proficiency_level = forms.ChoiceField(choices=PROFICIENCY_CHOICES, widget=forms.RadioSelect())
-
-    class Meta:
-        model = Skill
-        fields = ['name', 'proficiency_level', 'context']
-
-        labels = {
-            'name': _("Skill / Tool Name"),
-            'proficiency_level': _("Proficiency Level"),
-            'context': _("How did you use this? (Optional)"),
-        }
-
-        help_texts = {
-            'name': _("Add a specific skill or tool (e.g., Patient Care, Logistics, Python)."),
-            'context': _(
-                "Explain how you apply this skill, your experience with it, and your proficiency level. Leave it blank if you want."),
-        }
-
-        widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 2, 'class': 'advanced-field'}),
-        }
-
-# ==============================================================================
-# UPGRADED: SURGICALLY UPDATED PROJECT SECTION (Dynamic UI Ready)
-# ==============================================================================
 class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = PortfolioProject
@@ -213,21 +183,58 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 🎯 BULLETPROOF OVERRIDE
+        # Simply change the empty label text for the category dropdown
+        choices = list(self.fields['category'].choices)
+        if choices[0][0] in ('', None):
+            choices[0] = ('', '--- Select an Industry / Field ---')
+        self.fields['category'].choices = choices
+# ==============================================================================
+# UPGRADED: SURGICALLY UPDATED PROJECT SECTION (Dynamic UI Ready)
+# ==============================================================================
+class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = PortfolioProject
+        fields = ['category', 'title', 'role', 'link', 'main_description']
+
+        labels = {
+            'category': _("Industry / Field of Work"),
+            'title': _("Project Title"),
+            'role': _("Your Role"),
+            'link': _("Live Link or Document (Optional)"),
+            'main_description': _("Project Description"),
+        }
+
+        help_texts = {
+            'category': _("Select the industry or field this project belongs to."),
+            'title': _("Your project title."),
+            'role': _("What did you do?"),
+            'link': _("A link to see the project live."),
+            'main_description': _("Explain what the project is, what you did, and what you achieved."),
+        }
+
+        widgets = {
+            'category': forms.Select(attrs={'class': 'w-full'}),
+            'title': forms.TextInput(attrs={'placeholder': 'Enter title...'}),
+            'role': forms.TextInput(attrs={'placeholder': 'Enter your role...'}),
+            'main_description': forms.Textarea(attrs={'placeholder': 'Describe your project...', 'rows': 5, 'class': 'markdown-editor'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # 1. ALWAYS inject the placeholder option at the very top for this form.
+        choices = list(self.fields['category'].choices)
+        # Filter out existing blanks/Nones so we don't have duplicate empty options
+        choices = [c for c in choices if str(c[0]).strip() not in ('', 'None')]
+        self.fields['category'].choices = [('', '--- Select an Industry / Field ---')] + choices
+
+        # 2. 🎯 BULLETPROOF OVERRIDE FOR NEW ENTRIES
+        # Explicitly tell Django to start with the blank choice, overriding the model's default.
         if not self.instance.pk:
-            # 1. Force wipe the database default from Django's memory
-            self.initial['category'] = None
-            self.instance.category = None
-
-            # 2. Inject a true placeholder option at the very top
-            choices = list(self.fields['category'].choices)
-            choices = [c for c in choices if c[0] not in ('', None)]
-            self.fields['category'].choices = [('', '--- Select an Industry / Field ---')] + choices
-
-import datetime
-from django import forms
-from django.utils.translation import gettext_lazy as _
-from django.utils.safestring import mark_safe  # <-- ADD THIS IMPORT
+            self.initial['category'] = ''
+            self.fields['category'].initial = ''
+            if hasattr(self.instance, 'category'):
+                self.instance.category = None
 
 
 # ==============================================================================
@@ -235,16 +242,13 @@ from django.utils.safestring import mark_safe  # <-- ADD THIS IMPORT
 # ==============================================================================
 class MonthYearWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
-        # Generate Months
         months = [(str(i).zfill(2), datetime.date(2000, i, 1).strftime('%B')) for i in range(1, 13)]
         months.insert(0, ('', 'Month'))
 
-        # Generate Years (Current Year + 5 down to 1950)
         current_year = datetime.date.today().year
         years = [(str(y), str(y)) for y in range(current_year + 5, 1950, -1)]
         years.insert(0, ('', 'Year'))
 
-        # Standard styling applied to the inner selects
         select_classes = "block w-full bg-white border border-slate-200 rounded-xl text-[14px] font-semibold text-slate-800 px-4 py-3.5 appearance-none cursor-pointer"
 
         widgets = (
@@ -275,7 +279,6 @@ class MonthYearWidget(forms.MultiWidget):
 
         label_text = 'Start' if 'start' in name else 'End'
 
-        # WE WRAP THE RETURN IN mark_safe SO DJANGO RENDERS IT AS REAL HTML
         return mark_safe(f'''
         <div class="flex gap-3 w-full mt-1">
             <div class="w-1/2 flex flex-col gap-1.5">
@@ -307,15 +310,11 @@ class MonthYearField(forms.MultiValueField):
 
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
-    # LinkedIn-Style Timeline Fields
     start_date = MonthYearField(label=_("Timeline"), required=True)
     end_date = MonthYearField(label=_(" "), required=False, help_text=_("Leave blank if this is your current role."))
 
     class Meta:
         model = WorkExperience
-
-        # --- THE MAGIC HAPPENS HERE ---
-        # We moved 'description' up, and put location and dates at the very end
         fields = ['company_name', 'role_title', 'description', 'location_type', 'start_date', 'end_date', 'is_current']
 
         labels = {
@@ -335,9 +334,7 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
             'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank'}),
             'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Logistics Officer or Clinic Supervisor'}),
             'location_type': forms.RadioSelect(attrs={'class': 'radio-pill-group'}),
-            'description': forms.Textarea(
-                attrs={'placeholder': '• Coordinated daily operations...\n• Managed a team of 15 members...', 'rows': 5,
-                       'class': 'auto-bullet'}),
+            'description': forms.Textarea(attrs={'placeholder': '• Coordinated daily operations...\n• Managed a team of 15 members...', 'rows': 5, 'class': 'auto-bullet'}),
         }
 
     def clean(self):
@@ -362,7 +359,6 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
 
 
 class CredentialForm(TailwindFormMixin, forms.ModelForm):
-    # Updated to handle robust standard dates
     issue_date = forms.DateField(
         input_formats=FLEXIBLE_DATE_FORMATS,
         widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'MM/DD/YYYY'}),
@@ -387,8 +383,7 @@ class CredentialForm(TailwindFormMixin, forms.ModelForm):
             'title': _("E.g., Bachelor in Computer Science, Foundations of AI, or Graphics Design."),
             'issuer': _("The school, online platform, organization, or community that gave you this certificate."),
             'reflection': _("Optional. Share what you learned or how this certificate helped you grow."),
-            'url_link': _(
-                "Optional. A link to the online certificate, badge, or proof of achievement if you have one."),
+            'url_link': _("Optional. A link to the online certificate, badge, or proof of achievement if you have one."),
             'file_upload': _("Upload a picture or PDF of your certificate to show your proof of work."),
         }
 
@@ -441,18 +436,14 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
         fields = ['post_type', 'category', 'title', 'content', 'media_proof', 'visibility']
 
     def __init__(self, *args, **kwargs):
-        # Extract post_type passed from the view (for GET requests)
         self.requested_type = kwargs.pop('post_type', None)
         super().__init__(*args, **kwargs)
 
-        # Determine the current type
         current_type = self.requested_type
 
-        # Fallback 1: Check if this is an existing instance being edited
         if not current_type and self.instance and self.instance.pk:
             current_type = self.instance.post_type
 
-        # Fallback 2: Check POST data during form submission
         if not current_type and self.is_bound:
             current_type = self.data.get('post_type')
 
@@ -463,37 +454,29 @@ class ContentPostForm(TailwindFormMixin, forms.ModelForm):
             self.fields['title'].label = _("Entry Title")
             self.fields['title'].help_text = _("Give your log a quick title (e.g., 'Week 1 of Project Deployment').")
             self.fields['content'].label = _("Notes & Observations")
-            self.fields['content'].help_text = _(
-                "A place to document your daily progress, challenges overcome, or important notes.")
-            self.fields['content'].widget.attrs.update(
-                {'class': 'markdown-editor', 'placeholder': 'Today I learned...'})
+            self.fields['content'].help_text = _("A place to document your daily progress, challenges overcome, or important notes.")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Today I learned...'})
 
         elif current_type == 'VISION_BLOCK':
-            # Remove fields not needed for vision block
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Vision or Goal")
             self.fields['title'].help_text = _("Give title you want for your goal ? (e.g., 'My 5 year plan').")
             self.fields['content'].label = _("Detailed Plan")
-            self.fields['content'].help_text = _(
-                "Outline a long-term goal. Where do you see your career or industry heading in the future?")
+            self.fields['content'].help_text = _("Outline a long-term goal. Where do you see your career or industry heading in the future?")
             self.fields['content'].widget.attrs.update({'class': 'markdown-editor', 'placeholder': 'Explain here'})
 
         elif current_type == 'ESSAY':
-            # Remove fields not needed for essays
             self.fields.pop('category', None)
             self.fields.pop('media_proof', None)
 
             self.fields['title'].label = _("Article Title")
             self.fields['title'].help_text = _("An engaging headline for your article or thought-leadership post.")
             self.fields['content'].label = _("Article Content")
-            self.fields['content'].help_text = _(
-                "Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
-            self.fields['content'].widget.attrs.update(
-                {'class': 'markdown-editor min-h-[300px]', 'placeholder': 'Start writing...'})
+            self.fields['content'].help_text = _("Share your professional insights, write an essay, or publish a detailed guide. Markdown formatting is supported.")
+            self.fields['content'].widget.attrs.update({'class': 'markdown-editor min-h-[300px]', 'placeholder': 'Start writing...'})
 
-        # Securely pass the type as a hidden input so it gets submitted
         if current_type and 'post_type' in self.fields:
             self.fields['post_type'].widget = forms.HiddenInput()
             self.fields['post_type'].initial = current_type
@@ -539,6 +522,51 @@ class ProfileHeadlineForm(TailwindFormMixin, forms.ModelForm):
             'is_primary': _("Check this to display this headline prominently at the top of your profile."),
         }
         widgets = {'title': forms.TextInput(attrs={'placeholder': 'e.g., Operations Manager'})}
+
+
+from django import forms
+from django.utils.translation import gettext_lazy as _
+
+
+# Make sure to import your Skill model and TailwindFormMixin
+
+class SkillForm(TailwindFormMixin, forms.ModelForm):
+    PROFICIENCY_CHOICES = [
+        ('', 'Select Proficiency Level...'),  # Added placeholder
+        ('JUNIOR', 'Beginner / Still Learning'),
+        ('SENIOR', 'Proficient / Use it actively'),
+        ('MASTER', 'Expert / Can mentor others'),
+    ]
+
+    # FIX: Changed to forms.Select() to force a standard dropdown!
+    proficiency_level = forms.ChoiceField(
+        choices=PROFICIENCY_CHOICES,
+        widget=forms.Select()
+    )
+
+    class Meta:
+        model = Skill
+
+        # FIX: Moved proficiency_level to the very bottom of the fields list
+        fields = ['name', 'context', 'proficiency_level']
+
+        labels = {
+            'name': _("Skill / Tool Name"),
+            'proficiency_level': _("Proficiency Level"),
+            'context': _("How did you use this? (Optional)"),
+        }
+
+        help_texts = {
+            'name': _("Add a specific skill or tool (e.g., Patient Care, Logistics, Python)."),
+            'context': _(
+                "Explain how you apply this skill, your experience with it, and your proficiency level. Leave it blank if you want."),
+        }
+
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
+            'context': forms.Textarea(attrs={'placeholder': 'I applied this skill when I was working on...', 'rows': 2,
+                                             'class': 'advanced-field'}),
+        }
 
 
 class JobPreferenceForm(TailwindFormMixin, forms.ModelForm):

@@ -309,14 +309,16 @@ class PortfolioProject(TimeStampedModel):
         PRACTICE = 'PRACTICE', _('Learning / Bootcamp Project')
         REAL_WORLD = 'REAL_WORLD', _('Real-world / Client Project')
         STARTUP = 'STARTUP', _('Startup / Own Company')
-        PUBLISHED = 'PUBLISHED', _('Published / Peer-Reviewed')  # NEW: Added safely for researchers
+        PUBLISHED = 'PUBLISHED', _('Published / Peer-Reviewed')
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='projects')
 
-    # --- 1. NEW FUTURIST FIELDS (Added safely with defaults) ---
+    # --- 1. NEW FUTURIST FIELDS (Default safely removed here) ---
     category = models.CharField(
-        max_length=30, choices=Category.choices, default=Category.OTHER, db_index=True,
+        max_length=30,
+        choices=Category.choices,
+        db_index=True,
         help_text=_("The core industry of this project.")
     )
     meta_attributes = models.JSONField(
@@ -325,7 +327,7 @@ class PortfolioProject(TimeStampedModel):
             "Stores infinite profession-specific inputs natively (e.g., {'jurisdiction': 'NY'} or {'tech_stack': ['React']})")
     )
 
-    # --- 2. LEGACY DATA (STRICTLY PRESERVED - DO NOT ALTER) ---
+    # --- 2. LEGACY DATA (STRICTLY PRESERVED) ---
     title = models.CharField(max_length=200)
     context = models.CharField(max_length=20, choices=ProjectContext.choices, default=ProjectContext.PRACTICE)
     role = models.CharField(max_length=100, blank=True)
