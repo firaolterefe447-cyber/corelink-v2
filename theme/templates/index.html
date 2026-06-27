@@ -335,6 +335,57 @@
   .hero-stars { color: #f59e0b; font-size: 14px; }
   .hero-av-label { font-size: 13px; font-weight: 600; color: #cbd5e1; }
 
+  /* ==========================================================================
+     5. DISCOVER TALENT BANNER (DARK EXTENSION)
+     ========================================================================== */
+  .hero-extension {
+    position: relative; z-index: 10; width: 100%; max-width: 1280px;
+    margin: 80px auto 0; padding: 0 40px;
+  }
+  .discover-banner {
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--r-2xl); padding: 40px 48px; display: flex; align-items: center;
+    justify-content: space-between; gap: 32px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    position: relative; overflow: hidden;
+  }
+  .discover-banner::before {
+    content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 60%); pointer-events: none;
+  }
+  .db-left { position: relative; z-index: 2; }
+  .db-right { position: relative; z-index: 2; flex-shrink: 0; }
+  .db-title {
+    font-family: var(--font-display); font-size: 2.8rem; font-style: italic;
+    color: var(--white); margin-bottom: 8px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.1;
+  }
+  .db-desc {
+    color: rgba(203, 213, 225, 0.85); font-size: 1.1rem; font-weight: 400; line-height: 1.6; max-width: 500px;
+  }
+
+  .hero-cta-discover {
+    display: inline-flex; align-items: center; gap: 10px; padding: 16px 36px; border-radius: var(--r-pill);
+    background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25);
+    backdrop-filter: blur(12px); text-decoration: none; font-family: var(--font-body); font-size: 13.5px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--white);
+    transition: all 0.4s var(--ease-out); position: relative; overflow: hidden;
+  }
+  .hero-cta-discover::before {
+    content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--cyan), var(--blue));
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .hero-cta-discover:hover {
+    border-color: rgba(6, 182, 212, 0.5); transform: translateY(-2px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.25);
+  }
+  .hero-cta-discover:hover::before { opacity: 0.2; }
+  .hero-cta-discover span { position: relative; z-index: 1; }
+  .hero-cta-discover .hero-cta-text {
+    background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-cta-discover svg { position: relative; z-index: 1; opacity: 0.8; transition: transform 0.3s; }
+  .hero-cta-discover:hover svg { transform: scale(1.15) rotate(-5deg); opacity: 1; }
+
   @media (min-width: 769px) {
     .hide-on-desktop { display: none !important; }
   }
@@ -562,6 +613,9 @@
     .footer-main { grid-template-columns: 1fr 1fr; gap: 40px; }
     .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: flex-start; }
     .hero-right { max-width: 600px; text-align: left; }
+
+    .hero-extension { margin-top: 60px; }
+    .db-title { font-size: 2.4rem; }
   }
 
   @media (max-width: 768px) {
@@ -571,6 +625,10 @@
     .hero { padding-top: 120px; padding-bottom: 60px; justify-content: flex-end; }
     .hero-content { padding: 0 20px; text-align: left; }
     .hero-h1 { font-size: clamp(2.8rem, 11vw, 4rem); line-height: 1; }
+
+    .hero-extension { padding: 0 20px; margin-top: 40px; }
+    .discover-banner { flex-direction: column; text-align: left; padding: 32px 24px; gap: 24px; align-items: flex-start; }
+    .db-title { font-size: 2.2rem; }
 
     .main-canvas { padding: 60px 20px 0; border-radius: 24px 24px 0 0; }
     .clean-card { padding: 32px 24px; }
@@ -586,6 +644,9 @@
     .avatar-stack { padding-left: 8px; gap: 10px 0; }
     .avatar-item, .avatar-plus { width: 36px; height: 36px; margin-left: -8px; }
     .avatar-initials { font-size: 11px; }
+
+    .hero-extension { padding: 0 16px; margin-top: 32px; }
+    .db-right, .hero-cta-discover { width: 100%; justify-content: center; text-align: center; }
   }
 </style>
 
@@ -776,6 +837,25 @@
 
     </div>
   </div>
+
+  <!-- ============================================================
+       DISCOVER TALENT BANNER (EXTENDED DARK THEME)
+       ============================================================ -->
+  <div class="hero-extension reveal">
+    <div class="discover-banner">
+      <div class="db-left">
+        <h3 class="db-title">{% trans "Looking for top professionals?" %}</h3>
+        <p class="db-desc">{% trans "Explore our network of verified Ethiopian talent, creators, and established businesses." %}</p>
+      </div>
+      <div class="db-right">
+        <a href="{% url 'nexus_feed' %}" class="hero-cta-discover">
+          <span class="hero-cta-text">{% trans "Discover Talent" %}</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
 </header>
 
 <!-- ============================================================
