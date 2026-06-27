@@ -255,7 +255,12 @@ class CustomUser(AbstractUser, TimeStampedModel):
         db_index=True,
         help_text=_("Pin this user to the Talent Network card section on the landing page."),
     )
-
+    is_contacted = models.BooleanField(
+        _("Contacted Status"),
+        default=False,
+        db_index=True,
+        help_text=_("Check this if the user has been reached out to by our team.")
+    )
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = ["full_name"]
     objects = CustomUserManager()

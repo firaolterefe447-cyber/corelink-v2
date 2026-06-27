@@ -1,3 +1,4 @@
+import csv
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserChangeForm
@@ -56,8 +57,7 @@ class CustomUserChangeForm(forms.ModelForm):
     admin_rating = forms.IntegerField(
         min_value=0, max_value=5, required=False,
         label=_("Profile Admin Rating"),
-        help_text=_(
-            "Curate the user's rating (0-5). Automatically syncs to their Unified Portfolio.")
+        help_text=_("Curate the user's rating (0-5). Automatically syncs to their Unified Portfolio.")
     )
 
     is_rating_locked = forms.BooleanField(
@@ -159,7 +159,6 @@ class ApplicationRequestInline(TabularInline):
     model = ApplicationRequest
     extra = 0
     tab = True
-
     readonly_fields = ['submission_data', 'created_at', 'safe_download_cv', 'cv_file']
     fields = ['role_type', 'status', 'safe_download_cv', 'admin_notes', 'created_at']
     can_delete = False
@@ -193,21 +192,13 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     ordering = ('-date_joined',)
 
     # =========================================================
-    # NEW: UNFOLD SPECIFIC TOP-LEVEL ACTION BUTTON
+    # BOTH TOP-LEVEL ACTION BUTTONS
     # =========================================================
-    actions_list = ["export_users_html"]
+    actions_list = ["export_users_html", "export_users_excel"]
 
-    # =========================================================
-    # EXPORT ACTION: SMART HTML EXPORT (Clickable & PDF Ready)
-    # =========================================================
-    @action(description=_("📥 Open HTML Database Report"), url_path="export-users-html")
+    # --- BUTTON 1: THE HTML CRM REPORT ---
+    @action(description=_("🌐 Open HTML Report"), url_path="export-users-html")
     def export_users_html(self, request):
-        """
-        Generates a standalone, beautiful HTML page.
-        Bypasses Excel limitations. Links strictly open in new tabs.
-        Can be easily printed to PDF via browser.
-        """
-
         html_content = """
         <!DOCTYPE html>
         <html lang="en">
@@ -237,7 +228,9 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 .btn-tg:hover { background-color: #16A34A; color: #FFFFFF; }
                 .btn-disabled { background-color: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
 
-                /* Print Styles for when you hit Ctrl+P to save as PDF */
+                .badge-yes { background-color: #DCFCE7; color: #16A34A; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #BBF7D0; }
+                .badge-no { background-color: #FEF2F2; color: #DC2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #FECACA; }
+
                 @media print {
                     body { padding: 0; background-color: white; }
                     .table-wrapper { box-shadow: none; border: none; }
@@ -255,6 +248,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 <table>
                     <thead>
                         <tr>
+                            <th>Status</th>
                             <th>Name</th>
                             <th>Title / Expertise</th>
                             <th>Phone</th>
@@ -266,10 +260,9 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                     <tbody>
         """
 
-        # Fetch all users, optimized
-        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related('portfolio__headlines')
+        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related(
+            'portfolio__headlines').order_by('is_contacted', '-date_joined')
 
-        # Generate the Rows
         for user in queryset:
             title = "No Title Provided"
             profile = get_user_profile(user)
@@ -288,11 +281,9 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             except Exception:
                 full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
 
-            # Clean Values
             email = user.email if user.email else "<span style='color:#94A3B8'>N/A</span>"
             phone = user.phone_number if user.phone_number else "<span style='color:#94A3B8'>N/A</span>"
 
-            # Button Logic
             profile_btn = f'<a href="{full_url}" target="_blank" class="btn btn-profile">View Profile</a>'
 
             if user.telegram_handle:
@@ -301,8 +292,11 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             else:
                 telegram_btn = f'<span class="btn btn-disabled">No Telegram</span>'
 
+            contact_badge = '<span class="badge-yes">✅ Contacted</span>' if user.is_contacted else '<span class="badge-no">⏳ Pending</span>'
+
             html_content += f"""
                         <tr>
+                            <td>{contact_badge}</td>
                             <td><strong>{user.display_name}</strong></td>
                             <td>{title}</td>
                             <td>{phone}</td>
@@ -319,44 +313,139 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         </body>
         </html>
         """
-
         return HttpResponse(html_content, content_type='text/html')
 
-    # ---------------------------------------------------------
+    # --- BUTTON 2: THE EXCEL/PDF DOWNLOAD ---
+    @action(description=_("📊 Download Excel / PDF"), url_path="export-users-excel")
+    def export_users_excel(self, request):
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
+
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Talent Pool'
+
+        header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
+        header_font = Font(color="FFFFFF", bold=True, size=12)
+
+        thin_border = Border(
+            left=Side(style='thin', color='CBD5E1'), right=Side(style='thin', color='CBD5E1'),
+            top=Side(style='thin', color='CBD5E1'), bottom=Side(style='thin', color='CBD5E1')
+        )
+        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+
+        headers = ['Status', 'Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Telegram Handle']
+        worksheet.append(headers)
+
+        for cell in worksheet[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.border = thin_border
+            cell.alignment = cell_alignment
+
+        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related(
+            'portfolio__headlines').order_by('is_contacted', '-date_joined')
+
+        for user in queryset:
+            title = "No Title Provided"
+            profile = get_user_profile(user)
+            if profile:
+                primary_headline = profile.headlines.filter(is_primary=True).first()
+                if primary_headline:
+                    title = primary_headline.title
+                else:
+                    first_headline = profile.headlines.first()
+                    if first_headline:
+                        title = first_headline.title
+
+            try:
+                profile_path = user.get_absolute_url()
+                full_url = request.build_absolute_uri(profile_path)
+            except Exception:
+                full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
+
+            phone = str(user.phone_number) if user.phone_number else "N/A"
+            contacted = "Yes" if user.is_contacted else "No"
+
+            if user.telegram_handle:
+                clean_tg = user.telegram_handle.replace("@", "").strip()
+                telegram = f"https://t.me/{clean_tg}"
+            else:
+                telegram = "N/A"
+
+            row = [contacted, user.display_name, full_url, title, phone, telegram]
+            worksheet.append(row)
+
+            current_row = worksheet.max_row
+            for col_idx in range(1, 7):
+                cell = worksheet.cell(row=current_row, column=col_idx)
+                cell.border = thin_border
+                cell.alignment = cell_alignment
+
+                if col_idx == 3:
+                    cell.hyperlink = full_url
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border
+                    cell.alignment = cell_alignment
+                elif col_idx == 6 and telegram != "N/A":
+                    cell.hyperlink = telegram
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border
+                    cell.alignment = cell_alignment
+
+        for col in worksheet.columns:
+            max_length = 0
+            column_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            worksheet.column_dimensions[column_letter].width = min(max_length + 2, 35)
+
+        worksheet.page_margins.left = 0.2
+        worksheet.page_margins.right = 0.2
+        worksheet.sheet_properties.pageSetUpPr.fitToPage = True
+        worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
+        worksheet.page_setup.fitToWidth = 1
+        worksheet.page_setup.fitToHeight = 0
+
+        workbook.save(response)
+        return response
+
+    # ---------------------------------------------------------
+    # UI LIST DISPLAY
+    # ---------------------------------------------------------
     list_display = [
         'display_header',
+        'is_contacted',
         'contact_details',
         'role_and_rating',
         'is_verified',
         'is_nexus_visible',
         'is_selected',
-        'is_hero_avatar_selected',
-        'is_home_profile_selected',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_active',
     ]
 
     list_editable = [
+        'is_contacted',
         'is_verified',
         'is_nexus_visible',
         'is_selected',
-        'is_hero_avatar_selected',
-        'is_home_profile_selected',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_active'
     ]
 
     list_filter = [
+        'is_contacted',
         'role',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
         'is_selected',
         'is_nexus_visible',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_verified',
         'is_active',
         'date_joined'
@@ -372,6 +461,13 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 'current_location', 'avatar', 'cover_image', 'is_verified',
                 ('admin_rating', 'is_rating_locked')
             ),
+            "classes": ["tab"]
+        }),
+        (_("📞 CRM / Contact Status"), {
+            "fields": (
+                'is_contacted',
+            ),
+            "description": "Toggle this ON once you or your team have reached out to this user.",
             "classes": ["tab"]
         }),
         (_("🏠 Home Page Curation"), {
@@ -582,7 +678,10 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
     def download_cv_btn(self, obj):
         if obj.cv_file:
             return format_html(
-                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">⬇️ Open CV</a>',
+                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
+                '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>'
+                'View & Download CV'
+                '</a>',
                 obj.cv_file.url
             )
         return mark_safe(
