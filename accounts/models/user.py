@@ -216,12 +216,12 @@ class CustomUser(AbstractUser, TimeStampedModel):
         ),
     )
     is_nexus_visible = models.BooleanField(
-        _("Visible in Public Feed"),
+        _("Public Feed"),
         default=True,
         help_text=_("Uncheck to ban user from public Nexus feed"),
     )
     is_selected = models.BooleanField(
-        _("Admin Selected"),
+        _("Admin Pick"),
         default=False,
         db_index=True,
         help_text=_("Pin this user to the top of the Nexus Feed"),
@@ -244,13 +244,13 @@ class CustomUser(AbstractUser, TimeStampedModel):
     # NEW: HOME PAGE CURATION CONTROLS
     # ========================================================
     is_hero_avatar_selected = models.BooleanField(
-        _("Home Page Avatar Selected"),
+        _("Hero Avatar"),
         default=False,
         db_index=True,
         help_text=_("Pin this user to the top hero section avatar cluster on the landing page."),
     )
     is_home_profile_selected = models.BooleanField(
-        _("Home Page Profile Selected"),
+        _("Home Profile"),
         default=False,
         db_index=True,
         help_text=_("Pin this user to the Talent Network card section on the landing page."),

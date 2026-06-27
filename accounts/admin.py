@@ -192,17 +192,14 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     form = CustomUserChangeForm
     ordering = ('-date_joined',)
 
-    actions_list = ["export_users_html"]
+    # =========================================================
+    # BOTH TOP-LEVEL ACTION BUTTONS
+    # =========================================================
+    actions_list = ["export_users_html", "export_users_excel"]
 
-    # =========================================================
-    # EXPORT ACTION: SMART HTML EXPORT (Clickable & PDF Ready)
-    # =========================================================
-    @action(description=_("📥 Open HTML Database Report"), url_path="export-users-html")
+    # --- BUTTON 1: THE HTML CRM REPORT ---
+    @action(description=_("🌐 Open HTML Report"), url_path="export-users-html")
     def export_users_html(self, request):
-        """
-        Generates a standalone, beautiful HTML page.
-        Bypasses Excel limitations. Links strictly open in new tabs.
-        """
         html_content = """
         <!DOCTYPE html>
         <html lang="en">
@@ -331,11 +328,119 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         </body>
         </html>
         """
-
         return HttpResponse(html_content, content_type='text/html')
 
+    # --- BUTTON 2: THE EXCEL/PDF DOWNLOAD ---
+    @action(description=_("📊 Download Excel / PDF"), url_path="export-users-excel")
+    def export_users_excel(self, request):
+        """
+        Generates a true .XLSX Excel file engineered for PDF conversion.
+        Forces columns to fit on one landscape page without cutting off.
+        """
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
+
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Talent Pool'
+
+        header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
+        header_font = Font(color="FFFFFF", bold=True, size=12)
+
+        thin_border = Border(
+            left=Side(style='thin', color='CBD5E1'), right=Side(style='thin', color='CBD5E1'),
+            top=Side(style='thin', color='CBD5E1'), bottom=Side(style='thin', color='CBD5E1')
+        )
+        # CRITICAL FIX: wrap_text=True stops URLs from pushing everything off the page
+        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+
+        headers = ['Status', 'Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Telegram Handle']
+        worksheet.append(headers)
+
+        for cell in worksheet[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.border = thin_border
+            cell.alignment = cell_alignment
+
+        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related(
+            'portfolio__headlines').order_by('is_contacted', '-date_joined')
+
+        for user in queryset:
+            title = "No Title Provided"
+            profile = get_user_profile(user)
+            if profile:
+                primary_headline = profile.headlines.filter(is_primary=True).first()
+                if primary_headline:
+                    title = primary_headline.title
+                else:
+                    first_headline = profile.headlines.first()
+                    if first_headline:
+                        title = first_headline.title
+
+            try:
+                profile_path = user.get_absolute_url()
+                full_url = request.build_absolute_uri(profile_path)
+            except Exception:
+                full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
+
+            phone = str(user.phone_number) if user.phone_number else "N/A"
+            contacted = "Yes" if user.is_contacted else "No"
+
+            if user.telegram_handle:
+                clean_tg = user.telegram_handle.replace("@", "").strip()
+                telegram = f"https://t.me/{clean_tg}"
+            else:
+                telegram = "N/A"
+
+            row = [contacted, user.display_name, full_url, title, phone, telegram]
+            worksheet.append(row)
+
+            current_row = worksheet.max_row
+            for col_idx in range(1, 7):
+                cell = worksheet.cell(row=current_row, column=col_idx)
+                cell.border = thin_border
+                cell.alignment = cell_alignment
+
+                if col_idx == 3:
+                    cell.hyperlink = full_url
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border
+                    cell.alignment = cell_alignment
+                elif col_idx == 6 and telegram != "N/A":
+                    cell.hyperlink = telegram
+                    cell.style = "Hyperlink"
+                    cell.border = thin_border
+                    cell.alignment = cell_alignment
+
+        for col in worksheet.columns:
+            max_length = 0
+            column_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            # CRITICAL FIX: Hard cap width at 35 so it never stretches off the PDF page
+            worksheet.column_dimensions[column_letter].width = min(max_length + 2, 35)
+
+        # PDF PAGE SETUP (The Ironclad Lock)
+        worksheet.page_margins.left = 0.2
+        worksheet.page_margins.right = 0.2
+        worksheet.sheet_properties.pageSetUpPr.fitToPage = True
+        worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
+        worksheet.page_setup.fitToWidth = 1
+        worksheet.page_setup.fitToHeight = 0
+
+        workbook.save(response)
+        return response
+
     # ---------------------------------------------------------
-    # UI LIST DISPLAY (RESTORED ALL CURATION FIELDS!)
+    # UI LIST DISPLAY
     # ---------------------------------------------------------
     list_display = [
         'display_header',
@@ -345,10 +450,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
-        'is_hero_avatar_selected',
-        'is_home_profile_selected',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_active',
     ]
 
@@ -357,10 +458,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
-        'is_hero_avatar_selected',
-        'is_home_profile_selected',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_active'
     ]
 
@@ -371,8 +468,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_home_profile_selected',
         'is_selected',
         'is_nexus_visible',
-        'is_pinned_in_right_now',
-        'is_banned_from_right_now',
         'is_verified',
         'is_active',
         'date_joined'
