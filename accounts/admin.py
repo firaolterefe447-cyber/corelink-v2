@@ -159,6 +159,7 @@ class ApplicationRequestInline(TabularInline):
     model = ApplicationRequest
     extra = 0
     tab = True
+
     readonly_fields = ['submission_data', 'created_at', 'safe_download_cv', 'cv_file']
     fields = ['role_type', 'status', 'safe_download_cv', 'admin_notes', 'created_at']
     can_delete = False
@@ -191,14 +192,17 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     form = CustomUserChangeForm
     ordering = ('-date_joined',)
 
-    # =========================================================
-    # BOTH TOP-LEVEL ACTION BUTTONS
-    # =========================================================
-    actions_list = ["export_users_html", "export_users_excel"]
+    actions_list = ["export_users_html"]
 
-    # --- BUTTON 1: THE HTML CRM REPORT ---
-    @action(description=_("🌐 Open HTML Report"), url_path="export-users-html")
+    # =========================================================
+    # EXPORT ACTION: SMART HTML EXPORT (Clickable & PDF Ready)
+    # =========================================================
+    @action(description=_("📥 Open HTML Database Report"), url_path="export-users-html")
     def export_users_html(self, request):
+        """
+        Generates a standalone, beautiful HTML page.
+        Bypasses Excel limitations. Links strictly open in new tabs.
+        """
         html_content = """
         <!DOCTYPE html>
         <html lang="en">
@@ -216,10 +220,12 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 .table-wrapper { background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #E2E8F0; }
                 table { width: 100%; border-collapse: collapse; text-align: left; }
                 th { background-color: #0A66C2; color: #FFFFFF; padding: 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-                td { padding: 14px 16px; border-bottom: 1px solid #E2E8F0; font-size: 14px; color: #334155; }
+                td { padding: 14px 16px; border-bottom: 1px solid #E2E8F0; font-size: 14px; color: #334155; vertical-align: middle; }
                 tr:last-child td { border-bottom: none; }
                 tr:nth-child(even) { background-color: #F8FAFC; }
                 tr:hover { background-color: #F0F6FF; }
+
+                .avatar-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #CBD5E1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: block; }
 
                 .btn { display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; text-decoration: none; text-transform: uppercase; transition: all 0.2s; }
                 .btn-profile { background-color: #EBF4FD; color: #0A66C2; border: 1px solid #BFDBFE; }
@@ -248,6 +254,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 <table>
                     <thead>
                         <tr>
+                            <th>Avatar</th>
                             <th>Status</th>
                             <th>Name</th>
                             <th>Title / Expertise</th>
@@ -294,8 +301,19 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 
             contact_badge = '<span class="badge-yes">✅ Contacted</span>' if user.is_contacted else '<span class="badge-no">⏳ Pending</span>'
 
+            try:
+                if user.avatar and hasattr(user.avatar, 'url'):
+                    avatar_src = request.build_absolute_uri(user.avatar.url)
+                else:
+                    avatar_src = f"https://ui-avatars.com/api/?name={user.display_name}&background=EBF4FF&color=7F9CF5&bold=true"
+            except Exception:
+                avatar_src = f"https://ui-avatars.com/api/?name={user.display_name}&background=EBF4FF&color=7F9CF5&bold=true"
+
+            avatar_html = f'<img src="{avatar_src}" class="avatar-img" alt="{user.display_name}">'
+
             html_content += f"""
                         <tr>
+                            <td style="width: 50px;">{avatar_html}</td>
                             <td>{contact_badge}</td>
                             <td><strong>{user.display_name}</strong></td>
                             <td>{title}</td>
@@ -313,112 +331,11 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         </body>
         </html>
         """
+
         return HttpResponse(html_content, content_type='text/html')
 
-    # --- BUTTON 2: THE EXCEL/PDF DOWNLOAD ---
-    @action(description=_("📊 Download Excel / PDF"), url_path="export-users-excel")
-    def export_users_excel(self, request):
-        import openpyxl
-        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="CoreLink_Talent_Database.xlsx"'
-
-        workbook = openpyxl.Workbook()
-        worksheet = workbook.active
-        worksheet.title = 'Talent Pool'
-
-        header_fill = PatternFill(start_color="0A66C2", end_color="0A66C2", fill_type="solid")
-        header_font = Font(color="FFFFFF", bold=True, size=12)
-
-        thin_border = Border(
-            left=Side(style='thin', color='CBD5E1'), right=Side(style='thin', color='CBD5E1'),
-            top=Side(style='thin', color='CBD5E1'), bottom=Side(style='thin', color='CBD5E1')
-        )
-        cell_alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
-
-        headers = ['Status', 'Full Name', 'Profile Link', 'Professional Title', 'Phone Number', 'Telegram Handle']
-        worksheet.append(headers)
-
-        for cell in worksheet[1]:
-            cell.font = header_font
-            cell.fill = header_fill
-            cell.border = thin_border
-            cell.alignment = cell_alignment
-
-        queryset = CustomUser.objects.all().select_related('portfolio').prefetch_related(
-            'portfolio__headlines').order_by('is_contacted', '-date_joined')
-
-        for user in queryset:
-            title = "No Title Provided"
-            profile = get_user_profile(user)
-            if profile:
-                primary_headline = profile.headlines.filter(is_primary=True).first()
-                if primary_headline:
-                    title = primary_headline.title
-                else:
-                    first_headline = profile.headlines.first()
-                    if first_headline:
-                        title = first_headline.title
-
-            try:
-                profile_path = user.get_absolute_url()
-                full_url = request.build_absolute_uri(profile_path)
-            except Exception:
-                full_url = f"https://corelink.et/profile/{user.corelink_id or user.id}/"
-
-            phone = str(user.phone_number) if user.phone_number else "N/A"
-            contacted = "Yes" if user.is_contacted else "No"
-
-            if user.telegram_handle:
-                clean_tg = user.telegram_handle.replace("@", "").strip()
-                telegram = f"https://t.me/{clean_tg}"
-            else:
-                telegram = "N/A"
-
-            row = [contacted, user.display_name, full_url, title, phone, telegram]
-            worksheet.append(row)
-
-            current_row = worksheet.max_row
-            for col_idx in range(1, 7):
-                cell = worksheet.cell(row=current_row, column=col_idx)
-                cell.border = thin_border
-                cell.alignment = cell_alignment
-
-                if col_idx == 3:
-                    cell.hyperlink = full_url
-                    cell.style = "Hyperlink"
-                    cell.border = thin_border
-                    cell.alignment = cell_alignment
-                elif col_idx == 6 and telegram != "N/A":
-                    cell.hyperlink = telegram
-                    cell.style = "Hyperlink"
-                    cell.border = thin_border
-                    cell.alignment = cell_alignment
-
-        for col in worksheet.columns:
-            max_length = 0
-            column_letter = col[0].column_letter
-            for cell in col:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
-            worksheet.column_dimensions[column_letter].width = min(max_length + 2, 35)
-
-        worksheet.page_margins.left = 0.2
-        worksheet.page_margins.right = 0.2
-        worksheet.sheet_properties.pageSetUpPr.fitToPage = True
-        worksheet.page_setup.orientation = worksheet.ORIENTATION_LANDSCAPE
-        worksheet.page_setup.fitToWidth = 1
-        worksheet.page_setup.fitToHeight = 0
-
-        workbook.save(response)
-        return response
-
     # ---------------------------------------------------------
-    # UI LIST DISPLAY
+    # UI LIST DISPLAY (RESTORED ALL CURATION FIELDS!)
     # ---------------------------------------------------------
     list_display = [
         'display_header',
@@ -428,6 +345,10 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
+        'is_hero_avatar_selected',
+        'is_home_profile_selected',
+        'is_pinned_in_right_now',
+        'is_banned_from_right_now',
         'is_active',
     ]
 
@@ -436,6 +357,10 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
+        'is_hero_avatar_selected',
+        'is_home_profile_selected',
+        'is_pinned_in_right_now',
+        'is_banned_from_right_now',
         'is_active'
     ]
 
@@ -446,6 +371,8 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_home_profile_selected',
         'is_selected',
         'is_nexus_visible',
+        'is_pinned_in_right_now',
+        'is_banned_from_right_now',
         'is_verified',
         'is_active',
         'date_joined'
@@ -678,7 +605,7 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
     def download_cv_btn(self, obj):
         if obj.cv_file:
             return format_html(
-                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
+                '<a href="{}" target="_blank" style="display: inline-block; padding: 6px 14px; background-color: #0A66C2; color: white; border-radius: 8px; font-weight: 800; text-decoration: none; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.2);">'
                 '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>'
                 'View & Download CV'
                 '</a>',
