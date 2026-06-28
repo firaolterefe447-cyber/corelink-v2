@@ -45,7 +45,7 @@ def inspect_user(request, user_id):
         'experiences': profile.experiences.all().order_by('-start_date'),
         'projects': profile.projects.all().order_by('order', '-created_at'),
         'credentials': profile.credentials.all().order_by('-issue_date'),
-        'posts': profile.posts.all().order_by('-created_at'),
+        'posts': profile.content_posts.all().order_by('-created_at'),
         'preferences': profile.job_preferences.all(),
     }
 
@@ -57,10 +57,14 @@ def inspect_user(request, user_id):
         # Safely map to Visionary variables so the template doesn't crash
         context.update({
             'targets': profile.skills.filter(status='LEARNING'),
-            'logs': profile.posts.filter(post_type='GROWTH_LOG'),
-            'blocks': profile.posts.filter(post_type='VISION_BLOCK'),
+            'logs': profile.content_posts.filter(post_type='GROWTH_LOG'),
+            'blocks': profile.content_posts.filter(post_type='VISION_BLOCK'),
             'certifications': profile.credentials.filter(credential_type='CERTIFICATE')
         })
+        return render(request, 'dashboard/unified_main.html', context)
+
+    elif target_user.role == 'ADMIN':
+        # Admin users see the unified dashboard like experts
         return render(request, 'dashboard/unified_main.html', context)
 
     elif target_user.role == 'FOUNDER':
