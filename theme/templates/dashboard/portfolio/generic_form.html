@@ -295,9 +295,7 @@
                                 {% else %}
                                     col-span-1
                                 {% endif %}
-                                {% if 'category' in form.fields and not form.instance.pk and field.name != 'category' %}
-                                    hidden-state
-                                {% endif %}"
+                                "
                                 data-field-name="{{ field.name }}">
 
                                 {% if field.field.widget.input_type == 'checkbox' %}
@@ -350,7 +348,7 @@
 
                 <!-- MOBILE-OPTIMIZED UNIVERSAL ASSET VAULT GALLERY -->
                 {% if 'category' in form.fields %}
-                    <div class="pt-5 sm:pt-6 mt-2 border-t border-slate-200/80 dynamic-reveal {% if not form.instance.pk %}hidden-state{% endif %}" id="gallery-section" data-field-name="gallery">
+                    <div class="pt-5 sm:pt-6 mt-2 border-t border-slate-200/80 dynamic-reveal" id="gallery-section" data-field-name="gallery">
                         <div class="mb-4 sm:mb-5 bg-gradient-to-r from-blue-50 to-emerald-50 p-3 sm:p-4 rounded-lg">
                             <h3 class="text-[13px] sm:text-[14px] font-bold text-slate-800 uppercase tracking-widest mb-1.5" id="gallery-label">📸 Project Assets & Evidence</h3>
                             <p class="text-[12px] sm:text-[13px] text-slate-600 font-medium leading-snug" id="gallery-help">Upload images or PDF documents to visually showcase this work.</p>
@@ -393,7 +391,7 @@
                 {% endif %}
 
                 <!-- MOBILE-OPTIMIZED SUBMIT FOOTER -->
-                <div class="pt-5 sm:pt-6 mt-4 sm:mt-5 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 dynamic-reveal {% if 'category' in form.fields and not form.instance.pk %}hidden-state{% endif %}" id="submit-section">
+                <div class="pt-5 sm:pt-6 mt-4 sm:mt-5 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 dynamic-reveal" id="submit-section">
                     <a href="javascript:history.back()" class="text-center sm:text-left text-[13px] sm:text-[14px] font-bold text-slate-500 hover:text-slate-700 active:text-slate-800 transition-colors px-3 py-2 sm:px-2 rounded-lg sm:rounded-none touch-manipulation">← Cancel</a>
                     <button type="submit" id="main-submit-btn" class="btn-primary-gradient w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg sm:rounded-[0.75rem] text-[14px] sm:text-[14.5px] font-bold flex justify-center items-center gap-2 active:scale-95 sm:active:scale-100 transition-transform touch-manipulation">
                         <span id="submit-text">Save Details ✓</span>
@@ -524,26 +522,12 @@
                 const val = categoryInput.value;
                 const map = contentMaps[val] || contentMaps['DEFAULT'];
 
-                // IF NO CATEGORY IS SELECTED (ONBOARDING MODE)
-                if (!val) {
-                    subtitle.innerText = "Select an industry below to reveal the project form.";
-                    fieldsToToggle.forEach(f => {
-                        const el = document.querySelector(`[data-field-name="${f}"]`);
-                        if(el) el.classList.add('hidden-state');
-                    });
-                    if(gallerySection) gallerySection.classList.add('hidden-state');
-                    if(submitSection) submitSection.classList.add('hidden-state');
-                    return;
-                }
-
-                // IF CATEGORY IS SELECTED (EXPAND FORM)
-                subtitle.innerText = "Fill out the details below. We've customized the form for your industry.";
+                // Always show fields - dynamic enhancement only
+                subtitle.innerText = val ? "We've customized the form for your industry." : "Fill out the details below. Select your industry for customized guidance.";
 
                 fieldsToToggle.forEach(f => {
                     const el = document.querySelector(`[data-field-name="${f}"]`);
                     if(el) {
-                        el.classList.remove('hidden-state');
-
                         if(map[f]) {
                             const label = el.querySelector('.field-label');
                             const help = el.querySelector('.field-help');
@@ -557,7 +541,6 @@
                 });
 
                 if(gallerySection) {
-                    gallerySection.classList.remove('hidden-state');
                     const gLabel = document.getElementById('gallery-label');
                     const gHelp = document.getElementById('gallery-help');
                     const gBtnText = document.getElementById('gallery-btn-text');
@@ -567,10 +550,6 @@
                     if(gHelp) gHelp.innerText = map.gallery.help;
                     if(gBtnText) gBtnText.innerText = map.gallery.btn;
                     if(gUpload) gUpload.accept = map.gallery.accept;
-                }
-
-                if(submitSection) {
-                    submitSection.classList.remove('hidden-state');
                 }
             }
 
