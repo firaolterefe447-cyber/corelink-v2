@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block navbar %}
-<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[240px] lg:w-[260px] xl:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
         <div class="flex-1">
             <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
@@ -62,13 +62,13 @@
     </div>
 </aside>
 
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
-        <i data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
+    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
     </button>
 </div>
 {% endblock navbar %}
@@ -105,6 +105,27 @@
     h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
+    /* Typography Scale */
+    .text-display { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.04em; }
+    .text-h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; }
+    .text-h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+    .text-h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
+    .text-body-lg { font-size: 1rem; font-weight: 500; line-height: 1.6; }
+    .text-body { font-size: 0.9375rem; font-weight: 400; line-height: 1.6; }
+    .text-body-sm { font-size: 0.875rem; font-weight: 400; line-height: 1.5; }
+    .text-caption { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    /* Spacing Scale */
+    .space-1 { margin-bottom: 0.25rem; }
+    .space-2 { margin-bottom: 0.5rem; }
+    .space-3 { margin-bottom: 0.75rem; }
+    .space-4 { margin-bottom: 1rem; }
+    .space-5 { margin-bottom: 1.25rem; }
+    .space-6 { margin-bottom: 1.5rem; }
+    .space-8 { margin-bottom: 2rem; }
+    .space-10 { margin-bottom: 2.5rem; }
+    .space-12 { margin-bottom: 3rem; }
+
     .custom-scroll::-webkit-scrollbar { width: 5px; }
     .custom-scroll::-webkit-scrollbar-track { background: transparent; }
     .custom-scroll::-webkit-scrollbar-thumb { background-color: #E2E8F0; border-radius: 10px; }
@@ -117,13 +138,13 @@
         width: 100%;
         position: relative;
         z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
     @media (min-width: 768px) {
-        .app-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
+        .app-canvas { padding-left: calc(240px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
     }
     @media (min-width: 1024px) {
-        .app-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3rem; }
+        .app-canvas { padding-left: calc(260px + 3rem); padding-right: 3rem; padding-top: 3rem; }
     }
     @media (min-width: 1280px) {
         .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
@@ -137,24 +158,28 @@
         box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
         position: relative;
         scroll-margin-top: 100px;
-        transition: border-color 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
     @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; scroll-margin-top: 40px; } }
-    .bento-card:hover { border-color: rgba(203, 213, 225, 1); }
+    .bento-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
+        transform: translateY(-2px);
+    }
 
     .premium-input {
         width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.75rem;
         background: #ffffff; transition: border-color 0.2s ease; color: #0f172a;
         font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
     }
-    .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
+    .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); transform: translateY(-1px); transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
 
     /* MODERN PROFILE BUTTONS */
     .btn-profile-primary, .btn-profile-secondary {
-        height: 44px;
-        padding: 0 1.25rem;
+        height: 42px;
+        padding: 0 1.15rem;
         border-radius: 0.75rem;
-        font-size: 14.5px;
+        font-size: 13.5px;
         font-weight: 700;
         display: inline-flex;
         align-items: center;
@@ -165,6 +190,13 @@
         white-space: nowrap;
         cursor: pointer;
     }
+    @media (max-width: 639px) {
+        .btn-profile-primary, .btn-profile-secondary {
+            height: 40px;
+            padding: 0 1rem;
+            font-size: 13px;
+        }
+    }
 
     .btn-profile-primary {
         background: linear-gradient(135deg, #0952A5, #073E89);
@@ -173,11 +205,11 @@
         box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
     }
     .btn-profile-primary:hover {
-        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
-        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(9, 82, 165, 0.4);
+        transform: translateY(-3px);
     }
     .btn-profile-primary:active {
-        transform: translateY(0);
+        transform: translateY(-1px);
         box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
     }
 
@@ -190,11 +222,11 @@
         background: #ffffff;
         color: #0F172A;
         border-color: #CBD5E1;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+        transform: translateY(-3px);
     }
     .btn-profile-secondary:active {
-        transform: translateY(0);
+        transform: translateY(-1px);
         box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08);
         background: #f1f5f9;
     }
@@ -203,22 +235,24 @@
     .btn-manage-text {
         height: 40px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
         color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-        transition: background 0.2s ease, color 0.2s ease; flex-shrink: 0; text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); flex-shrink: 0; text-decoration: none;
         font-size: 13px; font-weight: 800; border: 1.5px solid transparent;
         cursor: pointer;
     }
-    .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
+    .btn-manage-text:hover { background: #f8fafc; color: #0f172a; border-color: #e2e8f0; transform: translateY(-1px); }
+    .btn-manage-text:active { transform: translateY(0); }
 
     .btn-add-solid {
         height: 40px; padding: 0 1.15rem; border-radius: 0.75rem;
         background: #0A66C2; color: #ffffff;
         font-size: 13px; font-weight: 800; border: none;
         display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-        transition: background 0.2s ease; text-decoration: none; white-space: nowrap;
+        transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none; white-space: nowrap;
         box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3);
         cursor: pointer;
     }
-    .btn-add-solid:hover { background: #0856A8; }
+    .btn-add-solid:hover { background: #0856A8; box-shadow: 0 4px 12px rgba(10,102,194,0.4); transform: translateY(-1px); }
+    .btn-add-solid:active { transform: translateY(0); }
 
     .cover-container-radius {
         border-top-left-radius: calc(1rem - 1px);
@@ -237,20 +271,21 @@
     /* AVATAR CIRCLE */
     .avatar-circle {
         display: flex; align-items: center; justify-content: center;
-        width: 124px; height: 124px;
+        width: 100px; height: 100px;
         border-radius: 50%; background: #ffffff;
-        box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
+        box-shadow: 0 0 0 3px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
         overflow: hidden; position: relative; cursor: pointer;
         transition: box-shadow 0.2s ease; flex-shrink: 0; text-decoration: none;
     }
-    @media (min-width: 640px) { .avatar-circle { width: 144px; height: 144px; } }
+    @media (min-width: 640px) { .avatar-circle { width: 124px; height: 124px; } }
     @media (min-width: 768px) {
         .avatar-circle {
             width: 168px; height: 168px;
             box-shadow: 0 0 0 6px #ffffff, 0 2px 12px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
         }
     }
-    .avatar-circle:hover { box-shadow: 0 0 0 6px #ffffff, 0 4px 16px rgba(10, 102, 194, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); }
+    .avatar-circle:hover { box-shadow: 0 0 0 4px #ffffff, 0 4px 16px rgba(10, 102, 194, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); }
+    @media (min-width: 768px) { .avatar-circle:hover { box-shadow: 0 0 0 6px #ffffff, 0 4px 16px rgba(10, 102, 194, 0.2), inset 0 0 0 1px rgba(0,0,0,0.05); } }
     .avatar-circle img { width: 100%; height: 100%; object-fit: cover; background: #f8fafc; }
 
     .avatar-overlay {
@@ -261,12 +296,54 @@
     .avatar-circle:hover .avatar-overlay { opacity: 1; }
 
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.4s ease forwards; }
+    .anim-smooth-appear { animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
     @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    .fade-in { animation: fadeIn 0.2s ease forwards; }
+    .fade-in { animation: fadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
-    @keyframes shimmer { 100% { transform: translateX(100%); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-up { animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+    /* Enhanced Card Styles */
+    .card-elevated {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .card-elevated:hover {
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.08);
+        transform: translateY(-4px);
+        border-color: rgba(203, 213, 225, 1);
+    }
+    @media (min-width: 768px) { .card-elevated { border-radius: 1.25rem; } }
+
+    /* Focus Ring */
+    *:focus-visible {
+        outline: 2px solid #0A66C2;
+        outline-offset: 2px;
+    }
+    *:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    /* Skeleton Loading States */
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 0.5rem;
+    }
+    .skeleton-text { height: 1em; margin-bottom: 0.5em; }
+    .skeleton-text-sm { height: 0.875em; margin-bottom: 0.375em; }
+    .skeleton-text-lg { height: 1.5em; margin-bottom: 0.75em; }
+    .skeleton-avatar { width: 100px; height: 100px; border-radius: 50%; }
+    .skeleton-card { height: 120px; }
+    .skeleton-button { height: 42px; width: 120px; border-radius: 0.75rem; }
 
     .drawer-open  { transform: translate3d(0, 0, 0); }
     .drawer-closed { transform: translate3d(0, 100%, 0); }
@@ -322,22 +399,22 @@
             <div class="px-5 sm:px-8 md:px-12 pb-10 md:pb-14 flex flex-col relative z-20">
 
                 <!-- Avatar Link Block -->
-                <div class="relative -mt-[4rem] md:-mt-[5.5rem] mb-5 md:mb-7 z-30 inline-flex sm:ml-2 md:ml-4">
+                <div class="relative -mt-[3rem] md:-mt-[5.5rem] mb-4 md:mb-7 z-30 inline-flex sm:ml-2 md:ml-4">
                     <a href="{% url 'media_manager' %}" class="avatar-circle group" title="{% trans 'Change profile photo' %}">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.full_name }}">
                             <div class="avatar-overlay pointer-events-none">
-                                <i data-lucide="camera" class="w-7 h-7 md:w-9 md:h-9 text-white mb-1.5"></i>
-                                <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Edit" %}</span>
+                                <i data-lucide="camera" class="w-6 h-6 md:w-9 md:h-9 text-white mb-1.5"></i>
+                                <span class="text-white text-[9px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Edit" %}</span>
                             </div>
                         {% else %}
                             <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 text-slate-400 group-hover:from-slate-200 group-hover:to-slate-300 transition-colors pointer-events-none">
-                                <i data-lucide="user" class="w-10 h-10 md:w-14 md:h-14 stroke-[1.5]"></i>
-                                <span class="text-[9px] md:text-[10px] font-black tracking-[0.1em] mt-1">NO PHOTO</span>
+                                <i data-lucide="user" class="w-8 h-8 md:w-14 md:h-14 stroke-[1.5]"></i>
+                                <span class="text-[8px] md:text-[10px] font-black tracking-[0.1em] mt-1">NO PHOTO</span>
                             </div>
                             <div class="avatar-overlay pointer-events-none">
-                                <i data-lucide="camera" class="w-7 h-7 md:w-9 md:h-9 text-white mb-1.5"></i>
-                                <span class="text-white text-[10px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Add Photo" %}</span>
+                                <i data-lucide="camera" class="w-6 h-6 md:w-9 md:h-9 text-white mb-1.5"></i>
+                                <span class="text-white text-[9px] md:text-[11px] font-black tracking-widest uppercase">{% trans "Add Photo" %}</span>
                             </div>
                         {% endif %}
                     </a>
@@ -348,17 +425,17 @@
 
                     <!-- Info Column -->
                     <div class="flex-1 min-w-0 pr-0 lg:pr-8">
-                        <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-none mb-1 break-words w-full">
+                        <h1 class="text-h1 text-slate-900 break-words w-full mb-2">
                             {{ user.full_name|default:user.phone_number }}
                         </h1>
 
                         {% if headlines.first or portfolio.field_of_interest %}
-                        <p class="text-[#0A66C2] font-bold text-[16px] sm:text-[18px] md:text-[21px] tracking-tight mb-0 break-words w-full">
+                        <p class="text-[#0A66C2] font-bold text-[16px] sm:text-[18px] md:text-[21px] tracking-tight mb-3 break-words w-full">
                             {% if headlines.first %}{{ headlines.first.title }}{% else %}{{ portfolio.field_of_interest }}{% endif %}
                         </p>
                         {% endif %}
 
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-5 md:mt-7">
+                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-6">
                             <span class="flex items-center gap-1.5 text-[13px] md:text-[13.5px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl cursor-default">
                                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
                                 {{ portfolio.location|default:_("Location not set") }}
@@ -414,9 +491,9 @@
                 </div>
 
                 <!-- Professional Bio -->
-                <div class="p-6 sm:p-8 md:p-10 bg-slate-50/60 rounded-[1rem] md:rounded-[1.25rem] border border-slate-200/80 text-left mt-8 md:mt-10 w-full relative z-20">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-bold text-slate-700 text-[13px] md:text-[14px] uppercase tracking-widest cursor-default">{% trans "About Me" %}</h3>
+                <div class="p-5 sm:p-7 md:p-9 bg-slate-50/60 rounded-[1rem] md:rounded-[1.25rem] border border-slate-200/80 text-left mt-6 md:mt-8 w-full relative z-20">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-slate-700 text-[12px] md:text-[14px] uppercase tracking-widest cursor-default">{% trans "About Me" %}</h3>
                         <button onclick="openBioEditor()" class="text-[#0A66C2] font-extrabold text-[13px] md:text-[14px] hover:bg-blue-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% if portfolio.bio_narrative %}{% trans "Edit" %}{% else %}{% trans "Write Story" %}{% endif %}</span>
@@ -424,10 +501,10 @@
                     </div>
 
                     {% if not portfolio.bio_narrative %}
-                        <p class="text-[13px] text-slate-400 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                        <p class="text-[13px] text-slate-400 font-medium leading-relaxed mb-4 md:pr-10 cursor-default">
                             {% trans "Write a detailed professional bio that covers your background and summarizes who you are in depth." %}
                         </p>
-                        <button onclick="openBioEditor()" class="w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 mt-2 text-left cursor-pointer group/empty">
+                        <button onclick="openBioEditor()" class="w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-4 flex items-center gap-3 mt-2 text-left cursor-pointer group/empty">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover/empty:bg-blue-100 group-hover/empty:text-blue-600 transition-colors pointer-events-none">
                                 <i data-lucide="plus" class="w-4 h-4"></i>
                             </div>
@@ -435,7 +512,7 @@
                         </button>
                     {% else %}
                         <div id="bio-container" class="relative">
-                            <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-300 ease-in-out bg-white p-5 rounded-xl border border-slate-200/60 cursor-default md:!max-h-none" style="max-height: 120px;">
+                            <div id="bio-text-wrap" class="relative overflow-hidden transition-all duration-300 ease-in-out bg-white p-4 rounded-xl border border-slate-200/60 cursor-default md:!max-h-none" style="max-height: 150px;">
                                 <p class="text-[14.5px] sm:text-[15.5px] md:text-[16.5px] text-slate-800 font-medium leading-[1.9] whitespace-pre-line">{{ portfolio.bio_narrative }}</p>
                                 <div id="bio-fade" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none md:hidden" aria-hidden="true"></div>
                             </div>
@@ -1224,34 +1301,34 @@
 
 <!-- MOBILE BOTTOM NAV -->
 {% if not is_inspector and request.user.is_authenticated %}
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-[#0A66C2] relative">
-        <div class="absolute top-0 w-12 h-1 bg-[#0A66C2] rounded-b-full"></div>
-        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">My profile</span>
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">My profile</span>
     </a>
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
-        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
     </a>
-    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
-        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
     </a>
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
-        <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
     </a>
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors relative">
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors relative">
         <div class="relative">
-            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
             {% if unread_msg_count > 0 %}
-                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white">
+                <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 bg-rose-500 text-white text-[8px] font-black rounded-full border-2 border-white">
                     {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
                 </span>
             {% endif %}
         </div>
-        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+        <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
     </a>
 </nav>
 {% endif %}
