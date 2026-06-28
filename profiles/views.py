@@ -31,7 +31,7 @@ from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMet
 from profiles.models.new_unified_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject,
     ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity,
-    RightNowPost, RightNowMedia, RightNowLike, RightNowComment
+    RightNowPost, RightNowMedia, RightNowLike, RightNowComment, Language
 )
 from profiles.models import (
     Company, CompanyMember, CompanyService, ServiceGalleryImage,
@@ -42,7 +42,7 @@ from profiles.forms import (
     WorkExperienceForm, ContentPostForm, JobPreferenceForm, LiveOpportunityForm,
     CompanyProfileUpdateForm, CompanyServiceForm, CompanyNewsForm, CompanyMilestoneForm,
     CompanySocialLinkForm, CompanyContactMethodForm, SocialLinkForm, ContactMethodForm,
-    IdentityMediaForm, AddCompanyMemberForm, RightNowPostForm
+    IdentityMediaForm, AddCompanyMemberForm, RightNowPostForm, LanguageForm
 )
 
 logger = logging.getLogger(__name__)
@@ -211,6 +211,7 @@ def public_profile_view(request, identifier):
         # Identity Blocks
         'headlines': profile.headlines.all(),
         'skills': profile.skills.all(),
+        'languages': profile.languages.all(),
         'credentials': profile.credentials.all(),
         'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
 
@@ -652,6 +653,29 @@ class PreferenceDeleteView(PortfolioSecurityMixin, DeleteView):
     model = UnifiedJobPreference
     template_name = 'dashboard/shared/confirm_delete.html'
     success_url = reverse_lazy('manage_preferences')
+
+
+# --- LANGUAGES ---
+class LanguageListView(PortfolioSecurityMixin, ListView):
+    model = Language
+    template_name = 'dashboard/portfolio/language_list.html'
+
+class LanguageCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = Language
+    form_class = LanguageForm
+    template_name = 'dashboard/portfolio/language_form.html'
+    success_url = reverse_lazy('language_list')
+
+class LanguageUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = Language
+    form_class = LanguageForm
+    template_name = 'dashboard/portfolio/language_form.html'
+    success_url = reverse_lazy('language_list')
+
+class LanguageDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = Language
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('language_list')
 
 
 # --- LIVE OPPORTUNITIES (The 10x Feature) ---

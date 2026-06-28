@@ -26,7 +26,7 @@ except ImportError:
 
 from profiles.models.new_unified_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject, RightNowPost, RightNowMedia,
-    ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity
+    ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity, Language
 )
 
 from profiles.models import (
@@ -797,13 +797,40 @@ class CompanyContactMethodForm(TailwindFormMixin, forms.ModelForm):
 
         labels = {
             'label': _("Contact Label"),
-            'value': _("Contact Details"),
+        }
+
+
+class LanguageForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = Language
+        fields = ['language_code', 'custom_language_name', 'proficiency', 'is_primary']
+
+        labels = {
+            'language_code': _("Language"),
+            'custom_language_name': _("Custom Language Name"),
+            'proficiency': _("Proficiency Level"),
+            'is_primary': _("Primary Language"),
         }
 
         help_texts = {
-            'label': _("A clear name for this contact method (e.g., 'Sales Desk', 'Support Email', 'Main Office')."),
-            'value': _("The actual phone number, email address, or physical address clients should use."),
+            'language_code': _("Select from Ethiopian and international languages, or choose 'Other' to enter a custom language."),
+            'custom_language_name': _("Required when 'Other' is selected above."),
+            'proficiency': _("How well do you speak this language?"),
+            'is_primary': _("Mark this as your primary/native language."),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        language_code = cleaned_data.get('language_code')
+        custom_language_name = cleaned_data.get('custom_language_name')
+
+        if language_code == 'OTHER' and not custom_language_name:
+            raise ValidationError({
+                'custom_language_name': _("Custom language name is required when 'Other' is selected.")
+            })
+
+        return cleaned_data
+
 
 # ==============================================================================
 # UPGRADED: SURGICALLY UPDATED GALLERY/ASSET SECTION

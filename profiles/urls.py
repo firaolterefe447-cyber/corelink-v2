@@ -78,10 +78,18 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/preferences/new/', views.PreferenceCreateView.as_view(), name='preference_create'),
     path('dashboard/preferences/<uuid:pk>/edit/', views.PreferenceUpdateView.as_view(), name='preference_edit'),
     path('dashboard/preferences/<uuid:pk>/delete/', views.PreferenceDeleteView.as_view(), name='preference_delete'),
-path('dashboard/logs/', GrowthLogListView.as_view(), name='manage_growth_logs'),
+
+    # H. Languages
+    path('dashboard/languages/', views.LanguageListView.as_view(), name='language_list'),
+    path('dashboard/languages/new/', views.LanguageCreateView.as_view(), name='language_create'),
+    path('dashboard/languages/<uuid:pk>/edit/', views.LanguageUpdateView.as_view(), name='language_edit'),
+    path('dashboard/languages/<uuid:pk>/delete/', views.LanguageDeleteView.as_view(), name='language_delete'),
+
+    path('dashboard/logs/', GrowthLogListView.as_view(), name='manage_growth_logs'),
     path('dashboard/essays/', EssayListView.as_view(), name='manage_essays'),
     path('dashboard/visions/', VisionBlockListView.as_view(), name='manage_vision_blocks'),
-    # H. Live Opportunities (The 10x Feature)
+
+    # I. Live Opportunities (The 10x Feature)
     path('dashboard/opportunities/', views.OpportunityListView.as_view(), name='manage_opportunities'),
     path('dashboard/opportunities/new/', views.OpportunityCreateView.as_view(), name='opportunity_create'),
     path('dashboard/opportunities/<uuid:pk>/edit/', views.OpportunityUpdateView.as_view(), name='opportunity_edit'),

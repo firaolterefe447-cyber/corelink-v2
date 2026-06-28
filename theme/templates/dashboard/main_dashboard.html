@@ -600,7 +600,7 @@
                 </div>
             </div>
 
-            <!-- 4. Featured Projects and works -->
+            <!-- 3. Featured Projects and works -->
             <div id="bento-projects" class="bento-card p-6 md:p-8 flex flex-col relative">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Featured Projects and works" %}</h3>
@@ -742,6 +742,48 @@
                         <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
                             <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 7. Languages -->
+            <div id="bento-languages" class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Languages" %}</h3>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'language_list' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
+                        </a>
+                        <a href="{% url 'language_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Language" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                    {% trans "Showcase the languages you speak, including Ethiopian languages and international languages. Specify your proficiency level to help others understand your communication capabilities." %}
+                </p>
+                <div class="flex-1 mt-2">
+                    {% if languages %}
+                        <div class="flex flex-wrap gap-2.5">
+                            {% for language in languages|slice:":8" %}
+                            <div class="px-4 py-2 bg-white border border-slate-200/80 rounded-xl flex items-center gap-2 hover:border-[#0A66C2] transition-colors cursor-default">
+                                <span class="text-[13.5px] font-bold text-slate-700">{{ language.get_language_display }}</span>
+                                {% if language.is_primary %}
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100/50">{% trans "Primary" %}</span>
+                                {% endif %}
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest {% if language.proficiency == 'NATIVE' %}bg-emerald-50 text-emerald-600 border border-emerald-100/50{% elif language.proficiency == 'FLUENT' %}bg-purple-50 text-purple-600 border border-purple-100/50{% elif language.proficiency == 'INTERMEDIATE' %}bg-amber-50 text-amber-600 border border-amber-100/50{% else %}bg-slate-100 text-slate-400 border border-slate-200/50{% endif %}">
+                                    {{ language.get_proficiency_display }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'language_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your languages" %}</h4>
                         </a>
                     {% endif %}
                 </div>

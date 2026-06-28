@@ -101,6 +101,15 @@ class CoreLinkOracle:
             elif skill_count >= 1:
                 score += 3   # Base: 1-4 skills
 
+            # Languages - REWARDS MULTILINGUAL CAPABILITIES
+            language_count = portfolio.languages.count()
+            if language_count >= 5:
+                score += 10  # Elite: 5+ languages
+            elif language_count >= 3:
+                score += 7   # Strong: 3-4 languages
+            elif language_count >= 1:
+                score += 3   # Base: 1-2 languages
+
             # Content / Journaling - REWARDS CONSISTENT OUTPUT
             content_count = portfolio.content_posts.count()
             if content_count >= 10:
@@ -167,6 +176,7 @@ class CoreLinkOracle:
                 'portfolio__experiences',
                 'portfolio__credentials',
                 'portfolio__skills',
+                'portfolio__languages',
                 'portfolio__content_posts'
             ).get(id=user_id)
 

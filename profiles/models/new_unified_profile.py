@@ -296,6 +296,106 @@ class Skill(models.Model):
         ordering = ['-status', 'name']
 
 
+class Language(models.Model):
+    """User language proficiency with Ethiopian languages and custom input support."""
+    class ProficiencyLevel(models.TextChoices):
+        NATIVE = 'NATIVE', _('Native')
+        FLUENT = 'FLUENT', _('Fluent / Professional')
+        INTERMEDIATE = 'INTERMEDIATE', _('Intermediate / Conversational')
+        BASIC = 'BASIC', _('Basic / Beginner')
+
+    # Ethiopian Languages (ISO 639-1 codes where available)
+    ETHIOPIAN_LANGUAGES = [
+        ('am', _('Amharic')),
+        ('om', _('Oromo')),
+        ('ti', _('Tigrinya')),
+        ('so', _('Somali')),
+        ('aa', _('Afar')),
+        ('sid', _('Sidamo')),
+        ('wal', _('Wolaytta')),
+        ('gur', _('Gurage (General)')),
+    ]
+
+    # Common International Languages
+    INTERNATIONAL_LANGUAGES = [
+        ('en', _('English')),
+        ('ar', _('Arabic')),
+        ('fr', _('French')),
+        ('es', _('Spanish')),
+        ('de', _('German')),
+        ('zh', _('Chinese')),
+        ('ja', _('Japanese')),
+        ('pt', _('Portuguese')),
+        ('ru', _('Russian')),
+        ('it', _('Italian')),
+        ('hi', _('Hindi')),
+        ('ko', _('Korean')),
+        ('tr', _('Turkish')),
+        ('fa', _('Persian')),
+        ('sw', _('Swahili')),
+    ]
+
+    # Combined choices with custom option
+    LANGUAGE_CHOICES = ETHIOPIAN_LANGUAGES + INTERNATIONAL_LANGUAGES + [('OTHER', _('Other (Custom)'))]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='languages')
+
+    # Standard language code (ISO 639-1)
+    language_code = models.CharField(
+        _("Language Code"),
+        max_length=10,
+        choices=LANGUAGE_CHOICES,
+        db_index=True
+    )
+
+    # Custom language name (if 'OTHER' is selected)
+    custom_language_name = models.CharField(
+        _("Custom Language Name"),
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text=_("Required if 'Other' is selected")
+    )
+
+    proficiency = models.CharField(
+        _("Proficiency Level"),
+        max_length=20,
+        choices=ProficiencyLevel.choices,
+        default=ProficiencyLevel.INTERMEDIATE,
+        db_index=True
+    )
+
+    is_primary = models.BooleanField(
+        _("Primary Language"),
+        default=False,
+        help_text=_("Mark as your primary/native language")
+    )
+
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-is_primary', 'order', 'language_code']
+        verbose_name = _("Language")
+        verbose_name_plural = _("Languages")
+
+    def clean(self):
+        """Validate that custom_language_name is provided when OTHER is selected."""
+        from django.core.exceptions import ValidationError
+        if self.language_code == 'OTHER' and not self.custom_language_name:
+            raise ValidationError(_("Custom language name is required when 'Other' is selected."))
+
+    def get_language_display(self):
+        """Get the display name for the language."""
+        if self.language_code == 'OTHER':
+            return self.custom_language_name or _('Other')
+        return dict(self.LANGUAGE_CHOICES).get(self.language_code, self.language_code)
+
+    def __str__(self):
+        lang_name = self.get_language_display()
+        return f"{lang_name} - {self.get_proficiency_display()}"
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLUSTER 4: PROOF OF WORK & EXPRESSION
 # Human Context: The Universal Evidence Library. Upgraded to support every
