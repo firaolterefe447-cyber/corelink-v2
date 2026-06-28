@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns =[
-    path('pool/<str:role_type>/', views.ops_pool_browser, name='ops_pool_browser'),
+    path('pool/<str:pool_type>/', views.ops_pool_browser, name='ops_pool_browser'),
     path('inspect/<uuid:user_id>/', views.inspect_user, name='inspect_user'),
     path('toggle-verify/<uuid:user_id>/', views.toggle_verify, name='ops_toggle_verify'),
     path('toggle-active/<uuid:user_id>/', views.toggle_active, name='ops_toggle_active'),
