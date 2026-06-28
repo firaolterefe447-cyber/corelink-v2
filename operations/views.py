@@ -32,7 +32,7 @@ def inspect_user(request, user_id):
         'target_user': target_user,  # Triggers Admin God Bar
         'user': target_user,  # Satisfies template variables
         'is_inspector': True,
-        'profile': profile,
+        'portfolio': profile,  # Template expects 'portfolio' not 'profile'
         'avatar_url': target_user.get_avatar_url,
         'cover_image_url': target_user.get_cover_image_url,
         'social_links': target_user.social_links.all(),
@@ -51,7 +51,7 @@ def inspect_user(request, user_id):
 
     # 3. Route to proper Template
     if target_user.role == 'EXPERT':
-        return render(request, 'dashboard/unified_main.html', context)
+        return render(request, 'dashboard/main_dashboard.html', context)
 
     elif target_user.role == 'VISIONARY':
         # Safely map to Visionary variables so the template doesn't crash
@@ -61,11 +61,11 @@ def inspect_user(request, user_id):
             'blocks': profile.content_posts.filter(post_type='VISION_BLOCK'),
             'certifications': profile.credentials.filter(credential_type='CERTIFICATE')
         })
-        return render(request, 'dashboard/unified_main.html', context)
+        return render(request, 'dashboard/main_dashboard.html', context)
 
     elif target_user.role == 'ADMIN':
         # Admin users see the unified dashboard like experts
-        return render(request, 'dashboard/unified_main.html', context)
+        return render(request, 'dashboard/main_dashboard.html', context)
 
     elif target_user.role == 'FOUNDER':
         membership = target_user.company_memberships.filter(is_active=True).first()
@@ -79,7 +79,7 @@ def inspect_user(request, user_id):
             'my_applications': JobApplication.objects.filter(applicant=target_user).select_related('job').order_by(
                 '-created_at'),
         })
-        return render(request, 'dashboard/founder_main.html', context)
+        return render(request, 'dashboard/company/admin_dashboard.html', context)
 
     return HttpResponse("Unknown Role", status=400)
 
