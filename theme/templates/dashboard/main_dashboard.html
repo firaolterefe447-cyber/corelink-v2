@@ -706,6 +706,47 @@
                 </div>
             </div>
 
+            <!-- 6. Professional Titles -->
+            <div id="bento-titles" class="bento-card p-6 md:p-8 flex flex-col relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Professional Titles" %}</h3>
+                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Manage" %}</span>
+                        </a>
+                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+                            <span class="pointer-events-none">{% trans "Add Headline" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
+                    {% trans "Add up to five professional titles that summarize your expertise. Clear, specific titles help recruiters, founders, and partners quickly understand your background and find you in the network." %}
+                </p>
+                <div class="flex-1 mt-2">
+                    {% if headlines %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {% for hl in headlines|slice:":3" %}
+                            <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 flex items-center gap-3 transition-colors cursor-default">
+                                <div class="overflow-hidden flex-1">
+                                    <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ hl.title }}</h4>
+                                    {% if hl.is_primary %}
+                                        <span class="inline-block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em] mt-0.5">{% trans "Primary" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
+                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- ============================================================================== -->
             <!-- 🌟 "WHAT ARE YOU FOCUSING ON" QUICK COMPOSE SECTION -->
             <!-- ============================================================================== -->
@@ -929,48 +970,6 @@
                 </div>
             </div>
 
-            <!-- 6. Professional Titles -->
-            <div id="bento-titles" class="bento-card p-6 md:p-8 flex flex-col relative">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
-                    <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Professional Titles" %}</h3>
-                    <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_headlines' %}" class="btn-manage-text">
-                            <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Manage" %}</span>
-                        </a>
-                        <a href="{% url 'headline_create' %}" class="btn-add-solid flex-1 sm:flex-none">
-                            <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
-                            <span class="pointer-events-none">{% trans "Add Headline" %}</span>
-                        </a>
-                    </div>
-                </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10 cursor-default">
-                    {% trans "Add up to five professional titles that summarize your expertise. Clear, specific titles help recruiters, founders, and partners quickly understand your background and find you in the network." %}
-                </p>
-                <div class="flex-1 mt-2">
-                    {% if headlines %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {% for hl in headlines|slice:":3" %}
-                            <div class="p-4 rounded-xl border border-slate-200/80 bg-white hover:border-slate-300 flex items-center gap-3 transition-colors cursor-default">
-                                <div class="w-2.5 h-2.5 rounded-full bg-[#0A66C2] shrink-0 {% if hl.is_primary %}opacity-100{% else %}opacity-30{% endif %}"></div>
-                                <div class="overflow-hidden">
-                                    <h4 class="font-bold text-slate-800 text-[14.5px] truncate">{{ hl.title }}</h4>
-                                    {% if hl.is_primary %}
-                                        <span class="inline-block text-[10px] font-black text-[#0A66C2] uppercase tracking-[0.1em] mt-0.5">{% trans "Primary" %}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'headline_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-5 flex items-center gap-3 cursor-pointer">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="plus" class="w-4 h-4"></i></div>
-                            <h4 class="font-bold text-slate-600 text-[14px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your professional title" %}</h4>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
         </div>
 
         <!-- ============================================================================== -->
@@ -986,13 +985,29 @@
                 <div class="p-6 md:p-12 relative z-10">
 
                     <!-- Header (Exact Original Text) -->
-                    <div class="mb-10 max-w-3xl">
+                    <div class="mb-8 max-w-3xl">
                         <h2 class="font-heading text-[1.8rem] md:text-[2.2rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight mb-4 leading-tight">
                             Profile Building Guidelines
                         </h2>
                         <p class="text-[14.5px] md:text-[15.5px] text-slate-400 font-medium leading-[1.8]">
                             To build a complete profile that represents your true professional identity on CoreLink, please follow the guidelines below. Each section is designed to help you showcase your actual value to the community, moving beyond a simple list to a true reflection of your capabilities.
                         </p>
+                    </div>
+
+                    <!-- Profile Progress Bar -->
+                    <div class="mb-10 relative">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-heading font-black text-[15px] md:text-[17px] text-white tracking-tight">Profile Progress</span>
+                            <span class="font-black text-[22px] md:text-[26px] text-emerald-400 leading-none font-heading tracking-tight">
+                                {% if portfolio.admin_rating == 5 %}100{% elif portfolio.admin_rating == 4 %}95{% elif portfolio.admin_rating == 3 %}90{% elif portfolio.admin_rating == 2 %}70{% elif portfolio.admin_rating == 1 %}30{% else %}10{% endif %}%
+                            </span>
+                        </div>
+                        <div class="relative h-2 md:h-2.5 bg-slate-800/50 rounded-full overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                                 style="width:{% if portfolio.admin_rating == 5 %}100%{% elif portfolio.admin_rating == 4 %}95%{% elif portfolio.admin_rating == 3 %}90%{% elif portfolio.admin_rating == 2 %}70%{% elif portfolio.admin_rating == 1 %}30%{% else %}10%{% endif %}; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(16, 185, 129, 0.2);">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Vertical Timeline Guide -->
@@ -1010,17 +1025,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>Upload a clean professional profile image of you with clear resolution that lets people see who you are. Your profile image is the first point of connection, so choose something that feels authentic and approachable. Use a crisp, impactful cover image that reflects your field, your creative process, or your personal brand. This image should set the tone for your header and tell visitors at a glance what kind of professional you are, whether you are a developer, a designer, a researcher, or a business strategist.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'media_manager' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Profile Photo" %}</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 02: Skills -->
@@ -1034,17 +1043,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>List both your technical and soft skills, ranging from those you have mastered to those you are currently learning. Do not just list keywords; provide context. For each skill, explain a project or task where you successfully applied it in a real-world scenario. Explain the how and why. For example, if you list Python, do not just stop there. Describe how you used it to automate a specific task, analyze a dataset, or build a backend service. This helps others understand not just what you know, but how you think and solve problems.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'skill_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Skills" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 03: Projects -->
@@ -1058,19 +1061,13 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl space-y-4 line-clamp-3 md:line-clamp-none transition-all duration-300 [display:-webkit-box] [-webkit-box-orient:vertical]">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl space-y-4 transition-all duration-300">
                                     <p>This is the most critical section for showcasing your expertise, regardless of your field. Think of this as your library of work. Whether you are in law, medicine, software engineering, design, or research, you can upload anything that demonstrates your skill: projects, published research, case studies, academic papers, or design iterations.</p>
                                     <p>For technical work, include a direct link to a live demo, a GitHub repository, or documentation. Include screenshots of your code, architecture diagrams, or the live homepage. For research or legal or medical work, upload PDFs of your white papers, research findings, case analysis, or field reports. Explain the methodology you used and the significance of your findings.</p>
                                     <p>For all fields, include a gallery of images or visuals for each entry. For every project or case study, provide a deep-dive summary: describe the problem you set out to solve, the approach you took, the tools or resources you utilized, and the ultimate outcome. By making your work tangible, you show others not just what you claim to do, but how you actually perform in your field.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'project_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add a Project" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 04: Experience -->
@@ -1084,17 +1081,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>Detail your professional history, including internships, freelance work, volunteer roles, and previous employment. For every position, focus on the substance of your contribution rather than just your job title. Use a paragraph to highlight the specific responsibilities you held, the obstacles you faced, and the tangible impact or results you achieved. If you helped a company increase efficiency, saved them time, or launched a successful product, explicitly mention that. This is the section where you prove that you can deliver results in a professional environment.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'experience_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Experience" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 05: Education -->
@@ -1108,17 +1099,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>Clearly document your academic degrees, diplomas, and any professional certifications you have earned. Education is your foundation, so provide enough detail for someone to understand the scope of your studies. For each entry, provide a description detailing the core knowledge you gained. Explain how that specific degree or certification serves as the backbone for your current expertise. If you completed a specialized course, highlight the specific modules or final projects that demonstrate the depth of your understanding.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'credential_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Education" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 06: Insights -->
@@ -1132,17 +1117,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>Document your insights, industry analysis, or regular field perspectives here. Writing your knowledge consistently demonstrates a deep understanding of your field and establishes you as a thoughtful practitioner. For each piece you add, focus on sharing a unique perspective or a lesson learned from your work. This section proves to potential employers and collaborators that you are not just executing tasks, but actively engaging with the theory, trends, and future of your industry.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'content_create' %}?type=ESSAY" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Essay" %}</span> <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 07: Vision -->
@@ -1156,17 +1135,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>This is your professional mission statement. Use this section to articulate where you are heading and the impact you aim to make in your field. Describe the long-term vision that drives your work and the specific, actionable goals you are setting for the coming months or years. By sharing your vision, you allow others, potential collaborators, mentors, or employers, to understand your underlying motivation and see if your aspirations align with their own projects or organizational goals.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'content_create' %}?type=VISION_BLOCK" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Vision" %}</span> <i data-lucide="compass" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 08: Titles -->
@@ -1180,17 +1153,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>Add up to five professional titles that summarize your expertise. Clear, specific titles help recruiters, founders, and partners quickly understand your background and find you in the network. Think of these as the primary keywords that define your current professional offering; be as precise as possible about your role, such as Full-Stack Developer or Content Strategist, to ensure you appear in relevant searches.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'headline_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Titles" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 09: Focus -->
@@ -1204,17 +1171,11 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>This is your space to document your ongoing journey and show the community your growth. Use this section to share what you are currently learning, the projects you are actively building, or the industry problems you are currently researching. Treat this as a living log—update it regularly to show that you are constantly moving forward. Sharing your focus gives others insight into your current trajectory and helps you connect with peers who are working on similar challenges.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="#bento-focus" onclick="setTimeout(()=>document.getElementById('right_now_text').focus(), 100)" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Share Focus Update" %}</span> <i data-lucide="zap" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                         <!-- Step 10: Contact -->
@@ -1228,71 +1189,17 @@
                             </div>
 
                             <div>
-                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl line-clamp-3 md:line-clamp-none transition-all duration-300">
+                                <div class="text-[14px] md:text-[15px] text-slate-400 leading-[1.8] font-medium mb-2 md:mb-4 max-w-4xl transition-all duration-300">
                                     <p>This is your gateway for connection. Add your direct contact methods, such as your email, phone number, Telegram, or WhatsApp, and include links to your digital spaces like GitHub, LinkedIn, or personal websites. Providing multiple, accessible ways to reach you allows recruiters and potential partners to move quickly when they find a match. Keeping these updated ensures that the connection process is seamless and professional.</p>
                                 </div>
-                                <button class="md:hidden text-emerald-400 text-[13px] font-bold flex items-center gap-1 mb-4" onclick="toggleGuidelineText(this)">
-                                    <span>{% trans "See full" %}</span> <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300"></i>
-                                </button>
                             </div>
 
-                            <a href="{% url 'contact_create' %}" class="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all active:scale-95 backdrop-blur-md shadow-[0_4px_12px_rgba(16,185,129,0.05)] w-max mt-1">
-                                <span>{% trans "Add Contact Method" %}</span> <i data-lucide="plus" class="w-4 h-4"></i>
-                            </a>
                         </div>
 
                     </div>
 
-                    <!-- Footer Note (Exact Original Text) -->
-                    <div class="mt-12 p-5 md:p-6 rounded-2xl bg-[#131C31] border border-slate-700/60 flex items-start sm:items-center gap-4">
-                        <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#0A66C2]/10 border border-[#0A66C2]/30 flex items-center justify-center shrink-0">
-                            <i data-lucide="check-circle-2" class="w-5 h-5 md:w-6 md:h-6 text-blue-400"></i>
-                        </div>
-                        <p class="text-[14px] md:text-[15px] font-semibold text-slate-300 leading-relaxed">
-                            Once you have completed these sections, your profile will be positioned as a primary source for talent discovery within the community.
-                        </p>
-                    </div>
 
                 </div>
-            </div>
-        </div>
-
-        <!-- ============================================================================== -->
-        <!-- BOTTOM SECTION (Trust Score - Full Width Redesign) -->
-        <!-- ============================================================================== -->
-        <div class="mb-12 lg:mb-16">
-            <div class="bento-card p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full cursor-default z-20">
-
-                <!-- Left Side: Metric -->
-                <div class="flex flex-col items-center md:items-start text-center md:text-left shrink-0 md:w-[260px]">
-                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100 pointer-events-none shadow-sm">
-                        <i data-lucide="shield-check" class="w-7 h-7 text-[#0A66C2]"></i>
-                    </div>
-                    <span class="font-black text-[11px] md:text-[12px] tracking-[0.18em] uppercase text-slate-400 mb-1.5 pointer-events-none">{% trans "Trust Score" %}</span>
-                    <span class="font-black text-6xl md:text-7xl text-slate-900 leading-none font-heading pointer-events-none tracking-tight">
-                        {% if portfolio.admin_rating == 5 %}100<span class="text-3xl text-slate-400 ml-1">%</span>
-                        {% elif portfolio.admin_rating == 4 %}95<span class="text-3xl text-slate-400 ml-1">%</span>
-                        {% elif portfolio.admin_rating == 3 %}90<span class="text-3xl text-slate-400 ml-1">%</span>
-                        {% elif portfolio.admin_rating == 2 %}70<span class="text-3xl text-slate-400 ml-1">%</span>
-                        {% elif portfolio.admin_rating == 1 %}30<span class="text-3xl text-slate-400 ml-1">%</span>
-                        {% else %}10<span class="text-3xl text-slate-400 ml-1">%</span>{% endif %}
-                    </span>
-                </div>
-
-                <!-- Right Side: Bar & Context -->
-                <div class="flex-1 w-full flex flex-col justify-center">
-                    <div class="h-4 md:h-5 w-full bg-slate-100 rounded-full overflow-hidden relative mb-5 pointer-events-none shadow-inner">
-                        <div class="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-[#0A66C2] to-blue-400 rounded-full transition-all duration-1000 ease-out"
-                             style="width:{% if portfolio.admin_rating == 5 %}100%{% elif portfolio.admin_rating == 4 %}95%{% elif portfolio.admin_rating == 3 %}90%{% elif portfolio.admin_rating == 2 %}70%{% elif portfolio.admin_rating == 1 %}30%{% else %}10%{% endif %};">
-                             <!-- Subtle Shimmer Animation -->
-                             <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-full animate-[shimmer_2s_infinite]"></div>
-                        </div>
-                    </div>
-                    <p class="text-slate-500 text-[13.5px] md:text-[15px] font-medium leading-relaxed pointer-events-none max-w-2xl">
-                        {% trans "Complete every section to reach 100%. Fully detailed personal profiles are prioritized by our platform's discovery algorithms." %}
-                    </p>
-                </div>
-
             </div>
         </div>
 
