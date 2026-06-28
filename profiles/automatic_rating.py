@@ -89,7 +89,7 @@ class CoreLinkOracle:
             score += min(company.milestones.count() * 5, 10)  # Needs 2 Milestones for max 10
             score += min(company.news_articles.count() * 2.5, 5)  # Needs 2 Articles for max 5
 
-        return min(int(score), 100)
+        return min(int(score), 98)
 
     @staticmethod
     def map_score_to_rating(score: int) -> int:

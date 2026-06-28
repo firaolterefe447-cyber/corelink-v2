@@ -83,28 +83,31 @@ def inspect_user(request, user_id):
 # --- PART 2: THE POOL BROWSER ---
 
 @staff_member_required
-def ops_pool_browser(request, role_type):
+def ops_pool_browser(request, pool_type):
     """
-    Dynamic Browser: Handles Experts, Visionaries, and Founders.
-    (Optimized with Unified Profile `select_related`)
+    Dynamic Browser: Handles Users and Companies.
     """
-    role_map = {
-        'expert': 'EXPERT',
-        'visionary': 'VISIONARY',
-        'founder': 'FOUNDER'
-    }
-    db_role = role_map.get(role_type.lower(), 'EXPERT')
-
-    # HUGE SPEED BOOST: We only need to select_related('portfolio') now!
-    users = User.objects.filter(role=db_role).select_related('portfolio')
-
-    context = {
-        'users': users,
-        'role_title': role_type.capitalize(),
-        'total_count': users.count()
-    }
-
-    return render(request, 'ops/pool_browser.html', context)
+    if pool_type.upper() == 'USER':
+        users = User.objects.all().select_related('portfolio')
+        context = {
+            'users': users,
+            'pool_type': 'USER',
+            'pool_title': 'Users',
+            'total_count': users.count()
+        }
+        return render(request, 'ops/pool_browser.html', context)
+    elif pool_type.upper() == 'COMPANY':
+        from workspace.models import Company
+        companies = Company.objects.all().prefetch_related('memberships__user')
+        context = {
+            'companies': companies,
+            'pool_type': 'COMPANY',
+            'pool_title': 'Companies',
+            'total_count': companies.count()
+        }
+        return render(request, 'ops/pool_browser.html', context)
+    else:
+        return HttpResponse("Invalid pool type", status=400)
 
 
 # --- PART 3: HTMX ACTIONS (GOD BAR) ---

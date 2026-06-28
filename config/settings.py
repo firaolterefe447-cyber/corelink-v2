@@ -357,22 +357,17 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                     {
-                        "title": _("Browse Expert Pool"),
+                        "title": _("Browse Users"),
                         "icon": "manage_search",
-                        "link": "/ops/pool/EXPERT/",
+                        "link": "/ops/pool/USER/",
                         "badge": "View Mode",
                         "permission": lambda request: request.user.is_superuser,
                     },
                     {
-                        "title": _("Browse Visionary Pool"),
-                        "icon": "manage_search",
-                        "link": "/ops/pool/VISIONARY/",
-                        "permission": lambda request: request.user.is_superuser,
-                    },
-                    {
-                        "title": _("Browse Founder Pool"),
-                        "icon": "manage_search",
-                        "link": "/ops/pool/FOUNDER/",
+                        "title": _("Browse Companies"),
+                        "icon": "business",
+                        "link": "/ops/pool/COMPANY/",
+                        "badge": "View Mode",
                         "permission": lambda request: request.user.is_superuser,
                     },
                 ],
