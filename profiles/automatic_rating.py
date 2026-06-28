@@ -17,59 +17,98 @@ class CoreLinkOracle:
 
     @staticmethod
     def _get_text_score(text: str, excellent_len=300, good_len=100, basic_len=50) -> int:
-        """Helper to scan how deeply a user wrote their narratives."""
+        """Helper to scan how deeply a user wrote their narratives - NOW MORE GRANULAR."""
         if not text: return 0
         length = len(str(text).strip())
         if length >= excellent_len: return 12
         if length >= good_len: return 6
         if length >= basic_len: return 2
+        if length >= 10: return 1  # Reward even small attempts
         return 0
 
     @staticmethod
     def calculate_power_score(user) -> int:
-        """Calculates a ruthless AI score out of 100. Impossible to cheat."""
+        """
+        ULTRA-INTELLIGENT ORACLE SCORING ENGINE
+        Aggressively rewards high-achievers with massive portfolios, skills, and projects.
+        Cap at 98 - Admin manually grants 100 for exceptional cases.
+        """
         score = 0
 
         # ==========================================
-        # 1. THE BASE IDENTITY MATRIX (Max 25 points)
+        # 1. THE BASE IDENTITY MATRIX (Max 20 points)
         # ==========================================
         if getattr(user, 'avatar', None): score += 5
         if getattr(user, 'cover_image', None): score += 5
         if getattr(user, 'is_verified', False): score += 5
 
-        # Social & Contact Grinding
-        score += min(user.social_links.count() * 2, 6)  # Max 6 pts (Needs 3 Socials)
-        score += min(user.contact_methods.count() * 2, 4)  # Max 4 pts (Needs 2 Contacts)
+        # Social & Contact - REWARDS SINGLE ENTRIES
+        score += min(user.social_links.count() * 2, 6)  # Max 6 pts (3 pts per social)
+        score += min(user.contact_methods.count() * 2, 4)  # Max 4 pts (2 pts per contact)
 
         # ==========================================
-        # 2. THE FLUID PORTFOLIO MATRIX (Max 80 points)
+        # 2. THE FLUID PORTFOLIO MATRIX (Max 78 points)
         # ==========================================
         if hasattr(user, 'portfolio'):
             portfolio = user.portfolio
 
-            # --- AI Reading their Text (Max 25 points) ---
+            # --- AI Reading their Text (Max 23 points) ---
             if portfolio.headlines.filter(is_primary=True).exists(): score += 3
             score += CoreLinkOracle._get_text_score(portfolio.bio_narrative, excellent_len=300, good_len=150)  # Max 12
             score += CoreLinkOracle._get_text_score(portfolio.current_mission, excellent_len=200,
-                                                    good_len=100)  # Max 10
+                                                    good_len=100)  # Max 8
 
-            # --- Proof of Work & Mastery Volume (Max 55 points) ---
+            # --- Proof of Work & Mastery Volume (AGGRESSIVE REWARDS) ---
             if getattr(portfolio, 'cv_file', None): score += 5
 
-            # Projects (Real-world or Practice)
-            score += min(portfolio.projects.count() * 5, 15)  # Needs 3 Projects for max 15
+            # Projects - MASSIVE REWARD FOR HIGH VOLUME
+            project_count = portfolio.projects.count()
+            if project_count >= 10:
+                score += 25  # Elite: 10+ projects
+            elif project_count >= 5:
+                score += 18  # Strong: 5-9 projects
+            elif project_count >= 3:
+                score += 12  # Solid: 3-4 projects
+            elif project_count >= 1:
+                score += 6   # Base: 1-2 projects
 
-            # Work Experience
-            score += min(portfolio.experiences.count() * 5, 10)  # Needs 2 Jobs for max 10
+            # Work Experience - REWARDS CAREER DEPTH
+            exp_count = portfolio.experiences.count()
+            if exp_count >= 5:
+                score += 15  # Elite: 5+ jobs
+            elif exp_count >= 3:
+                score += 10  # Strong: 3-4 jobs
+            elif exp_count >= 1:
+                score += 5   # Base: 1-2 jobs
 
-            # Verified Credentials (Degrees/Certs)
-            score += min(portfolio.credentials.count() * 5, 10)  # Needs 2 Credentials for max 10
+            # Credentials - REWARDS VERIFIED EXPERTISE
+            cred_count = portfolio.credentials.count()
+            if cred_count >= 5:
+                score += 15  # Elite: 5+ credentials
+            elif cred_count >= 3:
+                score += 10  # Strong: 3-4 credentials
+            elif cred_count >= 1:
+                score += 5   # Base: 1-2 credentials
 
-            # Skill Evolution (INTERESTED -> LEARNING -> MASTERED)
-            score += min(portfolio.skills.count() * 2, 10)  # Needs 5 Skills for max 10
+            # Skills - MASSIVE REWARD FOR SKILL DIVERSITY
+            skill_count = portfolio.skills.count()
+            if skill_count >= 15:
+                score += 15  # Elite: 15+ skills
+            elif skill_count >= 10:
+                score += 12  # Strong: 10-14 skills
+            elif skill_count >= 5:
+                score += 8   # Solid: 5-9 skills
+            elif skill_count >= 1:
+                score += 3   # Base: 1-4 skills
 
-            # Content / Journaling Pulse
-            score += min(portfolio.content_posts.count() * 2.5, 5)  # Needs 2 Posts for max 5
+            # Content / Journaling - REWARDS CONSISTENT OUTPUT
+            content_count = portfolio.content_posts.count()
+            if content_count >= 10:
+                score += 10  # Elite: 10+ posts
+            elif content_count >= 5:
+                score += 6   # Strong: 5-9 posts
+            elif content_count >= 1:
+                score += 3   # Base: 1-4 posts
 
         # ==========================================
         # 3. CORPORATE ASSET OVERRIDE (Bonus 40 points)
@@ -84,10 +123,24 @@ class CoreLinkOracle:
             if getattr(company, 'cover_image', None): score += 5
             if getattr(company, 'mission_stmt', None): score += 5
 
-            # Deep Assets (Max 25 points)
-            score += min(company.services.count() * 5, 10)  # Needs 2 Services for max 10
-            score += min(company.milestones.count() * 5, 10)  # Needs 2 Milestones for max 10
-            score += min(company.news_articles.count() * 2.5, 5)  # Needs 2 Articles for max 5
+            # Deep Assets - AGGRESSIVE REWARDS
+            service_count = company.services.count()
+            if service_count >= 5:
+                score += 15  # Elite: 5+ services
+            elif service_count >= 2:
+                score += 8   # Base: 2-4 services
+
+            milestone_count = company.milestones.count()
+            if milestone_count >= 5:
+                score += 15  # Elite: 5+ milestones
+            elif milestone_count >= 2:
+                score += 8   # Base: 2-4 milestones
+
+            news_count = company.news_articles.count()
+            if news_count >= 5:
+                score += 10  # Elite: 5+ articles
+            elif news_count >= 2:
+                score += 5   # Base: 2-4 articles
 
         return min(int(score), 98)
 

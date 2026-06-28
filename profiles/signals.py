@@ -8,28 +8,18 @@ from django.utils.text import slugify
 from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMethod
 from core.services import optimize_standard_image
 from .automatic_rating import CoreLinkOracle
-from .models import (
-    VisionaryProfile,
-    Project,
-    Certification,
-    GrowthLog,
-    LearningTarget,
-    VisionBlock,
-    ExpertProfile,
-    ExpertSkill,
-    ExpertCredential,
-    ExpertProject,
-    ExpertExperience,
-    ExpertThought,
-    FounderProfile,
-    Company,
-    CompanyService,
-    CompanyMilestone,
-    CompanyNews,
-    CompanySocialLink,
-    CompanyContactMethod,
-    ServiceGalleryImage,
-    NewsGalleryImage,
+from .models.new_unified_profile import (
+    UserProfile,
+    ProfileHeadline,
+    Skill,
+    Credential,
+    PortfolioProject,
+    WorkExperience,
+    ContentPost,
+    RightNowPost,
+    RightNowMedia,
+    RightNowLike,
+    RightNowComment,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,24 +42,6 @@ def generate_unique_slug(klass, field_name, source_text):
     return unique_slug
 
 
-@receiver(post_save, sender=VisionaryProfile)
-@receiver(post_save, sender=ExpertProfile)
-@receiver(post_save, sender=FounderProfile)
-def manage_slug_generation(sender, instance, created, **kwargs):
-    # Check if slug needs to be generated
-    if created or not instance.slug:
-
-        # FIX: Every profile (Visionary, Expert, AND Founder)
-        # should use the person's name for their PERSONAL profile URL.
-        source_text = getattr(instance.user, "full_name", None)
-
-        if source_text:
-            new_slug = generate_unique_slug(sender, "slug", source_text)
-
-            # Update database directly to avoid re-triggering this signal
-            sender.objects.filter(pk=instance.pk).update(slug=new_slug)
-
-
 def _trigger_oracle(user_id):
     """Fires the Oracle asynchronously after the DB transaction is committed."""
     if user_id:
@@ -87,66 +59,37 @@ def watch_account_matrix(sender, instance, **kwargs):
     _trigger_oracle(user_id)
 
 
-@receiver([post_save, post_delete], sender=VisionaryProfile)
-@receiver([post_save, post_delete], sender=ExpertProfile)
-@receiver([post_save, post_delete], sender=FounderProfile)
-def watch_base_profiles(sender, instance, **kwargs):
-    # Using instance.user_id for safer access
-    _trigger_oracle(instance.user_id)
+# ==========================================
+# 2. WATCH UNIFIED PORTFOLIO PIPELINE
+# ==========================================
+@receiver([post_save, post_delete], sender=UserProfile)
+@receiver([post_save, post_delete], sender=ProfileHeadline)
+def watch_unified_base(sender, instance, **kwargs):
+    if sender == UserProfile:
+        _trigger_oracle(instance.user_id)
+    elif hasattr(instance, "profile"):
+        _trigger_oracle(instance.profile.user_id)
 
 
-# ==========================================
-# 2. WATCH VISIONARY PIPELINE
-# ==========================================
-@receiver([post_save, post_delete], sender=Project)
-@receiver([post_save, post_delete], sender=Certification)
-@receiver([post_save, post_delete], sender=GrowthLog)
-@receiver([post_save, post_delete], sender=LearningTarget)
-@receiver([post_save, post_delete], sender=VisionBlock)
-def watch_visionary_nodes(sender, instance, **kwargs):
+@receiver([post_save, post_delete], sender=Skill)
+@receiver([post_save, post_delete], sender=Credential)
+@receiver([post_save, post_delete], sender=PortfolioProject)
+@receiver([post_save, post_delete], sender=WorkExperience)
+@receiver([post_save, post_delete], sender=ContentPost)
+def watch_unified_portfolio_nodes(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
         _trigger_oracle(instance.profile.user_id)
 
 
-# ==========================================
-# 3. WATCH EXPERT PIPELINE
-# ==========================================
-@receiver([post_save, post_delete], sender=ExpertSkill)
-@receiver([post_save, post_delete], sender=ExpertCredential)
-@receiver([post_save, post_delete], sender=ExpertProject)
-@receiver([post_save, post_delete], sender=ExpertExperience)
-@receiver([post_save, post_delete], sender=ExpertThought)
-def watch_expert_nodes(sender, instance, **kwargs):
+@receiver([post_save, post_delete], sender=RightNowPost)
+@receiver([post_save, post_delete], sender=RightNowMedia)
+def watch_right_now_ecosystem(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
         _trigger_oracle(instance.profile.user_id)
-
-
-# ==========================================
-# 4. WATCH FOUNDER & COMPANY PIPELINE
-# ==========================================
-@receiver([post_save, post_delete], sender=Company)
-@receiver([post_save, post_delete], sender=CompanyService)
-@receiver([post_save, post_delete], sender=CompanyMilestone)
-@receiver([post_save, post_delete], sender=CompanyNews)
-@receiver([post_save, post_delete], sender=CompanySocialLink)
-@receiver([post_save, post_delete], sender=CompanyContactMethod)
-def watch_enterprise_nodes(sender, instance, **kwargs):
-    # Locate the root Company
-    if sender == Company:
-        company = instance
-    elif hasattr(instance, "company"):
-        company = instance.company
-    else:
-        company = None
-
-    # If the company's data changes, recalculate all active Founders attached to it
-    if company:
-        for member in company.members.filter(is_active=True):
-            _trigger_oracle(member.user_id)
 
 
 # ==============================================================================
-# 5. ASYNC SIGNAL HANDLERS (IMAGE OPTIMIZATION)
+# ASYNC SIGNAL HANDLERS (IMAGE OPTIMIZATION FOR UNIFIED MODELS)
 # ==============================================================================
 
 
@@ -180,29 +123,10 @@ def _perform_optimization(instance_id: Any, model_class: type, field_name: str) 
         )
 
 
-@receiver(post_save, sender=Company)
-@receiver(post_save, sender=ServiceGalleryImage)
-@receiver(post_save, sender=CompanyNews)
-@receiver(post_save, sender=NewsGalleryImage)
-def optimize_images_async_placeholder(
-    sender: Any, instance: Any, created: bool, **kwargs: Any
-) -> None:
-    """
-    Intercepts Media uploads to run optimizations post-commit safely.
-    (Removed FounderProfile target fields as part of the Name Section removal requirements).
-    """
-    target_fields = []
-
-    if sender in [ServiceGalleryImage, NewsGalleryImage]:
-        target_fields.append("image")
-    elif sender == CompanyNews:
-        target_fields.append("cover_image")
-    elif sender == Company:
-        target_fields.append("cover_image")
-        target_fields.append("logo")
-
-    for field in target_fields:
-        if getattr(instance, field, None):
-            transaction.on_commit(
-                lambda f=field: _perform_optimization(instance.pk, sender, f)
-            )
+@receiver(post_save, sender=RightNowMedia)
+def optimize_right_now_media(sender: Any, instance: Any, created: bool, **kwargs: Any) -> None:
+    """Optimize Right Now media uploads."""
+    if getattr(instance, "image", None):
+        transaction.on_commit(
+            lambda: _perform_optimization(instance.pk, sender, "image")
+        )
