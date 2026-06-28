@@ -320,31 +320,33 @@ class MonthYearField(forms.MultiValueField):
 
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
-    start_date = MonthYearField(label=_("Timeline"), required=True)
+    start_date = MonthYearField(label=_("Timeline"), required=True, help_text=_("Select month and year (GC Calendar)"))
     end_date = MonthYearField(label=_(" "), required=False, help_text=_("Leave blank if this is your current role."))
 
     class Meta:
         model = WorkExperience
-        fields = ['company_name', 'role_title', 'description', 'location_type', 'start_date', 'end_date', 'is_current']
+        fields = ['company_name', 'role_title', 'description', 'location_type', 'employment_type', 'start_date', 'end_date', 'is_current']
 
         labels = {
             'company_name': _("Organization Name"),
             'role_title': _("Your Title"),
             'location_type': _("Location Setup"),
+            'employment_type': _("Employment Type"),
             'is_current': _("I currently work here"),
             'description': _("Role Description"),
         }
 
         help_texts = {
             'company_name': _("The name of the company, hospital, organization, or school where you worked."),
-            'description': _("Press 'Enter' to automatically create a new bullet point."),
+            'description': _("Explain your role and key responsibilities."),
         }
 
         widgets = {
             'company_name': forms.TextInput(attrs={'placeholder': 'e.g., Ministry of Health, Commercial Bank'}),
             'role_title': forms.TextInput(attrs={'placeholder': 'e.g., Logistics Officer or Clinic Supervisor'}),
-            'location_type': forms.RadioSelect(attrs={'class': 'radio-pill-group'}),
-            'description': forms.Textarea(attrs={'placeholder': '• Coordinated daily operations...\n• Managed a team of 15 members...', 'rows': 5, 'class': 'auto-bullet'}),
+            'location_type': forms.Select(),
+            'employment_type': forms.Select(),
+            'description': forms.Textarea(attrs={'placeholder': 'Describe your role, responsibilities, and achievements...', 'rows': 5}),
         }
 
     def clean(self):

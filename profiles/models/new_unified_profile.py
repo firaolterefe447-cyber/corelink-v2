@@ -213,12 +213,28 @@ class WorkExperience(models.Model):
         ON_SITE = 'ON_SITE', _('On-Site')
         HYBRID = 'HYBRID', _('Hybrid')
 
+    class EmploymentType(models.TextChoices):
+        FULL_TIME = 'FULL_TIME', _('Full-time')
+        PART_TIME = 'PART_TIME', _('Part-time')
+        CONTRACT = 'CONTRACT', _('Contract')
+        INTERNSHIP = 'INTERNSHIP', _('Internship')
+        FREELANCE = 'FREELANCE', _('Freelance')
+        VOLUNTEER = 'VOLUNTEER', _('Volunteer')
+        APPRENTICESHIP = 'APPRENTICESHIP', _('Apprenticeship')
+        OTHER = 'OTHER', _('Other')
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='experiences')
 
     company_name = models.CharField(max_length=200)
     role_title = models.CharField(max_length=200)
     location_type = models.CharField(max_length=50, choices=LocType.choices, default=LocType.ON_SITE)
+    employment_type = models.CharField(
+        max_length=50,
+        choices=EmploymentType.choices,
+        blank=True,
+        null=True
+    )
 
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
