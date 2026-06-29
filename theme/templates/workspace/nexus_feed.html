@@ -128,39 +128,55 @@
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-
-        /* Ultra Modern Slate & White Palette */
-        --bg-color: #F8FAFC;
-        --surface: #FFFFFF;
-        --text-dark: #0F172A;
-        --text-muted: #64748B;
-        --primary: #0A66C2;
-        --border-hard: #E2E8F0;
-        --ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --blue: #0A66C2;
+        --blue-dark: #0856A8;
     }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
     body {
         font-family: var(--font-body);
-        background: var(--bg-color);
-        color: var(--text-dark);
+        background-color: #F0F4F8;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(219,234,254,0.5) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241,245,249,0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
         -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
     }
 
-    h1, h2, h3, h4, h5, h6, .nav-heading {
-        font-family: var(--font-heading);
-        letter-spacing: -0.015em;
-    }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 24px) + 6rem); }
-    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #E2E8F0; border-radius: 10px; }
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #E2E8F0 transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { scrollbar-width: none; } }
+
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
+    }
+    @media (min-width: 768px) {
+        .app-canvas { padding-left: calc(240px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
+    }
+    @media (min-width: 1024px) {
+        .app-canvas { padding-left: calc(260px + 3rem); padding-right: 3rem; padding-top: 3rem; }
+    }
+    @media (min-width: 1280px) {
+        .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
+    }
 
     /* Ultra Clean Grid Cards */
     .structural-card {
-        background: var(--surface);
-        border: 1px solid var(--border-hard);
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
         border-radius: 1rem;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -2px rgba(0,0,0,0.02);
         overflow: hidden;
@@ -171,53 +187,59 @@
         box-shadow: 0 12px 24px -8px rgba(0,0,0,0.06);
         border-color: #CBD5E1;
     }
+
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
 <!-- MAIN CONTAINER -->
-<div class="relative z-10 max-w-[80rem] mx-auto pb-safe min-h-screen pt-24 md:pt-32">
+<div class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} anim-smooth-appear">
 
-    <!--
-        ==============================================
-        MASTER DISCOVERY TOGGLE
-        ==============================================
-    -->
-    <div class="w-full flex flex-col items-center mb-6 md:mb-10 relative z-30 px-4 mt-2">
-        <div class="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-sm flex items-center w-full sm:w-max">
-            <!-- INDIVIDUALS (ACTIVE) -->
-            <div class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-bold tracking-wide flex items-center justify-center gap-2 bg-[#F0F6FF] text-[#0A66C2] cursor-default border border-transparent shadow-sm">
-                <i data-lucide="user" class="w-4 h-4"></i> {% trans "Individuals" %}
+    <div class="max-w-4xl mx-auto w-full relative z-10">
+
+        <!--
+            ==============================================
+            MASTER DISCOVERY TOGGLE
+            ==============================================
+        -->
+        <div class="w-full flex flex-col items-center mb-6 md:mb-10 relative z-30 mt-2">
+            <div class="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-sm flex items-center w-full sm:w-max">
+                <!-- INDIVIDUALS (ACTIVE) -->
+                <div class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-bold tracking-wide flex items-center justify-center gap-2 bg-[#F0F6FF] text-[#0A66C2] cursor-default border border-transparent shadow-sm">
+                    <i data-lucide="user" class="w-4 h-4"></i> {% trans "Individuals" %}
+                </div>
+
+                <!-- TEAMS (LINK) -->
+                <a href="{% url 'team_nexus' %}" class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-semibold tracking-wide transition-all flex items-center justify-center gap-2 text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC]">
+                    <i data-lucide="boxes" class="w-4 h-4"></i> {% trans "Teams" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- FEED HEADER & DESKTOP INBOX -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div class="max-w-2xl w-full">
+                <h1 class="text-[24px] md:text-[32px] font-extrabold text-[#0F172A] tracking-tight mb-2 leading-tight nav-heading">
+                    {% trans "Community Posts" %}
+                </h1>
+                <p class="text-[14.5px] md:text-[15.5px] text-[#475569] font-medium leading-relaxed">
+                    {% trans "Discover and connect with professionals, founders, and students in real-time based on what they are working on and exactly who they are looking to meet right now." %}
+                </p>
             </div>
 
-            <!-- TEAMS (LINK) -->
-            <a href="{% url 'team_nexus' %}" class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-semibold tracking-wide transition-all flex items-center justify-center gap-2 text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC]">
-                <i data-lucide="boxes" class="w-4 h-4"></i> {% trans "Teams" %}
+            <a href="{% url 'chat_hub' %}" class="hidden md:flex relative items-center gap-2 px-6 py-3 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[14px] font-bold transition-all shrink-0 active:scale-95">
+                <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[22px] h-[22px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-[#0A66C2] shadow-sm">
+                        {{ unread_msg_count }}
+                    </span>
+                {% endif %}
             </a>
         </div>
-    </div>
 
-    <!-- FEED HEADER & DESKTOP INBOX -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 px-4 md:px-8">
-        <div class="max-w-2xl w-full">
-            <h1 class="text-[24px] md:text-[32px] font-extrabold text-[#0F172A] tracking-tight mb-2 leading-tight nav-heading">
-                {% trans "Community Posts" %}
-            </h1>
-            <p class="text-[14.5px] md:text-[15.5px] text-[#475569] font-medium leading-relaxed">
-                {% trans "Discover and connect with professionals, founders, and students in real-time based on what they are working on and exactly who they are looking to meet right now." %}
-            </p>
-        </div>
-
-        <a href="{% url 'chat_hub' %}" class="hidden md:flex relative items-center gap-2 px-6 py-3 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[14px] font-bold transition-all shrink-0 active:scale-95">
-            <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
-            {% if unread_msg_count > 0 %}
-                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[22px] h-[22px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-[#0A66C2] shadow-sm">
-                    {{ unread_msg_count }}
-                </span>
-            {% endif %}
-        </a>
-    </div>
-
-    <!-- MAIN GRID (Grid Layout) -->
-    <div class="px-4 md:px-8">
+        <!-- MAIN GRID (Grid Layout) -->
+        <div>
         <!-- EXACT 2-COLUMN GRID. Gap handles spacing, no margin needed inside -->
         <div id="users-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
 
@@ -331,37 +353,47 @@
             </div>
 
         </div>
+        </div>
     </div>
 </div>
 
-<!-- ==============================================
-     MOBILE BOTTOM NAVIGATION
-     ============================================== -->
-{% if not is_inspector %}
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-[#E2E8F0] flex justify-between items-center w-full h-[60px]" style="padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: content-box;">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
-        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium mt-1">{% trans "Dashboard" %}</span>
-    </a>
+<!-- MOBILE BOTTOM NAVIGATION -->
+{% if not is_inspector and request.user.is_authenticated %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
 
-    <!-- Role-Based Workspace Navigation (Mobile) -->
-    <a href="{% if user.role == 'FOUNDER' %}{% url 'founder_workspace' %}{% elif user.role == 'EXPERT' %}{% url 'expert_action_page' %}{% else %}{% url 'visionary_action_page' %}{% endif %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
-        <i data-lucide="layers" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium mt-1">{% trans "Activities" %}</span>
-    </a>
+    {% with first_membership=request.user.company_memberships.first %}
+        {% if request.user.role == 'FOUNDER' and first_membership %}
+            <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+                <i data-lucide="building" class="w-5 h-5 stroke-[2.5]"></i>
+                <span class="text-[11px] font-bold whitespace-nowrap">My Company</span>
+            </a>
+        {% else %}
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+                <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+                <span class="text-[11px] font-bold whitespace-nowrap">My profile</span>
+            </a>
+        {% endif %}
+    {% endwith %}
 
-    <a href="#" class="flex flex-col items-center justify-center w-1/5 h-full text-[#0A66C2] relative">
-        <div class="absolute top-0 w-full h-[3px] bg-[#0A66C2] rounded-b-full"></div>
-        <i data-lucide="users" class="w-6 h-6"></i>
-        <span class="text-[10px] font-bold mt-1">{% trans "Network" %}</span>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Discover" %}</span>
     </a>
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
-        <i data-lucide="briefcase" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium mt-1">{% trans "Opportunities" %}</span>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
     </a>
-    <a href="{{ user.get_absolute_url }}" target="_blank" class="flex flex-col items-center justify-center w-1/5 h-full text-[#64748B] hover:text-[#0A66C2]">
-        <i data-lucide="user-circle" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium mt-1">{% trans "My Profile" %}</span>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}<span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>{% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
     </a>
 </nav>
 {% endif %}
