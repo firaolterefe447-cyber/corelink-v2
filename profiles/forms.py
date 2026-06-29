@@ -175,7 +175,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'category': _(""),
+            'category': _("Select the field this project belongs to."),
             'title': _("Project title."),
             'role': _("Your specific contribution."),
             'link': _("Optional link to live demo, GitHub, publication, or proof."),
@@ -195,7 +195,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         # 1. ALWAYS inject the placeholder option at the very top
         choices = list(self.fields['category'].choices)
         choices = [c for c in choices if str(c[0]).strip() not in ('', 'None')]
-        self.fields['category'].choices = [('', 'Select...')] + choices
+        self.fields['category'].choices = [('', 'Select field of this project')] + choices
 
         # 2. Bulletproof override for new entries
         if not self.instance.pk:
