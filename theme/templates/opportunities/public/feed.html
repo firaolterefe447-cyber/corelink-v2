@@ -43,6 +43,13 @@
                     {% endif %}
                 {% endwith %}
 
+                {% if request.user.role == 'FOUNDER' %}
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-emerald-50/80 text-emerald-600 hover:text-emerald-700 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Personal Profile" %}
+                </a>
+                {% endif %}
+
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
                     <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
                     {% trans "Discover" %}
@@ -505,6 +512,10 @@
                 <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div> My profile</button>
             {% endif %}
         {% endwith %}
+
+        {% if request.user.role == 'FOUNDER' %}
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-600 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-emerald-100 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Personal Profile" %}</button>
+        {% endif %}
 
         <button onclick="window.location.href='{% url 'nexus_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div> {% trans "Discover" %}</button>
         <button onclick="window.location.href='{% url 'right_now_feed' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4"><div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div> {% trans "Updates" %}</button>

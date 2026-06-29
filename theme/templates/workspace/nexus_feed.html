@@ -32,6 +32,13 @@
                     {% endif %}
                 {% endwith %}
 
+                {% if request.user.role == 'FOUNDER' %}
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-emerald-50/80 text-emerald-600 hover:text-emerald-700 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Personal Profile" %}
+                </a>
+                {% endif %}
+
                 <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
                     <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     {% trans "Discover" %}
@@ -386,6 +393,10 @@
                 <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
             {% endif %}
         {% endwith %}
+
+        {% if request.user.role == 'FOUNDER' %}
+        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-600 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-emerald-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Personal Profile" %}</a>
+        {% endif %}
 
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
 
