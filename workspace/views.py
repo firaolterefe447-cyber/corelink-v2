@@ -329,11 +329,11 @@ def right_now_feed(request):
                 absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost') + F('total_quality'), output_field=FloatField())
             ).filter(
                 Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
-            ).order_by('-profile__user__is_pinned_in_right_now', '-absolute_score', '-gallery_count', '-char_length', '-created_at')
+            ).order_by('-profile__user__is_pinned_in_right_now', '-absolute_score', '-gallery_count', '-char_length')
         else:
-            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-total_quality', '-gallery_count', '-char_length', '-created_at')
+            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-total_quality', '-gallery_count', '-char_length')
     else:
-        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-created_at', '-total_quality')
+        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-total_quality')
 
     results = results.distinct()
 

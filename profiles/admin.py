@@ -294,7 +294,7 @@ class UserProfileAdmin(ModelAdmin):
 
 @admin.register(RightNowPost)
 class RightNowPostAdmin(ModelAdmin):
-    list_display = ('profile', 'short_title', 'heart_icon', 'is_admin_selected_badge', 'is_active_focus', 'is_published', 'created_at')
+    list_display = ('profile', 'short_title', 'is_admin_selected_badge', 'is_active_focus', 'is_published', 'created_at')
     list_filter = ('is_published', 'is_active_focus', 'is_admin_selected', 'current_search', 'collaboration_status', 'created_at')
     search_fields = ('profile__user__email', 'profile__user__full_name', 'title', 'body_narrative', 'external_link')
     autocomplete_fields = ['profile']
@@ -335,10 +335,6 @@ class RightNowPostAdmin(ModelAdmin):
     @display(description="Title", ordering="title")
     def short_title(self, obj):
         return obj.title if obj.title else format_html('<span class="text-gray-400 italic">No Title</span>')
-
-    @display(description="Likes")
-    def heart_icon(self, obj):
-        return format_html('<span style="color: #ef4444; font-size: 18px;">❤️</span>')
 
     @display(description="Feed Status")
     def is_admin_selected_badge(self, obj):
