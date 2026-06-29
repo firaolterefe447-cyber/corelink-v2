@@ -711,17 +711,27 @@
                 <!-- Social Links -->
                 {% if social_links %}
                 <div>
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-3 md:mb-4 block">Digital Presence</span>
-                    <div class="flex flex-col gap-3.5">
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4 md:mb-5 block">Digital Presence</span>
+                    <div class="space-y-3 md:space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-4 md:p-5 bg-white border border-slate-200 rounded-[1.25rem] shadow-sm transition-all active:scale-95 hover:border-[#0A66C2] hover:shadow-md group focus-visible:outline-none">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-[#0A66C2] transition-colors">
-                                    <i data-lucide="{{ link.icon_slug }}" class="w-4 h-4 md:w-5 md:h-5"></i>
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-xl md:rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20 focus-visible:outline-none">
+                            <!-- Distinct gradient backgrounds per link -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            <!-- Content -->
+                            <div class="relative p-5 md:p-6 bg-white border border-slate-200 rounded-xl md:rounded-2xl transition-all duration-300 group-hover:border-transparent group-hover:translate-x-1">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <span class="text-[15px] md:text-[17px] font-bold text-slate-900 group-hover:text-white transition-colors duration-300">{{ link.platform_name }}</span>
+                                        <span class="text-[11px] md:text-[12px] font-semibold text-slate-400 group-hover:text-purple-100 transition-colors duration-300 uppercase tracking-[0.2em] mt-1">View Profile</span>
+                                    </div>
+                                    <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 group-hover:bg-white group-hover:text-purple-600 transition-all duration-300 group-hover:scale-110">
+                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <span class="text-[14.5px] md:text-[15.5px] font-bold text-slate-800 group-hover:text-[#0A66C2] transition-colors">{{ link.platform_name }}</span>
                             </div>
-                            <i data-lucide="arrow-up-right" class="w-4 h-4 md:w-5 md:h-5 text-slate-300 group-hover:text-[#0A66C2] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"></i>
                         </a>
                         {% endfor %}
                     </div>
