@@ -257,19 +257,16 @@
 
             <!-- HERO HEADER SECTION -->
             <div class="mb-8">
-                <h1 class="text-[22px] sm:text-[24px] md:text-[28px] font-black text-slate-900 leading-tight mb-2">
+                <h1 class="text-[22px] sm:text-[24px] md:text-[28px] font-black text-slate-900 leading-tight">
                     {% trans "Discover What Ethiopian Professionals & Students Are Looking For and Working on!" %}
                 </h1>
-                <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-relaxed">
-                    {% trans "See what the community is learning, focusing on, and working on right now. Connect with professionals and find opportunities." %}
-                </p>
             </div>
 
             <!-- Ultra Clean Feed Controls & Search -->
             <div class="mb-8 z-20">
-                <div class="w-full">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
                     <!-- Clean minimal search input -->
-                    <form method="GET" class="w-full relative group">
+                    <form method="GET" class="flex-1 relative group">
                         <div class="flex items-center w-full bg-white border border-slate-200 rounded-full px-4 py-2 shadow-sm transition-all focus-within:border-[#0A66C2] focus-within:ring-2 focus-within:ring-[#0A66C2]/15">
                             <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-[#0A66C2] transition-colors"></i>
                             <input type="text" name="q" value="{{ search_query }}"
@@ -277,6 +274,15 @@
                                 placeholder="{% trans 'Search posts or intents...' %}">
                         </div>
                     </form>
+
+                    <!-- Share Update Button -->
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'right_now_create' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-[#0A66C2] to-blue-600 hover:from-[#0856A8] hover:to-blue-700 text-white font-bold text-[14px] sm:text-[15px] px-5 sm:px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95 whitespace-nowrap">
+                            <i data-lucide="plus" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                            <span class="hidden sm:inline">{% trans "Share Update" %}</span>
+                            <span class="sm:hidden">{% trans "Share" %}</span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 
