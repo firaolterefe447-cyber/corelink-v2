@@ -366,35 +366,56 @@
 </nav>
 {% endif %}
 
-<!-- MOBILE LANGUAGE DRAWER -->
-<div id="mobile-lang-backdrop" onclick="toggleMobileLangDrawer()" class="md:hidden fixed inset-0 bg-black/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 ease-out backdrop-blur-sm"></div>
+<!-- DRAWERS -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
 
-<div id="mobile-lang-drawer" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[120] transform translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex flex-col max-h-[85vh] w-full">
-    <div class="w-full pt-4 pb-2 flex justify-center shrink-0 cursor-pointer" onclick="toggleMobileLangDrawer()">
-        <div class="w-12 h-1.5 bg-[#E2E8F0] rounded-full"></div>
-    </div>
-    <div class="px-6 pb-4 shrink-0 flex items-center justify-between border-b border-[#E2E8F0] w-full">
-        <h3 class="font-bold text-[18px] text-[#0F172A] flex items-center gap-2">
-            <i data-lucide="globe" class="w-5 h-5 text-[#0A66C2]"></i> {% trans "Select Language" %}
-        </h3>
-        <button onclick="toggleMobileLangDrawer()" class="w-8 h-8 flex items-center justify-center bg-[#F8FAFC] text-[#64748B] rounded-full active:scale-95 transition-transform border border-[#E2E8F0]">
-            <i data-lucide="x" class="w-4 h-4"></i>
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if request.user.role == 'FOUNDER' and first_membership %}
+                <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-slate-600"></i></div> {% trans "My Company" %}</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
+            {% endif %}
+        {% endwith %}
+
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if not request.user.role == 'FOUNDER' or not first_membership %}
+                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
+            {% endif %}
+        {% endwith %}
+
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
+            </span>
         </button>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
     </div>
-    <form action="{% url 'set_language' %}" method="post" class="px-4 py-4 overflow-y-auto custom-scroll space-y-2 w-full">
+</div>
+
+<!-- Language Drawer -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'en' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'en' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "English" %}</span>
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
-        <button type="submit" name="language" value="am" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'am' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'am' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "አማርኛ" %}</span>
-        </button>
-        <button type="submit" name="language" value="om" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'om' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'om' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "Afaan Oromoo" %}</span>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
         </button>
     </form>
-    <div class="h-6"></div>
 </div>
 
 <!-- TOASTS -->
@@ -407,20 +428,34 @@
         lucide.createIcons();
     }
 
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const bds = document.querySelectorAll('[id$="-backdrop"]');
+        if(navDw) navDw.classList.replace('translate-y-0', 'translate-y-full');
+        if(langDw) langDw.classList.replace('translate-y-0', 'translate-y-full');
+        bds.forEach(bd => bd.classList.replace('opacity-100', 'opacity-0'));
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        navBd.classList.remove('opacity-0', 'pointer-events-none');
+        navBd.classList.add('opacity-100', 'pointer-events-auto');
+        navDw.classList.remove('translate-y-full', 'opacity-0');
+        navDw.classList.add('translate-y-0', 'opacity-100');
+        document.body.classList.add('body-lock');
+    }
+
     function toggleMobileLangDrawer() {
-        const bd = document.getElementById('mobile-lang-backdrop');
-        const dw = document.getElementById('mobile-lang-drawer');
-        if (dw.classList.contains('translate-y-full')) {
-            bd.classList.remove('opacity-0', 'pointer-events-none');
-            bd.classList.add('opacity-100', 'pointer-events-auto');
-            dw.classList.remove('translate-y-full');
-            document.body.style.overflow = 'hidden';
-        } else {
-            bd.classList.add('opacity-0', 'pointer-events-none');
-            bd.classList.remove('opacity-100', 'pointer-events-auto');
-            dw.classList.add('translate-y-full');
-            document.body.style.overflow = '';
-        }
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+        langBd.classList.remove('opacity-0', 'pointer-events-none');
+        langBd.classList.add('opacity-100', 'pointer-events-auto');
+        langDw.classList.remove('translate-y-full', 'opacity-0');
+        langDw.classList.add('translate-y-0', 'opacity-100');
+        document.body.classList.add('body-lock');
     }
 
     let shareToastTimeout;
