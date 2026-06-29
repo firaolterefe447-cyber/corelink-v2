@@ -227,7 +227,13 @@ class UserProfileAdmin(ModelAdmin):
         }),
     )
 
-    actions = ['lock_ratings', 'unlock_ratings', 'boost_rating']
+    actions = ['lock_ratings', 'unlock_ratings', 'boost_rating', 'open_curation_interface']
+
+    @admin.action(description="Open Feed Curation Interface")
+    def open_curation_interface(self, request, queryset):
+        from django.http import HttpResponseRedirect
+        from django.urls import reverse
+        return HttpResponseRedirect(reverse('admin_curation'))
 
     @display(description=_("User Identity"), ordering='user__last_name')
     def user_identity(self, obj):
@@ -288,12 +294,17 @@ class UserProfileAdmin(ModelAdmin):
 
 @admin.register(RightNowPost)
 class RightNowPostAdmin(ModelAdmin):
-    list_display = ('profile', 'short_title', 'engagement_metrics', 'is_active_focus', 'is_published', 'created_at')
-    list_filter = ('is_published', 'is_active_focus', 'current_search', 'collaboration_status', 'created_at')
+    list_display = ('profile', 'short_title', 'heart_icon', 'is_admin_selected_badge', 'is_active_focus', 'is_published', 'created_at')
+    list_filter = ('is_published', 'is_active_focus', 'is_admin_selected', 'current_search', 'collaboration_status', 'created_at')
     search_fields = ('profile__user__email', 'profile__user__full_name', 'title', 'body_narrative', 'external_link')
     autocomplete_fields = ['profile']
 
     inlines = [RightNowMediaInline, RightNowCommentInline, RightNowLikeInline]
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['curation_url'] = reverse('admin_curation')
+        return super().changelist_view(request, extra_context)
 
     fieldsets = (
         (_("Author & Networking Intent"), {
@@ -325,14 +336,15 @@ class RightNowPostAdmin(ModelAdmin):
     def short_title(self, obj):
         return obj.title if obj.title else format_html('<span class="text-gray-400 italic">No Title</span>')
 
-    @display(description="Engagement Stats")
-    def engagement_metrics(self, obj):
-        return format_html(
-            '<span class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded text-gray-700 mr-1">❤️ {}</span>'
-            '<span class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded text-gray-700 mr-1">💬 {}</span>'
-            '<span class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded text-gray-700">👁️ {}</span>',
-            obj.likes_count, obj.comments_count, obj.views_count
-        )
+    @display(description="Likes")
+    def heart_icon(self, obj):
+        return format_html('<span style="color: #ef4444; font-size: 18px;">❤️</span>')
+
+    @display(description="Feed Status")
+    def is_admin_selected_badge(self, obj):
+        if obj.is_admin_selected:
+            return format_html('<span class="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">✓ Selected</span>')
+        return format_html('<span class="bg-gray-200 text-gray-600 px-2 py-1 rounded text-xs font-medium">Not Selected</span>')
 
 
 @admin.register(RightNowComment)

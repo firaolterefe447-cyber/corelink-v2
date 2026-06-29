@@ -79,6 +79,14 @@
                 <!-- 3. LOGIN & JOIN NAVIGATION (Desktop) -->
                 <div class="hidden md:flex items-center gap-4">
                     {% if request.user.is_authenticated %}
+                        <!-- Admin Curation Link (Admin Only) -->
+                        {% if request.user.role == 'ADMIN' %}
+                        <a href="{% url 'admin_curation' %}" class="flex items-center gap-2 text-sm font-bold text-purple-700 hover:text-purple-600 bg-purple-50 hover:bg-purple-100 px-4 py-2 rounded-lg transition border border-purple-200">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
+                            Feed Curation
+                        </a>
+                        {% endif %}
+
                         <!-- User is Logged In -->
                         <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-sm font-bold text-brand-800 hover:text-brand-600 transition">
                             <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600">
@@ -115,6 +123,14 @@
 
                 <div class="border-t border-gray-100 my-2 pt-2">
                     {% if request.user.is_authenticated %}
+                        <!-- Admin Curation Link (Admin Only - Mobile) -->
+                        {% if request.user.role == 'ADMIN' %}
+                        <a href="{% url 'admin_curation' %}" class="flex items-center gap-3 px-3 py-3 font-bold text-purple-700 bg-purple-50 rounded-lg mb-2">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            Feed Curation
+                        </a>
+                        {% endif %}
+
                         <!-- Mobile Logged In -->
                          <a href="{% url 'dashboard' %}" class="flex items-center gap-3 px-3 py-3 font-bold text-brand-800 bg-brand-50 rounded-lg">
                             <i data-lucide="layout-dashboard" class="w-5 h-5"></i>

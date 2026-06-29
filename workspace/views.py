@@ -496,11 +496,13 @@ def admin_curation_view(request):
     # Stats
     total_posts = posts.count()
     selected_posts = posts.filter(is_admin_selected=True).count()
+    not_selected_posts = total_posts - selected_posts
 
     context = {
         'posts': posts,
         'total_posts': total_posts,
         'selected_posts': selected_posts,
+        'not_selected_posts': not_selected_posts,
     }
 
     return render(request, 'workspace/admin_curation.html', context)

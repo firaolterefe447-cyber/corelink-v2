@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app='profiles' %}">Profiles</a>
+&rsaquo; <a href="{% url 'admin:profiles_rightnowpost_changelist' %}">Right Now Posts</a>
+&rsaquo; {% trans 'Feed Curation' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>{% trans "Feed Curation - Select Posts for Public Display" %}</h2>
+        
+        <div class="form-row">
+            <div>
+                <p class="help">
+                    {% trans "Select which Right Now posts appear in the public feed. Posts are prioritized by: gallery count → character length → recency." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div style="margin: 20px 0;">
+                <a href="{% url 'admin_curation' %}" class="button" target="_blank">
+                    {% trans "Open Feed Curation Interface" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <h3>{% trans "Quick Stats" %}</h3>
+                <ul>
+                    <li>{% trans "Total Posts:" %} {{ total_posts }}</li>
+                    <li>{% trans "Selected for Feed:" %} {{ selected_posts }}</li>
+                    <li>{% trans "Not Selected:" %} {{ not_selected_posts }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
