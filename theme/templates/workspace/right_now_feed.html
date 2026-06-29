@@ -539,34 +539,10 @@
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
 
-        {% with first_membership=request.user.company_memberships.first %}
-            {% if request.user.role == 'FOUNDER' and first_membership %}
-                <a href="{% url 'company_admin_dashboard' slug=first_membership.company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-slate-600"></i></div> {% trans "My Company" %}</a>
-            {% else %}
-                <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
-            {% endif %}
-        {% endwith %}
+        <a href="{% url 'manage_right_now' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="history" class="w-4 h-4 text-slate-600"></i></div> {% trans "My Update History" %}</a>
 
-        {% if request.user.role == 'FOUNDER' %}
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50 rounded-xl text-[15px] font-bold text-emerald-600 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-emerald-100 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div> {% trans "Personal Profile" %}</a>
-        {% endif %}
+        <a href="{% url 'right_now_create' %}" class="w-full text-left px-4 py-3.5 hover:bg-blue-50 rounded-xl text-[15px] font-bold text-[#0A66C2] flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-blue-200 shadow-sm flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 text-[#0A66C2]"></i></div> {% trans "Share Update" %}</a>
 
-        <div class="h-px bg-slate-100 my-3 mx-2"></div>
-
-        {% with first_membership=request.user.company_memberships.first %}
-            {% if not request.user.role == 'FOUNDER' or not first_membership %}
-                <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
-            {% endif %}
-        {% endwith %}
-
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
-            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
-            <span class="flex-1 flex justify-between items-center">
-                {% trans "Language" %}
-                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
-            </span>
-        </button>
-        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
     </div>
 </div>
 
@@ -632,20 +608,34 @@
         const navDw = document.getElementById('mobile-nav-drawer');
         const langDw = document.getElementById('mobile-lang-drawer');
         const bds = document.querySelectorAll('[id$="-backdrop"]');
-        if(navDw) navDw.classList.replace('translate-y-0', 'translate-y-full');
-        if(langDw) langDw.classList.replace('translate-y-0', 'translate-y-full');
-        bds.forEach(bd => bd.classList.replace('opacity-100', 'opacity-0'));
+        if(navDw) {
+            navDw.classList.remove('drawer-open');
+            navDw.classList.add('drawer-closed');
+        }
+        if(langDw) {
+            langDw.classList.remove('drawer-open');
+            langDw.classList.add('drawer-closed');
+        }
+        bds.forEach(bd => {
+            bd.classList.remove('opacity-100', 'pointer-events-auto');
+            bd.classList.add('opacity-0', 'pointer-events-none');
+        });
         document.body.classList.remove('body-lock');
     }
 
     function toggleMobileNavDrawer() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const navBd = document.getElementById('mobile-nav-backdrop');
-        navBd.classList.remove('opacity-0', 'pointer-events-none');
-        navBd.classList.add('opacity-100', 'pointer-events-auto');
-        navDw.classList.remove('translate-y-full', 'opacity-0');
-        navDw.classList.add('translate-y-0', 'opacity-100');
-        document.body.classList.add('body-lock');
+        if (navDw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            navBd.classList.remove('opacity-0', 'pointer-events-none');
+            navBd.classList.add('opacity-100', 'pointer-events-auto');
+            navDw.classList.remove('drawer-closed');
+            navDw.classList.add('drawer-open');
+            document.body.classList.add('body-lock');
+        } else {
+            closeAllDrawers();
+        }
     }
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
