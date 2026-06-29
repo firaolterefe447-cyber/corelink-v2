@@ -2,10 +2,77 @@
 {% load static i18n %}
 
 {% block navbar %}
-<!-- Hide standard nav for a pure, immersive focus mode -->
-<style>
-    #mobile-navbar, .default-navbar { display: none !important; }
-</style>
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[240px] lg:w-[260px] xl:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+        <div class="flex-1">
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+            </div>
+
+            <nav class="flex flex-col gap-1.5">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    My profile
+                </a>
+                <a href="{% url 'collaboration_hub' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="bell-ring" class="w-4 h-4 text-slate-600"></i></div>
+                    My Application
+                </a>
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Discover" %}
+                </a>
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Updates" %}
+                </a>
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
+        </div>
+        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                <span>{% trans "Settings" %}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'dashboard' %}'">
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
+    </button>
+</div>
 {% endblock navbar %}
 
 {% block content %}
@@ -21,6 +88,7 @@
     }
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
+    /* MATCH MAIN PAGE BACKGROUND */
     body {
         font-family: var(--font-body);
         background-color: #F0F4F8;
@@ -34,145 +102,475 @@
 
     h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
+    /* =========================================
+       PREMIUM INPUT DESIGN - WORLD CLASS
+       ========================================= */
+    .django-form ul { list-style: none; padding: 0; margin: 0; }
+
+    .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]),
+    .django-form select,
+    .django-form textarea {
+        width: 100% !important;
+        background: #ffffff !important;
+        border: 1.5px solid rgba(226, 232, 240, 0.9) !important;
+        border-radius: 0.875rem !important;
+        color: #0f172a !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        padding: 0.875rem 1rem !important;
+        outline: none !important;
+        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    }
+
+    .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]):hover,
+    .django-form select:hover,
+    .django-form textarea:hover {
+        border-color: rgba(203, 213, 225, 1) !important;
+        box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06) !important;
+    }
+
+    .django-form input:not([type="checkbox"]):not([type="file"]):not([type="radio"]):focus,
+    .django-form select:focus,
+    .django-form textarea:focus {
+        border-color: rgba(10, 102, 194, 0.6) !important;
+        box-shadow: 0 0 0 4px rgba(10,102,194,0.12), 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    .django-form select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+        background-position: right 1rem center !important;
+        background-repeat: no-repeat !important;
+        background-size: 1.1em !important;
+        padding-right: 2.75rem !important;
+        cursor: pointer;
+    }
+    .django-form select:hover {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230A66C2' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    }
+
+    /* =========================================
+       MODERN TOGGLE SWITCH - WORLD CLASS
+       ========================================= */
+    .toggle-wrapper {
+        display: flex; align-items: center; justify-content: space-between;
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        border: 1.5px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        min-height: 64px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .toggle-wrapper:hover {
+        border-color: rgba(203, 213, 225, 1);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+        transform: translateY(-1px);
+    }
+
+    .toggle-wrapper:active {
+        transform: translateY(0);
+        box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.04);
+    }
+
+    .toggle-switch {
+        position: relative; width: 56px; height: 32px;
+        background: linear-gradient(145deg, #E2E8F0, #CBD5E1);
+        border-radius: 999px;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        flex-shrink: 0;
+        box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.1);
+    }
+
+    .toggle-switch::after {
+        content: ''; position: absolute; top: 3px; left: 3px;
+        width: 26px; height: 26px; background: #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15), 0 1px 2px rgba(15, 23, 42, 0.1);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    input[type="checkbox"]:checked + .toggle-switch {
+        background: linear-gradient(135deg, #0A66C2, #0856A8);
+        box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+    }
+    input[type="checkbox"]:checked + .toggle-switch::after {
+        transform: translateX(24px);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+    }
+    .django-form input[type="checkbox"] { display: none; }
+
+    /* =========================================
+       PRIMARY BUTTON - WORLD CLASS
+       ========================================= */
     .btn-primary-gradient {
         background: linear-gradient(135deg, #0952A5, #073E89);
         color: #ffffff;
         border: none;
-        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
-        transition: all 0.2s ease-out;
+        box-shadow: 0 4px 14px rgba(9, 82, 165, 0.3), 0 2px 6px rgba(9, 82, 165, 0.2);
+        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-primary-gradient::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+        opacity: 0;
+        transition: opacity 0.25s ease;
     }
     .btn-primary-gradient:hover {
-        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
-        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(9, 82, 165, 0.4), 0 4px 12px rgba(9, 82, 165, 0.25);
+        transform: translateY(-3px);
+    }
+    .btn-primary-gradient:hover::before {
+        opacity: 1;
     }
     .btn-primary-gradient:active {
-        transform: translateY(0);
-        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
     }
 
-    .form-input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid #E2E8F0;
-        border-radius: 0.75rem;
-        font-size: 14px;
-        transition: all 0.2s;
-        background: #ffffff;
+    /* Animations */
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    .form-input:focus {
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .animate-slide-in { animation: slideInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+
+    /* =========================================
+       MOBILE-SPECIFIC OPTIMIZATIONS - WORLD CLASS
+       ========================================= */
+    @media (max-width: 640px) {
+        button, a, input[type="submit"], input[type="button"], input[type="reset"],
+        .btn-primary-gradient, .toggle-wrapper {
+            min-height: 48px;
+            min-width: 48px;
+        }
+
+        .django-form { gap: 1.25rem !important; }
+
+        .btn-primary-gradient:hover {
+            transform: none;
+            box-shadow: 0 4px 14px rgba(9, 82, 165, 0.3), 0 2px 6px rgba(9, 82, 165, 0.2);
+        }
+
+        .btn-primary-gradient:active {
+            transform: scale(0.97);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-wrapper:active { background: #f0f4f8; transform: scale(0.98); }
+
+        button, .btn-primary-gradient, .toggle-wrapper {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            font-size: 16px !important;
+        }
+
+        body { box-shadow: none; }
+
+        @supports(padding: max(0px)) {
+            main { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+        }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    /* =========================================
+       ACCESSIBILITY & FOCUS STATES - WORLD CLASS
+       ========================================= */
+    *:focus-visible {
+        outline: 2.5px solid #0A66C2;
+        outline-offset: 3px;
+        border-radius: 0.5rem;
+    }
+    *:focus:not(:focus-visible) {
         outline: none;
-        border-color: #0A66C2;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
     }
 
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.4s ease forwards; }
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        .django-form input, .django-form select, .django-form textarea {
+            border-width: 2px !important;
+        }
+        .btn-primary-gradient {
+            border: 2px solid #ffffff;
+        }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; animation: none !important; }
+    }
+
+    /* =========================================
+       PC FORM LAYOUT OPTIMIZATIONS - WORLD CLASS
+       ========================================= */
+    @media (min-width: 768px) {
+        main {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        
+        .django-form {
+            gap: 1.5rem !important;
+        }
+        
+        #form-grid {
+            gap: 1.5rem !important;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        main {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+        
+        .django-form {
+            gap: 1.75rem !important;
+        }
+    }
+
+    /* Form container enhancements */
+    @media (min-width: 768px) {
+        .w-full.max-w-\[720px\] {
+            max-width: 760px;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08), 0 1px 4px rgba(15, 23, 42, 0.04);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .w-full.max-w-\[720px\] {
+            max-width: 800px;
+        }
+    }
+
+    /* LAYOUT: Matching the Dashboard's canvas */
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(10rem + env(safe-area-inset-bottom)) 1.25rem;
+    }
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(240px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
+    }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(260px + 3rem); padding-right: 3rem; padding-top: 3rem; }
+    }
+    @media (min-width: 1280px) {
+        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
+    }
+
+    /* Mobile/Default Drawer Styles */
+    .drawer-closed {
+        transform: translateY(100%);
+        pointer-events: none;
+    }
+    .drawer-open {
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Desktop Modal overrides for language drawer */
+    @media (min-width: 768px) {
+        #mobile-lang-drawer {
+            top: 50% !important;
+            left: 50% !important;
+            bottom: auto !important;
+            right: auto !important;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        #mobile-lang-drawer.drawer-closed {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -45%) scale(0.96) !important;
+        }
+        #mobile-lang-drawer.drawer-open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1) !important;
+        }
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<main class="w-full min-h-screen py-6 px-4 md:py-12 md:px-0 flex justify-center items-start anim-smooth-appear">
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} animate-slide-in">
+    <!-- WRAPPER -->
+    <div class="max-w-[1000px] mx-auto w-full relative z-10">
 
-    <div class="w-full max-w-[760px] bg-white/95 backdrop-blur-md rounded-[1.25rem] border border-slate-200/90 shadow-[0_1px_4px_rgba(15,23,42,0.06)] overflow-hidden relative z-10">
+        <!-- CLEAN BENTO CARD CONTAINER -->
+        <div class="w-full bg-white/98 backdrop-blur-xl rounded-[1.25rem] md:rounded-[1.5rem] border border-slate-200/90 shadow-[0_4px_24px_rgba(15,23,42,0.08),0_1px_4px_rgba(15,23,42,0.04)] overflow-hidden relative z-10">
 
         <!-- HEADER -->
-        <div class="px-5 sm:px-8 pt-6 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-100">
-            <div class="flex items-center gap-4">
-                <a href="{% url 'language_list' %}" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-500 rounded-[0.75rem] flex items-center justify-center transition-transform active:scale-95 shrink-0" title="{% trans 'Back to Languages' %}">
-                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                </a>
-                <div>
-                    <h1 class="font-heading text-[20px] md:text-[24px] font-extrabold text-slate-900 leading-tight">
-                        {% if form.instance.pk %}{% trans "Edit Language" %}{% else %}{% trans "Add Language" %}{% endif %}
-                    </h1>
-                    <p class="text-[13.5px] text-slate-500 font-medium mt-0.5">
-                        {% trans "Select a language and your proficiency level." %}
-                    </p>
-                </div>
+        <div class="px-5 sm:px-8 pt-8 pb-6 flex items-center gap-4 border-b border-slate-100/80 bg-gradient-to-b from-white to-slate-50/50">
+            <a href="javascript:history.back()" class="w-10 h-10 sm:w-11 sm:h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-500 rounded-[0.875rem] flex items-center justify-center transition-all duration-200 hover:shadow-md active:scale-95 shrink-0 group">
+                <i data-lucide="arrow-left" class="w-5 h-5 sm:w-5.5 sm:h-5.5 group-hover:-translate-x-0.5 transition-transform"></i>
+            </a>
+            <div class="flex-1 min-w-0">
+                <h1 class="font-heading text-[22px] md:text-[26px] font-extrabold text-slate-900 leading-tight tracking-tight">
+                    {% if form.instance.pk %}{% trans "Edit Language" %}{% else %}{% trans "Add Language" %}{% endif %}
+                </h1>
+                <p class="text-[13.5px] text-slate-500 font-medium mt-1" id="form-subtitle">{% trans "Select a language and your proficiency level." %}</p>
             </div>
         </div>
 
-        <!-- FORM BODY -->
-        <div class="p-5 sm:p-8 bg-slate-50/30">
-            <form method="post" class="space-y-6">
+        <!-- MOBILE-OPTIMIZED FORM BODY -->
+        <div class="px-4 sm:px-6 md:px-8 py-6 sm:py-7 md:py-9 bg-gradient-to-b from-white via-blue-50/20 to-slate-50/30">
+            <form method="post" id="main-form" class="django-form flex flex-col gap-5 sm:gap-6" novalidate>
                 {% csrf_token %}
 
-                <!-- Language Selection -->
-                <div>
-                    <label class="block text-[13.5px] font-bold text-slate-800 mb-2">{% trans "Language" %}</label>
-                    <select name="language_code" id="id_language_code" class="form-input" onchange="toggleCustomLanguage()">
-                        <option value="">-- {% trans "Select a language" %} --</option>
-                        <optgroup label="{% trans "Ethiopian Languages" %}">
-                            <option value="am" {% if form.language_code.value == 'am' %}selected{% endif %}>{% trans "Amharic" %}</option>
-                            <option value="om" {% if form.language_code.value == 'om' %}selected{% endif %}>{% trans "Oromo" %}</option>
-                            <option value="ti" {% if form.language_code.value == 'ti' %}selected{% endif %}>{% trans "Tigrinya" %}</option>
-                            <option value="so" {% if form.language_code.value == 'so' %}selected{% endif %}>{% trans "Somali" %}</option>
-                            <option value="aa" {% if form.language_code.value == 'aa' %}selected{% endif %}>{% trans "Afar" %}</option>
-                            <option value="sid" {% if form.language_code.value == 'sid' %}selected{% endif %}>{% trans "Sidamo" %}</option>
-                            <option value="wal" {% if form.language_code.value == 'wal' %}selected{% endif %}>{% trans "Wolaytta" %}</option>
-                            <option value="gur" {% if form.language_code.value == 'gur' %}selected{% endif %}>{% trans "Gurage (General)" %}</option>
-                        </optgroup>
-                        <optgroup label="{% trans "International Languages" %}">
-                            <option value="en" {% if form.language_code.value == 'en' %}selected{% endif %}>{% trans "English" %}</option>
-                            <option value="ar" {% if form.language_code.value == 'ar' %}selected{% endif %}>{% trans "Arabic" %}</option>
-                            <option value="fr" {% if form.language_code.value == 'fr' %}selected{% endif %}>{% trans "French" %}</option>
-                            <option value="es" {% if form.language_code.value == 'es' %}selected{% endif %}>{% trans "Spanish" %}</option>
-                            <option value="de" {% if form.language_code.value == 'de' %}selected{% endif %}>{% trans "German" %}</option>
-                            <option value="zh" {% if form.language_code.value == 'zh' %}selected{% endif %}>{% trans "Chinese" %}</option>
-                            <option value="ja" {% if form.language_code.value == 'ja' %}selected{% endif %}>{% trans "Japanese" %}</option>
-                            <option value="pt" {% if form.language_code.value == 'pt' %}selected{% endif %}>{% trans "Portuguese" %}</option>
-                            <option value="ru" {% if form.language_code.value == 'ru' %}selected{% endif %}>{% trans "Russian" %}</option>
-                            <option value="it" {% if form.language_code.value == 'it' %}selected{% endif %}>{% trans "Italian" %}</option>
-                            <option value="hi" {% if form.language_code.value == 'hi' %}selected{% endif %}>{% trans "Hindi" %}</option>
-                            <option value="ko" {% if form.language_code.value == 'ko' %}selected{% endif %}>{% trans "Korean" %}</option>
-                            <option value="tr" {% if form.language_code.value == 'tr' %}selected{% endif %}>{% trans "Turkish" %}</option>
-                            <option value="fa" {% if form.language_code.value == 'fa' %}selected{% endif %}>{% trans "Persian" %}</option>
-                            <option value="sw" {% if form.language_code.value == 'sw' %}selected{% endif %}>{% trans "Swahili" %}</option>
-                        </optgroup>
-                        <optgroup label="{% trans "Other" %}">
-                            <option value="OTHER" {% if form.language_code.value == 'OTHER' %}selected{% endif %}>{% trans "Other (Custom)" %}</option>
-                        </optgroup>
-                    </select>
-                    {% if form.language_code.errors %}
-                        <p class="text-[12px] text-rose-600 mt-1.5 font-medium">{{ form.language_code.errors }}</p>
-                    {% endif %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-x-5 md:gap-y-6" id="form-grid">
+                    
+                    <!-- Language Selection -->
+                    <div class="flex flex-col w-full dynamic-reveal col-span-1 md:col-span-2" data-field-name="language_code">
+                        <div class="flex items-start justify-between mb-2 sm:mb-2.5 gap-2">
+                            <label class="text-[11px] sm:text-[11.5px] font-black text-slate-500 uppercase tracking-widest px-0.5 field-label" for="id_language_code">
+                                {% trans "Language" %}
+                            </label>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Required</span>
+                        </div>
+
+                        <div class="relative w-full field-input-wrapper mb-2">
+                            <select name="language_code" id="id_language_code" onchange="toggleCustomLanguage()">
+                                <option value="">-- {% trans "Select a language" %} --</option>
+                                <optgroup label="{% trans "Ethiopian Languages" %}">
+                                    <option value="am" {% if form.language_code.value == 'am' %}selected{% endif %}>{% trans "Amharic" %}</option>
+                                    <option value="om" {% if form.language_code.value == 'om' %}selected{% endif %}>{% trans "Oromo" %}</option>
+                                    <option value="ti" {% if form.language_code.value == 'ti' %}selected{% endif %}>{% trans "Tigrinya" %}</option>
+                                    <option value="so" {% if form.language_code.value == 'so' %}selected{% endif %}>{% trans "Somali" %}</option>
+                                    <option value="aa" {% if form.language_code.value == 'aa' %}selected{% endif %}>{% trans "Afar" %}</option>
+                                    <option value="sid" {% if form.language_code.value == 'sid' %}selected{% endif %}>{% trans "Sidamo" %}</option>
+                                    <option value="wal" {% if form.language_code.value == 'wal' %}selected{% endif %}>{% trans "Wolaytta" %}</option>
+                                    <option value="gur" {% if form.language_code.value == 'gur' %}selected{% endif %}>{% trans "Gurage (General)" %}</option>
+                                </optgroup>
+                                <optgroup label="{% trans "International Languages" %}">
+                                    <option value="en" {% if form.language_code.value == 'en' %}selected{% endif %}>{% trans "English" %}</option>
+                                    <option value="ar" {% if form.language_code.value == 'ar' %}selected{% endif %}>{% trans "Arabic" %}</option>
+                                    <option value="fr" {% if form.language_code.value == 'fr' %}selected{% endif %}>{% trans "French" %}</option>
+                                    <option value="es" {% if form.language_code.value == 'es' %}selected{% endif %}>{% trans "Spanish" %}</option>
+                                    <option value="de" {% if form.language_code.value == 'de' %}selected{% endif %}>{% trans "German" %}</option>
+                                    <option value="zh" {% if form.language_code.value == 'zh' %}selected{% endif %}>{% trans "Chinese" %}</option>
+                                    <option value="ja" {% if form.language_code.value == 'ja' %}selected{% endif %}>{% trans "Japanese" %}</option>
+                                    <option value="pt" {% if form.language_code.value == 'pt' %}selected{% endif %}>{% trans "Portuguese" %}</option>
+                                    <option value="ru" {% if form.language_code.value == 'ru' %}selected{% endif %}>{% trans "Russian" %}</option>
+                                    <option value="it" {% if form.language_code.value == 'it' %}selected{% endif %}>{% trans "Italian" %}</option>
+                                    <option value="hi" {% if form.language_code.value == 'hi' %}selected{% endif %}>{% trans "Hindi" %}</option>
+                                    <option value="ko" {% if form.language_code.value == 'ko' %}selected{% endif %}>{% trans "Korean" %}</option>
+                                    <option value="tr" {% if form.language_code.value == 'tr' %}selected{% endif %}>{% trans "Turkish" %}</option>
+                                    <option value="fa" {% if form.language_code.value == 'fa' %}selected{% endif %}>{% trans "Persian" %}</option>
+                                    <option value="sw" {% if form.language_code.value == 'sw' %}selected{% endif %}>{% trans "Swahili" %}</option>
+                                </optgroup>
+                                <optgroup label="{% trans "Other" %}">
+                                    <option value="OTHER" {% if form.language_code.value == 'OTHER' %}selected{% endif %}>{% trans "Other (Custom)" %}</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        {% if form.language_code.errors %}
+                            <div class="bg-rose-50/90 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-2 sm:mt-2.5 border border-rose-200 flex items-start gap-2 sm:gap-2.5">
+                                <i data-lucide="alert-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-600 shrink-0 mt-0.5"></i>
+                                <div class="text-[12px] sm:text-[13px] font-bold text-rose-700 leading-snug">
+                                    {% for error in form.language_code.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Custom Language Name (Hidden by default) -->
+                    <div id="custom_language_container" class="flex flex-col w-full dynamic-reveal col-span-1 md:col-span-2 hidden" data-field-name="custom_language_name">
+                        <div class="flex items-start justify-between mb-2 sm:mb-2.5 gap-2">
+                            <label class="text-[11px] sm:text-[11.5px] font-black text-slate-500 uppercase tracking-widest px-0.5 field-label" for="id_custom_language_name">
+                                {% trans "Custom Language Name" %}
+                            </label>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Required</span>
+                        </div>
+
+                        <div class="relative w-full field-input-wrapper mb-2">
+                            <input type="text" name="custom_language_name" id="id_custom_language_name" placeholder="{% trans "Enter language name" %}" value="{{ form.custom_language_name.value|default:'' }}">
+                        </div>
+
+                        <p class="text-[12px] sm:text-[13px] font-medium text-slate-500 mt-1.5 px-0.5 leading-snug field-help">{% trans "Required when 'Other' is selected" %}</p>
+
+                        {% if form.custom_language_name.errors %}
+                            <div class="bg-rose-50/90 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-2 sm:mt-2.5 border border-rose-200 flex items-start gap-2 sm:gap-2.5">
+                                <i data-lucide="alert-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-600 shrink-0 mt-0.5"></i>
+                                <div class="text-[12px] sm:text-[13px] font-bold text-rose-700 leading-snug">
+                                    {% for error in form.custom_language_name.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Proficiency Level -->
+                    <div class="flex flex-col w-full dynamic-reveal col-span-1 md:col-span-2" data-field-name="proficiency">
+                        <div class="flex items-start justify-between mb-2 sm:mb-2.5 gap-2">
+                            <label class="text-[11px] sm:text-[11.5px] font-black text-slate-500 uppercase tracking-widest px-0.5 field-label" for="id_proficiency">
+                                {% trans "Proficiency Level" %}
+                            </label>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Required</span>
+                        </div>
+
+                        <div class="relative w-full field-input-wrapper mb-2">
+                            <select name="proficiency" id="id_proficiency">
+                                <option value="NATIVE" {% if form.proficiency.value == 'NATIVE' %}selected{% endif %}>{% trans "Native" %}</option>
+                                <option value="FLUENT" {% if form.proficiency.value == 'FLUENT' %}selected{% endif %}>{% trans "Fluent / Professional" %}</option>
+                                <option value="INTERMEDIATE" {% if form.proficiency.value == 'INTERMEDIATE' %}selected{% endif %}>{% trans "Intermediate / Conversational" %}</option>
+                                <option value="BASIC" {% if form.proficiency.value == 'BASIC' %}selected{% endif %}>{% trans "Basic / Beginner" %}</option>
+                            </select>
+                        </div>
+
+                        {% if form.proficiency.errors %}
+                            <div class="bg-rose-50/90 rounded-lg sm:rounded-xl p-3 sm:p-4 mt-2 sm:mt-2.5 border border-rose-200 flex items-start gap-2 sm:gap-2.5">
+                                <i data-lucide="alert-circle" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-600 shrink-0 mt-0.5"></i>
+                                <div class="text-[12px] sm:text-[13px] font-bold text-rose-700 leading-snug">
+                                    {% for error in form.proficiency.errors %}<p>{{ error }}</p>{% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Primary Language Toggle -->
+                    <div class="flex flex-col w-full dynamic-reveal col-span-1 md:col-span-2" data-field-name="is_primary">
+                        <label class="toggle-wrapper group active:bg-slate-100">
+                            <div class="pr-3 sm:pr-4 flex-1 min-w-0">
+                                <span class="block text-[13px] sm:text-[14px] font-bold text-slate-800 group-active:text-[#0A66C2] transition-colors field-label">{% trans "Mark as primary/native language" %}</span>
+                            </div>
+                            <div class="ml-2 flex-shrink-0">
+                                <input type="checkbox" name="is_primary" id="id_is_primary" {% if form.is_primary.value %}checked{% endif %}>
+                                <div class="toggle-switch"></div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
 
-                <!-- Custom Language Name (Hidden by default) -->
-                <div id="custom_language_container" class="hidden">
-                    <label class="block text-[13.5px] font-bold text-slate-800 mb-2">{% trans "Custom Language Name" %}</label>
-                    <input type="text" name="custom_language_name" id="id_custom_language_name" class="form-input" placeholder="{% trans "Enter language name" %}" value="{{ form.custom_language_name.value|default:'' }}">
-                    <p class="text-[12px] text-slate-500 mt-1.5">{% trans "Required when 'Other' is selected" %}</p>
-                    {% if form.custom_language_name.errors %}
-                        <p class="text-[12px] text-rose-600 mt-1.5 font-medium">{{ form.custom_language_name.errors }}</p>
-                    {% endif %}
-                </div>
-
-                <!-- Proficiency Level -->
-                <div>
-                    <label class="block text-[13.5px] font-bold text-slate-800 mb-2">{% trans "Proficiency Level" %}</label>
-                    <select name="proficiency" id="id_proficiency" class="form-input">
-                        <option value="NATIVE" {% if form.proficiency.value == 'NATIVE' %}selected{% endif %}>{% trans "Native" %}</option>
-                        <option value="FLUENT" {% if form.proficiency.value == 'FLUENT' %}selected{% endif %}>{% trans "Fluent / Professional" %}</option>
-                        <option value="INTERMEDIATE" {% if form.proficiency.value == 'INTERMEDIATE' %}selected{% endif %}>{% trans "Intermediate / Conversational" %}</option>
-                        <option value="BASIC" {% if form.proficiency.value == 'BASIC' %}selected{% endif %}>{% trans "Basic / Beginner" %}</option>
-                    </select>
-                    {% if form.proficiency.errors %}
-                        <p class="text-[12px] text-rose-600 mt-1.5 font-medium">{{ form.proficiency.errors }}</p>
-                    {% endif %}
-                </div>
-
-                <!-- Primary Language Toggle -->
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" name="is_primary" id="id_is_primary" {% if form.is_primary.value %}checked{% endif %} class="w-5 h-5 rounded border-slate-300 text-[#0A66C2] focus:ring-[#0A66C2]">
-                    <label for="id_is_primary" class="text-[13.5px] font-medium text-slate-700">{% trans "Mark as primary/native language" %}</label>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="pt-4 flex gap-3">
-                    <a href="{% url 'language_list' %}" class="px-5 py-2.5 rounded-[0.75rem] text-[13.5px] font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
-                        {% trans "Cancel" %}
-                    </a>
-                    <button type="submit" class="btn-primary-gradient px-5 py-2.5 rounded-[0.75rem] text-[13.5px] font-bold flex-1 sm:flex-none">
-                        {% if form.instance.pk %}{% trans "Update Language" %}{% else %}{% trans "Add Language" %}{% endif %}
+                <!-- MOBILE-OPTIMIZED SUBMIT FOOTER -->
+                <div class="pt-6 sm:pt-7 mt-5 sm:mt-6 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-end gap-4 sm:gap-5 dynamic-reveal" id="submit-section">
+                    <button type="submit" id="main-submit-btn" class="btn-primary-gradient w-full sm:w-auto px-7 sm:px-9 py-3.5 sm:py-4 rounded-[0.875rem] sm:rounded-[0.875rem] text-[14px] sm:text-[15px] font-bold flex justify-center items-center gap-2.5 active:scale-95 sm:active:scale-100 transition-transform touch-manipulation relative overflow-hidden">
+                        <span class="btn-text" id="submit-text">{% if form.instance.pk %}{% trans "Update Language" %}{% else %}{% trans "Add Language" %}{% endif %}</span>
+                        <i data-lucide="check" class="w-4 h-4 sm:w-5 sm:h-5" id="submit-icon"></i>
                     </button>
                 </div>
             </form>
@@ -180,7 +578,124 @@
     </div>
 </main>
 
+<!-- MOBILE BOTTOM NAV -->
+{% if not is_inspector and request.user.is_authenticated %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+    <!-- ACTIVE: My Profile -->
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap">My profile</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
+    </a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- DRAWERS -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
+    <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
+    <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
+        <a href="/workspace/" class="w-full text-left px-4 py-3.5 bg-blue-50/70 hover:bg-blue-100/50 rounded-[0.85rem] text-[14.5px] font-bold text-[#0A66C2] flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-blue-200/60 flex items-center justify-center shadow-sm"><i data-lucide="bell-ring" class="w-4 h-4 text-[#0A66C2]"></i></div>
+            {% trans "My Updates" %}
+        </a>
+        <div class="h-px bg-slate-100 my-2 mx-2"></div>
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">{% trans "Language" %} <small class="text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{% if 'en' in request.LANGUAGE_CODE %}EN{% elif request.LANGUAGE_CODE == 'am' %}AM{% else %}{{ request.LANGUAGE_CODE }}{% endif %}</small></span>
+        </button>
+        <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3.5 transition-colors mt-1">
+            <div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
+            {% trans "Logout" %}
+        </a>
+    </div>
+</div>
+
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<!-- Modal styling applied for desktop, default bottom sheet for mobile -->
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:w-[360px] bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] md:rounded-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] md:pb-6 prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if 'en' in request.LANGUAGE_CODE %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+            <span class="text-[15px] {% if 'en' in request.LANGUAGE_CODE %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if 'en' in request.LANGUAGE_CODE %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
+
 <script>
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
+
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
+
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
+
+        document.body.classList.remove('body-lock');
+    }
+
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
+
     function toggleCustomLanguage() {
         const languageSelect = document.getElementById('id_language_code');
         const customContainer = document.getElementById('custom_language_container');
@@ -194,7 +709,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener("DOMContentLoaded", function() {
         if (typeof lucide !== 'undefined') lucide.createIcons();
         toggleCustomLanguage();
     });
