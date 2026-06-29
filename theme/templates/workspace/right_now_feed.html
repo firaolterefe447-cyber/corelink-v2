@@ -426,16 +426,20 @@
                             </div>
 
                             <!-- 6. THE FEEDBACK SECTION -->
-                            <div class="comments-wrapper mt-4 bg-slate-50/80 rounded-[1.5rem]" id="comments-wrapper-{{ post.id }}">
-                                <div class="comments-inner border border-slate-100 rounded-[1.5rem] shadow-inner">
+                            <div class="comments-wrapper mt-4" id="comments-wrapper-{{ post.id }}">
+                                <div class="comments-inner">
                                     <div id="comments-list-{{ post.id }}" class="p-4 sm:p-5 space-y-4 max-h-[350px] overflow-y-auto custom-scroll">
                                         <div class="text-center text-[13px] font-bold text-slate-400 py-4 flex flex-col items-center gap-2" id="comments-loading-{{ post.id }}">
                                             <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> {% trans "Loading feedback..." %}
                                         </div>
                                     </div>
-                                    <div class="p-4 bg-white border-t border-slate-100 rounded-b-[1.5rem] flex gap-3 items-end">
-                                        <textarea id="comment-input-{{ post.id }}" rows="1" placeholder="{% trans 'Provide feedback...' %}" class="w-full bg-slate-50 border border-slate-200 text-[14px] font-medium rounded-xl px-4 py-3 focus:ring-4 focus:ring-[#0A66C2]/10 focus:border-[#0A66C2] outline-none resize-none transition-all placeholder:text-slate-400 shadow-inner" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-                                        <button onclick="submitComment('{{ post.id }}')" class="bg-slate-900 hover:bg-black text-white p-3 rounded-xl shrink-0 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"><i data-lucide="send" class="w-5 h-5"></i></button>
+                                    <div class="p-4 bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl shadow-sm flex gap-3 items-end">
+                                        <div class="flex-1 relative">
+                                            <textarea id="comment-input-{{ post.id }}" rows="1" placeholder="{% trans 'Share your thoughts...' %}" class="w-full bg-white border-2 border-slate-200 text-[15px] font-medium rounded-2xl px-4 py-3.5 focus:ring-4 focus:ring-[#0A66C2]/10 focus:border-[#0A66C2] focus:bg-white outline-none resize-none transition-all placeholder:text-slate-400 shadow-sm" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'; if(this.value.length > 0) this.parentElement.nextElementSibling.classList.remove('opacity-50', 'scale-95'); else this.parentElement.nextElementSibling.classList.add('opacity-50', 'scale-95');" onfocus="this.parentElement.nextElementSibling.classList.remove('opacity-50', 'scale-95')" onblur="if(this.value.length === 0) this.parentElement.nextElementSibling.classList.add('opacity-50', 'scale-95')"></textarea>
+                                        </div>
+                                        <button onclick="submitComment('{{ post.id }}')" class="bg-gradient-to-r from-[#0A66C2] to-blue-600 hover:from-[#0856A8] hover:to-blue-700 text-white p-3.5 rounded-2xl shrink-0 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 opacity-50 scale-95 transform">
+                                            <i data-lucide="send" class="w-5 h-5"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
