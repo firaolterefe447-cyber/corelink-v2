@@ -632,6 +632,10 @@ class RightNowPost(TimeStampedModel):
         _("Pinned to Profile Top"), default=True, db_index=True,
         help_text=_("If true, this is the current active status on their portfolio.")
     )
+    is_admin_selected = models.BooleanField(
+        _("Admin Curated"), default=False, db_index=True,
+        help_text=_("If true, this post is selected by admin to appear in the feed.")
+    )
 
     class Meta:
         verbose_name = _("Right Now Post")

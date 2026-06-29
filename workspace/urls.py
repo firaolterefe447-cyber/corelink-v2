@@ -4,7 +4,8 @@ from . import views
 urlpatterns = [
 # Main Workspace/Portfolio URL
     path('network/right-now/', views.right_now_feed, name='right_now_feed'),
-path('update/<uuid:post_id>/', views.RightNowDetailView.as_view(), name='right_now_detail'),
+    path('update/<uuid:post_id>/', views.RightNowDetailView.as_view(), name='right_now_detail'),
+    path('admin/curation/', views.admin_curation_view, name='admin_curation'),
     path('workspace/', views.workspace_view, name='collaboration_hub'),
     # Dashboards
     path('workspace/dashboard/', views.WorkspaceDashboardView.as_view(), name='workspace_dashboard'),

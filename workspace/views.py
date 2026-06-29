@@ -30,8 +30,8 @@ from django.views.generic import TemplateView, CreateView, ListView, UpdateView,
 
 # Django Database & Search ORM
 from django.db import connection
-from django.db.models import Q, F, Case, When, Value, FloatField, ExpressionWrapper, Max
-from django.db.models.functions import Coalesce, Greatest, Cast, Now, ExtractDay
+from django.db.models import Q, F, Case, When, Value, FloatField, ExpressionWrapper, Max, Count
+from django.db.models.functions import Coalesce, Greatest, Cast, Now, ExtractDay, Length
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.postgres.aggregates import StringAgg
 
@@ -251,6 +251,7 @@ def right_now_feed(request):
 
     base_posts = RightNowPost.objects.filter(
         is_published=True,
+        is_admin_selected=True,
         profile__user__is_active=True,
         profile__user__is_public=True,
         profile__user__is_nexus_visible=True,
@@ -263,6 +264,9 @@ def right_now_feed(request):
         'profile', 'profile__user'
     ).prefetch_related(
         'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        char_length=Length('body_narrative')
     )
 
     base_posts = base_posts.annotate(raw_age=Now() - F('created_at'))
@@ -325,11 +329,11 @@ def right_now_feed(request):
                 absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost') + F('total_quality'), output_field=FloatField())
             ).filter(
                 Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
-            ).order_by('-profile__user__is_pinned_in_right_now', '-absolute_score', '-created_at')
+            ).order_by('-profile__user__is_pinned_in_right_now', '-absolute_score', '-gallery_count', '-char_length', '-created_at')
         else:
-            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-total_quality', '-created_at')
+            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-total_quality', '-gallery_count', '-char_length', '-created_at')
     else:
-        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-created_at', '-total_quality')
+        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-created_at', '-total_quality')
 
     results = results.distinct()
 
@@ -437,6 +441,69 @@ class RightNowDetailView(DetailView):
         ).order_by('created_at')  # Chronological order makes sense for reading a long thread
 
         return context
+
+
+# ==============================================================================================================
+# ███████████████████████████████████  8. ADMIN CURATION SYSTEM  ███████████████████████████████████████████████
+# ==============================================================================================================
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def admin_curation_view(request):
+    """
+    Admin-only interface to curate which Right Now posts appear in the feed.
+    Only admin-selected posts will be displayed to users.
+    Posts are prioritized by gallery count and character length.
+    """
+    # Check if user is admin
+    if request.user.role != 'ADMIN':
+        messages.error(request, "Access Denied: Admin only.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        action = request.POST.get('action')  # 'select' or 'deselect'
+
+        if post_id:
+            try:
+                post = RightNowPost.objects.get(id=post_id)
+                if action == 'select':
+                    post.is_admin_selected = True
+                    post.save()
+                    messages.success(request, f"Post selected for feed.")
+                elif action == 'deselect':
+                    post.is_admin_selected = False
+                    post.save()
+                    messages.success(request, f"Post removed from feed.")
+            except RightNowPost.DoesNotExist:
+                messages.error(request, "Post not found.")
+
+        return redirect('admin_curation')
+
+    # GET request - show all posts with curation status
+    posts = RightNowPost.objects.filter(
+        is_published=True,
+        profile__user__is_active=True
+    ).select_related(
+        'profile', 'profile__user'
+    ).prefetch_related(
+        'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        char_length=Length('body_narrative')
+    ).order_by('-is_admin_selected', '-gallery_count', '-char_length', '-created_at')
+
+    # Stats
+    total_posts = posts.count()
+    selected_posts = posts.filter(is_admin_selected=True).count()
+
+    context = {
+        'posts': posts,
+        'total_posts': total_posts,
+        'selected_posts': selected_posts,
+    }
+
+    return render(request, 'workspace/admin_curation.html', context)
 # ==============================================================================================================
 # ███████████████████████████████████  5. TEAM OPERATIONS NEXUS  ███████████████████████████████████████████████
 # ==============================================================================================================
