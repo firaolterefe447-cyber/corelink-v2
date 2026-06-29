@@ -279,16 +279,7 @@ def right_now_feed(request):
             output_field=FloatField()
         )
 
-    scored_posts = base_posts.annotate(
-        score_avatar=Case(When(profile__user__avatar='', then=0), default=15, output_field=FloatField()),
-        score_verified=Case(When(profile__user__is_verified=True, then=15), default=0, output_field=FloatField()),
-        days_old=days_old_expr,
-        freshness_boost=Greatest(Value(0.0), Value(20.0) - Cast(F('days_old'), FloatField()) * 1.0),
-        admin_score=Cast(Coalesce('profile__admin_rating', Value(0)) * 5, FloatField()),
-        media_boost=Case(When(external_link__isnull=False, then=10), default=0, output_field=FloatField())
-    ).annotate(
-        total_quality=F('score_avatar') + F('score_verified') + F('admin_score') + F('freshness_boost') + F('media_boost')
-    )
+    scored_posts = base_posts
 
     if raw_query:
         (
@@ -326,14 +317,14 @@ def right_now_feed(request):
                     default=Value(0.0), output_field=FloatField()
                 )
             ).annotate(
-                absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost') + F('total_quality'), output_field=FloatField())
+                absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost'), output_field=FloatField())
             ).filter(
                 Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
-            ).order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-absolute_score')
+            ).order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
         else:
-            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-total_quality')
+            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
     else:
-        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length', '-total_quality')
+        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
 
     results = results.distinct()
 
