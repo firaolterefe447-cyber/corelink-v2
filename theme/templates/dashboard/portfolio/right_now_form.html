@@ -208,11 +208,22 @@
 
     /* Premium Input */
     .premium-input {
-        width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.75rem;
-        background: #ffffff; transition: border-color 0.2s ease; color: #0f172a;
-        font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
+        width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.875rem;
+        background: #ffffff; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); color: #0f172a;
+        font-size: 15px; font-weight: 500; padding: 1rem 1.125rem; outline: none; appearance: none;
     }
-    .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); transform: translateY(-1px); transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+    .premium-input:focus { border-color: rgba(10, 102, 194, 0.6); box-shadow: 0 0 0 4px rgba(10,102,194,0.1); transform: translateY(-1px); }
+    .premium-input::placeholder { color: #94a3b8; font-weight: 400; }
+
+    /* Premium Textarea */
+    .premium-textarea {
+        width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.875rem;
+        background: #ffffff; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); color: #0f172a;
+        font-size: 15px; font-weight: 500; padding: 1rem 1.125rem; outline: none; appearance: none;
+        resize: vertical; min-height: 160px; line-height: 1.6;
+    }
+    .premium-textarea:focus { border-color: rgba(10, 102, 194, 0.6); box-shadow: 0 0 0 4px rgba(10,102,194,0.1); transform: translateY(-1px); }
+    .premium-textarea::placeholder { color: #94a3b8; font-weight: 400; }
 
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
@@ -293,47 +304,42 @@
 
                 <!-- MAIN EDITOR CARD -->
                 <div class="bento-card flex flex-col overflow-hidden">
-                    <div class="px-6 py-6 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border border-blue-100 shrink-0">
-                            <i data-lucide="zap" class="w-5 h-5 text-[#0A66C2]"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none">{% trans "What are you working on?" %}</h2>
-                            <p class="text-[13px] text-slate-500 font-medium mt-1">{% trans "Update your professional status to the ecosystem." %}</p>
-                        </div>
+                    <div class="px-6 py-5 border-b border-slate-100">
+                        <h2 class="font-heading text-[1.15rem] md:text-[1.25rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none">{% trans "What are you working on?" %}</h2>
+                        <p class="text-[13px] text-slate-500 font-medium mt-1.5">{% trans "Update your professional status to the ecosystem." %}</p>
                     </div>
 
-                    <div class="p-6 md:p-8 flex flex-col gap-6">
+                    <div class="p-6 md:p-7 flex flex-col gap-5">
                         <div class="w-full">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "Headline / Milestone" %}</label>
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "Headline / Milestone" %}</label>
                             {{ form.title }}
                         </div>
 
                         <div class="w-full">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "The Details" %}</label>
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "The Details" %}</label>
                             {{ form.body_narrative }}
                         </div>
                     </div>
                 </div>
 
                 <!-- MEDIA GALLERY CARD -->
-                <div class="bento-card p-6 md:p-8">
-                    <div class="mb-4">
-                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Attach Media / Proof (Optional)" %}</label>
-                        <p class="text-[13px] text-slate-500 font-medium px-1">{% trans "Upload screenshots, diagrams, or photos to visually showcase your work." %}</p>
+                <div class="bento-card p-6 md:p-7">
+                    <div class="mb-5">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-1.5 px-0.5">{% trans "Attach Media / Proof (Optional)" %}</label>
+                        <p class="text-[13px] text-slate-500 font-medium px-0.5 leading-relaxed">{% trans "Upload screenshots, diagrams, or photos to visually showcase your work." %}</p>
                     </div>
 
                     <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
 
-                    <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 transition-all">
+                    <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 transition-all">
                         <!-- Existing Images -->
                         {% if form.instance.pk and form.instance.gallery.all %}
                             {% for media in form.instance.gallery.all %}
-                            <div class="relative group aspect-square rounded-xl overflow-hidden border border-slate-200 transition-all duration-300 shadow-sm" id="existing-wrapper-{{ media.pk }}">
+                            <div class="relative group aspect-square rounded-2xl overflow-hidden border border-slate-200 transition-all duration-300 shadow-sm" id="existing-wrapper-{{ media.pk }}">
                                 <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-all duration-300" id="existing-img-{{ media.pk }}">
                                 <div class="absolute inset-0 bg-rose-500/10 opacity-0 transition-opacity duration-300 pointer-events-none" id="existing-overlay-{{ media.pk }}"></div>
                                 <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
-                                <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="absolute top-2 right-2 w-8 h-8 bg-white/90 hover:bg-rose-500 text-slate-600 hover:text-white rounded-lg flex items-center justify-center shadow-md backdrop-blur-sm transition-all z-10" id="btn-{{ media.pk }}">
+                                <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="absolute top-2 right-2 w-8 h-8 bg-white/95 hover:bg-rose-500 text-slate-600 hover:text-white rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm transition-all z-10" id="btn-{{ media.pk }}">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -341,8 +347,8 @@
                         {% endif %}
 
                         <!-- Add Button -->
-                        <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-xl border-2 border-dashed border-slate-300 hover:border-blue-400 bg-slate-50 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0A66C2] transition-all cursor-pointer">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200">
+                        <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-400 bg-slate-50 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0A66C2] transition-all cursor-pointer">
+                            <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200">
                                 <i data-lucide="image-plus" class="w-5 h-5"></i>
                             </div>
                             <span class="text-[12px] font-bold">{% trans "Upload Image" %}</span>
@@ -357,18 +363,18 @@
             <div class="lg:col-span-4 flex flex-col gap-5 lg:gap-6">
 
                 <!-- Settings Card -->
-                <div class="bento-card p-6 md:p-8 space-y-6">
-                    <h3 class="font-heading text-[1.1rem] md:text-[1.2rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none mb-2">{% trans "Settings" %}</h3>
+                <div class="bento-card p-6 md:p-7 space-y-5">
+                    <h3 class="font-heading text-[1.1rem] md:text-[1.2rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none">{% trans "Settings" %}</h3>
 
                     <!-- External Link -->
                     <div class="w-full">
-                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "External Link" %}</label>
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "External Link" %}</label>
                         {{ form.external_link }}
                     </div>
 
                     <!-- Goal -->
                     <div class="w-full">
-                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "Your Objective" %}</label>
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "Your Objective" %}</label>
                         <div class="relative">
                             {{ form.current_search }}
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
@@ -377,7 +383,7 @@
 
                     <!-- Status -->
                     <div class="w-full">
-                        <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "Availability" %}</label>
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "Availability" %}</label>
                         <div class="relative">
                             {{ form.collaboration_status }}
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
@@ -386,9 +392,9 @@
                 </div>
 
                 <!-- Publishing Card -->
-                <div class="bento-card p-6 md:p-8 sticky top-[calc(6rem+env(safe-area-inset-top))] bg-gradient-to-b from-blue-50/30 to-white">
-                    <div class="mb-6">
-                        <label class="flex items-start gap-3 cursor-pointer group bg-white p-4 rounded-xl border border-slate-200 hover:border-blue-300 transition-all shadow-sm">
+                <div class="bento-card p-6 md:p-7 sticky top-[calc(6rem+env(safe-area-inset-top))] bg-gradient-to-b from-blue-50/40 to-white">
+                    <div class="mb-5">
+                        <label class="flex items-start gap-3 cursor-pointer group bg-white p-4 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all shadow-sm">
                             <div class="mt-0.5">{{ form.is_published }}</div>
                             <div>
                                 <span class="block text-[13.5px] font-bold text-slate-900 group-hover:text-[#0A66C2] transition-colors">{% trans "Publish to Network" %}</span>
