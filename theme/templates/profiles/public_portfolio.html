@@ -437,19 +437,25 @@
         <!-- CORE SKILLS -->
         {% if skills %}
         <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Core Skills</h2>
-            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 md:mb-8 tracking-tight">Core Skills</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 md:gap-8">
                 {% for skill in skills %}
-                <article class="p-6 md:p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium cursor-default">
-                    <div class="flex flex-col gap-1.5 md:gap-2 mb-3 md:mb-4">
-                        <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
-                        <!-- Displaying ONLY what the user actually entered in the form -->
-                        {% if skill.proficiency_level %}
-                        <span class="inline-block w-max text-[9px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_proficiency_level_display }}</span>
-                        {% endif %}
+                <article class="p-5 md:p-8 bg-white border border-slate-200/80 rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm card-hover-premium cursor-default transition-all">
+                    <div class="flex flex-col gap-2 md:gap-3 mb-3 md:mb-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-[15px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
+                            {% if skill.proficiency_level %}
+                            <span class="shrink-0 text-[8px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2 py-0.5 md:py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.15em] whitespace-nowrap">{{ skill.get_proficiency_level_display }}</span>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if skill.context %}
-                    <p class="text-[13.5px] md:text-[15px] text-slate-600 font-serif-title italic tracking-wide leading-relaxed">"{{ skill.context }}"</p>
+                    <div class="relative">
+                        <div class="absolute -left-2 top-0 text-[#0A66C2] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                        <p class="text-[13px] md:text-[15px] text-slate-600 font-serif-title italic tracking-wide leading-relaxed pl-4 md:pl-6">{{ skill.context }}</p>
+                        <div class="absolute -right-1 bottom-0 text-[#0A66C2] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                    </div>
                     {% endif %}
                 </article>
                 {% endfor %}
