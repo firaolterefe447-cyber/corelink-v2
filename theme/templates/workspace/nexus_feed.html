@@ -216,9 +216,9 @@
         </a>
     </div>
 
-    <!-- MAIN GRID (Masonry Layout) -->
+    <!-- MAIN GRID (Grid Layout) -->
     <div class="px-4 md:px-8">
-        <div id="users-grid" class="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6">
+        <div id="users-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
 
             {% for network_user in network_users %}
 
@@ -227,7 +227,7 @@
                 {% if profile and profile.right_now %}
 
                 <!-- User Card -->
-                <div class="user-card structural-card break-inside-avoid inline-block w-full mb-5 md:mb-6 p-5 md:p-6 flex flex-col group relative"
+                <div class="user-card structural-card w-full mb-5 md:mb-6 p-5 md:p-6 flex flex-col group relative"
                      style="{% if user.role == 'VISIONARY' and network_user.role != 'VISIONARY' %}display: none; opacity: 0; transform: scale(0.98) translateY(4px);{% else %}display: flex; opacity: 1; transform: scale(1) translateY(0);{% endif %}"
                      data-role="{{ network_user.role }}"
                      data-time="{% if profile.last_signal_update %}{{ profile.last_signal_update|date:'U' }}{% else %}0{% endif %}">
