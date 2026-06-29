@@ -135,7 +135,7 @@
         <div class="bento-card relative flex flex-col w-full bg-white shadow-sm" id="profile-hero">
 
             <!-- Cover Image (FIXED HEIGHT FOR PC) -->
-            <div class="relative h-[110px] sm:h-[140px] md:h-[250px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
+            <div class="relative h-[140px] sm:h-[160px] md:h-[250px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
                 {% else %}
@@ -147,10 +147,10 @@
             </div>
 
             <!-- Hero Body Container -->
-            <div class="px-5 sm:px-8 md:px-10 pb-8 md:pb-10 flex flex-col relative z-20">
+            <div class="px-5 sm:px-8 md:px-10 pb-6 md:pb-10 flex flex-col relative z-20">
 
                 <!-- Avatar Block -->
-                <div class="relative -mt-[3rem] md:-mt-[4.5rem] mb-4 md:mb-5 z-30 inline-flex sm:ml-2 md:ml-4">
+                <div class="relative -mt-[3.5rem] sm:-mt-[4rem] md:-mt-[4.5rem] mb-4 md:mb-5 z-30 inline-flex sm:ml-2 md:ml-4">
                     <div class="avatar-circle">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
@@ -163,34 +163,34 @@
                 </div>
 
                 <!-- Text & Actions Row -->
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full relative z-30">
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-5 md:gap-6 w-full relative z-30">
 
                     <!-- Info Column -->
                     <div class="flex-1 min-w-0 pr-0 lg:pr-8">
-                        <h1 class="text-[clamp(1.5rem,4vw,2.25rem)] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-2 break-words w-full">
+                        <h1 class="text-[clamp(1.75rem,5vw,2.25rem)] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-2.5 md:mb-2 break-words w-full">
                             {{ user.display_name }}
                         </h1>
 
-                        <p class="text-[#0A66C2] font-bold text-[15px] sm:text-[16px] md:text-[18px] tracking-tight mb-0 break-words w-full font-serif-title">
+                        <p class="text-[#0A66C2] font-bold text-[16px] sm:text-[17px] md:text-[18px] tracking-tight mb-3 md:mb-0 break-words w-full font-serif-title">
                             {% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}
                         </p>
 
                         <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-5">
                             {% if profile.location %}
-                            <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
+                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
+                                <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#0A66C2]"></i>
                                 {{ profile.location }}
                             </span>
                             {% endif %}
                             {% if profile.institution %}
-                            <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
+                                <i data-lucide="building-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400"></i>
                                 {{ profile.institution }}
                             </span>
                             {% endif %}
                             {% if profile.field_of_interest %}
-                            <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
+                                <i data-lucide="briefcase" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400"></i>
                                 {{ profile.field_of_interest }}
                             </span>
                             {% endif %}
@@ -198,12 +198,12 @@
 
                         <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-3">
                             {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                            <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
+                            <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[9px] sm:text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3 sm:px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
                                 {{ profile.get_current_search_display }}
                             </span>
                             {% endif %}
                             {% if profile.collaboration_status %}
-                            <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
+                            <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[9px] sm:text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3 sm:px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
                                 {{ profile.get_collaboration_status_display }}
                             </span>
                             {% endif %}
@@ -212,8 +212,8 @@
                         <!-- Current Focus (Right Now Top Snippet) -->
                         {% with latest_focus=right_now_posts.first %}
                         {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
-                        <div class="mt-5 md:mt-6 relative">
-                            <p class="text-[14px] md:text-[16px] font-serif-title text-slate-600 italic leading-relaxed md:border-l-[3px] md:border-[#0A66C2] md:pl-4">
+                        <div class="mt-4 md:mt-6 relative">
+                            <p class="text-[13px] sm:text-[14px] md:text-[16px] font-serif-title text-slate-600 italic leading-relaxed border-l-[3px] border-[#0A66C2] pl-3 md:pl-4">
                                 "{% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}"
                             </p>
                         </div>
@@ -223,8 +223,8 @@
 
                     <!-- Right Action CTA -->
                     {% if profile.cv_file %}
-                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-4 lg:mt-0">
-                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50">
+                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-3 md:mt-4 lg:mt-0">
+                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[12px] sm:text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             View Resumé
                         </a>
