@@ -122,7 +122,7 @@
 <!-- TYPOGRAPHY -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -173,186 +173,161 @@
         .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
     }
 
-    /* Ultra Clean Grid Cards */
-    .structural-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -2px rgba(0,0,0,0.02);
-        overflow: hidden;
+    /* Modern Glass Card */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        position: relative;
         transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        animation: smoothAppear 0.5s var(--ease-magic) forwards;
     }
-    .user-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px -8px rgba(0,0,0,0.06);
-        border-color: #CBD5E1;
+    .glass-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
     }
 
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    /* Staggered load */
+    .glass-card:nth-child(1) { animation-delay: 0.05s; }
+    .glass-card:nth-child(2) { animation-delay: 0.10s; }
+    .glass-card:nth-child(3) { animation-delay: 0.15s; }
+    .glass-card:nth-child(4) { animation-delay: 0.20s; }
+    .glass-card:nth-child(5) { animation-delay: 0.25s; }
+    .glass-card:nth-child(6) { animation-delay: 0.30s; }
+
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.5s var(--ease-magic) forwards; }
     body.body-lock { overflow: hidden !important; touch-action: none !important; }
 </style>
 
 <!-- MAIN CONTAINER -->
 <div class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} anim-smooth-appear">
 
-    <div class="max-w-4xl mx-auto w-full relative z-10">
+    <div class="max-w-6xl mx-auto w-full relative z-10">
 
-        <!--
-            ==============================================
-            MASTER DISCOVERY TOGGLE
-            ==============================================
-        -->
-        <div class="w-full flex flex-col items-center mb-6 md:mb-10 relative z-30 mt-2">
-            <div class="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-sm flex items-center w-full sm:w-max">
-                <!-- INDIVIDUALS (ACTIVE) -->
-                <div class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-bold tracking-wide flex items-center justify-center gap-2 bg-[#F0F6FF] text-[#0A66C2] cursor-default border border-transparent shadow-sm">
+        <!-- HERO SECTION -->
+        <div class="text-center mb-8 md:mb-12 anim-smooth-appear">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-black text-slate-900 tracking-tighter leading-[1.1] mb-3 nav-heading">
+                {% trans "Discover Amazing" %}
+                <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#0A66C2] via-blue-500 to-indigo-600">
+                    {% trans "People" %}
+                </span>
+            </h1>
+            <p class="text-[14px] md:text-[16px] text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+                {% trans "Connect with professionals, founders, and students who are actively building and looking to collaborate right now." %}
+            </p>
+        </div>
+
+        <!-- TYPE TOGGLE -->
+        <div class="flex justify-center mb-8 md:mb-10 anim-smooth-appear" style="animation-delay: 0.1s;">
+            <div class="bg-white/80 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-1">
+                <div class="px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-wide flex items-center gap-2 bg-[#0A66C2] text-white shadow-sm">
                     <i data-lucide="user" class="w-4 h-4"></i> {% trans "Individuals" %}
                 </div>
-
-                <!-- TEAMS (LINK) -->
-                <a href="{% url 'team_nexus' %}" class="flex-1 sm:flex-none px-10 py-2.5 rounded-lg text-[14px] font-semibold tracking-wide transition-all flex items-center justify-center gap-2 text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC]">
+                <a href="{% url 'team_nexus' %}" class="px-6 py-2.5 rounded-xl text-[13px] font-semibold tracking-wide transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50">
                     <i data-lucide="boxes" class="w-4 h-4"></i> {% trans "Teams" %}
                 </a>
             </div>
         </div>
 
-        <!-- FEED HEADER & DESKTOP INBOX -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-            <div class="max-w-2xl w-full">
-                <h1 class="text-[24px] md:text-[32px] font-extrabold text-[#0F172A] tracking-tight mb-2 leading-tight nav-heading">
-                    {% trans "Community Posts" %}
-                </h1>
-                <p class="text-[14.5px] md:text-[15.5px] text-[#475569] font-medium leading-relaxed">
-                    {% trans "Discover and connect with professionals, founders, and students in real-time based on what they are working on and exactly who they are looking to meet right now." %}
-                </p>
-            </div>
-
-            <a href="{% url 'chat_hub' %}" class="hidden md:flex relative items-center gap-2 px-6 py-3 bg-[#0A66C2] text-white shadow-md shadow-blue-500/20 hover:bg-[#004182] rounded-full text-[14px] font-bold transition-all shrink-0 active:scale-95">
-                <i data-lucide="inbox" class="w-4 h-4"></i> {% trans "My Inbox" %}
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[22px] h-[22px] px-1 bg-rose-500 text-white text-[11px] font-bold rounded-full border-2 border-[#0A66C2] shadow-sm">
-                        {{ unread_msg_count }}
-                    </span>
-                {% endif %}
-            </a>
-        </div>
-
-        <!-- MAIN GRID (Grid Layout) -->
-        <div>
-        <!-- EXACT 2-COLUMN GRID. Gap handles spacing, no margin needed inside -->
-        <div id="users-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+        <!-- 2-COLUMN GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
 
             {% for network_user in network_users %}
 
                 {% with profile=network_user.visionary_profile|default:network_user.founder_profile|default:network_user.expert_profile %}
-                <!-- ONLY DISPLAY USERS WHO HAVE EXPLICITLY FILLED OUT THEIR "RIGHT NOW" FIELD -->
                 {% if profile and profile.right_now %}
 
-                <!-- User Card - Added h-full to make them stretch equally -->
-                <div class="user-card structural-card w-full h-full p-5 md:p-6 flex flex-col group relative"
-                     style="{% if user.role == 'VISIONARY' and network_user.role != 'VISIONARY' %}display: none; opacity: 0; transform: scale(0.98) translateY(4px);{% else %}display: flex; opacity: 1; transform: scale(1) translateY(0);{% endif %}"
-                     data-role="{{ network_user.role }}"
-                     data-time="{% if profile.last_signal_update %}{{ profile.last_signal_update|date:'U' }}{% else %}0{% endif %}">
+                <a href="{{ network_user.get_absolute_url }}" class="glass-card group/card"
+                   style="{% if user.role == 'VISIONARY' and network_user.role != 'VISIONARY' %}display: none;{% endif %}"
+                   data-role="{{ network_user.role }}"
+                   data-time="{% if profile.last_signal_update %}{{ profile.last_signal_update|date:'U' }}{% else %}0{% endif %}">
 
-                    <!-- A. IDENTITY ROW -->
-                    <div class="flex items-start gap-4 mb-5 w-full">
-                        <!-- Avatar Circle -->
-                        <div class="shrink-0 h-[52px] w-[52px] rounded-full bg-[#F8FAFC] overflow-hidden border border-[#E2E8F0] flex items-center justify-center relative shadow-sm">
+                    <!-- HEADER -->
+                    <div class="p-6 pb-4 flex items-start gap-4">
+                        <div class="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center group-hover/card:shadow-md transition-shadow">
                             {% if network_user.avatar %}
-                                <img src="{{ network_user.get_avatar_url }}" alt="{{ network_user.display_name }}" class="h-full w-full object-cover">
+                                <img src="{{ network_user.get_avatar_url }}" alt="{{ network_user.display_name }}" class="w-full h-full object-cover">
                             {% else %}
-                                <span class="text-[22px] font-extrabold text-[#94A3B8]">
-                                    {{ network_user.display_name|slice:":1" }}
-                                </span>
+                                <span class="text-[28px] font-black text-slate-400">{{ network_user.display_name|slice:":1" }}</span>
                             {% endif %}
                         </div>
-
-                        <!-- Name & Roles -->
-                        <div class="flex-1 min-w-0 pt-0.5">
-                            <div class="flex items-center justify-between gap-2 w-full mb-1">
-                                <h3 class="font-bold text-[#0F172A] text-[17px] leading-tight truncate hover:text-[#0A66C2] transition-colors break-words w-full">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <h3 class="font-bold text-[18px] text-slate-900 truncate group-hover/card:text-[#0A66C2] transition-colors">
                                     {{ network_user.display_name }}
                                 </h3>
-                                <!-- Top Right Role Badge -->
-                                <span class="px-2 py-0.5 rounded-md bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                                <span class="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-600 shrink-0">
                                     {% if network_user.role == 'VISIONARY' %}{% trans "Student" %}
                                     {% elif network_user.role == 'FOUNDER' %}{% trans "Founder" %}
                                     {% elif network_user.role == 'EXPERT' %}{% trans "Professional" %}{% endif %}
                                 </span>
                             </div>
-
-                            <!-- Title / Headline -->
-                            <div class="text-[13px] font-medium text-[#64748B] truncate flex items-center gap-1.5 w-full">
+                            <div class="text-[13px] font-medium text-slate-500 truncate flex items-center gap-1.5">
                                 {% if network_user.role == 'VISIONARY' %}
-                                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
-                                    <span class="truncate break-words">{% if profile.current_title %}{{ profile.current_title }}{% else %}{% trans "Exploring opportunities" %}{% endif %}</span>
+                                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+                                    <span>{% if profile.current_title %}{{ profile.current_title }}{% else %}{% trans "Exploring opportunities" %}{% endif %}</span>
                                 {% elif network_user.role == 'EXPERT' %}
-                                    <i data-lucide="briefcase" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
-                                    <span class="truncate break-words">
-                                        {% for headline in profile.headlines.all %}{% if headline.is_primary %}{{ headline.title }}{% endif %}{% endfor %}
-                                    </span>
+                                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                                    <span>{% for headline in profile.headlines.all %}{% if headline.is_primary %}{{ headline.title }}{% endif %}{% endfor %}</span>
                                 {% elif network_user.role == 'FOUNDER' %}
-                                    <i data-lucide="building-2" class="w-3.5 h-3.5 opacity-80 shrink-0"></i>
-                                    <span class="truncate break-words">{% if profile.sector %}{{ profile.sector }}{% else %}{% trans "Building the future" %}{% endif %}</span>
+                                    <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+                                    <span>{% if profile.sector %}{{ profile.sector }}{% else %}{% trans "Building the future" %}{% endif %}</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
 
-                    <!-- B. THE CURRENT SIGNAL / NARRATIVE -->
-                    <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] mb-4 relative w-full group-hover:border-[#CBD5E1] transition-colors">
-                        <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-[#0A66C2] rounded-l-xl opacity-90"></div>
-                        <p class="text-[14.5px] text-[#0F172A] leading-relaxed whitespace-pre-line break-words pl-1.5 font-medium">
-                            {{ profile.right_now }}
-                        </p>
-                    </div>
+                    <!-- CONTENT -->
+                    <div class="px-6 pb-4">
+                        <div class="bg-gradient-to-br from-blue-50/50 to-indigo-50/30 p-4 rounded-xl border border-blue-100/50 mb-4 group-hover/card:border-blue-200/50 transition-colors">
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 h-full bg-[#0A66C2] rounded-full shrink-0"></div>
+                                <p class="text-[14px] text-slate-700 leading-relaxed font-medium whitespace-pre-line">
+                                    {{ profile.right_now }}
+                                </p>
+                            </div>
+                        </div>
 
-                    <!-- C. STRUCTURED METADATA (Looking For - No Icons, Fully Visible) -->
-                    <div class="mb-6 w-full">
-                        <div class="bg-blue-50/40 px-4 py-3 rounded-lg border border-blue-100/50">
-                            <span class="text-[12px] font-bold text-[#64748B] uppercase tracking-wider block mb-0.5">{% trans "Looking For" %}</span>
-                            <span class="text-[14.5px] font-semibold text-[#0F172A] leading-snug break-words">
-                                {{ profile.get_current_search_display|default:_("Opportunities & Networking") }}
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center text-[11px] font-bold text-[#0A66C2] bg-[#0A66C2]/10 border border-[#0A66C2]/20 px-3 py-1.5 rounded-full tracking-widest uppercase">
+                                {{ profile.get_current_search_display|default:_("Networking") }}
                             </span>
                         </div>
                     </div>
 
-                    <!-- D. FOOTER: TIMESTAMP & ACTIONS -->
-                    <div class="pt-4 border-t border-[#E2E8F0] flex items-center justify-between w-full mt-auto">
-                        <span class="signal-time text-[11.5px] font-bold text-[#94A3B8] uppercase tracking-wider" data-timestamp="{{ profile.last_signal_update|date:'c' }}"></span>
-
+                    <!-- FOOTER -->
+                    <div class="px-6 py-4 border-t border-slate-100/80 flex items-center justify-between mt-auto">
+                        <span class="signal-time text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-timestamp="{{ profile.last_signal_update|date:'c' }}"></span>
                         <div class="flex items-center gap-2">
-                            <!-- See Profile Button -->
-                            <a href="{{ network_user.get_absolute_url }}" class="h-9 px-3.5 bg-white border border-[#E2E8F0] text-[#475569] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] rounded-lg text-[13px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
-                                <i data-lucide="user" class="w-4 h-4 text-[#94A3B8]"></i> {% trans "Profile" %}
-                            </a>
-
-                            <!-- Message Button -->
                             {% if request.user != network_user %}
-                            <a href="{% url 'chat_with' network_user.id %}" class="h-9 px-3.5 bg-[#0A66C2] border border-transparent text-white hover:bg-[#004182] rounded-lg text-[13px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-[#0A66C2]/20 active:scale-95">
+                            <a href="{% url 'chat_with' network_user.id %}" onclick="event.stopPropagation()" class="h-9 px-4 bg-[#0A66C2] hover:bg-[#0856A8] text-white rounded-xl text-[13px] font-bold transition-all flex items-center gap-1.5 shadow-sm shadow-[#0A66C2]/20 active:scale-95">
                                 <i data-lucide="send" class="w-4 h-4"></i> {% trans "Message" %}
                             </a>
                             {% endif %}
                         </div>
                     </div>
 
-                </div>
+                </a>
 
                 {% endif %}
                 {% endwith %}
             {% endfor %}
 
             <!-- Empty State -->
-            <div id="filter-empty-state" class="hidden structural-card w-full py-16 flex-col items-center justify-center text-center col-span-full bg-white">
-                <div class="w-16 h-16 bg-[#F8FAFC] rounded-full flex items-center justify-center mb-4 text-[#94A3B8] border border-[#E2E8F0]">
-                    <i data-lucide="search-x" class="w-8 h-8"></i>
+            <div id="filter-empty-state" class="hidden glass-card p-12 flex-col items-center justify-center text-center col-span-full">
+                <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-5 border border-slate-100">
+                    <i data-lucide="search-x" class="w-10 h-10 text-slate-300"></i>
                 </div>
-                <h3 class="text-[18px] font-bold text-[#0F172A] mb-2 nav-heading">{% trans "No Active Posts" %}</h3>
-                <p class="text-[14.5px] text-[#64748B]">{% trans "Be the first to update your status and appear here." %}</p>
+                <h3 class="text-[20px] font-black text-slate-900 mb-2 nav-heading">{% trans "No Active Posts" %}</h3>
+                <p class="text-[14px] text-slate-500">{% trans "Be the first to update your status and appear here." %}</p>
             </div>
 
-        </div>
         </div>
     </div>
 </div>
@@ -450,11 +425,6 @@
     </form>
 </div>
 
-<!-- TOASTS -->
-<div id="share-toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-[#0F172A] text-white px-6 py-3 rounded-full shadow-xl transition-all duration-300 transform translate-y-20 opacity-0 z-[100] text-[13px] font-semibold flex items-center gap-2 pointer-events-none w-max max-w-[90vw]">
-    <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i> {% trans "Link Copied to Clipboard" %}
-</div>
-
 <script>
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -490,20 +460,6 @@
         document.body.classList.add('body-lock');
     }
 
-    let shareToastTimeout;
-    function copyExactProfileLink(djangoUrlPath) {
-        const fullUrl = window.location.origin + djangoUrlPath;
-        navigator.clipboard.writeText(fullUrl).then(() => {
-            const toast = document.getElementById('share-toast');
-            clearTimeout(shareToastTimeout);
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            if (navigator.vibrate) navigator.vibrate(10);
-            shareToastTimeout = setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        });
-    }
-
     // Dynamic Timestamp Parser logic
     function timeAgo(dateString) {
         if (!dateString) return "{% trans 'Just now' %}";
@@ -519,9 +475,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const grid = document.getElementById('users-grid');
+        const grid = document.querySelector('.grid');
         const emptyState = document.getElementById('filter-empty-state');
-        const userCardsNodeList = document.querySelectorAll('.user-card');
+        const userCardsNodeList = document.querySelectorAll('.glass-card');
 
         let visibleCount = 0;
         userCardsNodeList.forEach(card => {
