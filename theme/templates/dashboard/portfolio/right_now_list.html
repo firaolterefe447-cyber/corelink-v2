@@ -212,40 +212,6 @@
     .btn-add-solid:hover { background: #0856A8; box-shadow: 0 4px 12px rgba(10,102,194,0.4); transform: translateY(-1px); }
     .btn-add-solid:active { transform: translateY(0); }
 
-    /* Timeline Card */
-    .timeline-card {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: 1rem;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .timeline-card:hover {
-        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.08);
-        transform: translateY(-4px);
-        border-color: rgba(203, 213, 225, 1);
-    }
-    @media (min-width: 768px) { .timeline-card { border-radius: 1.25rem; } }
-
-    /* Timeline Dot */
-    .timeline-dot {
-        width: 12px; height: 12px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #0A66C2, #0856A8);
-        border: 3px solid #ffffff;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1), 0 2px 8px rgba(10, 102, 194, 0.3);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .timeline-card:hover ~ .timeline-dot,
-    .group/timeline:hover .timeline-dot {
-        box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.2), 0 4px 12px rgba(10, 102, 194, 0.4);
-        transform: scale(1.1);
-    }
-
-    /* Timeline Line */
-    .timeline-line {
-        background: linear-gradient(to bottom, rgba(10, 102, 194, 0.2), rgba(10, 102, 194, 0.05));
-    }
 
     /* Focus Ring */
     *:focus-visible {
@@ -286,130 +252,90 @@
         </div>
 
         <!-- HEADER TITLE -->
-        <div class="mb-8 lg:mb-10">
-            <h1 class="text-h1 text-slate-900 break-words w-full mb-3">
-                {% trans "Your Updates History" %}
+        <div class="mb-6 lg:mb-8">
+            <h1 class="text-h2 text-slate-900 break-words w-full mb-2">
+                {% trans "Your Updates" %}
             </h1>
-            <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-relaxed">
-                {% trans "A chronological timeline of what you've shared with the network." %}
+            <p class="text-[13px] text-slate-500 font-medium">
+                {% trans "Manage your professional updates." %}
             </p>
         </div>
 
         <!-- ==============================================
-             PREMIUM TIMELINE
+             CLEAN CARD LIST
              ============================================== -->
-        <div class="relative max-w-3xl">
+        <div class="space-y-4">
 
             {% if right_now_posts %}
-                <div class="space-y-0 relative z-10">
-                    {% for post in right_now_posts %}
-                    <div class="relative pl-10 md:pl-14 group/timeline pb-8 md:pb-10 last:pb-0">
+                {% for post in right_now_posts %}
+                <div class="bento-card p-5 md:p-6 flex flex-col">
 
-                        <!-- The continuous vertical line -->
-                        <div class="absolute left-[19px] md:left-[23px] top-6 bottom-0 w-[2px] timeline-line group-last/timeline:hidden z-0"></div>
-
-                        <!-- Premium Timeline Dot -->
-                        <div class="absolute left-[14px] md:left-[18px] top-5 timeline-dot z-10"></div>
-
-                        <!-- PREMIUM TIMELINE CARD -->
-                        <div class="timeline-card p-5 md:p-6 lg:p-7 flex flex-col group/card relative">
-
-                            <!-- Card Header: Metadata & Actions -->
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                                    <span class="text-slate-500 text-[13px] md:text-[13.5px] font-semibold flex items-center gap-1.5">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
-                                        {{ post.created_at|date:"M d, Y" }}
-                                    </span>
-                                    {% if post.is_published %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-lg text-[11.5px] font-black uppercase tracking-wider">
-                                            <i data-lucide="globe" class="w-3 h-3"></i>
-                                            {% trans "Published" %}
-                                        </span>
-                                    {% else %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg text-[11.5px] font-black uppercase tracking-wider">
-                                            <i data-lucide="eye-off" class="w-3 h-3"></i>
-                                            {% trans "Draft" %}
-                                        </span>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Actions Dropdown -->
-                                <div class="flex items-center gap-1.5 opacity-100 md:opacity-0 group-hover/card:opacity-100 transition-opacity">
-                                    <a href="{% url 'right_now_edit' post.pk %}" class="w-9 h-9 flex items-center justify-center bg-slate-50 hover:bg-[#0A66C2] text-slate-500 hover:text-white rounded-xl transition-all border border-slate-100 hover:border-[#0A66C2] shadow-sm hover:shadow-md" title="{% trans 'Edit' %}">
-                                        <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                    </a>
-                                    <a href="{% url 'right_now_delete' post.pk %}" class="w-9 h-9 flex items-center justify-center bg-slate-50 hover:bg-rose-500 text-slate-500 hover:text-white rounded-xl transition-all border border-slate-100 hover:border-rose-500 shadow-sm hover:shadow-md" title="{% trans 'Delete' %}">
-                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Content -->
-                            <h3 class="text-[17px] md:text-[18px] lg:text-[19px] font-bold text-slate-900 mb-3 leading-snug tracking-tight group-hover/card:text-[#0A66C2] transition-colors">
-                                {{ post.title|default:post.get_current_search_display }}
-                            </h3>
-                            <p class="text-[15px] md:text-[15.5px] text-slate-700 leading-[1.8] max-w-2xl mb-5 font-medium whitespace-pre-line">
-                                {{ post.body_narrative }}
-                            </p>
-
-                            <!-- Media Gallery Preview -->
-                            {% if post.gallery.all %}
-                                <div class="mb-5">
-                                    <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
-                                        {% for media in post.gallery.all|slice:":3" %}
-                                            <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0">
-                                                <img src="{{ media.image.url }}" class="w-full h-full object-cover" alt="Media">
-                                            </div>
-                                        {% endfor %}
-                                        {% if post.gallery.count > 3 %}
-                                            <div class="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center">
-                                                <span class="text-slate-500 font-bold text-[13px]">+{{ post.gallery.count|add:"-3" }}</span>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endif %}
-
-                            <!-- Tags & Links -->
-                            <div class="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-slate-100/80">
-                                <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 rounded-lg text-[12.5px] font-semibold tracking-tight">
-                                    {{ post.get_collaboration_status_display }}
+                    <!-- Card Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-slate-500 text-[13px] font-semibold">
+                                {{ post.created_at|date:"M d, Y" }}
+                            </span>
+                            {% if post.is_published %}
+                                <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                    {% trans "Published" %}
                                 </span>
-                                {% if post.get_current_search_display %}
-                                    <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[#0A66C2] rounded-lg text-[12.5px] font-semibold tracking-tight">
-                                        {{ post.get_current_search_display }}
-                                    </span>
-                                {% endif %}
-                                {% if post.external_link %}
-                                    <a href="{{ post.external_link }}" target="_blank" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 text-[#0A66C2] rounded-lg text-[12.5px] font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
-                                        <i data-lucide="link" class="w-3 h-3"></i> {{ post.link_domain|default:"Link" }}
-                                    </a>
-                                {% endif %}
-                            </div>
+                            {% else %}
+                                <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-600 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                    {% trans "Draft" %}
+                                </span>
+                            {% endif %}
+                        </div>
 
+                        <div class="flex items-center gap-1.5">
+                            <a href="{% url 'right_now_edit' post.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-[#0A66C2] text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-[#0A66C2]">
+                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <a href="{% url 'right_now_delete' post.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-rose-500 text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-rose-500">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </a>
                         </div>
                     </div>
-                    {% endfor %}
+
+                    <!-- Content -->
+                    <h3 class="text-[16px] md:text-[17px] font-bold text-slate-900 mb-2 leading-snug">
+                        {{ post.title|default:post.get_current_search_display }}
+                    </h3>
+                    <p class="text-[14px] text-slate-600 leading-[1.7] mb-4 font-medium whitespace-pre-line">
+                        {{ post.body_narrative }}
+                    </p>
+
+                    <!-- Footer Info -->
+                    <div class="flex flex-wrap items-center gap-2 mt-auto pt-3 border-t border-slate-100">
+                        <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-600 rounded-md text-[12px] font-semibold">
+                            {{ post.get_collaboration_status_display }}
+                        </span>
+                        {% if post.get_current_search_display %}
+                            <span class="px-2.5 py-1 bg-blue-50 border border-blue-100 text-[#0A66C2] rounded-md text-[12px] font-semibold">
+                                {{ post.get_current_search_display }}
+                            </span>
+                        {% endif %}
+                        {% if post.external_link %}
+                            <a href="{{ post.external_link }}" target="_blank" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 border border-blue-100 hover:border-blue-200 text-[#0A66C2] rounded-md text-[12px] font-semibold flex items-center gap-1 transition-colors">
+                                <i data-lucide="link" class="w-3 h-3"></i> {{ post.link_domain|default:"Link" }}
+                            </a>
+                        {% endif %}
+                    </div>
+
                 </div>
+                {% endfor %}
 
             {% else %}
-                <!-- PREMIUM EMPTY STATE FOR TIMELINE -->
-                <div class="bento-card p-8 md:p-12 lg:p-16 text-center flex flex-col items-center justify-center mt-4">
-                    <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[2rem] flex items-center justify-center mb-6 border border-blue-100 shadow-sm relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-transparent opacity-50"></div>
-                        <i data-lucide="zap" class="w-10 h-10 text-[#0A66C2] relative z-10"></i>
+                <!-- CLEAN EMPTY STATE -->
+                <div class="bento-card p-8 md:p-12 text-center flex flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
+                        <i data-lucide="zap" class="w-8 h-8 text-[#0A66C2]"></i>
                     </div>
-                    <h3 class="text-[20px] md:text-[22px] font-black text-slate-900 mb-3 tracking-tight">{% trans "Your timeline is empty" %}</h3>
-                    <p class="text-[14.5px] text-slate-500 font-medium max-w-md leading-relaxed mb-8">{% trans "Build an undeniable professional history by posting updates about what you are learning, building, or searching for directly from your dashboard." %}</p>
-                    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                        <a href="{% url 'right_now_create' %}" class="btn-profile-primary w-full sm:w-auto">
-                            <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Create First Update" %}
-                        </a>
-                        <a href="{% url 'dashboard' %}" class="btn-profile-secondary w-full sm:w-auto">
-                            {% trans "Go to Dashboard" %}
-                        </a>
-                    </div>
+                    <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No updates yet" %}</h3>
+                    <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed mb-6">{% trans "Share your professional journey by posting updates." %}</p>
+                    <a href="{% url 'right_now_create' %}" class="btn-profile-primary">
+                        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Create Update" %}
+                    </a>
                 </div>
             {% endif %}
 
