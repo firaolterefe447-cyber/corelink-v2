@@ -364,40 +364,45 @@
 
                             <!-- 4. PREMIUM MEDIA GALLERY -->
                             {% if post.gallery.all %}
-                                <div class="mb-5 relative group/gallery">
+                                <a href="{% url 'right_now_detail' post.id %}" class="mb-5 relative group/gallery block">
                                     {% with count=post.gallery.count %}
-                                    <div class="media-grid overflow-hidden rounded-[1.25rem] border border-slate-100 shadow-sm bg-slate-50 flex flex-col">
+                                    <div class="media-grid overflow-hidden rounded-[1.25rem] border border-slate-100 shadow-sm bg-slate-50 flex flex-col transition-all hover:border-[#0A66C2]/30 hover:shadow-md">
 
                                         {% if count == 1 %}
                                             <div class="relative w-full max-h-[450px] sm:max-h-[500px] flex justify-center bg-slate-100 overflow-hidden">
-                                                <img src="{{ post.gallery.first.image.url }}" alt="Post image" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                                                <img src="{{ post.gallery.first.image.url }}" alt="Post image" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                             </div>
                                         {% elif count == 2 %}
                                             <div class="grid grid-cols-2 gap-0.5 h-[280px] sm:h-[350px]">
                                                 {% for media in post.gallery.all|slice:":2" %}
                                                     <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                     </div>
                                                 {% endfor %}
                                             </div>
                                         {% elif count >= 3 %}
-                                            <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
+                                            <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px] relative">
                                                 <div class="relative overflow-hidden w-full h-full">
-                                                    <img src="{{ post.gallery.all.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                                                    <img src="{{ post.gallery.all.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                 </div>
                                                 <div class="grid grid-rows-2 gap-0.5 w-full h-full">
                                                     <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ post.gallery.all.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                                                        <img src="{{ post.gallery.all.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                     </div>
                                                     <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ post.gallery.all.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105 cursor-zoom-in">
+                                                        <img src="{{ post.gallery.all.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                        {% if count > 3 %}
+                                                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                                                <span class="text-white font-black text-[24px] sm:text-[28px]">+{{ count|add:"-3" }}</span>
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </div>
                                         {% endif %}
                                     </div>
                                     {% endwith %}
-                                </div>
+                                </a>
                             {% endif %}
 
                             <!-- 5. SOCIAL ACTIONS (Feedback & Connect) -->
