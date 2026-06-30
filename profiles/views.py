@@ -561,6 +561,30 @@ class ProjectDeleteView(PortfolioSecurityMixin, DeleteView):
     success_url = reverse_lazy('manage_projects')
 
 
+@login_required
+@require_GET
+def auto_detect_project_category(request):
+    """
+    AI-Auto-Detect endpoint for project category.
+    Analyzes title, description, and role to suggest the most likely category.
+    Returns JSON with detected category, confidence score, and top suggestions.
+    """
+    from profiles.services import detect_project_category
+
+    title = request.GET.get('title', '')
+    description = request.GET.get('description', '')
+    role = request.GET.get('role', '')
+
+    result = detect_project_category(title, description, role)
+
+    return JsonResponse({
+        'success': True,
+        'category': result['category'],
+        'confidence': result['confidence'],
+        'suggestions': result['suggestions']
+    })
+
+
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║ CLUSTER 5: CONTENT PUBLISHING ENGINE                                       ║
 # ║ Human Context: Handing the various forms of user expression (Logs, Essays, ║

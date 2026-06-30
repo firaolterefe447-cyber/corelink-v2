@@ -63,6 +63,7 @@ path('p/<str:identifier>/og-image/', views.profile_og_image, name='profile_og_im
     path('dashboard/projects/new/', views.ProjectCreateView.as_view(), name='project_create'),
     path('dashboard/projects/<uuid:pk>/edit/', views.ProjectUpdateView.as_view(), name='project_edit'),
     path('dashboard/projects/<uuid:pk>/delete/', views.ProjectDeleteView.as_view(), name='project_delete'),
+    path('api/projects/auto-detect-category/', views.auto_detect_project_category, name='auto_detect_project_category'),
 path('api/right-now/create/', views.api_create_right_now, name='api_create_right_now'),
     # F. Content, Diaries, and Vision Blocks
     path('dashboard/posts/', views.ContentPostListView.as_view(), name='manage_contents'),

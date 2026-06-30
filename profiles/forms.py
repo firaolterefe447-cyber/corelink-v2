@@ -167,7 +167,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         fields = ['category', 'title', 'role', 'link', 'main_description']
 
         labels = {
-            'category': _("Industry / Field of Work"),
+            'category': _("Industry / Field of Work (Optional)"),
             'title': _("Project Title"),
             'role': _("Your Role"),
             'link': _("Live Link or Document (Optional)"),
@@ -175,7 +175,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'category': _("Select the field this project belongs to."),
+            'category': _("We'll auto-detect this based on your title and description. You can also select manually."),
             'title': _("Project title."),
             'role': _("Your specific contribution."),
             'link': _("Optional link to live demo, GitHub, publication, or proof."),
@@ -191,6 +191,11 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Make category field optional
+        self.fields['category'].required = False
+        # Remove HTML5 required attribute from widget
+        self.fields['category'].widget.attrs.pop('required', None)
 
         # 1. ALWAYS inject the placeholder option at the very top
         choices = list(self.fields['category'].choices)
@@ -235,8 +240,9 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     
     def clean_link(self):
         """Validate URL if provided."""
-        link = self.cleaned_data.get('link', '').strip()
+        link = self.cleaned_data.get('link', '')
         if link:
+            link = link.strip()
             if not link.startswith(('http://', 'https://')):
                 link = f"https://{link}"
             try:

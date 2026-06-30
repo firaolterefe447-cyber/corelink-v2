@@ -1112,6 +1112,99 @@
             isCurrentCheckbox.addEventListener('change', toggleEndDate);
         }
 
+        // =========================================================
+        // AI AUTO-DETECT CATEGORY FOR PROJECTS
+        // =========================================================
+        const categoryField = document.getElementById('id_category');
+        const titleField = document.getElementById('id_title');
+        const roleField = document.getElementById('id_role');
+        const descriptionField = document.getElementById('id_main_description');
+
+        if (categoryField && titleField) {
+            let debounceTimer;
+            const DEBOUNCE_DELAY = 800;
+
+            async function autoDetectCategory() {
+                const title = titleField?.value || '';
+                const role = roleField?.value || '';
+                const description = descriptionField?.value || '';
+
+                if (title.length < 3) return;
+
+                try {
+                    const response = await fetch('{% url "auto_detect_project_category" %}?' + new URLSearchParams({
+                        title: title,
+                        role: role,
+                        description: description
+                    }));
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.category && data.confidence >= 2.0) {
+                            // Show suggestion to user
+                            showCategorySuggestion(data.category, data.confidence, data.suggestions);
+                        }
+                    }
+                } catch (error) {
+                    console.log('Auto-detect failed:', error);
+                }
+            }
+
+            function showCategorySuggestion(category, confidence, suggestions) {
+                // Remove existing suggestion if any
+                const existingSuggestion = document.getElementById('category-suggestion');
+                if (existingSuggestion) existingSuggestion.remove();
+
+                // Get category display name
+                const categorySelect = categoryField;
+                const categoryOption = Array.from(categorySelect.options).find(opt => opt.value === category);
+                const categoryDisplay = categoryOption ? categoryOption.text : category;
+
+                // Create suggestion UI
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.id = 'category-suggestion';
+                suggestionDiv.className = 'mt-2 p-3 bg-gradient-to-r from-blue-50 to-emerald-50 rounded-lg border border-blue-200 animate-fade-in';
+                suggestionDiv.innerHTML = `
+                    <div class="flex items-center gap-2 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A66C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+                        <span class="text-[12px] font-bold text-slate-700">AI Suggested Category</span>
+                        <span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">${Math.round(confidence)}% confidence</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-[13px] font-semibold text-slate-800">${categoryDisplay}</span>
+                        <button type="button" onclick="acceptCategorySuggestion('${category}')" class="text-[11px] font-bold text-white bg-[#0A66C2] hover:bg-[#0856A8] px-3 py-1.5 rounded-lg transition-colors">
+                            Apply
+                        </button>
+                    </div>
+                `;
+
+                // Insert after category field
+                const categoryWrapper = categoryField.closest('[data-field-name="category"]');
+                if (categoryWrapper) {
+                    categoryWrapper.appendChild(suggestionDiv);
+                }
+            }
+
+            window.acceptCategorySuggestion = function(category) {
+                categoryField.value = category;
+                const suggestion = document.getElementById('category-suggestion');
+                if (suggestion) {
+                    suggestion.style.opacity = '0';
+                    setTimeout(() => suggestion.remove(), 300);
+                }
+            };
+
+            // Debounced auto-detect on field changes
+            function triggerAutoDetect() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(autoDetectCategory, DEBOUNCE_DELAY);
+            }
+
+            titleField?.addEventListener('input', triggerAutoDetect);
+            roleField?.addEventListener('input', triggerAutoDetect);
+            descriptionField?.addEventListener('input', triggerAutoDetect);
+        }
+
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
         if (fileInput && galleryGrid) {

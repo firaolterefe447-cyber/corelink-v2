@@ -435,7 +435,9 @@ class PortfolioProject(TimeStampedModel):
         max_length=30,
         choices=Category.choices,
         db_index=True,
-        help_text=_("The core industry of this project.")
+        blank=True,
+        null=True,
+        help_text=_("The core industry of this project. Auto-detected if not provided.")
     )
     meta_attributes = models.JSONField(
         _("Domain Specific Data"), default=dict, blank=True,
