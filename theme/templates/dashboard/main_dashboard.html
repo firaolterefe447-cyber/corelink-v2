@@ -354,15 +354,15 @@
     <div class="max-w-[1200px] mx-auto w-full relative">
 
         <!-- PROFILE COMPLETION PROGRESS BAR -->
-        <div class="mb-4 lg:mb-6">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-[13px] font-semibold text-slate-700">Profile Completion</span>
-                <span class="text-[13px] font-bold" id="oracle-score-display" style="color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}">{% if portfolio.oracle_score %}{{ portfolio.oracle_score }}{% else %}0{% endif %}%</span>
+        <div class="mb-6 lg:mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[14px] sm:text-[15px] font-bold text-slate-800">Profile Completion</span>
+                <span class="text-[14px] sm:text-[15px] font-black" id="oracle-score-display" style="color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}">{% if portfolio.oracle_score %}{{ portfolio.oracle_score }}{% else %}0{% endif %}%</span>
             </div>
-            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                <div id="progress-bar-fill" class="h-2 rounded-full transition-all duration-500 ease-out" style="width: {% if portfolio.oracle_score %}{{ portfolio.oracle_score }}%{% else %}0%{% endif %}; background-color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}"></div>
+            <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                <div id="progress-bar-fill" class="h-3 rounded-full transition-all duration-500 ease-out" style="width: {% if portfolio.oracle_score %}{{ portfolio.oracle_score }}%{% else %}0%{% endif %}; background-color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}"></div>
             </div>
-            <span class="text-[11px] text-slate-500 mt-1 block" id="score-change-text">Complete your profile to unlock visibility and opportunities</span>
+            <span class="text-[12px] sm:text-[13px] text-slate-500 font-medium mt-2 block" id="score-change-text">Complete your profile to unlock visibility and opportunities</span>
         </div>
 
         <script>
@@ -390,15 +390,15 @@
                 if (changeAmount !== null) {
                     if (changeAmount > 0) {
                         scoreChangeText.textContent = `+${changeAmount} points added`;
-                        scoreChangeText.className = 'text-[11px] text-emerald-600 font-semibold';
+                        scoreChangeText.className = 'text-[12px] sm:text-[13px] text-emerald-600 font-semibold';
                     } else if (changeAmount < 0) {
                         scoreChangeText.textContent = `${changeAmount} points`;
-                        scoreChangeText.className = 'text-[11px] text-rose-600 font-semibold';
+                        scoreChangeText.className = 'text-[12px] sm:text-[13px] text-rose-600 font-semibold';
                     }
                     
                     setTimeout(() => {
                         scoreChangeText.textContent = 'Complete your profile to unlock visibility and opportunities';
-                        scoreChangeText.className = 'text-[11px] text-slate-500';
+                        scoreChangeText.className = 'text-[12px] sm:text-[13px] text-slate-500 font-medium';
                     }, 3000);
                 }
 
