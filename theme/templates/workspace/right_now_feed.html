@@ -362,45 +362,60 @@
                             </div>
                             {% endif %}
 
-                            <!-- 4. PREMIUM MEDIA GALLERY -->
+                            <!-- 4. PREMIUM MEDIA GALLERY - INNOVATIVE MODERN DESIGN -->
                             {% if post.gallery.all %}
                                 <a href="{% url 'right_now_detail' post.id %}" class="mb-5 relative group/gallery block">
                                     {% with count=post.gallery.count %}
-                                    <div class="media-grid overflow-hidden rounded-[1.25rem] border border-slate-100 shadow-sm bg-slate-50 flex flex-col transition-all hover:border-[#0A66C2]/30 hover:shadow-md">
+                                    <div class="media-grid overflow-hidden rounded-[1.5rem] border border-slate-100 shadow-lg bg-slate-50 flex flex-col transition-all duration-500 hover:border-[#0A66C2]/40 hover:shadow-xl hover:shadow-[#0A66C2]/10">
 
                                         {% if count == 1 %}
                                             <div class="relative w-full max-h-[450px] sm:max-h-[500px] flex justify-center bg-slate-100 overflow-hidden">
                                                 <img src="{{ post.gallery.first.image.url }}" alt="Post image" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500"></div>
                                             </div>
                                         {% elif count == 2 %}
-                                            <div class="grid grid-cols-2 gap-0.5 h-[280px] sm:h-[350px]">
+                                            <div class="grid grid-cols-2 gap-1 h-[280px] sm:h-[350px]">
                                                 {% for media in post.gallery.all|slice:":2" %}
-                                                    <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                    <div class="relative overflow-hidden w-full h-full rounded-l-[0.5rem] {% if forloop.first %}rounded-l-[1.5rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem]{% endif %}">
+                                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-110">
+                                                        <div class="absolute inset-0 bg-black/0 group-hover/gallery:bg-black/10 transition-all duration-300"></div>
                                                     </div>
                                                 {% endfor %}
                                             </div>
                                         {% elif count >= 3 %}
                                             {% with gallery_list=post.gallery.all %}
-                                            <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
-                                                <div class="relative overflow-hidden w-full h-full">
+                                            <div class="relative h-[320px] sm:h-[420px]">
+                                                <!-- Featured Large Image (Left) -->
+                                                <div class="absolute inset-0 w-[55%] rounded-l-[1.5rem] overflow-hidden">
                                                     <img src="{{ gallery_list.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/30"></div>
                                                 </div>
-                                                <div class="grid grid-rows-2 gap-0.5 w-full h-full">
-                                                    <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ gallery_list.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                
+                                                <!-- Stacked Thumbnails (Right) -->
+                                                <div class="absolute right-0 top-0 bottom-0 w-[45%] flex flex-col gap-1 p-1">
+                                                    <div class="flex-1 relative overflow-hidden rounded-t-[1.5rem] rounded-bl-[0.5rem]">
+                                                        <img src="{{ gallery_list.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-110">
+                                                        <div class="absolute inset-0 bg-black/0 group-hover/gallery:bg-black/15 transition-all duration-300"></div>
                                                     </div>
-                                                    <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ gallery_list.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                    <div class="flex-1 relative overflow-hidden rounded-b-[1.5rem] rounded-tl-[0.5rem]">
+                                                        <img src="{{ gallery_list.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-110">
                                                         {% if count > 3 %}
-                                                            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center hover:bg-slate-900/70 transition-colors z-20">
-                                                                <div class="text-center transform transition-transform duration-300 group-hover/gallery:scale-105">
-                                                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/95 rounded-full flex items-center justify-center mb-2 mx-auto shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
-                                                                        <i data-lucide="layout-grid" class="w-4 h-4 sm:w-5 sm:h-5 text-slate-900"></i>
+                                                            <div class="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/70 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover/gallery:from-black/80 group-hover/gallery:via-black/70 group-hover/gallery:to-black/80">
+                                                                <div class="text-center transform transition-all duration-300 group-hover/gallery:scale-110">
+                                                                    <div class="relative">
+                                                                        <div class="absolute inset-0 bg-white/20 blur-xl rounded-full"></div>
+                                                                        <div class="relative w-14 h-14 sm:w-16 sm:h-16 bg-white/95 rounded-2xl flex items-center justify-center mx-auto shadow-2xl shadow-black/30">
+                                                                            <i data-lucide="layers" class="w-6 h-6 sm:w-7 sm:h-7 text-slate-900"></i>
+                                                                        </div>
                                                                     </div>
-                                                                    <span class="text-white font-bold text-[11px] sm:text-[13px] tracking-wide">+{{ count|add:"-3" }} Photos</span>
+                                                                    <div class="mt-3">
+                                                                        <span class="text-white font-black text-[14px] sm:text-[16px] tracking-tight block">+{{ count|add:"-3" }}</span>
+                                                                        <span class="text-white/80 font-semibold text-[10px] sm:text-[11px] tracking-wider uppercase block">More</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                        {% else %}
+                                                            <div class="absolute inset-0 bg-black/0 group-hover/gallery:bg-black/10 transition-all duration-300"></div>
                                                         {% endif %}
                                                     </div>
                                                 </div>
