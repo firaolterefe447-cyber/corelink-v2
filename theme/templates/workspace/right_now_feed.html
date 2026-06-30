@@ -381,16 +381,17 @@
                                                 {% endfor %}
                                             </div>
                                         {% elif count >= 3 %}
-                                            <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px] relative">
+                                            {% with gallery_list=post.gallery.all %}
+                                            <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
                                                 <div class="relative overflow-hidden w-full h-full">
-                                                    <img src="{{ post.gallery.all.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                    <img src="{{ gallery_list.0.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                 </div>
                                                 <div class="grid grid-rows-2 gap-0.5 w-full h-full">
                                                     <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ post.gallery.all.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                        <img src="{{ gallery_list.1.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                     </div>
                                                     <div class="relative overflow-hidden w-full h-full">
-                                                        <img src="{{ post.gallery.all.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
+                                                        <img src="{{ gallery_list.2.image.url }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/gallery:scale-105">
                                                         {% if count > 3 %}
                                                             <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center hover:bg-slate-900/70 transition-colors z-20">
                                                                 <div class="text-center transform transition-transform duration-300 group-hover/gallery:scale-105">
@@ -404,6 +405,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            {% endwith %}
                                         {% endif %}
                                     </div>
                                     {% endwith %}
