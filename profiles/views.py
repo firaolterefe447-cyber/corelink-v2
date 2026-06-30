@@ -913,6 +913,27 @@ def api_get_comments(request, post_id):
     })
 
 
+@login_required
+@require_GET
+def api_get_oracle_score(request):
+    """
+    Returns the current user's Oracle score for real-time progress updates.
+    """
+    try:
+        portfolio = request.user.portfolio
+        return JsonResponse({
+            'status': 'success',
+            'oracle_score': portfolio.oracle_score or 0,
+            'admin_rating': portfolio.admin_rating or 0
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'oracle_score': 0,
+            'admin_rating': 0
+        })
+
+
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║ CLUSTER 8: PERSONAL NETWORK & SOCIALS                                      ║
 # ║ Human Context: Managing the user's external links and contact preferences. ║

@@ -102,6 +102,7 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('api/right-now/<uuid:post_id>/toggle-like/', views.api_toggle_like, name='api_toggle_like'),
     path('api/right-now/<uuid:post_id>/add-comment/', views.api_add_comment, name='api_add_comment'),
     path('api/right-now/<uuid:post_id>/comments/', views.api_get_comments, name='api_get_comments'),
+    path('api/oracle-score/', views.api_get_oracle_score, name='api_get_oracle_score'),
     # The Network Dashboard (Shows both Contacts & Socials)
     path('dashboard/network/', views.NetworkListView.as_view(), name='manage_network'),
 

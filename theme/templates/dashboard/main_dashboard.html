@@ -354,18 +354,82 @@
     <div class="max-w-[1200px] mx-auto w-full relative">
 
         <!-- PROFILE COMPLETION PROGRESS BAR -->
-        <div class="mb-6 lg:mb-8 bg-white border border-slate-200/80 rounded-xl p-4 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[13px] font-bold text-slate-700">Profile Completion</span>
-                <span class="text-[12px] font-bold text-amber-600">{% if portfolio.oracle_score %}{{ portfolio.oracle_score }}{% else %}0{% endif %}%</span>
+        <div class="mb-4 lg:mb-6">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[13px] font-semibold text-slate-700">Profile Completion</span>
+                <span class="text-[13px] font-bold" id="oracle-score-display" style="color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}">{% if portfolio.oracle_score %}{{ portfolio.oracle_score }}{% else %}0{% endif %}%</span>
             </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div class="bg-gradient-to-r from-amber-400 to-amber-500 h-2 rounded-full transition-all duration-500" style="width: {% if portfolio.oracle_score %}{{ portfolio.oracle_score }}%{% else %}0%{% endif %}"></div>
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div id="progress-bar-fill" class="h-2 rounded-full transition-all duration-500 ease-out" style="width: {% if portfolio.oracle_score %}{{ portfolio.oracle_score }}%{% else %}0%{% endif %}; background-color: {% if portfolio.oracle_score %}{% if portfolio.oracle_score < 25 %}#ef4444{% elif portfolio.oracle_score < 50 %}#f59e0b{% elif portfolio.oracle_score < 75 %}#3b82f6{% else %}#10b981{% endif %}{% else %}#ef4444{% endif %}"></div>
             </div>
-            <p class="text-[12px] text-slate-500 mt-2">
-                <a href="#profile-guidelines" class="text-[#0A66C2] font-semibold hover:underline">Complete your profile</a> to unlock visibility and opportunities.
-            </p>
+            <span class="text-[11px] text-slate-500 mt-1 block" id="score-change-text">Complete your profile to unlock visibility and opportunities</span>
         </div>
+
+        <script>
+            let currentOracleScore = {% if portfolio.oracle_score %}{{ portfolio.oracle_score }}{% else %}0{% endif %};
+
+            function getScoreColor(score) {
+                if (score < 25) return '#ef4444';
+                if (score < 50) return '#f59e0b';
+                if (score < 75) return '#3b82f6';
+                return '#10b981';
+            }
+
+            function updateProgressDisplay(newScore, changeAmount = null) {
+                const progressBar = document.getElementById('progress-bar-fill');
+                const scoreDisplay = document.getElementById('oracle-score-display');
+                const scoreChangeText = document.getElementById('score-change-text');
+
+                const color = getScoreColor(newScore);
+
+                progressBar.style.width = newScore + '%';
+                progressBar.style.backgroundColor = color;
+                scoreDisplay.textContent = newScore + '%';
+                scoreDisplay.style.color = color;
+
+                if (changeAmount !== null) {
+                    if (changeAmount > 0) {
+                        scoreChangeText.textContent = `+${changeAmount} points added`;
+                        scoreChangeText.className = 'text-[11px] text-emerald-600 font-semibold';
+                    } else if (changeAmount < 0) {
+                        scoreChangeText.textContent = `${changeAmount} points`;
+                        scoreChangeText.className = 'text-[11px] text-rose-600 font-semibold';
+                    }
+                    
+                    setTimeout(() => {
+                        scoreChangeText.textContent = 'Complete your profile to unlock visibility and opportunities';
+                        scoreChangeText.className = 'text-[11px] text-slate-500';
+                    }, 3000);
+                }
+
+                currentOracleScore = newScore;
+            }
+
+            async function fetchUpdatedScore() {
+                try {
+                    const response = await fetch('{% url "api_get_oracle_score" %}', {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const scoreChange = data.oracle_score - currentOracleScore;
+                        updateProgressDisplay(data.oracle_score, scoreChange !== 0 ? scoreChange : null);
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch updated score:', error);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', function() {
+                        setTimeout(fetchUpdatedScore, 1000);
+                    });
+                });
+            });
+        </script>
 
         <!-- PROFILE HERO CARD -->
         <div class="bento-card relative flex flex-col w-full mb-6 lg:mb-8 bg-white" id="profile-hero">
