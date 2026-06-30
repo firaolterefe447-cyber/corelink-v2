@@ -305,19 +305,21 @@
                 <!-- MAIN EDITOR CARD -->
                 <div class="bento-card flex flex-col overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-100">
-                        <h2 class="font-heading text-[1.15rem] md:text-[1.25rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none">{% trans "What are you working on?" %}</h2>
-                        <p class="text-[13px] text-slate-500 font-medium mt-1.5">{% trans "Update your professional status to the ecosystem." %}</p>
+                        <h2 class="font-heading text-[1.15rem] md:text-[1.25rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none">{% trans "Share your current focus" %}</h2>
+                        <p class="text-[13px] text-slate-500 font-medium mt-1.5">{% trans "Let the community know what you're working on, learning, or building right now." %}</p>
                     </div>
 
                     <div class="p-6 md:p-7 flex flex-col gap-5">
                         <div class="w-full">
-                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "Headline / Milestone" %}</label>
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "Headline" %}</label>
                             {{ form.title }}
+                            <p class="text-[12px] text-slate-400 font-medium mt-1.5 px-0.5">{% trans "A short, catchy title for your update (e.g., 'Building a React Dashboard', 'Learning Machine Learning')" %}</p>
                         </div>
 
                         <div class="w-full">
-                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "The Details" %}</label>
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "What are you working on?" %}</label>
                             {{ form.body_narrative }}
+                            <p class="text-[12px] text-slate-400 font-medium mt-1.5 px-0.5">{% trans "Describe your project, learning journey, or current focus. What challenges are you tackling? What progress have you made?" %}</p>
                         </div>
                     </div>
                 </div>
@@ -325,8 +327,15 @@
                 <!-- MEDIA GALLERY CARD -->
                 <div class="bento-card p-6 md:p-7">
                     <div class="mb-5">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-1.5 px-0.5">{% trans "Attach Media / Proof (Optional)" %}</label>
-                        <p class="text-[13px] text-slate-500 font-medium px-0.5 leading-relaxed">{% trans "Upload screenshots, diagrams, or photos to visually showcase your work." %}</p>
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-1.5 px-0.5">{% trans "Visual Gallery" %}</label>
+                        <p class="text-[13px] text-slate-500 font-medium px-0.5 leading-relaxed">{% trans "Add screenshots, photos, or diagrams to showcase your work visually. Upload multiple images to create a gallery." %}</p>
+                    </div>
+                    
+                    <div class="mb-4 p-3 bg-blue-50/50 border border-blue-100 rounded-xl">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-[#0A66C2] mt-0.5 shrink-0"></i>
+                            <p class="text-[12px] text-slate-600 font-medium leading-snug">{% trans "Tip: Upload screenshots of your work, progress photos, diagrams, or any visual that helps tell your story. You can add up to 20 images." %}</p>
+                        </div>
                     </div>
 
                     <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
@@ -347,11 +356,12 @@
                         {% endif %}
 
                         <!-- Add Button -->
-                        <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-400 bg-slate-50 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0A66C2] transition-all cursor-pointer">
-                            <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200">
+                        <button type="button" id="add-more-btn" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-2xl border-2 border-dashed border-slate-300 hover:border-blue-400 bg-slate-50 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0A66C2] transition-all cursor-pointer group">
+                            <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 group-hover:scale-110 transition-transform">
                                 <i data-lucide="image-plus" class="w-5 h-5"></i>
                             </div>
-                            <span class="text-[12px] font-bold">{% trans "Upload Image" %}</span>
+                            <span class="text-[12px] font-bold">{% trans "Add Image" %}</span>
+                            <span class="text-[10px] text-slate-400 font-medium">{% trans "Max 20 images" %}</span>
                         </button>
                     </div>
                 </div>
@@ -370,6 +380,7 @@
                     <div class="w-full">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5 px-0.5">{% trans "External Link" %}</label>
                         {{ form.external_link }}
+                        <p class="text-[12px] text-slate-400 font-medium mt-1.5 px-0.5">{% trans "Link to your project, portfolio, GitHub, or any relevant resource (optional)" %}</p>
                     </div>
 
                     <!-- Goal -->
@@ -379,6 +390,7 @@
                             {{ form.current_search }}
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
                         </div>
+                        <p class="text-[12px] text-slate-400 font-medium mt-1.5 px-0.5">{% trans "What are you looking for? (e.g., collaboration, feedback, job opportunities)" %}</p>
                     </div>
 
                     <!-- Status -->
@@ -388,6 +400,7 @@
                             {{ form.collaboration_status }}
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
                         </div>
+                        <p class="text-[12px] text-slate-400 font-medium mt-1.5 px-0.5">{% trans "Let others know if you're open to collaboration or opportunities" %}</p>
                     </div>
                 </div>
 
