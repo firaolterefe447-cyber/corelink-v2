@@ -287,7 +287,7 @@
                                 {% endfor %}
                             </div>
                         {% elif count >= 5 %}
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div id="gallery-preview" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {% for media in post.gallery.all|slice:":6" %}
                                     <div class="rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden shadow-md border border-slate-200 aspect-square {% if forloop.first %}col-span-2 row-span-2 aspect-auto{% endif %}">
                                         <img src="{{ media.image.url }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
@@ -296,7 +296,7 @@
                             </div>
                             {% if count > 6 %}
                                 <div class="mt-3 text-center">
-                                    <button class="text-[13px] sm:text-[14px] font-bold text-[#0A66C2] bg-blue-50 border border-blue-100 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
+                                    <button onclick="showAllGallery({{ count }})" class="text-[13px] sm:text-[14px] font-bold text-[#0A66C2] bg-blue-50 border border-blue-100 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors">
                                         View all {{ count }} images
                                     </button>
                                 </div>
@@ -465,8 +465,40 @@
         navigator.clipboard.writeText(text).then(() => {
             const span = btnElement.querySelector('.btn-text');
             span.innerText = "Copied!";
-            setTimeout(() => span.innerText = "Share Link", 2000);
+            setTimeout(() => span.innerText = "Share", 2000);
         });
+    }
+
+    function showAllGallery(count) {
+        const preview = document.getElementById('gallery-preview');
+        const button = event.target;
+        
+        // Get all gallery images from the post
+        const galleryImages = [
+            {% for media in post.gallery.all %}
+                {
+                    url: "{{ media.image.url }}",
+                    index: {{ forloop.counter0 }}
+                },
+            {% endfor %}
+        ];
+        
+        // Replace preview with full grid
+        preview.innerHTML = '';
+        preview.className = 'grid grid-cols-2 sm:grid-cols-3 gap-3';
+        
+        galleryImages.forEach((img, idx) => {
+            const div = document.createElement('div');
+            div.className = 'rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden shadow-md border border-slate-200 aspect-square';
+            div.innerHTML = `<img src="${img.url}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy">`;
+            preview.appendChild(div);
+        });
+        
+        // Hide the button
+        button.style.display = 'none';
+        
+        // Scroll to gallery
+        preview.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     async function submitDetailFeedback(postId) {
