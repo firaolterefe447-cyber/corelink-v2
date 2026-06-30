@@ -1113,12 +1113,75 @@
         }
 
         // =========================================================
-        // AI AUTO-DETECT CATEGORY FOR PROJECTS
+        // AI AUTO-DETECT CATEGORY FOR PROJECTS (Hidden Field)
         // =========================================================
         const categoryField = document.getElementById('id_category');
         const titleField = document.getElementById('id_title');
         const roleField = document.getElementById('id_role');
         const descriptionField = document.getElementById('id_main_description');
+        const roleHelpText = document.getElementById('help-role');
+        const descHelpText = document.getElementById('help-main_description');
+
+        // Category-specific help text mappings
+        const categoryHelpText = {
+            'SOFTWARE_DATA': {
+                role: 'Your tech stack and specific role (e.g., "React Frontend + Node.js Backend")',
+                description: 'Describe the tech stack, architecture, key features, and impact (e.g., user metrics, performance)'
+            },
+            'HARDWARE_ROBOTICS': {
+                role: 'Your technical contribution (e.g., "Firmware development for Arduino-based system")',
+                description: 'Describe hardware components, sensors used, functionality, and any testing results'
+            },
+            'MEDICAL_CLINICAL': {
+                role: 'Your medical role and specialty (e.g., "Principal Investigator - Cardiology")',
+                description: 'Describe research methodology, patient population, key findings, and clinical significance'
+            },
+            'LEGAL_POLICY': {
+                role: 'Your legal role (e.g., "Lead Counsel - Constitutional Law")',
+                description: 'Describe legal issues addressed, jurisdiction, arguments made, and outcomes achieved'
+            },
+            'SCIENCE_RESEARCH': {
+                role: 'Your research role (e.g., "Lab Lead - Molecular Biology")',
+                description: 'Describe hypothesis, methodology, experimental results, and scientific conclusions'
+            },
+            'DESIGN_UX': {
+                role: 'Your design role (e.g., "UX Researcher + UI Designer")',
+                description: 'Describe design process, user research findings, tools used (Figma, Sketch), and design impact'
+            },
+            'ARCHITECTURE_CIVIL': {
+                role: 'Your engineering role (e.g., "Structural Engineer - Commercial Buildings")',
+                description: 'Describe project scope, materials used, engineering challenges, and construction details'
+            },
+            'BUSINESS_FINANCE': {
+                role: 'Your business role (e.g., "Co-founder & CFO")',
+                description: 'Describe business model, market opportunity, key metrics, and financial achievements'
+            },
+            'MARKETING_MEDIA': {
+                role: 'Your marketing role (e.g., "Digital Marketing Manager")',
+                description: 'Describe campaign strategy, channels used, engagement metrics, and marketing outcomes'
+            },
+            'ARTS_CREATIVE': {
+                role: 'Your creative role (e.g., "Director & Cinematographer")',
+                description: 'Describe creative concept, artistic techniques, platforms, and audience reception'
+            },
+            'EDUCATION_TRAINING': {
+                role: 'Your educational role (e.g., "Curriculum Designer - STEM")',
+                description: 'Describe learning objectives, teaching methods, student outcomes, and educational impact'
+            },
+            'OPERATIONS_TRADES': {
+                role: 'Your operational role (e.g., "Operations Manager - Supply Chain")',
+                description: 'Describe operational processes, efficiency improvements, and measurable outcomes'
+            },
+            'OTHER': {
+                role: 'Your specific contribution to this project',
+                description: 'Describe the project, your role, approach taken, and impact achieved'
+            }
+        };
+
+        const defaultHelpText = {
+            role: 'Your specific contribution.',
+            description: 'Describe the project, problem, approach, and impact.'
+        };
 
         if (categoryField && titleField) {
             let debounceTimer;
@@ -1141,8 +1204,11 @@
                     if (response.ok) {
                         const data = await response.json();
                         if (data.category && data.confidence >= 2.0) {
-                            // Show suggestion to user
-                            showCategorySuggestion(data.category, data.confidence, data.suggestions);
+                            // Auto-set the hidden category field
+                            categoryField.value = data.category;
+                            
+                            // Update help text dynamically based on detected category
+                            updateHelpText(data.category);
                         }
                     }
                 } catch (error) {
@@ -1150,49 +1216,21 @@
                 }
             }
 
-            function showCategorySuggestion(category, confidence, suggestions) {
-                // Remove existing suggestion if any
-                const existingSuggestion = document.getElementById('category-suggestion');
-                if (existingSuggestion) existingSuggestion.remove();
-
-                // Get category display name
-                const categorySelect = categoryField;
-                const categoryOption = Array.from(categorySelect.options).find(opt => opt.value === category);
-                const categoryDisplay = categoryOption ? categoryOption.text : category;
-
-                // Create suggestion UI
-                const suggestionDiv = document.createElement('div');
-                suggestionDiv.id = 'category-suggestion';
-                suggestionDiv.className = 'mt-2 p-3 bg-gradient-to-r from-blue-50 to-emerald-50 rounded-lg border border-blue-200 animate-fade-in';
-                suggestionDiv.innerHTML = `
-                    <div class="flex items-center gap-2 mb-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A66C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
-                        <span class="text-[12px] font-bold text-slate-700">AI Suggested Category</span>
-                        <span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">${Math.round(confidence)}% confidence</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-3">
-                        <span class="text-[13px] font-semibold text-slate-800">${categoryDisplay}</span>
-                        <button type="button" onclick="acceptCategorySuggestion('${category}')" class="text-[11px] font-bold text-white bg-[#0A66C2] hover:bg-[#0856A8] px-3 py-1.5 rounded-lg transition-colors">
-                            Apply
-                        </button>
-                    </div>
-                `;
-
-                // Insert after category field
-                const categoryWrapper = categoryField.closest('[data-field-name="category"]');
-                if (categoryWrapper) {
-                    categoryWrapper.appendChild(suggestionDiv);
+            function updateHelpText(category) {
+                const help = categoryHelpText[category] || defaultHelpText;
+                
+                if (roleHelpText && help.role) {
+                    roleHelpText.textContent = help.role;
+                    roleHelpText.classList.add('animate-fade-in');
+                    setTimeout(() => roleHelpText.classList.remove('animate-fade-in'), 300);
+                }
+                
+                if (descHelpText && help.description) {
+                    descHelpText.textContent = help.description;
+                    descHelpText.classList.add('animate-fade-in');
+                    setTimeout(() => descHelpText.classList.remove('animate-fade-in'), 300);
                 }
             }
-
-            window.acceptCategorySuggestion = function(category) {
-                categoryField.value = category;
-                const suggestion = document.getElementById('category-suggestion');
-                if (suggestion) {
-                    suggestion.style.opacity = '0';
-                    setTimeout(() => suggestion.remove(), 300);
-                }
-            };
 
             // Debounced auto-detect on field changes
             function triggerAutoDetect() {

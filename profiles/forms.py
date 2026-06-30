@@ -167,7 +167,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         fields = ['category', 'title', 'role', 'link', 'main_description']
 
         labels = {
-            'category': _("Industry / Field of Work (Optional)"),
+            'category': _("Industry / Field of Work"),
             'title': _("Project Title"),
             'role': _("Your Role"),
             'link': _("Live Link or Document (Optional)"),
@@ -175,7 +175,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         help_texts = {
-            'category': _("We'll auto-detect this based on your title and description. You can also select manually."),
+            'category': _("Auto-detected based on your project content."),
             'title': _("Project title."),
             'role': _("Your specific contribution."),
             'link': _("Optional link to live demo, GitHub, publication, or proof."),
@@ -183,7 +183,7 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
         }
 
         widgets = {
-            'category': forms.Select(attrs={'class': 'w-full', 'id': 'id_category_select'}),
+            'category': forms.HiddenInput(attrs={'id': 'id_category'}),
             'title': forms.TextInput(attrs={'placeholder': 'Enter title...'}),
             'role': forms.TextInput(attrs={'placeholder': 'Enter your role...'}),
             'main_description': forms.Textarea(attrs={'placeholder': 'Describe your project...', 'rows': 5, 'class': 'markdown-editor'}),
@@ -192,22 +192,8 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Make category field optional
+        # Category is now hidden and auto-detected via JavaScript
         self.fields['category'].required = False
-        # Remove HTML5 required attribute from widget
-        self.fields['category'].widget.attrs.pop('required', None)
-
-        # 1. ALWAYS inject the placeholder option at the very top
-        choices = list(self.fields['category'].choices)
-        choices = [c for c in choices if str(c[0]).strip() not in ('', 'None')]
-        self.fields['category'].choices = [('', 'Select field of this project')] + choices
-
-        # 2. Bulletproof override for new entries
-        if not self.instance.pk:
-            self.initial['category'] = ''
-            self.fields['category'].initial = ''
-            if hasattr(self.instance, 'category'):
-                self.instance.category = None
     
     def clean_title(self):
         """Ensure title is meaningful and not too generic."""
@@ -251,6 +237,14 @@ class PortfolioProjectForm(TailwindFormMixin, forms.ModelForm):
             except ValidationError:
                 raise ValidationError(_("Please provide a valid URL starting with http:// or https://"))
         return link
+    
+    def clean_category(self):
+        """Handle category field - set to OTHER if not auto-detected."""
+        category = self.cleaned_data.get('category')
+        if not category:
+            # Default to OTHER if auto-detection didn't work
+            return 'OTHER'
+        return category
 
 
 # ==============================================================================

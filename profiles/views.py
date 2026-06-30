@@ -470,6 +470,11 @@ class ProjectCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
             # Get portfolio and attach to form
             portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
             form.instance.profile = portfolio
+            
+            # Ensure category is set (default to OTHER if not detected)
+            if not form.cleaned_data.get('category'):
+                form.instance.category = 'OTHER'
+            
             self.object = form.save()
             
             # Handle multiple file uploads for the gallery (images and PDFs)
@@ -515,6 +520,10 @@ class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
 
     def form_valid(self, form):
         with transaction.atomic():
+            # Ensure category is set (default to OTHER if not detected)
+            if not form.cleaned_data.get('category'):
+                form.instance.category = 'OTHER'
+            
             self.object = form.save()
             
             # Handle adding new gallery files (images and PDFs)
