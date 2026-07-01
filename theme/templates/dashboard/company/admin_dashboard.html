@@ -182,25 +182,20 @@
     }
     .btn-company-secondary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08); background: #f1f5f9; }
 
-    /* MOBILE PERSONAL PROFILE BUTTON - Bold & Prominent */
-    @media (max-width: 767px) {
-        .btn-personal-profile-mobile {
-            background: linear-gradient(135deg, #0A66C2, #0856A8) !important;
-            color: #ffffff !important;
-            border: none !important;
-            font-weight: 800 !important;
-            box-shadow: 0 4px 14px rgba(10, 102, 194, 0.35) !important;
-        }
-        .btn-personal-profile-mobile:hover {
-            background: linear-gradient(135deg, #0856A8, #064698) !important;
-            box-shadow: 0 6px 18px rgba(10, 102, 194, 0.45) !important;
-            transform: translateY(-2px);
-        }
-        .btn-personal-profile-mobile:active {
-            transform: translateY(0) !important;
-            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.2) !important;
-        }
+    /* Bold Personal Profile Button - matching Manage Company style */
+    .btn-company-secondary.btn-personal-profile {
+        font-weight: 900 !important;
+        color: #0A66C2 !important;
+        border-color: #0A66C2 !important;
+        background: #EFF6FF !important;
     }
+    .btn-company-secondary.btn-personal-profile:hover {
+        color: #0856A8 !important;
+        border-color: #0856A8 !important;
+        background: #E0F2FE !important;
+        box-shadow: 0 6px 20px rgba(10, 102, 194, 0.25) !important;
+    }
+
 
     /* ACTION TEXT BUTTONS - ENHANCED */
     .btn-manage-text {
@@ -242,8 +237,8 @@
     .cover-placeholder-01 {
         display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
     }
-    .cover-placeholder-01 .glow-tr { position: absolute; top: -30%; right: -20%; width: 80%; height: 160%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
-    .cover-placeholder-01 .glow-bl { position: absolute; bottom: -30%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
 
     .logo-box {
         display: flex; align-items: center; justify-content: center; width: 124px; height: 124px;
@@ -284,8 +279,8 @@
                     <img src="{{ company.cover_image.url }}" class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]" alt="Cover">
                 {% else %}
                     <div class="cover-placeholder-01">
-                        <div class="glow-tr"></div>
-                        <div class="glow-bl"></div>
+                        <div class="glow-left"></div>
+                        <div class="glow-right"></div>
                     </div>
                 {% endif %}
 
@@ -346,11 +341,11 @@
 
                     <!-- Actions Column -->
                     <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
-                        <a href="{% url 'dashboard' %}" class="btn-company-secondary btn-personal-profile-mobile w-full sm:w-auto">
+                        <a href="{% url 'dashboard' %}" class="btn-company-secondary btn-personal-profile w-full sm:w-auto">
                             <i data-lucide="user" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Personal Profile" %}</span>
                         </a>
-                        <a href="{% url 'company_public_profile' company.slug %}" class="btn-company-primary w-full sm:w-auto !bg-[linear-gradient(135deg,#0f172a,#1e293b)] hover:!bg-[linear-gradient(135deg,#000000,#0f172a)] !shadow-slate-900/30">
+                        <a href="{% url 'company_public_profile' company.slug %}" class="btn-company-primary w-full sm:w-auto">
                             <i data-lucide="external-link" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Company Public Profile" %}</span>
                         </a>
