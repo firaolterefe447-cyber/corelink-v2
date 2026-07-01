@@ -576,15 +576,12 @@
         </section>
         {% endif %}
 
-        <!-- SPLIT CONTENT SECTIONS -->
-        {% if content_posts %}
-
         <!-- GOALS -->
+        {% if vision_blocks %}
         <section id="goals" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">My Goal</h2>
             <div class="grid gap-8">
-                {% for post in content_posts %}
-                    {% if post.post_type == 'VISION_BLOCK' %}
+                {% for post in vision_blocks %}
                     <article class="p-8 md:p-12 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_15px_40px_rgba(10,102,194,0.15)] text-white relative overflow-hidden group">
                         <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] md:text-[140px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
                         <div class="relative z-10">
@@ -599,10 +596,10 @@
                             {% endif %}
                         </div>
                     </article>
-                    {% endif %}
                 {% endfor %}
             </div>
         </section>
+        {% endif %}
 
         <!-- THOUGHTS -->
         {% if essays %}
@@ -628,11 +625,11 @@
         {% endif %}
 
         <!-- PROGRESS -->
+        {% if progress_logs %}
         <section id="progress" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Daily Progress</h2>
             <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
-                {% for post in content_posts %}
-                    {% if post.post_type != 'VISION_BLOCK' and post.post_type != 'ESSAY' %}
+                {% for post in progress_logs %}
                     <article class="relative group">
                         <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
 
@@ -650,11 +647,9 @@
                         </div>
                         {% endif %}
                     </article>
-                    {% endif %}
                 {% endfor %}
             </div>
         </section>
-
         {% endif %}
 
         <!-- LANGUAGES -->
@@ -961,10 +956,13 @@
     }
 
     function smartBack() {
-        if (window.history.length > 1) {
+        // Use document.referrer for robust navigation
+        if (document.referrer && document.referrer !== window.location.href) {
+            window.location.href = document.referrer;
+        } else if (window.history.length > 1) {
             window.history.back();
         } else {
-            // Fallback to dashboard if no history
+            // Fallback to dashboard
             window.location.href = "{% url 'dashboard' %}";
         }
     }
@@ -988,12 +986,8 @@
             }
         });
 
-        // Hide Empty Split Content Sections
-        document.querySelectorAll('.content-section-wrapper').forEach(section => {
-            if (section.querySelectorAll('article').length === 0) {
-                section.style.display = 'none';
-            }
-        });
+        // REMOVED: Hide Empty Split Content Sections
+        // Django conditionals handle this server-side. JS hiding was interfering with proper rendering.
 
         // BULLETPROOF REVEAL ANIMATIONS
         // The elements are fully visible by default.

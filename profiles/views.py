@@ -219,6 +219,8 @@ def public_profile_view(request, identifier):
         'projects': profile.projects.all().prefetch_related('gallery'),
         'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
         'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY'),
+        'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK'),
+        'progress_logs': profile.content_posts.filter(visibility='PUBLIC').exclude(post_type__in=['VISION_BLOCK', 'ESSAY']),
 
         # 🔥 THE NEW FOCUS HISTORY FEED
         'right_now_posts': profile.right_now_posts.filter(
