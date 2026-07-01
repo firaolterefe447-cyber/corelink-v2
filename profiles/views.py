@@ -212,15 +212,15 @@ def public_profile_view(request, identifier):
         'headlines': profile.headlines.all(),
         'skills': profile.skills.all(),
         'languages': profile.languages.all(),
-        'credentials': profile.credentials.all(),
+        'credentials': profile.credentials.all().order_by('-issue_date'),
         'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
 
         # Assets & Content
         'projects': profile.projects.all().prefetch_related('gallery'),
         'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
-        'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY'),
-        'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK'),
-        'progress_logs': profile.content_posts.filter(visibility='PUBLIC').exclude(post_type__in=['VISION_BLOCK', 'ESSAY']),
+        'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY').order_by('-created_at'),
+        'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK').order_by('-created_at'),
+        'progress_logs': profile.content_posts.filter(visibility='PUBLIC').exclude(post_type__in=['VISION_BLOCK', 'ESSAY']).order_by('-created_at'),
 
         # 🔥 THE NEW FOCUS HISTORY FEED
         'right_now_posts': profile.right_now_posts.filter(

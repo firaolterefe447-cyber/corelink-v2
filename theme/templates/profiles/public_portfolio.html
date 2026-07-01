@@ -125,6 +125,10 @@
     .reveal-on-scroll.js-hiding:not(.is-visible) { opacity: 0; transform: translateY(30px); }
     .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Mobile-safe text rendering */
+    .text-break-words { overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
+    .text-break-words p { overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
 </style>
 
 <!-- =========================================================================
@@ -507,10 +511,12 @@
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Credentials</h2>
             <div class="grid md:grid-cols-2 gap-6 md:gap-8">
                 {% for cred in credentials %}
-                <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium flex flex-col">
+                <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium flex flex-col text-break-words">
                     <div class="relative z-20 flex flex-col h-full">
                         <div class="flex flex-wrap items-center gap-3 mb-5">
+                            {% if cred.issuer %}
                             <span class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ cred.issuer }}</span>
+                            {% endif %}
                             {% if cred.issue_date %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
                         </div>
 
@@ -587,7 +593,7 @@
                         <div class="relative z-10">
                             <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-6 shadow-sm">Vision</span>
                             <h3 class="text-[22px] md:text-[30px] font-serif-title font-bold mb-5 md:mb-6 leading-tight">{{ post.title }}</h3>
-                            <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] md:max-w-[85%] whitespace-pre-line">{{ post.content }}</p>
+                            <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] md:max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
 
                             {% if post.media_proof %}
                             <div class="mt-8 md:mt-10 rounded-xl overflow-hidden border border-white/10 shadow-inner max-w-2xl">
@@ -613,7 +619,7 @@
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                         </div>
                         {% endif %}
-                        <div class="p-6 md:p-8 flex-1 flex flex-col">
+                        <div class="p-6 md:p-8 flex-1 flex flex-col text-break-words">
                             <span class="text-[9.5px] md:text-[10.5px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
                             <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
                             <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
@@ -639,7 +645,7 @@
                         </div>
 
                         <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2.5 transition-colors group-hover:text-[#0A66C2]">{{ post.title }}</h4>
-                        <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.content }}</p>
+                        <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%] text-break-words">{{ post.content }}</p>
 
                         {% if post.media_proof %}
                         <div class="mt-5 md:mt-6 max-w-[24rem] h-48 md:h-56 rounded-[1.5rem] overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm md:group-hover:shadow-md transition-all duration-500 md:group-hover:-translate-y-1.5">
@@ -1000,7 +1006,7 @@
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.01, rootMargin: '50px' });
 
             document.querySelectorAll('.reveal-on-scroll').forEach(el => {
                 // By adding 'js-hiding', we tell CSS to make it opacity 0.
