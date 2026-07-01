@@ -23,7 +23,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.core.exceptions import PermissionDenied
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from django.db.models import Q
 
 # Custom Models & Forms
@@ -35,7 +35,7 @@ from profiles.models.new_unified_profile import (
 )
 from profiles.models import (
     Company, CompanyMember, CompanyService, ServiceGalleryImage,
-    CompanyNews, NewsGalleryImage, CompanyMilestone, CompanySocialLink, CompanyContactMethod
+    CompanyNews, NewsGalleryImage, CompanyMilestone, CompanySocialLink, CompanyContactMethod, CompanyInvitation
 )
 from profiles.forms import (
     UserProfileForm, ProfileHeadlineForm, SkillForm, CredentialForm, PortfolioProjectForm,
@@ -1095,6 +1095,12 @@ class CompanyDashboardView(CompanyContextMixin, DetailView):
     def get_object(self):
         return self.get_company()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        company = self.get_object()
+        context['active_members'] = company.members.filter(is_active=True).select_related('user')
+        return context
+
 
 class CompanyEditView(LoginRequiredMixin, UpdateView):
     """Class-based view for editing a company profile, perfectly matching urls.py."""
@@ -1218,8 +1224,8 @@ def company_team_manage(request, slug):
     """Handles adding new team members to the company."""
     company = get_object_or_404(Company, slug=slug)
 
-    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role='OWNER').exists():
-        raise PermissionDenied("Only the Company Owner can manage the team.")
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role__in=['OWNER', 'ADMIN']).exists():
+        raise PermissionDenied("Only Company Owners and Admins can manage the team.")
 
     if request.method == 'POST':
         form = AddCompanyMemberForm(request.POST)
@@ -1258,8 +1264,8 @@ def company_team_remove(request, slug, member_id):
     """Revokes active access for a team member and sets them to ALUMNI."""
     company = get_object_or_404(Company, slug=slug)
 
-    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role='OWNER').exists():
-        raise PermissionDenied("Only the Company Owner can revoke access.")
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role__in=['OWNER', 'ADMIN']).exists():
+        raise PermissionDenied("Only Company Owners and Admins can revoke access.")
 
     member = get_object_or_404(CompanyMember, id=member_id, company=company)
 
@@ -1272,6 +1278,307 @@ def company_team_remove(request, slug, member_id):
         messages.success(request, "Revoked team member access successfully.")
 
     return redirect('company_team_manage', slug=company.slug)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_team_invite(request, slug):
+    """Send invitation to join company team via profile URL, phone, or direct user."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    company = get_object_or_404(Company, slug=slug)
+    logger.info(f"company_team_invite called for company {slug} by user {request.user}")
+
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role__in=['OWNER', 'ADMIN']).exists():
+        logger.error(f"Permission denied for user {request.user} on company {company.name}")
+        raise PermissionDenied("Only Company Owners and Admins can send invitations.")
+
+    if request.method == 'POST':
+        form = AddCompanyMemberForm(request.POST)
+        is_valid = form.is_valid()
+        logger.info(f"Form submitted. Valid: {is_valid}")
+        if not is_valid:
+            logger.error(f"Form errors: {form.errors}")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            return redirect('company_team_manage', slug=company.slug)
+        if is_valid:
+            raw_input = form.cleaned_data['user_identifier'].strip()
+            role = form.cleaned_data['role']
+            job_title = form.cleaned_data['job_title']
+
+            target_user = None
+            invitation_type = None
+            identifier = None
+
+            # Check if input is a profile URL
+            if raw_input.startswith('http'):
+                # Extract username from URL
+                from urllib.parse import urlparse
+                parsed = urlparse(raw_input)
+                path_parts = parsed.path.strip('/').split('/')
+                if len(path_parts) >= 2 and path_parts[0] == 'u':
+                    username = path_parts[1]
+                    target_user = CustomUser.objects.filter(username=username).first()
+                    if target_user:
+                        invitation_type = 'profile_url'
+                        identifier = raw_input
+
+            # If not found via URL, try phone search
+            if not target_user:
+                search_variations = [raw_input.replace(" ", "")]
+                if raw_input.startswith('0'):
+                    search_variations.append(f"+251{raw_input[1:]}")
+                elif raw_input.startswith('+251'):
+                    search_variations.append(f"0{raw_input[4:]}")
+
+                target_user = CustomUser.objects.filter(
+                    Q(corelink_id=raw_input) | Q(phone_number__in=search_variations) | Q(email__iexact=raw_input)
+                ).first()
+
+                if target_user:
+                    invitation_type = 'phone'
+                    identifier = raw_input
+
+            # If user exists, create invitation
+            if target_user:
+                # Check if already a member
+                is_member = CompanyMember.objects.filter(company=company, user=target_user, is_active=True).exists()
+                if is_member:
+                    messages.error(request, f"{target_user.full_name} is already a team member.")
+                    return redirect('company_team_manage', slug=company.slug)
+
+                # Check if pending invitation exists
+                has_pending = CompanyInvitation.objects.filter(
+                    company=company, invited_user=target_user, status=CompanyInvitation.Status.PENDING
+                ).exists()
+                if has_pending:
+                    # Send a reminder notification about the existing invitation
+                    from workspace.models import ChatMessage
+                    # Get the pending invitation
+                    pending_invitation = CompanyInvitation.objects.filter(
+                        company=company, invited_user=target_user, status=CompanyInvitation.Status.PENDING
+                    ).first()
+                    try:
+                        if pending_invitation:
+                            chat_msg = ChatMessage.objects.create(
+                                sender=request.user,
+                                receiver=target_user,
+                                body=f"[INVITATION:{pending_invitation.id}] Reminder: You have a pending invitation to join {company.name} as {job_title}."
+                            )
+                            logger.info(f"Created reminder ChatMessage {chat_msg.id} for existing invitation")
+                        else:
+                            chat_msg = ChatMessage.objects.create(
+                                sender=request.user,
+                                receiver=target_user,
+                                body=f"Reminder: You have a pending invitation to join {company.name} as {job_title}."
+                            )
+                    except Exception as e:
+                        logger.error(f"Failed to create reminder chat notification: {e}", exc_info=True)
+                    
+                    messages.warning(request, f"An invitation is already pending for {target_user.full_name}. A reminder has been sent to their inbox.")
+                    return redirect('company_admin_dashboard', slug=company.slug)
+
+                # Create invitation
+                from django.utils import timezone
+                from datetime import timedelta
+                logger.info(f"Creating invitation for user {target_user} to company {company.name}")
+                invitation = CompanyInvitation.objects.create(
+                    company=company,
+                    invited_user=target_user,
+                    profile_url=identifier if invitation_type == 'profile_url' else None,
+                    phone=identifier if invitation_type == 'phone' else None,
+                    role=role,
+                    job_title=job_title,
+                    expires_at=timezone.now() + timedelta(days=7)
+                )
+                logger.info(f"CompanyInvitation created: {invitation.id}")
+                
+                # Create inbox notification for the invited user
+                from workspace.models import ChatMessage
+                logger.info(f"Attempting to create ChatMessage from {request.user} to {target_user}")
+                try:
+                    chat_msg = ChatMessage.objects.create(
+                        sender=request.user,
+                        receiver=target_user,
+                        body=f"[INVITATION:{invitation.id}] You have been invited to join {company.name} as {job_title}."
+                    )
+                    logger.info(f"SUCCESS: Created ChatMessage {chat_msg.id} from {request.user} to {target_user} for company invitation")
+                except Exception as e:
+                    # Log error but don't fail the invitation
+                    logger.error(f"FAILED to create chat notification for invitation: {e}", exc_info=True)
+                
+                messages.success(request, f"Invitation sent to {target_user.full_name}! They will receive a notification in their inbox.")
+                logger.info(f"Redirecting to company_admin_dashboard for {company.slug}")
+                return redirect('company_admin_dashboard', slug=company.slug)
+
+            else:
+                messages.error(request, "User not found. Please verify the profile URL, phone number, or email.")
+                return redirect('company_team_manage', slug=company.slug)
+        else:
+            # Form validation failed
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            return redirect('company_team_manage', slug=company.slug)
+
+    return redirect('company_team_manage', slug=company.slug)
+
+
+@login_required
+@require_http_methods(["POST"])
+def accept_company_invitation(request, invitation_id):
+    """Accept a company invitation and add user as team member."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    invitation = get_object_or_404(CompanyInvitation, id=invitation_id, invited_user=request.user)
+    
+    if invitation.status != CompanyInvitation.Status.PENDING:
+        messages.error(request, "This invitation is no longer valid.")
+        return redirect('chat_hub')
+    
+    if invitation.is_expired():
+        invitation.status = CompanyInvitation.Status.EXPIRED
+        invitation.save()
+        messages.error(request, "This invitation has expired.")
+        return redirect('chat_hub')
+    
+    # Add user as company member
+    CompanyMember.objects.create(
+        company=invitation.company,
+        user=request.user,
+        role=invitation.role,
+        job_title=invitation.job_title,
+        is_active=True
+    )
+    
+    # Update invitation status
+    invitation.status = CompanyInvitation.Status.ACCEPTED
+    invitation.save()
+    
+    # Send confirmation message to the inviter
+    from workspace.models import ChatMessage
+    inviter = invitation.company.get_owner_or_admin()
+    if inviter:
+        try:
+            ChatMessage.objects.create(
+                sender=request.user,
+                receiver=inviter,
+                body=f"{request.user.full_name} has accepted the invitation to join {invitation.company.name} as {invitation.job_title}."
+            )
+        except Exception as e:
+            logger.error(f"Failed to send acceptance notification: {e}")
+    
+    messages.success(request, f"You have successfully joined {invitation.company.name} as {invitation.job_title}!")
+    return redirect('company_admin_dashboard', slug=invitation.company.slug)
+
+
+@login_required
+@require_http_methods(["POST"])
+def decline_company_invitation(request, invitation_id):
+    """Decline a company invitation."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    invitation = get_object_or_404(CompanyInvitation, id=invitation_id, invited_user=request.user)
+    
+    if invitation.status != CompanyInvitation.Status.PENDING:
+        messages.error(request, "This invitation is no longer valid.")
+        return redirect('chat_hub')
+    
+    # Update invitation status
+    invitation.status = CompanyInvitation.Status.DECLINED
+    invitation.save()
+    
+    # Send notification to the inviter
+    from workspace.models import ChatMessage
+    inviter = invitation.company.get_owner_or_admin()
+    if inviter:
+        try:
+            ChatMessage.objects.create(
+                sender=request.user,
+                receiver=inviter,
+                body=f"{request.user.full_name} has declined the invitation to join {invitation.company.name}."
+            )
+        except Exception as e:
+            logger.error(f"Failed to send decline notification: {e}")
+    
+    messages.info(request, f"You have declined the invitation to join {invitation.company.name}.")
+    return redirect('chat_hub')
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_team_edit(request, slug, member_id):
+    """Edit team member role and job title."""
+    company = get_object_or_404(Company, slug=slug)
+
+    if not CompanyMember.objects.filter(company=company, user=request.user, is_active=True, role__in=['OWNER', 'ADMIN']).exists():
+        raise PermissionDenied("Only Company Owners and Admins can edit team members.")
+
+    member = get_object_or_404(CompanyMember, id=member_id, company=company)
+
+    if request.method == 'POST':
+        member.role = request.POST.get('role')
+        member.job_title = request.POST.get('job_title')
+        member.save()
+        messages.success(request, f"Team member updated successfully.")
+        return redirect('company_team_manage', slug=company.slug)
+
+    return render(request, 'dashboard/company/team_edit.html', {
+        'company': company,
+        'member': member,
+        'role_choices': CompanyMember.Role.choices
+    })
+
+
+@login_required
+def search_user_for_invitation(request):
+    """API endpoint to search users by profile URL, phone, or email for invitation preview."""
+    query = request.GET.get('q', '').strip()
+    
+    if not query:
+        return JsonResponse({'found': False})
+    
+    target_user = None
+    
+    # Check if input is a profile URL
+    if query.startswith('http'):
+        from urllib.parse import urlparse
+        parsed = urlparse(query)
+        path_parts = parsed.path.strip('/').split('/')
+        if len(path_parts) >= 2 and path_parts[0] == 'u':
+            username = path_parts[1]
+            target_user = CustomUser.objects.filter(username=username).first()
+    
+    # If not found via URL, try phone search
+    if not target_user:
+        search_variations = [query.replace(" ", "")]
+        if query.startswith('0'):
+            search_variations.append(f"+251{query[1:]}")
+        elif query.startswith('+251'):
+            search_variations.append(f"0{query[4:]}")
+        
+        target_user = CustomUser.objects.filter(
+            Q(corelink_id=query) | Q(phone_number__in=search_variations) | Q(email__iexact=query)
+        ).first()
+    
+    if target_user:
+        return JsonResponse({
+            'found': True,
+            'user': {
+                'id': str(target_user.id),
+                'full_name': target_user.full_name,
+                'avatar_url': target_user.get_avatar_url,
+                'email': target_user.email,
+                'phone': target_user.phone_number,
+            }
+        })
+    
+    return JsonResponse({'found': False})
 
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
@@ -1582,12 +1889,11 @@ def profile_og_image(request, identifier):
         if font_path:
             font_name_obj = ImageFont.truetype(font_path, 80)
             font_title_obj = ImageFont.truetype(font_path, 40)
-            print("SUCCESS: Inter Font Loaded!")
         else:
             raise Exception("Font file missing from server")
 
     except Exception as e:
-        print("WARNING: Font failed to load - " + str(e))
+        logger.warning(f"Font failed to load: {e}")
         # Absolute worst-case scenario (Tiny text)
         font_name_obj = ImageFont.load_default()
         font_title_obj = ImageFont.load_default()

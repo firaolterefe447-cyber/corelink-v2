@@ -30,5 +30,6 @@ from .company import (
     CompanyMilestone,
     CompanyNews,
     NewsGalleryImage,
+    CompanyInvitation,
 )
 from .founder import FounderProfile

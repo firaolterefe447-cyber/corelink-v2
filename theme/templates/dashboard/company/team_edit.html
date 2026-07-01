@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block navbar %}
+<div class="fixed top-8 left-0 right-0 z-[60] flex justify-center pointer-events-none px-4">
+    <div class="pointer-events-auto flex items-center p-1.5 bg-white/80 backdrop-blur-xl border border-slate-200/60 shadow-lg rounded-full">
+        <a href="{% url 'company_team_manage' company.slug %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Team" %}
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F0F4F8;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+        position: relative; transition: border-color 0.2s ease;
+    }
+    @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
+    .bento-card:hover { border-color: rgba(203, 213, 225, 1); }
+
+    .premium-input {
+        width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.75rem;
+        background: #ffffff; transition: border-color 0.2s ease, box-shadow 0.2s ease; color: #0f172a;
+        font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
+    }
+    .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
+
+    .btn-primary {
+        height: 44px; padding: 0 1.25rem; border-radius: 0.75rem; font-size: 14.5px; font-weight: 700;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+        background: linear-gradient(135deg, #0A66C2, #0856A8); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.28);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 16px rgba(10, 102, 194, 0.38); transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(0); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); }
+
+    .btn-secondary {
+        height: 44px; padding: 0 1.25rem; border-radius: 0.75rem; font-size: 14.5px; font-weight: 700;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+        background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569;
+    }
+    .btn-secondary:hover {
+        background: #ffffff; color: #0F172A; border-color: #CBD5E1;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06); transform: translateY(-2px);
+    }
+</style>
+
+<div class="pt-32 pb-20 px-4 max-w-2xl mx-auto min-h-screen">
+    <div class="mb-8">
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">{% trans "Edit Team Member" %}</h1>
+        <p class="text-slate-500 font-medium mt-1">{% trans "Update role and job title for this team member." %}</p>
+    </div>
+
+    <!-- Member Info Card -->
+    <div class="bento-card p-6 mb-6 flex items-center gap-4">
+        <div class="w-16 h-16 rounded-full bg-slate-100 overflow-hidden shrink-0">
+            <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover" alt="{{ member.user.full_name }}">
+        </div>
+        <div>
+            <h3 class="font-bold text-slate-900 text-[18px] leading-tight">{{ member.user.full_name }}</h3>
+            <p class="text-[13px] font-semibold text-slate-500 mt-0.5">{{ member.user.email }}</p>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="bento-card p-6 md:p-8">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">{% trans "Job Title" %}</label>
+                <input type="text" name="job_title" value="{{ member.job_title }}" class="premium-input" required>
+                <p class="text-[11px] text-slate-400 mt-1.5">{% trans "The person's official role within the organization." %}</p>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">{% trans "Role" %}</label>
+                <select name="role" class="premium-input cursor-pointer">
+                    {% for value, label in role_choices %}
+                        <option value="{{ value }}" {% if member.role == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <p class="text-[11px] text-slate-400 mt-1.5">{% trans "Admins have full access to settings. Editors can only write news articles and update services." %}</p>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="{% url 'company_team_manage' company.slug %}" class="btn-secondary flex-1 sm:flex-none">
+                    <span class="pointer-events-none">{% trans "Cancel" %}</span>
+                </a>
+                <button type="submit" class="btn-primary flex-1 sm:flex-none">
+                    <i data-lucide="save" class="w-4 h-4 pointer-events-none"></i>
+                    <span class="pointer-events-none">{% trans "Save Changes" %}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", () => lucide.createIcons());</script>
+{% endblock %}

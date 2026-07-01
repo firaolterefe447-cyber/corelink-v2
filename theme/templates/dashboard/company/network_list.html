@@ -2,12 +2,86 @@
 {% load static i18n %}
 
 {% block navbar %}
-<!-- Sleek Floating Back Button -->
-<div class="fixed top-6 left-4 md:top-8 md:left-8 z-[100] pointer-events-none">
-    <a href="{% url 'company_admin_dashboard' company.slug %}" class="pointer-events-auto flex items-center gap-2.5 px-5 py-2.5 md:px-6 md:py-3 bg-white/90 backdrop-blur-xl border border-slate-200/80 shadow-[0_12px_30px_-8px_rgba(15,23,42,0.12)] rounded-[1.2rem] text-[13.5px] md:text-[14px] font-bold text-slate-600 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all hover:-translate-y-0.5 active:scale-95 group">
-        <i data-lucide="arrow-left" class="w-4.5 h-4.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
-        <span>{% trans "Back" %}</span>
-    </a>
+<!-- ==============================================
+     LEFT SIDEBAR NAVIGATION (PC) - MATCHING ADMIN DASHBOARD
+     ============================================== -->
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <div class="flex-1">
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+            </div>
+
+            <nav class="flex flex-col gap-1.5">
+                <!-- ACTIVE: My Company -->
+                <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="building" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "My Company" %}
+                </a>
+
+                {% if request.user.role == 'ADMIN' %}
+                <a href="{% url 'admin_curation' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-purple-50/80 hover:border-purple-100/50 text-purple-600 hover:text-purple-700 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-purple-50 border border-purple-100/50 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4 text-purple-600"></i></div>
+                    {% trans "Feed Curation" %}
+                </a>
+                {% endif %}
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
+            </button>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+    </div>
+    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
+    </button>
 </div>
 {% endblock navbar %}
 

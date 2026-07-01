@@ -129,6 +129,14 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
 
     # Team Management
     path('company/<slug:slug>/team/', views.company_team_manage, name='company_team_manage'),
+    path('company/<slug:slug>/team/invite/', views.company_team_invite, name='company_team_invite'),
+    path('company/<slug:slug>/team/<uuid:member_id>/edit/', views.company_team_edit, name='company_team_edit'),
+    path('company/<slug:slug>/team/<uuid:member_id>/remove/', views.company_team_remove, name='company_team_remove'),
+    path('api/search-user/', views.search_user_for_invitation, name='search_user_for_invitation'),
+    
+    # Invitation Accept/Decline
+    path('invitation/<uuid:invitation_id>/accept/', views.accept_company_invitation, name='accept_company_invitation'),
+    path('invitation/<uuid:invitation_id>/decline/', views.decline_company_invitation, name='decline_company_invitation'),
 
     # Company Services
     path('dashboard/company/services/', views.ServiceListView.as_view(), name='manage_services'),

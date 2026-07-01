@@ -231,6 +231,20 @@
         background: #f1f5f9;
     }
 
+    /* Bold Manage Company Button */
+    .btn-profile-secondary.btn-manage-company {
+        font-weight: 900 !important;
+        color: #0A66C2 !important;
+        border-color: #0A66C2 !important;
+        background: #EFF6FF !important;
+    }
+    .btn-profile-secondary.btn-manage-company:hover {
+        color: #0856A8 !important;
+        border-color: #0856A8 !important;
+        background: #E0F2FE !important;
+        box-shadow: 0 6px 20px rgba(10, 102, 194, 0.25) !important;
+    }
+
     /* ACTION TEXT BUTTONS */
     .btn-manage-text {
         height: 40px; padding: 0 1rem; border-radius: 0.75rem; background: #ffffff;
@@ -513,19 +527,26 @@
 
                     <!-- Actions Column -->
                     <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
-                        {% if user.role == 'FOUNDER' %}
-                            {% if company %}
-                                <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary w-full sm:w-auto">
-                                    <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
-                                    <span class="pointer-events-none">{% trans "Manage Company" %}</span>
-                                </a>
-                            {% else %}
-                                <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto">
-                                    <i data-lucide="plus-circle" class="w-4 h-4 pointer-events-none"></i>
-                                    <span class="pointer-events-none">{% trans "Add Company" %}</span>
-                                </a>
+                        {% with first_membership=request.user.company_memberships.first %}
+                            {% if user.role == 'FOUNDER' or first_membership %}
+                                {% if company %}
+                                    <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary btn-manage-company w-full sm:w-auto">
+                                        <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
+                                        <span class="pointer-events-none">{% trans "Manage Company" %}</span>
+                                    </a>
+                                {% elif first_membership %}
+                                    <a href="{% url 'company_admin_dashboard' first_membership.company.slug %}" class="btn-profile-secondary btn-manage-company w-full sm:w-auto">
+                                        <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
+                                        <span class="pointer-events-none">{% trans "Manage Company" %}</span>
+                                    </a>
+                                {% elif user.role == 'FOUNDER' %}
+                                    <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto">
+                                        <i data-lucide="plus-circle" class="w-4 h-4 pointer-events-none"></i>
+                                        <span class="pointer-events-none">{% trans "Add Company" %}</span>
+                                    </a>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
+                        {% endwith %}
 
                         {% if portfolio.slug %}
                             <a href="{% url 'public_profile' portfolio.slug %}" target="_blank" class="btn-profile-primary w-full sm:w-auto">

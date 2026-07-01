@@ -708,8 +708,16 @@ class CompanyMilestoneForm(TailwindFormMixin, forms.ModelForm):
 
 
 class AddCompanyMemberForm(TailwindFormMixin, forms.Form):
-    user_identifier = forms.CharField(label=_("Search User"), widget=forms.TextInput(attrs={'placeholder': 'Enter Email or Phone number...'}))
-    job_title = forms.CharField(max_length=100, label=_("Job Title"), help_text=_("The person's official role within the organization (e.g., 'Operations Manager' or 'Senior Accountant')."))
+    user_identifier = forms.CharField(
+        label=_("Search User"),
+        widget=forms.TextInput(attrs={'placeholder': 'Paste profile URL or phone number...'}),
+        help_text=_("Enter a public profile URL (corelink.com/u/username) or phone number.")
+    )
+    job_title = forms.CharField(
+        max_length=100,
+        label=_("Job Title"),
+        help_text=_("The person's official role within the organization (e.g., 'Operations Manager' or 'Senior Accountant').")
+    )
     role = forms.ChoiceField(
         choices=CompanyMember.Role.choices,
         initial=CompanyMember.Role.EDITOR,

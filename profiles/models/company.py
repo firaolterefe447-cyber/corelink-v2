@@ -93,6 +93,16 @@ class Company(TimeStampedModel):
     def __str__(self) -> str:
         return self.name
 
+    def get_owner_or_admin(self):
+        """Get the company owner or an admin for notifications."""
+        from profiles.models.company import CompanyMember
+        member = CompanyMember.objects.filter(
+            company=self,
+            is_active=True,
+            role__in=['OWNER', 'ADMIN']
+        ).first()
+        return member.user if member else None
+
 
 class CompanySocialLink(TimeStampedModel):
     # Add this line
@@ -266,3 +276,53 @@ class NewsGalleryImage(models.Model):
 
     def __str__(self) -> str:
         return f"Image for {self.news.title}"
+
+
+class CompanyInvitation(TimeStampedModel):
+    """Invitation system for adding team members to a company."""
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("Pending Acceptance")
+        ACCEPTED = "ACCEPTED", _("Accepted")
+        DECLINED = "DECLINED", _("Declined")
+        EXPIRED = "EXPIRED", _("Expired")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="invitations"
+    )
+    invited_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="company_invitations",
+        null=True,
+        blank=True,
+    )
+    email = models.EmailField(_("Email Address"), blank=True, null=True)
+    phone = models.CharField(_("Phone Number"), max_length=20, blank=True, null=True)
+    profile_url = models.URLField(_("Profile URL"), blank=True, null=True)
+
+    role = models.CharField(
+        max_length=15,
+        choices=CompanyMember.Role.choices,
+        default=CompanyMember.Role.EDITOR,
+    )
+    job_title = models.CharField(_("Job Title"), max_length=100)
+
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.PENDING, db_index=True
+    )
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "Company Invitation"
+        verbose_name_plural = "Company Invitations"
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        target = self.invited_user.full_name if self.invited_user else self.email or self.phone
+        return f"Invitation to {self.company.name} for {target}"
+
+    def is_expired(self) -> bool:
+        return timezone.now() > self.expires_at
