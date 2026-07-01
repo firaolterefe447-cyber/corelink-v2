@@ -605,11 +605,11 @@
         </section>
 
         <!-- THOUGHTS -->
+        {% if essays %}
         <section id="thoughts" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
             <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Industry Thoughts</h2>
             <div class="grid md:grid-cols-2 gap-6 md:gap-8">
-                {% for post in content_posts %}
-                    {% if post.post_type == 'ESSAY' %}
+                {% for post in essays %}
                     <article class="bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-sm flex flex-col card-hover-premium hover:border-[#0A66C2]/30">
                         {% if post.media_proof %}
                         <div class="h-40 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
@@ -622,10 +622,10 @@
                             <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
                         </div>
                     </article>
-                    {% endif %}
                 {% endfor %}
             </div>
         </section>
+        {% endif %}
 
         <!-- PROGRESS -->
         <section id="progress" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
@@ -961,7 +961,12 @@
     }
 
     function smartBack() {
-        window.history.back();
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Fallback to dashboard if no history
+            window.location.href = "{% url 'dashboard' %}";
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {

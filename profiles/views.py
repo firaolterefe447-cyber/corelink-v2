@@ -218,6 +218,7 @@ def public_profile_view(request, identifier):
         # Assets & Content
         'projects': profile.projects.all().prefetch_related('gallery'),
         'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
+        'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY'),
 
         # 🔥 THE NEW FOCUS HISTORY FEED
         'right_now_posts': profile.right_now_posts.filter(
