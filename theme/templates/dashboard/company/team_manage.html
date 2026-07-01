@@ -267,8 +267,9 @@
                     <!-- User Preview Card -->
                     <div id="userPreview" class="hidden mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-full bg-white border-2 border-blue-200 overflow-hidden shrink-0">
-                                <img id="previewAvatar" src="" class="w-full h-full object-cover" alt="">
+                            <div id="avatarContainer" class="w-14 h-14 rounded-full bg-white border-2 border-blue-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                <img id="previewAvatar" src="" class="w-full h-full object-cover hidden" alt="">
+                                <span id="avatarInitials" class="hidden font-black text-[#0A66C2] text-[20px] tracking-tight"></span>
                             </div>
                             <div class="flex-1">
                                 <h4 id="previewName" class="font-bold text-slate-900 text-[16px] leading-tight"></h4>
@@ -307,8 +308,8 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn-primary w-full sm:w-auto">
-                <i data-lucide="user-plus" class="w-4 h-4 pointer-events-none"></i>
+            <button type="submit" class="btn-company-primary w-full sm:w-auto text-[14px] sm:text-[15px] py-3 sm:py-3.5 px-6 sm:px-8 font-extrabold tracking-wide shadow-lg hover:shadow-xl transition-all duration-200">
+                <i data-lucide="user-plus" class="w-5 h-5 pointer-events-none mr-2"></i>
                 <span class="pointer-events-none">{% trans "Send Invitation" %}</span>
             </button>
         </form>
@@ -373,6 +374,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const userPreview = document.getElementById('userPreview');
     const notFoundMessage = document.getElementById('notFoundMessage');
     const previewAvatar = document.getElementById('previewAvatar');
+    const avatarContainer = document.getElementById('avatarContainer');
+    const avatarInitials = document.getElementById('avatarInitials');
     const previewName = document.getElementById('previewName');
     const previewEmail = document.getElementById('previewEmail');
     const previewPhone = document.getElementById('previewPhone');
@@ -409,7 +412,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             
             if (data.found) {
-                previewAvatar.src = data.user.avatar_url;
+                // Handle avatar - show image if available, otherwise show initials
+                if (data.user.avatar_url && data.user.avatar_url !== '' && data.user.avatar_url !== '/media/avatars/default.png') {
+                    previewAvatar.src = data.user.avatar_url;
+                    previewAvatar.classList.remove('hidden');
+                    avatarInitials.classList.add('hidden');
+                    avatarContainer.classList.remove('bg-gradient-to-br', 'from-blue-100', 'to-indigo-100');
+                } else {
+                    previewAvatar.classList.add('hidden');
+                    avatarInitials.classList.remove('hidden');
+                    // Get first name and create initials
+                    const firstName = data.user.full_name.split(' ')[0] || data.user.full_name;
+                    avatarInitials.textContent = firstName.charAt(0).toUpperCase();
+                    avatarContainer.classList.add('bg-gradient-to-br', 'from-blue-100', 'to-indigo-100');
+                }
+                
                 previewName.textContent = data.user.full_name;
                 previewEmail.textContent = data.user.email;
                 previewPhone.textContent = data.user.phone || '';
