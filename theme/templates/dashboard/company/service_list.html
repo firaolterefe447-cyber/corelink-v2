@@ -86,9 +86,6 @@
 {% endblock navbar %}
 
 {% block content %}
-<!-- Universal Page Loader (Matched to Dashboard) -->
-<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-400 via-[#0A66C2] to-blue-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -97,189 +94,337 @@
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --blue: #0A66C2;
     }
-    * { -webkit-tap-highlight-color: transparent; }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
+    /* MATCH MAIN PAGE BACKGROUND */
     body {
         font-family: var(--font-body);
         background-color: #F0F4F8;
         background-image:
-            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
-            radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+            radial-gradient(circle at 0% 0%, rgba(219,234,254,0.5) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241,245,249,0.6) 0%, transparent 50%);
         background-attachment: fixed;
         color: #0F172A;
         -webkit-font-smoothing: antialiased;
     }
 
-    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    /* Bento Cards */
+    /* =========================================
+       PRIMARY BUTTON (Matches Main Page)
+       ========================================= */
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #0952A5, #073E89);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
+        transition: all 0.2s ease-out;
+    }
+    .btn-primary-gradient:hover {
+        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
+        transform: translateY(-2px);
+    }
+    .btn-primary-gradient:active {
+        transform: translateY(0);
+        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Premium Buttons */
+    .btn-profile-primary {
+        background: linear-gradient(135deg, #0952A5, #073E89);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
+        height: 42px; padding: 0 1.15rem; border-radius: 0.75rem;
+        font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+    }
+    .btn-profile-primary:hover {
+        box-shadow: 0 8px 20px rgba(9, 82, 165, 0.4);
+        transform: translateY(-3px);
+    }
+    .btn-profile-primary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); }
+
+    .btn-profile-secondary {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        color: #475569;
+        height: 40px; padding: 0 1rem; border-radius: 0.75rem;
+        font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+    }
+    .btn-profile-secondary:hover {
+        background: #ffffff;
+        color: #0F172A;
+        border-color: #CBD5E1;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+        transform: translateY(-3px);
+    }
+    .btn-profile-secondary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08); background: #f1f5f9; }
+
+    .btn-add-solid {
+        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem;
+        background: #0A66C2; color: #ffffff;
+        font-size: 13px; font-weight: 800; border: none;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none; white-space: nowrap;
+        box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3); cursor: pointer;
+    }
+    .btn-add-solid:hover { background: #0856A8; box-shadow: 0 4px 12px rgba(10,102,194,0.4); transform: translateY(-1px); }
+    .btn-add-solid:active { transform: translateY(0); }
+
+    /* BENTO CARD */
     .bento-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1.5rem;
-        box-shadow: 0 24px 60px -22px rgba(15, 23, 42, 0.12);
+        border-radius: 1rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
+    .bento-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Typography Scale */
+    .text-h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.4s ease forwards; }
+
+    /* LAYOUT: Matching the Dashboard's canvas */
+    .app-canvas {
+        width: 100%;
         position: relative;
         z-index: 10;
-        transition: box-shadow 0.4s var(--ease-magic), border-color 0.4s var(--ease-magic);
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
-    .bento-card:hover { box-shadow: 0 30px 60px -20px rgba(10, 102, 194, 0.1), 0 4px 6px -2px rgba(10, 102, 194, 0.05); border-color: rgba(203, 213, 225, 1); }
-
-    /* Primary CoreLink Blue Add Button */
-    .btn-add-solid {
-        position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
-        height: 48px; padding: 0 1.5rem; border-radius: 1rem; background: #0A66C2; color: #ffffff;
-        font-size: 14px; font-weight: 900; letter-spacing: 0.02em; border: none;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 8px 20px -6px rgba(10, 102, 194, 0.4);
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
     }
-    .btn-add-solid:hover { background: #0856A8; transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(10, 102, 194, 0.5); }
-    .btn-add-solid:active { transform: scale(0.96); box-shadow: 0 2px 8px -2px rgba(10, 102, 194, 0.3); }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3rem; }
+    }
+    @media (min-width: 1280px) {
+        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
+    }
 
-    /* Animations */
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    .drawer-closed { transform: translateY(100%); }
+    body.body-lock { overflow: hidden !important; touch-action: none !important; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<main class="min-h-screen relative z-10 pt-28 pb-20 px-5 sm:px-6 lg:px-8 max-w-[1040px] mx-auto anim-smooth-appear">
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} anim-smooth-appear">
 
-    <!-- PAGE HEADER -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-10 pl-2">
-        <div class="flex-1">
-            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-black text-slate-900 tracking-tight leading-none mb-3 font-heading">
-                {% trans "Manage Services" %}
-            </h1>
-            <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-relaxed max-w-2xl">
-                {% trans "Add, edit, or remove the core products and services offered by" %} <strong class="text-slate-800">{{ company.name }}</strong>. {% trans "Keep this list updated to attract the right partners and clients." %}
-            </p>
-        </div>
-        <a href="{% url 'service_create' %}" class="btn-add-solid shrink-0 w-full md:w-auto">
-            <i data-lucide="plus" class="w-5 h-5 pointer-events-none"></i>
-            <span class="pointer-events-none">{% trans "Add New Service" %}</span>
-        </a>
-    </div>
+    <!-- WRAPPER TO KEEP IT READABLE & CENTERED -->
+    <div class="max-w-4xl mx-auto w-full relative z-10">
 
-    <!-- MAIN BENTO CONTAINER -->
-    <div class="bento-card p-4 md:p-6 lg:p-8 flex flex-col gap-4">
-
-        {% for service in services %}
-        <!-- Premium Service Row -->
-        <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-5 p-5 md:p-6 rounded-[1.25rem] md:rounded-[1.5rem] bg-white border border-slate-200/80 hover:border-blue-300 hover:shadow-[0_12px_30px_-12px_rgba(10,102,194,0.2)] transition-all duration-400 ease-out z-10 hover:z-20">
-
-            <div class="flex-1 pr-4">
-                <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <h3 class="font-bold text-slate-900 text-[16px] md:text-[18px] tracking-tight">{{ service.name }}</h3>
-
-                    {% if service.is_active %}
-                        <!-- Semantic status colors are okay for badges, keeps it clear -->
-                        <span class="px-2.5 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5 shadow-sm">
-                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                            {% trans "Active" %}
-                        </span>
-                    {% else %}
-                        <span class="px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5 shadow-sm">
-                            <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                            {% trans "Hidden" %}
-                        </span>
-                    {% endif %}
-                </div>
-                <p class="text-[13.5px] md:text-[14px] text-slate-500 font-medium line-clamp-2 leading-[1.7] max-w-3xl">
-                    {{ service.description }}
-                </p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2.5 shrink-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-slate-100">
-                <a href="{% url 'service_edit' service.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-11 sm:h-12 w-full sm:w-12 rounded-[0.85rem] sm:rounded-[1rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-white hover:border-[#0A66C2] hover:text-[#0A66C2] hover:shadow-md transition-all duration-300" title="{% trans 'Edit Service' %}">
-                    <i data-lucide="edit-2" class="w-4.5 h-4.5"></i>
-                </a>
-                <a href="{% url 'service_delete' service.pk %}" class="flex-1 sm:flex-none flex items-center justify-center h-11 sm:h-12 w-full sm:w-12 rounded-[0.85rem] sm:rounded-[1rem] bg-slate-50 border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 hover:shadow-md transition-all duration-300" title="{% trans 'Delete Service' %}">
-                    <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
-                </a>
-            </div>
-        </div>
-
-        {% empty %}
-        <!-- Empty State -->
-        <div class="flex flex-col items-center justify-center p-12 md:p-16 text-center group">
-            <div class="w-20 h-20 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[1.5rem] flex items-center justify-center mb-5 text-slate-400 shadow-sm group-hover:border-blue-300 group-hover:text-[#0A66C2] group-hover:bg-blue-50 transition-colors">
-                <i data-lucide="package" class="w-8 h-8"></i>
-            </div>
-            <h3 class="text-[18px] md:text-[20px] font-black text-slate-900 mb-2 font-heading tracking-tight">{% trans "No Services Yet" %}</h3>
-            <p class="text-[14px] text-slate-500 font-medium max-w-sm mx-auto mb-8 leading-relaxed">
-                {% trans "Add your first product or service to show the network exactly what value your business provides." %}
-            </p>
+        <!-- Header Controls -->
+        <div class="mb-6 lg:mb-8 flex items-center justify-between">
+            <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Dashboard" %}
+            </a>
             <a href="{% url 'service_create' %}" class="btn-add-solid">
-                <i data-lucide="plus" class="w-5 h-5 pointer-events-none"></i>
-                <span class="pointer-events-none">{% trans "Create First Service" %}</span>
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "New Service" %}
             </a>
         </div>
-        {% endfor %}
 
+        <!-- HEADER TITLE -->
+        <div class="mb-6 lg:mb-8">
+            <h1 class="text-h2 text-slate-900 break-words w-full mb-2">
+                {% trans "Manage Services" %}
+            </h1>
+            <p class="text-[13px] text-slate-500 font-medium">
+                {% trans "Add, edit, or delete your company services." %}
+            </p>
+        </div>
+
+        <!-- ==============================================
+             CLEAN CARD LIST
+             ============================================== -->
+        <div class="space-y-4">
+
+            {% for service in services %}
+                <div class="bento-card p-5 md:p-6 flex flex-col">
+
+                    <!-- Card Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            {% if service.is_active %}
+                                <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                    {% trans "Active" %}
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-600 rounded-md text-[11px] font-bold uppercase tracking-wider">
+                                    {% trans "Hidden" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex items-center gap-1.5">
+                            <a href="{% url 'service_edit' service.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-[#0A66C2] text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-[#0A66C2]">
+                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <a href="{% url 'service_delete' service.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-rose-500 text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-rose-500">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <h3 class="text-[16px] md:text-[17px] font-bold text-slate-900 mb-2 leading-snug">
+                        {{ service.name }}
+                    </h3>
+                    {% if service.description %}
+                        <p class="text-[14px] text-slate-600 leading-[1.7] mb-4 font-medium whitespace-pre-line">
+                            {{ service.description }}
+                        </p>
+                    {% endif %}
+
+                </div>
+            {% empty %}
+                <!-- CLEAN EMPTY STATE -->
+                <div class="bento-card p-8 md:p-12 text-center flex flex-col items-center justify-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
+                        <i data-lucide="package" class="w-8 h-8 text-[#0A66C2]"></i>
+                    </div>
+                    <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No services added yet" %}</h3>
+                    <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed mb-6">{% trans "Add the products and services your company offers to showcase them to the network." %}</p>
+                    <a href="{% url 'service_create' %}" class="btn-profile-primary">
+                        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add First Service" %}
+                    </a>
+                </div>
+            {% endfor %}
+
+        </div>
     </div>
 </main>
+
+<!-- ==============================================
+     MOBILE BOTTOM NAVIGATION - MATCHES DASHBOARD
+     ============================================== -->
+{% if not is_inspector and request.user.is_authenticated %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+    <!-- ACTIVE: My Company -->
+    <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="building" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap">Company</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
+    </a>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
+    </a>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
+    </a>
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<!-- ==============================================
+     MOBILE NAVIGATION & LANG DRAWERS
+     ============================================== -->
+<div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+    <div class="space-y-2 w-full custom-scroll overflow-y-auto">
+        <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
+        <div class="h-px bg-slate-100 my-3 mx-2"></div>
+        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
+            <span class="flex-1 flex justify-between items-center">
+                {% trans "Language" %}
+                <small class="text-[11px] font-black uppercase bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">{% if 'en' in request.LANGUAGE_CODE %}EN{% elif request.LANGUAGE_CODE == 'am' %}AM{% else %}{{ request.LANGUAGE_CODE }}{% endif %}</small>
+            </span>
+        </button>
+        <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>
+    </div>
+</div>
+
+<!-- Language Drawer -->
+<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/60 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
+<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[350px] bg-white rounded-t-[2.5rem] md:rounded-t-3xl md:border md:border-slate-200 shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[140] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
+    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-6">{% trans "Select Language" %}</h3>
+    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="en" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
+            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+        <button type="submit" name="language" value="am" class="w-full min-h-[44px] p-4 rounded-xl flex items-center justify-between transition-all {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border border-blue-100 text-[#0A66C2] shadow-sm{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white hover:shadow-sm{% endif %}">
+            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
+            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
+        </button>
+    </form>
+</div>
 
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const loader = document.getElementById('global-page-loader');
-        let loaderInterval;
+    function closeAllDrawers() {
+        const navDw = document.getElementById('mobile-nav-drawer');
+        const navBd = document.getElementById('mobile-nav-backdrop');
+        const langDw = document.getElementById('mobile-lang-drawer');
+        const langBd = document.getElementById('mobile-lang-backdrop');
 
-        function startGlobalLoader() {
-            if(!loader) return;
-            loader.style.opacity = '1';
-            loader.style.transitionDuration = '300ms';
-            loader.style.width = '15%';
+        if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
 
-            let progress = 15;
-            clearInterval(loaderInterval);
-            loaderInterval = setInterval(() => {
-                progress += (Math.random() * 5 + 1);
-                if(progress > 85) {
-                    progress = 85;
-                    clearInterval(loaderInterval);
-                }
-                loader.style.transitionDuration = '200ms';
-                loader.style.width = progress + '%';
-            }, 300);
-        }
+        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
+        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
 
-        function stopGlobalLoader() {
-            if(!loader) return;
-            clearInterval(loaderInterval);
-            loader.style.transitionDuration = '200ms';
-            loader.style.width = '100%';
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.transitionDuration = '0ms';
-                    loader.style.width = '0%';
-                }, 300);
-            }, 250);
-        }
+        document.body.classList.remove('body-lock');
+    }
 
-        document.body.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (link) {
-                const href = link.getAttribute('href');
-                const target = link.getAttribute('target');
-                const isJS = href && href.startsWith('javascript:');
-                const isHash = href && href.startsWith('#');
-                const isNewTab = target === '_blank';
-                const isModifierPressed = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1;
+    function toggleMobileNavDrawer() {
+        const dw = document.getElementById('mobile-nav-drawer');
+        const bd = document.getElementById('mobile-nav-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
 
-                if (href && !isJS && !isHash && !isNewTab && !isModifierPressed) {
-                    startGlobalLoader();
-                }
-            }
-        });
-
-        window.addEventListener('pageshow', (e) => {
-            if (e.persisted) stopGlobalLoader();
-        });
-    });
+    function toggleMobileLangDrawer() {
+        const dw = document.getElementById('mobile-lang-drawer');
+        const bd = document.getElementById('mobile-lang-backdrop');
+        if (dw.classList.contains('drawer-closed')) {
+            closeAllDrawers();
+            bd.classList.replace('opacity-0', 'opacity-100');
+            bd.classList.remove('pointer-events-none');
+            dw.classList.replace('drawer-closed', 'drawer-open');
+            document.body.classList.add('body-lock');
+        } else { closeAllDrawers(); }
+    }
 </script>
 {% endblock content %}
