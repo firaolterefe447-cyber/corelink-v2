@@ -201,7 +201,7 @@
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         transition: left 0.6s ease;
-        pointer-events: none; /* FIXED INVISIBLE SHIELD */
+        pointer-events: none;
     }
     .bento-card:hover::before {
         left: 100%;
@@ -299,7 +299,7 @@
         mask-composite: exclude;
         opacity: 0;
         transition: opacity 0.4s ease;
-        pointer-events: none; /* FIXED INVISIBLE SHIELD */
+        pointer-events: none;
     }
     .card-hover-premium:hover {
         transform: translateY(-4px);
@@ -337,10 +337,10 @@
 
     /* Text Rendering */
     .text-break-words {
-        overflow-wrap: anywhere; /* FIXED TEXT BREAKING */
+        overflow-wrap: anywhere;
     }
     .text-break-words p {
-        overflow-wrap: anywhere; /* FIXED TEXT BREAKING */
+        overflow-wrap: anywhere;
     }
 
     /* Text Truncation */
@@ -360,11 +360,6 @@
     /* Expandable Text */
     .expandable-text {
         position: relative;
-    }
-    .expandable-text.expanded .line-clamp-2,
-    .expandable-text.expanded .line-clamp-3 {
-        -webkit-line-clamp: unset !important;
-        display: block !important;
     }
     .read-more-btn {
         display: inline-flex;
@@ -565,71 +560,6 @@
         font-style: italic;
         margin-top: 4px;
     }
-
-    /* Horizontal Project Scroll */
-    .projects-horizontal-scroll {
-        display: flex;
-        gap: 24px;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 24px;
-        scrollbar-width: thin;
-        scrollbar-color: var(--color-slate-300) transparent;
-        position: relative;
-    }
-    .projects-horizontal-scroll::-webkit-scrollbar {
-        height: 6px;
-    }
-    .projects-horizontal-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .projects-horizontal-scroll::-webkit-scrollbar-thumb {
-        background: var(--color-slate-300);
-        border-radius: 3px;
-    }
-    .projects-horizontal-scroll::-webkit-scrollbar-thumb:hover {
-        background: var(--color-slate-400);
-    }
-    .project-card {
-        flex: 0 0 min(85vw, 400px);
-        scroll-snap-align: start;
-    }
-    @media (min-width: 768px) {
-        .project-card {
-            flex: 0 0 min(45vw, 450px);
-        }
-    }
-    @media (min-width: 1024px) {
-        .project-card {
-            flex: 0 0 min(35vw, 500px);
-        }
-    }
-
-    /* Scroll Indicator */
-    .scroll-indicator {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--color-slate-400);
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 16px;
-        opacity: 0.8;
-        animation: pulse-scroll 2s ease-in-out infinite;
-    }
-    @keyframes pulse-scroll {
-        0%, 100% { opacity: 0.5; transform: translateX(0); }
-        50% { opacity: 1; transform: translateX(4px); }
-    }
-    .scroll-indicator i {
-        transition: transform 0.3s ease;
-    }
-    .scroll-indicator:hover i {
-        transform: translateX(4px);
-    }
 </style>
 
 <!-- =========================================================================
@@ -771,11 +701,7 @@
         <section id="about" class="reveal-on-scroll">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
             <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%] relative z-10">
-                <!-- FIXED ESCAPEJS BUG -->
-                <div id="bio-content" data-full-bio="{{ profile.bio_narrative }}">{{ profile.bio_narrative }}</div>
-                <button id="bio-toggle" class="hidden mt-4 text-[12px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link focus-visible:outline-none">
-                    Read full bio <i data-lucide="chevron-down" class="w-3.5 h-3.5 inline ml-1 transition-transform group-hover/link:translate-y-0.5"></i>
-                </button>
+                <div>{{ profile.bio_narrative }}</div>
             </div>
         </section>
         {% endif %}
@@ -833,9 +759,9 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for project in projects %}
                 <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm card-hover-premium flex flex-col">
-                    <!-- Project Gallery -->
+                    <!-- Project Gallery / Placeholder -->
                     {% if project.gallery.count > 0 %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100 cursor-pointer group block no-underline">
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100 cursor-pointer group block no-underline rounded-t-[calc(var(--radius-xl)-1px)]">
                             {% if project.gallery.count == 1 %}
                                 {% with asset=project.gallery.first %}
                                     {% if asset.asset_type == 'IMAGE' and asset.image %}
@@ -871,14 +797,14 @@
                             {% endif %}
                         </a>
                     {% else %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center border-b border-slate-100 cursor-pointer group block no-underline">
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center border-b border-slate-100 cursor-pointer group block no-underline rounded-t-[calc(var(--radius-xl)-1px)]">
                             <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
                                 <i data-lucide="layout" class="w-8 h-8 text-[var(--color-primary)]"></i>
                             </div>
                         </a>
                     {% endif %}
 
-                    <!-- Project Content (FIXED Z-INDEX) -->
+                    <!-- Project Content -->
                     <div class="p-5 flex-1 flex flex-col relative z-10">
                         <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline">
                             <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
@@ -1031,14 +957,7 @@
                             <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">Vision</span>
                             <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
 
-                            <!-- FIXED ESCAPEJS BUG & HIDDEN BUTTON -->
-                            <div class="expandable-text" id="vision-{{ post.id }}" data-full-content="{{ post.content }}">
-                                <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words vision-truncated">{{ post.content }}</p>
-                                <button class="read-more-btn text-blue-200 hover:text-white hidden" onclick="toggleExpand('vision-{{ post.id }}', this)">
-                                    <span>Read more</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                            <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
 
                             {% if post.media_proof %}
                             <div class="mt-8 rounded-lg overflow-hidden border border-white/10 max-w-2xl">
@@ -1064,19 +983,11 @@
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                         </div>
                         {% endif %}
-                        <!-- FIXED Z-INDEX -->
                         <div class="p-6 flex-1 flex flex-col text-break-words relative z-10">
                             <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
                             <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
 
-                            <!-- FIXED ESCAPEJS BUG & HIDDEN BUTTON -->
-                            <div class="expandable-text" id="essay-{{ post.id }}" data-full-content="{{ post.content }}">
-                                <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line essay-truncated">{{ post.content }}</p>
-                                <button class="read-more-btn hidden" onclick="toggleExpand('essay-{{ post.id }}', this)">
-                                    <span>Read more</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                            <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line">{{ post.content }}</p>
                         </div>
                     </article>
                 {% endfor %}
@@ -1296,7 +1207,6 @@
 
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    // Bulletproof Icon Loading
     try {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
@@ -1305,33 +1215,7 @@
         console.error("CoreLink: Icons failed to load, continuing execution.");
     }
 
-    // FIXED EXPANDABLE TEXT FUNCTION (Moved to Global Scope so buttons can access it immediately)
-    function toggleExpand(elementId, button) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
 
-        const paragraph = element.querySelector('p');
-        const buttonText = button.querySelector('span');
-        const fullContent = element.getAttribute('data-full-content');
-        const charLimit = 500;
-
-        if (element.classList.contains('expanded')) {
-            element.classList.remove('expanded');
-            paragraph.textContent = fullContent.substring(0, charLimit) + '...';
-            buttonText.textContent = 'Read more';
-            button.classList.remove('expanded');
-        } else {
-            element.classList.add('expanded');
-            paragraph.textContent = fullContent;
-            buttonText.textContent = 'Show less';
-            button.classList.add('expanded');
-        }
-    }
-    // Bind to window to ensure inline onclick handlers can find it
-    window.toggleExpand = toggleExpand;
-
-
-    // Project Gallery Data for Lightbox
     const projectGalleries = {};
     {% for project in projects %}
         {% if project.gallery.count > 0 %}
@@ -1457,13 +1341,20 @@
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
     }
 
+    // ROBUST BACK BUTTON FIX
     function smartBack() {
-        if (document.referrer && document.referrer !== window.location.href) {
-            window.location.href = document.referrer;
-        } else if (window.history.length > 1) {
+        // If there's browser history and the previous page is from our domain, strictly use history.back()
+        // This flawlessly preserves scroll position and state on phones and PCs.
+        if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
             window.history.back();
-        } else {
-            window.location.href = "{% url 'dashboard' %}";
+        }
+        // If coming from another site, safely direct to the referrer link
+        else if (document.referrer && document.referrer !== window.location.href) {
+            window.location.href = document.referrer;
+        }
+        // Ultimate fallback to Home/Dashboard if opened directly in a new tab
+        else {
+            window.location.href = "/";
         }
     }
 
@@ -1545,66 +1436,6 @@
             }
         }
 
-        // Bio Truncation Logic (Fixed)
-        const bioContent = document.getElementById('bio-content');
-        const bioToggle = document.getElementById('bio-toggle');
-        if (bioContent && bioToggle) {
-            const fullBio = bioContent.getAttribute('data-full-bio');
-            const bioLimit = 500;
-
-            if (fullBio && fullBio.length > bioLimit) {
-                const truncatedBio = fullBio.substring(0, bioLimit) + '...';
-                bioContent.textContent = truncatedBio;
-                bioToggle.classList.remove('hidden'); // Only show button if text is long enough
-
-                let isExpanded = false;
-                bioToggle.addEventListener('click', () => {
-                    if (isExpanded) {
-                        bioContent.textContent = truncatedBio;
-                        bioToggle.innerHTML = 'Read full bio <i data-lucide="chevron-down" class="w-3.5 h-3.5 inline ml-1 transition-transform group-hover/link:translate-y-0.5"></i>';
-                    } else {
-                        bioContent.textContent = fullBio;
-                        bioToggle.innerHTML = 'Show less <i data-lucide="chevron-up" class="w-3.5 h-3.5 inline ml-1 transition-transform group-hover/link:-translate-y-0.5"></i>';
-                    }
-                    isExpanded = !isExpanded;
-                    try { if (typeof lucide !== 'undefined') { lucide.createIcons(); } } catch(e) {}
-                });
-            } else {
-                bioContent.textContent = fullBio || '';
-                bioToggle.classList.add('hidden'); // Ensure button stays hidden if text is short
-            }
-        }
-
-        // Initialize truncation for essays and vision on page load (Fixed)
-        const charLimit = 500;
-
-        // Truncate essays and only reveal button if text is over limit
-        document.querySelectorAll('.essay-truncated').forEach(p => {
-            const container = p.closest('.expandable-text');
-            const btn = container.querySelector('.read-more-btn');
-            const fullContent = container.getAttribute('data-full-content');
-
-            if (fullContent && fullContent.length > charLimit) {
-                p.textContent = fullContent.substring(0, charLimit) + '...';
-                if(btn) btn.classList.remove('hidden');
-            } else {
-                p.textContent = fullContent || '';
-            }
-        });
-
-        // Truncate vision and only reveal button if text is over limit
-        document.querySelectorAll('.vision-truncated').forEach(p => {
-            const container = p.closest('.expandable-text');
-            const btn = container.querySelector('.read-more-btn');
-            const fullContent = container.getAttribute('data-full-content');
-
-            if (fullContent && fullContent.length > charLimit) {
-                p.textContent = fullContent.substring(0, charLimit) + '...';
-                if(btn) btn.classList.remove('hidden');
-            } else {
-                p.textContent = fullContent || '';
-            }
-        });
 
         window.openProjectGallery = function(projectId) {
             if (typeof openLightbox === 'function') {
