@@ -295,12 +295,9 @@
                                     {% endif %}
 
                                     <!-- Delete -->
-                                    <form action="{% url 'delete_message' msg.id %}" method="POST" onsubmit="return confirm('{% trans 'Delete this message for everyone?' %}');" class="m-0 p-0 inline-flex">
-                                        {% csrf_token %}
-                                        <button type="submit" class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all active:scale-90" title="{% trans 'Delete' %}">
-                                            <i data-lucide="trash-2" class="w-[14px] h-[14px]"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" onclick="deleteMessage('{{ msg.id }}')" class="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white/50 backdrop-blur-md border border-slate-200 text-slate-500 shadow-sm hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all active:scale-90" title="{% trans 'Delete' %}">
+                                        <i data-lucide="trash-2" class="w-[14px] h-[14px]"></i>
+                                    </button>
                                 </div>
                                 {% endif %}
 
@@ -707,6 +704,50 @@
             dw.classList.replace('drawer-closed', 'drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
+    }
+
+    function deleteMessage(messageId) {
+        if (!confirm('{% trans "Delete this message for everyone?" %}')) {
+            return;
+        }
+
+        const messageElement = document.getElementById('msg-' + messageId);
+        if (!messageElement) return;
+
+        // Add fade-out animation
+        messageElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        messageElement.style.opacity = '0';
+        messageElement.style.transform = 'translateX(20px)';
+
+        // Send AJAX request
+        fetch('{% url "delete_message" "00000000-0000-0000-0000-000000000000" %}'.replace('00000000-0000-0000-0000-000000000000', messageId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (response.ok) {
+                // Remove from DOM after animation
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 300);
+            } else {
+                // Restore if failed
+                messageElement.style.opacity = '1';
+                messageElement.style.transform = 'translateX(0)';
+                alert('{% trans "Failed to delete message. Please try again." %}');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Restore if failed
+            messageElement.style.opacity = '1';
+            messageElement.style.transform = 'translateX(0)';
+            alert('{% trans "Failed to delete message. Please try again." %}');
+        });
     }
 </script>
 {% endblock content %}

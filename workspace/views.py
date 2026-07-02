@@ -872,4 +872,5 @@ def delete_message(request, message_id):
     msg = get_object_or_404(ChatMessage, id=message_id, sender=request.user)
     msg.is_deleted = True
     msg.save()
-    return HttpResponse("")
+    from django.http import JsonResponse
+    return JsonResponse({'success': True, 'message_id': str(message_id)})
