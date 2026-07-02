@@ -1342,27 +1342,22 @@
     function smartBack(event) {
         if (event) event.preventDefault();
 
-        const fallbackUrl = '/';
-        const hasHistory = window.history && window.history.length > 1;
-        const hasReferrer = document.referrer && document.referrer !== '';
+        const currentHost = window.location.host;
+        const referrer = document.referrer;
+        const isInternalReferrer = referrer && referrer.includes(currentHost);
 
-        if (hasHistory || hasReferrer) {
-            // Attempt to go back natively (preserves scroll position and unloads the page)
+        if (isInternalReferrer && window.history.length > 1) {
+            // 1. Came from our own site in the same tab.
+            // Native history.back() perfectly restores scroll position and cache.
             window.history.back();
-
-            // Setup a fallback redirect in case history.back() does not actually trigger a navigation
-            // (e.g., reaching the end of the history stack where length > 1 but no actual back state exists)
-            const fallbackTimer = setTimeout(() => {
-                window.location.href = fallbackUrl;
-            }, 300); // 300ms is standard safe window for browser to initiate navigation
-
-            // If the browser starts successfully navigating away, clear the fallback redirect immediately
-            window.addEventListener('beforeunload', () => clearTimeout(fallbackTimer));
-            window.addEventListener('pagehide', () => clearTimeout(fallbackTimer));
-            window.addEventListener('unload', () => clearTimeout(fallbackTimer));
+        } else if (isInternalReferrer) {
+            // 2. Came from our own site but opened in a new tab (history.length === 1).
+            // Safely route back to the exact previous page.
+            window.location.href = referrer;
         } else {
-            // Fallback immediately if user has completely zero history and no referrer (e.g. fresh new tab)
-            window.location.href = fallbackUrl;
+            // 3. Came from an external site (Google, email) or direct link.
+            // Keep the user on the platform instead of kicking them out.
+            window.location.href = '/';
         }
     }
 
