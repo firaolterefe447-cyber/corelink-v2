@@ -37,7 +37,7 @@
                 <span>Share</span>
             </button>
 
-            <button onclick="smartBack(event)" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+            <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span>Back</span>
             </button>
@@ -1337,23 +1337,11 @@
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
     }
 
-    // EXTREMELY ROBUST BACK BUTTON - Works reliably across all browsers and devices
-    function smartBack(e) {
-        if (e) e.preventDefault();
-
-        var ref = document.referrer;
-        var currentUrl = window.location.href;
-
-        // 1. If we have a referrer and it's not the exact same page, go directly to it
-        if (ref && ref !== currentUrl && ref !== currentUrl + '/') {
-            window.location.href = ref;
-        }
-        // 2. Fallback to standard history stack if available
-        else if (window.history && window.history.length > 1) {
+    // Simple back button - works reliably
+    function smartBack() {
+        if (window.history.length > 1) {
             window.history.back();
-        }
-        // 3. Ultimate fallback if opened in a new tab without history
-        else {
+        } else {
             window.location.href = "/";
         }
     }
