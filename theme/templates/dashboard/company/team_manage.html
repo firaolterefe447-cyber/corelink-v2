@@ -74,13 +74,13 @@
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
-    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'company_admin_dashboard' company.slug %}'">
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
-        <i data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
+    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
     </button>
 </div>
 {% endblock %}
@@ -112,82 +112,80 @@
 
     h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    /* =========================================
-       PRIMARY BUTTON (Matches Main Page)
-       ========================================= */
-    .btn-primary-gradient {
-        background: linear-gradient(135deg, #0952A5, #073E89);
-        color: #ffffff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
-        transition: all 0.2s ease-out;
+    /* ACTION BUTTONS - ENHANCED WORLD-CLASS STYLING */
+    .btn-company-primary, .btn-company-secondary {
+        height: 44px; padding: 0 1.25rem; border-radius: 0.75rem; font-size: 14.5px; font-weight: 700;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none; white-space: nowrap; cursor: pointer;
+        position: relative; overflow: hidden;
     }
-    .btn-primary-gradient:hover {
-        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
-        transform: translateY(-2px);
+    .btn-company-primary {
+        background: linear-gradient(135deg, #0A66C2, #0856A8); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.28);
     }
-    .btn-primary-gradient:active {
-        transform: translateY(0);
-        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
+    .btn-company-primary::before {
+        content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+        opacity: 0; transition: opacity 0.3s ease;
     }
+    .btn-company-primary:hover { 
+        box-shadow: 0 8px 20px rgba(10, 102, 194, 0.4); transform: translateY(-3px);
+    }
+    .btn-company-primary:hover::before { opacity: 1; }
+    .btn-company-primary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); }
 
-    /* Premium Buttons */
-    .btn-profile-primary {
-        background: linear-gradient(135deg, #0952A5, #073E89);
-        color: #ffffff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
-        height: 42px; padding: 0 1.15rem; border-radius: 0.75rem;
-        font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+    .btn-company-secondary { background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; }
+    .btn-company-secondary:hover {
+        background: #ffffff; color: #0F172A; border-color: #CBD5E1;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1); transform: translateY(-3px);
     }
-    .btn-profile-primary:hover {
-        box-shadow: 0 8px 20px rgba(9, 82, 165, 0.4);
-        transform: translateY(-3px);
-    }
-    .btn-profile-primary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); }
+    .btn-company-secondary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08); background: #f1f5f9; }
 
-    .btn-profile-secondary {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        color: #475569;
-        height: 40px; padding: 0 1rem; border-radius: 0.75rem;
-        font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        transition: all 0.2s ease-out; text-decoration: none; white-space: nowrap; cursor: pointer;
+    /* ACTION TEXT BUTTONS - ENHANCED */
+    .btn-manage-text {
+        height: 40px; padding: 0 0.85rem; border-radius: 0.75rem; background: transparent;
+        color: #64748b; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); flex-shrink: 0; text-decoration: none;
+        font-size: 13px; font-weight: 800; border: 1.5px solid transparent; cursor: pointer;
     }
-    .btn-profile-secondary:hover {
-        background: #ffffff;
-        color: #0F172A;
-        border-color: #CBD5E1;
-        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
-        transform: translateY(-3px);
+    .btn-manage-text:hover { 
+        background: #f8fafc; 
+        color: #0f172a; 
+        border-color: #e2e8f0;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
     }
-    .btn-profile-secondary:active { transform: translateY(-1px); box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.08); background: #f1f5f9; }
 
     .btn-add-solid {
-        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem;
-        background: #0A66C2; color: #ffffff;
-        font-size: 13px; font-weight: 800; border: none;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-        transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 2px 6px -2px rgba(10,102,194,0.3); cursor: pointer;
+        height: 40px; padding: 0 1.15rem; border-radius: 0.75rem; background: #0A66C2; color: #ffffff;
+        font-size: 13px; font-weight: 800; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none; white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(10,102,194,0.3); cursor: pointer;
+        position: relative; overflow: hidden;
     }
-    .btn-add-solid:hover { background: #0856A8; box-shadow: 0 4px 12px rgba(10,102,194,0.4); transform: translateY(-1px); }
-    .btn-add-solid:active { transform: translateY(0); }
+    .btn-add-solid::before {
+        content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .btn-add-solid:hover { 
+        background: #0856A8;
+        box-shadow: 0 4px 12px rgba(10,102,194,0.4);
+        transform: translateY(-2px);
+    }
+    .btn-add-solid:hover::before { opacity: 1; }
 
-    /* BENTO CARD */
+    /* BENTO CARD - ENHANCED WORLD-CLASS STYLING */
     .bento-card {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.98);
         border: 1px solid rgba(226, 232, 240, 0.9);
         border-radius: 1rem;
-        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
-        position: relative;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+        position: relative; 
         transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        overflow: hidden;
     }
     @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
     .bento-card:hover {
-        border-color: rgba(203, 213, 225, 1);
-        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.1);
+        border-color: rgba(10, 102, 194, 0.3);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
         transform: translateY(-2px);
     }
 
@@ -202,7 +200,7 @@
         width: 100%;
         position: relative;
         z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(10rem + env(safe-area-inset-bottom)) 1.25rem;
     }
     @media (min-width: 768px) {
         .auth-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
@@ -227,6 +225,16 @@
         font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
     }
     .premium-input:focus { border-color: rgba(10, 102, 194, 0.45); box-shadow: 0 0 0 3px rgba(10,102,194,0.08); }
+
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #E2E8F0; border-radius: 10px; }
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #E2E8F0 transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { scrollbar-width: none; } }
+
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 </style>
 
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} anim-smooth-appear">
@@ -234,136 +242,137 @@
     <!-- WRAPPER TO KEEP IT READABLE & CENTERED -->
     <div class="max-w-4xl mx-auto w-full relative z-10">
 
-        <!-- Header Controls -->
-        <div class="mb-6 lg:mb-8 flex items-center justify-between">
-            <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Dashboard" %}
-            </a>
-        </div>
-
         <!-- HEADER TITLE -->
         <div class="mb-6 lg:mb-8">
-            <h1 class="text-h2 text-slate-900 break-words w-full mb-2">
+            <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-none mb-2 break-words w-full">
                 {% trans "Manage Core Team" %}
             </h1>
-            <p class="text-[13px] text-slate-500 font-medium">
-                {% trans "Add or remove members from your company's core team." %}
+            <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65]">
+                {% trans "Add or remove members from your company's core team to showcase your leadership." %}
             </p>
         </div>
 
         <!-- ==============================================
-             ADD MEMBER FORM
+             ADD MEMBER FORM - BENTO CARD
              ============================================== -->
-        <div class="bento-card p-5 md:p-6 mb-6">
-            <h3 class="font-heading text-[1.1rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none mb-4">{% trans "Add New Team Member" %}</h3>
-        <form method="post" action="{% url 'company_team_invite' company.slug %}" id="inviteForm">
-            {% csrf_token %}
-            <div class="space-y-4 mb-4">
-                <div>
-                    <label class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">{% trans "Profile URL or Phone Number" %}</label>
-                    <input type="text" name="user_identifier" class="premium-input" placeholder="profile URL or phone number...">
-                    <p class="text-[11px] text-slate-400 mt-1.5">{{ form.user_identifier.help_text }}</p>
-                    
-                    <!-- User Preview Card -->
-                    <div id="userPreview" class="hidden mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
-                        <div class="flex items-center gap-4">
-                            <div id="avatarContainer" class="w-14 h-14 rounded-full bg-white border-2 border-blue-200 overflow-hidden shrink-0 flex items-center justify-center">
-                                <img id="previewAvatar" src="" class="w-full h-full object-cover hidden" alt="">
-                                <span id="avatarInitials" class="hidden font-black text-[#0A66C2] text-[20px] tracking-tight"></span>
-                            </div>
-                            <div class="flex-1">
-                                <h4 id="previewName" class="font-bold text-slate-900 text-[16px] leading-tight"></h4>
-                                <p id="previewEmail" class="text-[13px] text-slate-600 mt-0.5"></p>
-                                <p id="previewPhone" class="text-[12px] text-slate-500 mt-0.5"></p>
-                            </div>
-                            <div class="shrink-0">
-                                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-[12px] font-bold">
-                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-                                    <span>{% trans "Found" %}</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Not Found Message -->
-                    <div id="notFoundMessage" class="hidden mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl">
-                        <div class="flex items-center gap-2 text-rose-700">
-                            <i data-lucide="user-x" class="w-4 h-4"></i>
-                            <span class="text-[13px] font-semibold">{% trans "User not found. Please check the URL or phone number." %}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">{% trans "Job Title" %}</label>
-                        <input type="text" name="job_title" class="premium-input" placeholder="e.g. Marketing Manager">
-                    </div>
-                    <div>
-                        <label class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">{% trans "Role" %}</label>
-                        <select name="role" class="premium-input">
-                            <option value="ADMIN">{% trans "Admin" %}</option>
-                            <option value="EDITOR">{% trans "Content Editor" %}</option>
-                        </select>
-                        <p class="text-[11px] text-slate-400 mt-1.5">{{ form.role.help_text }}</p>
-                    </div>
-                </div>
+        <div class="bento-card p-6 md:p-8 flex flex-col relative mb-6 lg:mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Add New Team Member" %}</h3>
             </div>
-            <button type="submit" class="btn-company-primary w-full sm:w-auto text-[14px] sm:text-[15px] py-3 sm:py-3.5 px-6 sm:px-8 font-extrabold tracking-wide shadow-lg hover:shadow-xl transition-all duration-200">
-                <i data-lucide="user-plus" class="w-5 h-5 pointer-events-none mr-2"></i>
-                <span class="pointer-events-none">{% trans "Send Invitation" %}</span>
-            </button>
-        </form>
-    </div>
-
-    <!-- Team Members List -->
-    <div class="bento-card p-6 md:p-8">
-        <h3 class="font-heading text-[1.1rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none mb-4">{% trans "Current Team Members" %}</h3>
-        
-        {% if team %}
-            <div class="space-y-4">
-                {% for member in team %}
-                <div class="bento-card p-5 md:p-6 flex flex-col">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-full bg-slate-100 overflow-hidden shrink-0">
-                                <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover" alt="{{ member.user.full_name }}">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-slate-900 text-[16px] leading-tight">{{ member.user.full_name }}</h4>
-                                <span class="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-[#0A66C2] mt-1 inline-block border border-blue-100">{{ member.get_role_display }}</span>
+            <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                {% trans "Invite co-founders, executives, and core employees to join your company team on CoreLink." %}
+            </p>
+            
+            <form method="post" action="{% url 'company_team_invite' company.slug %}" id="inviteForm">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[11.5px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1 cursor-default">{% trans "Profile URL or Phone Number" %}</label>
+                        <input type="text" name="user_identifier" class="premium-input" placeholder="profile URL or phone number...">
+                        <p class="text-[11px] text-slate-400 mt-1.5 px-1">{{ form.user_identifier.help_text }}</p>
+                        
+                        <!-- User Preview Card -->
+                        <div id="userPreview" class="hidden mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div id="avatarContainer" class="w-14 h-14 rounded-full bg-white border-2 border-blue-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                    <img id="previewAvatar" src="" class="w-full h-full object-cover hidden" alt="">
+                                    <span id="avatarInitials" class="hidden font-black text-[#0A66C2] text-[20px] tracking-tight"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 id="previewName" class="font-bold text-slate-900 text-[16px] leading-tight"></h4>
+                                    <p id="previewEmail" class="text-[13px] text-slate-600 mt-0.5"></p>
+                                    <p id="previewPhone" class="text-[12px] text-slate-500 mt-0.5"></p>
+                                </div>
+                                <div class="shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-[12px] font-bold">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                                        <span>{% trans "Found" %}</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-1.5">
-                            <a href="{% url 'company_team_edit' company.slug member.id %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-lg transition-all border border-slate-100">
-                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                        <!-- Not Found Message -->
+                        <div id="notFoundMessage" class="hidden mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl">
+                            <div class="flex items-center gap-2 text-rose-700">
+                                <i data-lucide="user-x" class="w-4 h-4"></i>
+                                <span class="text-[13px] font-semibold">{% trans "User not found. Please check the URL or phone number." %}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11.5px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1 cursor-default">{% trans "Job Title" %}</label>
+                            <input type="text" name="job_title" class="premium-input" placeholder="e.g. Marketing Manager">
+                        </div>
+                        <div>
+                            <label class="block text-[11.5px] font-black text-slate-500 uppercase tracking-widest mb-2 px-1 cursor-default">{% trans "Role" %}</label>
+                            <select name="role" class="premium-input">
+                                <option value="ADMIN">{% trans "Admin" %}</option>
+                                <option value="EDITOR">{% trans "Content Editor" %}</option>
+                            </select>
+                            <p class="text-[11px] text-slate-400 mt-1.5 px-1">{{ form.role.help_text }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-add-solid w-full sm:w-auto mt-4">
+                    <i data-lucide="user-plus" class="w-4 h-4 pointer-events-none"></i>
+                    <span class="pointer-events-none">{% trans "Send Invitation" %}</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- ==============================================
+             TEAM MEMBERS LIST - BENTO CARD
+             ============================================== -->
+        <div class="bento-card p-6 md:p-8 flex flex-col relative">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
+                <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Current Team Members" %}</h3>
+            </div>
+            <p class="text-[13px] md:text-[13.5px] text-slate-500 font-medium leading-[1.65] mb-5 md:pr-10 cursor-default">
+                {% trans "Your core team members who help drive your company forward." %}
+            </p>
+            
+            {% if team %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {% for member in team %}
+                    <div class="flex items-center gap-3 p-4 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors cursor-default group/item">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0">
+                            <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover" alt="{{ member.user.full_name }}">
+                        </div>
+                        <div class="overflow-hidden flex-1">
+                            <h4 class="font-bold text-slate-800 text-[14px] leading-tight truncate">{{ member.user.full_name }}</h4>
+                            <span class="text-[10px] font-black tracking-widest uppercase text-slate-400 block mt-0.5 truncate">{{ member.get_role_display }}</span>
+                            {% if member.job_title %}
+                                <span class="text-[11px] font-semibold text-slate-500 block mt-0.5 truncate">{{ member.job_title }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-col gap-1 shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                            <a href="{% url 'company_team_edit' company.slug member.id %}" class="w-7 h-7 flex items-center justify-center bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-[#0A66C2] rounded-lg transition-all border border-slate-100 hover:border-blue-200">
+                                <i data-lucide="edit-2" class="w-3 h-3"></i>
                             </a>
                             {% if member.user != request.user %}
                             <form method="post" action="{% url 'company_team_remove' company.slug member.id %}" class="inline">
                                 {% csrf_token %}
-                                <button type="submit" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-rose-500 text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-rose-500" onclick="return confirm('{% trans "Are you sure you want to remove this team member?" %}')">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <button type="submit" class="w-7 h-7 flex items-center justify-center bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-lg transition-all border border-slate-100 hover:border-rose-200" onclick="return confirm('{% trans "Are you sure you want to remove this team member?" %}')">
+                                    <i data-lucide="trash-2" class="w-3 h-3"></i>
                                 </button>
                             </form>
                             {% endif %}
                         </div>
                     </div>
-                    {% if member.job_title %}
-                        <p class="text-[14px] text-slate-600 font-medium">{{ member.job_title }}</p>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="bento-card p-8 md:p-12 text-center flex flex-col items-center justify-center">
-                <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-5">
-                    <i data-lucide="users" class="w-8 h-8 text-slate-400"></i>
+            {% else %}
+                <div class="p-8 md:p-12 text-center flex flex-col items-center justify-center bg-slate-50/50 rounded-xl border-2 border-dashed border-slate-200">
+                    <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i data-lucide="users" class="w-8 h-8 text-slate-400"></i>
+                    </div>
+                    <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No team members yet" %}</h3>
+                    <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed">{% trans "Add your co-founders and core employees to showcase your team to the network." %}</p>
                 </div>
-                <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No team members yet" %}</h3>
-                <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed mb-6">{% trans "Add your co-founders and core employees to showcase your team to the network." %}</p>
-            </div>
-        {% endif %}
-    </div>
+            {% endif %}
+        </div>
 </main>
 
 <script>
