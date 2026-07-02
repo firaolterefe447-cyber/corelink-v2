@@ -41,12 +41,12 @@
                 <span>Share</span>
             </button>
 
-            {% if request.user.is_authenticated %}
-                <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                    <span>Back</span>
-                </button>
-            {% else %}
+            <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back</span>
+            </button>
+
+            {% if not request.user.is_authenticated %}
                 <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] transition-colors focus-visible:outline-none rounded-sm">Log In</a>
                 <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
                     <span class="md:hidden">Join</span>
@@ -1341,19 +1341,13 @@
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
     }
 
-    // ROBUST BACK BUTTON FIX
+    // SIMPLIFIED BACK BUTTON - Works reliably across all browsers
     function smartBack() {
-        // If there's browser history and the previous page is from our domain, strictly use history.back()
-        // This flawlessly preserves scroll position and state on phones and PCs.
-        if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) {
+        // Try to go back in history if there's history
+        if (window.history.length > 1) {
             window.history.back();
-        }
-        // If coming from another site, safely direct to the referrer link
-        else if (document.referrer && document.referrer !== window.location.href) {
-            window.location.href = document.referrer;
-        }
-        // Ultimate fallback to Home/Dashboard if opened directly in a new tab
-        else {
+        } else {
+            // Fallback to home if no history
             window.location.href = "/";
         }
     }
