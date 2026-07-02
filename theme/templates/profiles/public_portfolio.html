@@ -37,7 +37,8 @@
                 <span>Share</span>
             </button>
 
-            <a href="/" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
+            <!-- SMART BACK BUTTON -->
+            <a href="/" onclick="smartBack(event)" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span>Back</span>
             </a>
@@ -1337,9 +1338,32 @@
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
     }
 
-    // Back button - uses browser's native back functionality
-    function smartBack() {
-        window.history.go(-1);
+    // Robust cross-browser back navigation
+    function smartBack(event) {
+        if (event) event.preventDefault();
+
+        const fallbackUrl = '/';
+        const hasHistory = window.history && window.history.length > 1;
+        const hasReferrer = document.referrer && document.referrer !== '';
+
+        if (hasHistory || hasReferrer) {
+            // Attempt to go back natively (preserves scroll position and unloads the page)
+            window.history.back();
+
+            // Setup a fallback redirect in case history.back() does not actually trigger a navigation
+            // (e.g., reaching the end of the history stack where length > 1 but no actual back state exists)
+            const fallbackTimer = setTimeout(() => {
+                window.location.href = fallbackUrl;
+            }, 300); // 300ms is standard safe window for browser to initiate navigation
+
+            // If the browser starts successfully navigating away, clear the fallback redirect immediately
+            window.addEventListener('beforeunload', () => clearTimeout(fallbackTimer));
+            window.addEventListener('pagehide', () => clearTimeout(fallbackTimer));
+            window.addEventListener('unload', () => clearTimeout(fallbackTimer));
+        } else {
+            // Fallback immediately if user has completely zero history and no referrer (e.g. fresh new tab)
+            window.location.href = fallbackUrl;
+        }
     }
 
     function scrollToContact() {
