@@ -63,105 +63,210 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
 <style>
-    :root { --font-main: 'Inter', sans-serif; --font-serif: 'Playfair Display', serif; }
+    :root {
+        --font-main: 'Inter', sans-serif;
+        --font-serif: 'Playfair Display', serif;
+        --color-primary: #0A66C2;
+        --color-primary-dark: #0856A8;
+        --color-slate-50: #F8FAFC;
+        --color-slate-100: #F1F5F9;
+        --color-slate-200: #E2E8F0;
+        --color-slate-400: #94A3B8;
+        --color-slate-600: #475569;
+        --color-slate-900: #0F172A;
+        --radius-sm: 0.75rem;
+        --radius-md: 1rem;
+        --radius-lg: 1.25rem;
+        --radius-xl: 1.5rem;
+        --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+        --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+        --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+    }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font-main); -webkit-font-smoothing: antialiased; background-color: #F8FAFC; color: #0F172A; overflow-x: hidden; }
+    body {
+        font-family: var(--font-main);
+        -webkit-font-smoothing: antialiased;
+        background-color: var(--color-slate-50);
+        color: var(--color-slate-900);
+        overflow-x: hidden;
+        line-height: 1.6;
+    }
 
     .font-serif-title { font-family: var(--font-serif); }
 
     /* CoreLink Top Loading Bar */
-    #top-loading-bar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb); z-index: 99999; width: 0%; pointer-events: none; box-shadow: 0 0 10px rgba(10, 102, 194, 0.5); opacity: 0; transition: width 0.4s ease-out, opacity 0.4s ease-in; }
+    #top-loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+        z-index: 99999;
+        width: 0%;
+        pointer-events: none;
+        box-shadow: 0 0 8px rgba(10, 102, 194, 0.4);
+        opacity: 0;
+        transition: width 0.3s ease-out, opacity 0.3s ease-in;
+    }
 
-    /* Clean Card Architecture */
+    /* Unified Card System */
     .bento-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1rem;
-        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+        background: white;
+        border: 1px solid var(--color-slate-200);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
         position: relative;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
 
     .cover-container-radius {
-        border-top-left-radius: calc(1rem - 1px);
-        border-top-right-radius: calc(1rem - 1px);
-    }
-    @media (min-width: 768px) {
-        .cover-container-radius { border-top-left-radius: calc(1.25rem - 1px); border-top-right-radius: calc(1.25rem - 1px); }
+        border-top-left-radius: calc(var(--radius-lg) - 1px);
+        border-top-right-radius: calc(var(--radius-lg) - 1px);
     }
 
     .cover-placeholder-01 {
-        display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #040F23 0%, #0A66C2 100%);
+        position: relative;
+        overflow: hidden;
+        pointer-events: none;
     }
-    .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
-    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
+    .cover-placeholder-01::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+        animation: shimmer 8s infinite linear;
+    }
+    @keyframes shimmer {
+        0% { transform: translate(-30%, -30%) rotate(0deg); }
+        100% { transform: translate(30%, 30%) rotate(360deg); }
+    }
 
     /* Avatar Display */
     .avatar-circle {
-        display: flex; align-items: center; justify-content: center;
-        width: 100px; height: 100px;
-        border-radius: 50%; background: #ffffff;
-        box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
-        overflow: hidden; position: relative; flex-shrink: 0; text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 0 0 4px white, var(--shadow-md);
+        overflow: hidden;
+        position: relative;
+        flex-shrink: 0;
+        text-decoration: none;
     }
-    @media (min-width: 640px) { .avatar-circle { width: 120px; height: 120px; } }
     @media (min-width: 768px) {
         .avatar-circle {
-            width: 136px; height: 136px;
-            box-shadow: 0 0 0 5px #ffffff, 0 2px 10px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
+            width: 130px;
+            height: 130px;
+            box-shadow: 0 0 0 5px white, var(--shadow-lg);
         }
     }
-    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; background: #f8fafc; }
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: var(--color-slate-100);
+    }
 
-    /* Hover & Animations */
-    .img-hover-zoom { transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    .group:hover .img-hover-zoom { transform: scale(1.05); }
-    .card-hover-premium { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-    .card-hover-premium:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(10, 102, 194, 0.08); border-color: rgba(10, 102, 194, 0.15); }
+    /* Unified Card Hover */
+    .card-hover-premium {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--color-primary);
+    }
 
-    /* Bulletproof Fallback Scroll Animations */
-    .reveal-on-scroll { transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
-    /* Only hide elements if JavaScript explicitly confirms it is working */
-    .reveal-on-scroll.js-hiding:not(.is-visible) { opacity: 0; transform: translateY(30px); }
-    .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* Image Hover */
+    .img-hover-zoom {
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .group:hover .img-hover-zoom {
+        transform: scale(1.03);
+    }
 
-    /* Mobile-safe text rendering */
-    .text-break-words { overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
-    .text-break-words p { overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
+    /* Scroll Animations */
+    .reveal-on-scroll {
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, transform;
+    }
+    .reveal-on-scroll.js-hiding:not(.is-visible) {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Text Rendering */
+    .text-break-words {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+    .text-break-words p {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+
+    /* Section Spacing */
+    section {
+        margin-bottom: var(--spacing-xl);
+    }
+    @media (min-width: 768px) {
+        section {
+            margin-bottom: calc(var(--spacing-xl) * 1.5);
+        }
+    }
 </style>
 
 <!-- =========================================================================
      UNIFIED ARCHITECTURE (Mobile + PC)
 ========================================================================== -->
-<div class="w-full bg-[#F8FAFC] pb-24 relative overflow-hidden animate-fade-in pt-16">
+<div class="w-full bg-[var(--color-slate-50)] pb-24 relative overflow-hidden animate-fade-in pt-16">
 
     <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8 mb-10">
         <!-- 1. HERO COVER (Bento Card Clean Design) -->
-        <div class="bento-card relative flex flex-col w-full bg-white shadow-sm" id="profile-hero">
+        <div class="bento-card relative flex flex-col w-full bg-white" id="profile-hero">
 
-            <!-- Cover Image (FIXED HEIGHT FOR PC) -->
-            <div class="relative h-[140px] sm:h-[160px] md:h-[250px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
+            <!-- Cover Image -->
+            <div class="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
                 {% else %}
-                    <div class="cover-placeholder-01">
-                        <div class="glow-left"></div>
-                        <div class="glow-right"></div>
-                    </div>
+                    <div class="cover-placeholder-01"></div>
                 {% endif %}
             </div>
 
             <!-- Hero Body Container -->
-            <div class="px-5 sm:px-8 md:px-10 pb-6 md:pb-10 flex flex-col relative z-20">
+            <div class="px-5 sm:px-8 md:px-10 pb-8 md:pb-10 flex flex-col relative z-20">
 
                 <!-- Avatar Block -->
-                <div class="relative -mt-[3.5rem] sm:-mt-[4rem] md:-mt-[4.5rem] mb-4 md:mb-5 z-30 inline-flex sm:ml-2 md:ml-4">
+                <div class="relative -mt-[4rem] sm:-mt-[4.5rem] md:-mt-[5rem] mb-5 md:mb-6 z-30 inline-flex sm:ml-2 md:ml-4">
                     <div class="avatar-circle">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
                         {% else %}
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-[#0A66C2]">
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-[var(--color-primary)]">
                                 <span class="text-4xl md:text-5xl font-serif-title font-bold">{{ user.display_name|slice:":1"|upper }}</span>
                             </div>
                         {% endif %}
@@ -169,42 +274,42 @@
                 </div>
 
                 <!-- Text & Actions Row -->
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-5 md:gap-6 w-full relative z-30">
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full relative z-30">
 
                     <!-- Info Column -->
                     <div class="flex-1 min-w-0 pr-0 lg:pr-8">
-                        <h1 class="text-[clamp(1.75rem,5vw,2.25rem)] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-2.5 md:mb-2 break-words w-full">
+                        <h1 class="text-[clamp(1.75rem,5vw,2.25rem)] md:text-[32px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-3 break-words w-full">
                             {{ user.display_name }}
                         </h1>
 
-                        <p class="text-[#0A66C2] font-bold text-[16px] sm:text-[17px] md:text-[18px] tracking-tight mb-3 md:mb-0 break-words w-full font-serif-title">
+                        <p class="text-[var(--color-primary)] font-bold text-[16px] sm:text-[17px] md:text-[18px] tracking-tight mb-4 break-words w-full font-serif-title">
                             {% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}
                         </p>
 
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-5">
+                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
                             {% if profile.location %}
-                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#0A66C2]"></i>
+                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[var(--color-primary)]"></i>
                                 {{ profile.location }}
                             </span>
                             {% endif %}
                             {% if profile.institution %}
-                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="building-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
+                                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
                                 {{ profile.institution }}
                             </span>
                             {% endif %}
                             {% if profile.field_of_interest %}
-                            <span class="flex items-center gap-1.5 text-[11px] sm:text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-lg cursor-default shadow-sm">
-                                <i data-lucide="briefcase" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
+                                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i>
                                 {{ profile.field_of_interest }}
                             </span>
                             {% endif %}
                         </div>
 
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-3">
+                        <div class="flex flex-wrap items-center gap-2 mb-5">
                             {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                            <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[9px] sm:text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3 sm:px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
+                            <span class="inline-flex items-center justify-center border border-slate-200 text-slate-700 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.15em] px-4 py-2 rounded-full bg-slate-50">
                                 {{ profile.get_current_search_display }}
                             </span>
                             {% endif %}
@@ -213,8 +318,8 @@
                         <!-- Current Focus (Right Now Top Snippet) -->
                         {% with latest_focus=right_now_posts.first %}
                         {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
-                        <div class="mt-4 md:mt-6 relative">
-                            <p class="text-[13px] sm:text-[14px] md:text-[16px] font-serif-title text-slate-600 leading-relaxed border-l-[3px] border-[#0A66C2] pl-3 md:pl-4">
+                        <div class="relative">
+                            <p class="text-[14px] sm:text-[15px] md:text-[16px] font-serif-title text-slate-600 leading-relaxed border-l-[3px] border-[var(--color-primary)] pl-4">
                                 {% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}
                             </p>
                         </div>
@@ -224,8 +329,8 @@
 
                     <!-- Right Action CTA -->
                     {% if profile.cv_file %}
-                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-3 md:mt-4 lg:mt-0">
-                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[12px] sm:text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50">
+                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-2 lg:mt-0">
+                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white text-[13px] font-semibold rounded-xl hover:bg-[var(--color-primary-dark)] transition-all active:scale-95 shadow-md">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             View Resumé
                         </a>
@@ -237,32 +342,32 @@
     </div>
 
     <!-- 2. CONTENT SECTIONS (Clean Layout) -->
-    <div class="max-w-[1000px] mx-auto px-5 md:px-10 space-y-16 md:space-y-24">
+    <div class="max-w-[1000px] mx-auto px-5 md:px-10">
 
         <!-- ABOUT ME -->
         {% if profile.bio_narrative %}
         <section id="about" class="reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
-            <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium md:max-w-[90%]">{{ profile.bio_narrative }}</div>
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
+            <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%]">{{ profile.bio_narrative }}</div>
         </section>
         {% endif %}
 
         <!-- LIVE SIGNALS -->
         {% if live_opportunities %}
-        <section id="signals" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-[#0A66C2] animate-pulse shadow-[0_0_8px_rgba(10,102,194,0.6)]"></div> Signals
+        <section id="signals" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-[var(--color-primary)] animate-pulse shadow-[0_0_8px_rgba(10,102,194,0.5)]"></div> Signals
             </h2>
-            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+            <div class="grid md:grid-cols-2 gap-6">
                 {% for opp in live_opportunities %}
-                <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] shadow-sm card-hover-premium">
+                <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium">
                     <div class="relative z-20">
-                        <div class="flex justify-between items-start mb-5">
-                            <span class="px-3.5 py-1 bg-blue-50 border border-blue-100 text-[#0A66C2] text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ opp.get_request_type_display }}</span>
-                            {% if opp.expires_at %}<span class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
+                            {% if opp.expires_at %}<span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
                         </div>
-                        <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ opp.title }}</h3>
-                        <p class="text-[14px] md:text-[15px] text-slate-600 leading-[1.8] text-left">{{ opp.details }}</p>
+                        <h3 class="text-[18px] md:text-[19px] font-bold text-slate-900 mb-3 leading-snug">{{ opp.title }}</h3>
+                        <p class="text-[14px] md:text-[15px] text-slate-600 leading-[1.7] text-left">{{ opp.details }}</p>
                     </div>
                 </article>
                 {% endfor %}
@@ -272,65 +377,65 @@
 
         <!-- SELECTED WORKS -->
         {% if projects %}
-        <section id="works" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Works</h2>
-            <div class="grid gap-12 md:gap-16">
+        <section id="works" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Selected Works</h2>
+            <div class="grid gap-10 md:gap-12">
                 {% for project in projects %}
                 <article class="group/project">
                     {% if project.gallery.count == 0 %}
-                        <div class="w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30">
-                            <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
-                                <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                        <div class="w-full bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm card-hover-premium flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 shrink-0">
+                                <i data-lucide="layout" class="w-5 h-5 text-[var(--color-primary)]"></i>
                             </div>
-                            <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
+                            <h3 class="text-[20px] md:text-[22px] font-bold text-slate-900">{{ project.title }}</h3>
                         </div>
                     {% else %}
-                        <h3 class="text-[22px] md:text-[26px] font-bold text-slate-900 mb-4 transition-colors group-hover/project:text-[#0A66C2]">{{ project.title }}</h3>
+                        <h3 class="text-[22px] md:text-[24px] font-bold text-slate-900 mb-4 transition-colors group-hover/project:text-[var(--color-primary)]">{{ project.title }}</h3>
                     {% endif %}
 
                     {% if project.gallery.count == 1 %}
                         {% with asset=project.gallery.first %}
-                        <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500">
+                        <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-xl overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200 group hover:shadow-md transition-shadow duration-300">
                             {% if asset.asset_type == 'IMAGE' and asset.image %}
                                 <div class="absolute inset-0 group/media cursor-pointer" onclick="openLightbox({{ project.id }}, 0)">
-                                    <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/media:scale-105">
-                                    <!-- Premium Zoom Overlay -->
+                                    <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/media:scale-105">
+                                    <!-- Zoom Overlay -->
                                     <div class="absolute inset-0 bg-black/0 group-hover/media:bg-slate-900/20 transition-all duration-300 flex items-center justify-center z-10 pointer-events-none">
-                                        <div class="w-14 h-14 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/media:opacity-100 transition-all duration-400 transform scale-50 group-hover/media:scale-100 shadow-xl">
-                                            <i data-lucide="zoom-in" class="w-6 h-6 text-white drop-shadow-md"></i>
+                                        <div class="w-12 h-12 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/media:opacity-100 transition-all duration-300 transform scale-50 group-hover/media:scale-100 shadow-lg">
+                                            <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
                                         </div>
                                     </div>
                                 </div>
                             {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                 <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                                    <div class="w-20 h-20 md:w-24 md:h-24 bg-red-50 rounded-2xl flex items-center justify-center border-2 border-red-100 mb-4 shadow-sm">
-                                        <i data-lucide="file-text" class="w-10 h-10 md:w-12 md:h-12 text-red-500"></i>
+                                    <div class="w-16 h-16 md:w-20 md:h-20 bg-red-50 rounded-xl flex items-center justify-center border border-red-100 mb-4 shadow-sm">
+                                        <i data-lucide="file-text" class="w-8 h-8 md:w-10 md:h-10 text-red-500"></i>
                                     </div>
-                                    <span class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-[0.2em] mb-2">PDF Document</span>
-                                    <a href="{{ asset.document_file.url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl text-[#0A66C2] font-bold text-sm hover:bg-slate-50 hover:border-[#0A66C2]/30 transition-all shadow-sm">
+                                    <span class="text-xs md:text-sm font-semibold text-slate-500 uppercase tracking-[0.15em] mb-3">PDF Document</span>
+                                    <a href="{{ asset.document_file.url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-lg text-[var(--color-primary)] font-semibold text-sm hover:bg-slate-50 transition-all shadow-sm">
                                         <i data-lucide="eye" class="w-4 h-4"></i>
                                         View Document
                                     </a>
                                 </div>
                             {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                                 <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                                    <div class="w-20 h-20 md:w-24 md:h-24 bg-purple-50 rounded-2xl flex items-center justify-center border-2 border-purple-100 mb-4 shadow-sm">
-                                        <i data-lucide="external-link" class="w-10 h-10 md:w-12 md:h-12 text-purple-500"></i>
+                                    <div class="w-16 h-16 md:w-20 md:h-20 bg-purple-50 rounded-xl flex items-center justify-center border border-purple-100 mb-4 shadow-sm">
+                                        <i data-lucide="external-link" class="w-8 h-8 md:w-10 md:h-10 text-purple-500"></i>
                                     </div>
-                                    <span class="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-[0.2em] mb-2">External Link</span>
-                                    <a href="{{ asset.external_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl text-[#0A66C2] font-bold text-sm hover:bg-slate-50 hover:border-[#0A66C2]/30 transition-all shadow-sm">
+                                    <span class="text-xs md:text-sm font-semibold text-slate-500 uppercase tracking-[0.15em] mb-3">External Link</span>
+                                    <a href="{{ asset.external_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-lg text-[var(--color-primary)] font-semibold text-sm hover:bg-slate-50 transition-all shadow-sm">
                                         <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                                         Open Link
                                     </a>
                                 </div>
                             {% else %}
                                 <div class="absolute inset-0 w-full h-full bg-slate-100 flex items-center justify-center">
-                                    <i data-lucide="image-off" class="w-12 h-12 text-slate-300"></i>
+                                    <i data-lucide="image-off" class="w-10 h-10 text-slate-300"></i>
                                 </div>
                             {% endif %}
 
                             {% if asset.caption and asset.asset_type == 'IMAGE' %}
-                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide z-20 pointer-events-none">
+                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[13px] md:text-[14px] p-5 pt-16 md:pt-20 truncate font-medium tracking-wide z-20 pointer-events-none">
                                 {{ asset.caption }}
                             </div>
                             {% endif %}
@@ -338,16 +443,16 @@
                         {% endwith %}
                     {% else %}
                         {% with count=project.gallery.count %}
-                        <div class="w-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50">
+                        <div class="w-full rounded-xl overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200">
                             {% if count == 2 %}
-                                <div class="grid grid-cols-2 gap-0.5 h-[280px] sm:h-[350px]">
+                                <div class="grid grid-cols-2 gap-0.5 h-[280px] sm:h-[320px]">
                                     {% for asset in project.gallery.all %}
                                         <div class="relative overflow-hidden w-full h-full group/thumb cursor-pointer" onclick="openLightbox({{ project.id }}, {{ forloop.counter0 }})">
                                             {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                                <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-700 group-hover/thumb:scale-105">
+                                                <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105">
                                                 <div class="absolute inset-0 bg-black/0 group-hover/thumb:bg-slate-900/20 transition-all duration-300 flex items-center justify-center z-10 pointer-events-none">
-                                                    <div class="w-12 h-12 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-400 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
-                                                        <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                                                    <div class="w-10 h-10 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-300 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
+                                                        <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                                                     </div>
                                                 </div>
                                             {% else %}
@@ -360,13 +465,13 @@
                                 </div>
                             {% elif count >= 3 %}
                                 {% with gallery_list=project.gallery.all %}
-                                <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[400px]">
+                                <div class="grid grid-cols-2 gap-0.5 h-[300px] sm:h-[360px]">
                                     <div class="relative overflow-hidden w-full h-full group/thumb cursor-pointer" onclick="openLightbox({{ project.id }}, 0)">
                                         {% if gallery_list.0.asset_type == 'IMAGE' and gallery_list.0.image %}
-                                            <img src="{{ gallery_list.0.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-700 group-hover/thumb:scale-105">
+                                            <img src="{{ gallery_list.0.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105">
                                             <div class="absolute inset-0 bg-black/0 group-hover/thumb:bg-slate-900/20 transition-all duration-300 flex items-center justify-center z-10 pointer-events-none">
-                                                <div class="w-12 h-12 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-400 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
-                                                    <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                                                <div class="w-10 h-10 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-300 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
+                                                    <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                                                 </div>
                                             </div>
                                         {% else %}
@@ -378,9 +483,9 @@
                                     <div class="grid grid-rows-2 gap-0.5 w-full h-full">
                                         <div class="relative overflow-hidden w-full h-full group/thumb cursor-pointer" onclick="openLightbox({{ project.id }}, 1)">
                                             {% if gallery_list.1.asset_type == 'IMAGE' and gallery_list.1.image %}
-                                                <img src="{{ gallery_list.1.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-700 group-hover/thumb:scale-105">
+                                                <img src="{{ gallery_list.1.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105">
                                                 <div class="absolute inset-0 bg-black/0 group-hover/thumb:bg-slate-900/20 transition-all duration-300 flex items-center justify-center z-10 pointer-events-none">
-                                                    <div class="w-10 h-10 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-400 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
+                                                    <div class="w-9 h-9 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-300 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
                                                         <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                                                     </div>
                                                 </div>
@@ -392,9 +497,9 @@
                                         </div>
                                         <div class="relative overflow-hidden w-full h-full group/thumb cursor-pointer" onclick="openLightbox({{ project.id }}, 2)">
                                             {% if gallery_list.2.asset_type == 'IMAGE' and gallery_list.2.image %}
-                                                <img src="{{ gallery_list.2.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-700 group-hover/thumb:scale-105">
+                                                <img src="{{ gallery_list.2.image.url }}" loading="lazy" alt="Gallery Image" class="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105">
                                                 <div class="absolute inset-0 bg-black/0 group-hover/thumb:bg-slate-900/20 transition-all duration-300 flex items-center justify-center z-10 pointer-events-none">
-                                                    <div class="w-10 h-10 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-400 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
+                                                    <div class="w-9 h-9 bg-white/30 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-all duration-300 transform scale-50 group-hover/thumb:scale-100 shadow-lg">
                                                         <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                                                     </div>
                                                 </div>
@@ -405,12 +510,12 @@
                                             {% endif %}
 
                                             {% if count > 3 %}
-                                            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center hover:bg-slate-900/70 transition-colors z-20">
+                                            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center hover:bg-slate-900/70 transition-colors z-20">
                                                 <div class="text-center transform transition-transform duration-300 group-hover/thumb:scale-105">
-                                                    <div class="w-12 h-12 bg-white/95 rounded-full flex items-center justify-center mb-2 mx-auto shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
-                                                        <i data-lucide="layout-grid" class="w-5 h-5 text-slate-900"></i>
+                                                    <div class="w-10 h-10 bg-white/95 rounded-full flex items-center justify-center mb-2 mx-auto shadow-lg">
+                                                        <i data-lucide="layout-grid" class="w-4 h-4 text-slate-900"></i>
                                                     </div>
-                                                    <span class="text-white font-bold text-[13px] tracking-wide">+{{ count|add:" -3" }} Photos</span>
+                                                    <span class="text-white font-semibold text-[12px] tracking-wide">+{{ count|add:" -3" }} Photos</span>
                                                 </div>
                                             </div>
                                             {% endif %}
@@ -424,20 +529,20 @@
                     {% endif %}
 
                     <div class="md:px-2">
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-5 text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em]">
+                        <div class="flex flex-wrap items-center gap-2 mb-4 text-[11px] font-semibold text-slate-500 uppercase tracking-[0.15em]">
                             {% if project.role %}<span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-md">{{ project.role }}</span>{% endif %}
-                            {% if project.client_name %}<span class="px-3 py-1.5 border border-slate-200 rounded-md bg-white shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
+                            {% if project.client_name %}<span class="px-3 py-1.5 border border-slate-200 rounded-md bg-white">Client: {{ project.client_name }}</span>{% endif %}
                         </div>
 
-                        <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] space-y-3 mb-6 text-left md:max-w-[90%]">
+                        <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] space-y-3 mb-5 text-left max-w-[90%]">
                             {% if project.main_description %}<p>{{ project.main_description }}</p>{% endif %}
                             {% if project.problem_statement %}<p>{{ project.problem_statement }}</p>{% endif %}
                             {% if project.solution_narrative %}<p>{{ project.solution_narrative }}</p>{% endif %}
                         </div>
 
                         {% if project.link %}
-                        <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-2 border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link focus-visible:outline-none">
-                            View Full Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
+                        <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link focus-visible:outline-none">
+                            View Full Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"></i>
                         </a>
                         {% endif %}
                     </div>
@@ -449,26 +554,26 @@
 
         <!-- EXPERIENCE -->
         {% if experiences %}
-        <section id="exp" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Experience</h2>
-            <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+        <section id="exp" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Experience</h2>
+            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for exp in experiences %}
                 <article class="relative group">
-                    <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] {% if exp.is_current %}border-[#0A66C2]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
+                    <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] md:border-[3px] {% if exp.is_current %}border-[var(--color-primary)]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
 
-                    <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-3">
-                        <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
-                        <span class="px-3 py-1 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ exp.get_location_type_display }}</span>
+                    <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
+                        <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
+                        <span class="px-2.5 py-1 border border-slate-200 text-slate-500 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-white">{{ exp.get_location_type_display }}</span>
                         {% if exp.employment_type %}
-                        <span class="px-3 py-1 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ exp.get_employment_type_display }}</span>
+                        <span class="px-2.5 py-1 border border-slate-200 text-slate-500 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-white">{{ exp.get_employment_type_display }}</span>
                         {% endif %}
                     </div>
 
-                    <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-1 transition-colors group-hover:text-[#0A66C2]">{{ exp.role_title }}</h4>
-                    <h5 class="text-[14px] md:text-[16px] font-serif-title font-bold text-[#0A66C2] md:text-slate-600 mb-4">{{ exp.company_name }}</h5>
+                    <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-1 transition-colors group-hover:text-[var(--color-primary)]">{{ exp.role_title }}</h4>
+                    <h5 class="text-[14px] md:text-[16px] font-serif-title font-semibold text-[var(--color-primary)] md:text-slate-600 mb-3">{{ exp.company_name }}</h5>
 
                     {% if exp.description %}
-                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ exp.description }}</p>
+                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%]">{{ exp.description }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}
@@ -478,25 +583,25 @@
 
         <!-- CORE SKILLS -->
         {% if skills %}
-        <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 md:mb-8 tracking-tight">Core Skills</h2>
+        <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Core Skills</h2>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 md:gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {% for skill in skills %}
-                <article class="p-5 md:p-8 bg-white border border-slate-200/80 rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm card-hover-premium cursor-default transition-all">
-                    <div class="flex flex-col gap-2 md:gap-3 mb-3 md:mb-4">
+                <article class="p-5 md:p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium cursor-default transition-all">
+                    <div class="flex flex-col gap-2 mb-4">
                         <div class="flex items-center justify-between gap-3">
-                            <span class="text-[15px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
+                            <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
                             {% if skill.proficiency_level %}
-                            <span class="shrink-0 text-[8px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2 py-0.5 md:py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.15em] whitespace-nowrap">{{ skill.get_proficiency_level_display }}</span>
+                            <span class="shrink-0 text-[10px] text-[var(--color-primary)] bg-blue-50 px-2 py-1 rounded-md border border-blue-100 font-semibold uppercase tracking-[0.15em] whitespace-nowrap">{{ skill.get_proficiency_level_display }}</span>
                             {% endif %}
                         </div>
                     </div>
                     {% if skill.context %}
                     <div class="relative">
-                        <div class="absolute -left-2 top-0 text-[#0A66C2] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
-                        <p class="text-[13px] md:text-[15px] text-slate-600 font-serif-title tracking-wide leading-relaxed pl-4 md:pl-6">{{ skill.context }}</p>
-                        <div class="absolute -right-1 bottom-0 text-[#0A66C2] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                        <div class="absolute -left-2 top-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                        <p class="text-[14px] md:text-[15px] text-slate-600 font-serif-title tracking-wide leading-relaxed pl-5 md:pl-6">{{ skill.context }}</p>
+                        <div class="absolute -right-1 bottom-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
                     </div>
                     {% endif %}
                 </article>
@@ -507,36 +612,36 @@
 
         <!-- CREDENTIALS -->
         {% if credentials %}
-        <section id="certs" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Credentials</h2>
-            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+        <section id="certs" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Credentials</h2>
+            <div class="grid md:grid-cols-2 gap-6">
                 {% for cred in credentials %}
-                <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium flex flex-col text-break-words">
+                <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium flex flex-col text-break-words">
                     <div class="relative z-20 flex flex-col h-full">
-                        <div class="flex flex-wrap items-center gap-3 mb-5">
+                        <div class="flex flex-wrap items-center gap-2 mb-4">
                             {% if cred.issuer %}
-                            <span class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ cred.issuer }}</span>
+                            <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ cred.issuer }}</span>
                             {% endif %}
-                            {% if cred.issue_date %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
+                            {% if cred.issue_date %}<span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
                         </div>
 
-                        <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-4 leading-snug">{{ cred.title }}</h4>
+                        <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ cred.title }}</h4>
 
                         {% if cred.reflection %}
-                        <p class="text-[14.5px] md:text-[15.5px] text-slate-600 mb-6 leading-[1.8]">{{ cred.reflection }}</p>
+                        <p class="text-[14.5px] md:text-[15px] text-slate-600 mb-5 leading-[1.7]">{{ cred.reflection }}</p>
                         {% endif %}
 
                         <div class="mt-auto">
                             {% if cred.key_takeaways %}
-                            <div class="bg-blue-50/50 p-5 rounded-[1rem] mb-6 border border-blue-100/50">
-                                <span class="block text-[9.5px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] mb-2">Key Takeaway</span>
-                                <p class="text-[13.5px] md:text-[14.5px] text-slate-700 font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
+                            <div class="bg-blue-50/50 p-4 rounded-lg mb-5 border border-blue-100/50">
+                                <span class="block text-[10px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] mb-2">Key Takeaway</span>
+                                <p class="text-[13.5px] md:text-[14px] text-slate-700 font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
                             </div>
                             {% endif %}
 
                             {% if cred.url_link or cred.file_upload %}
-                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[10.5px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-[1.5px] border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link">
-                                View Proof <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
+                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link">
+                                View Proof <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"></i>
                             </a>
                             {% endif %}
                         </div>
@@ -549,27 +654,27 @@
 
         <!-- MY FOCUS HISTORY -->
         {% if right_now_posts %}
-        <section id="focus-history" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">My Focus History</h2>
-            <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+        <section id="focus-history" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Focus History</h2>
+            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in right_now_posts %}
                     {% if post.body_narrative %}
                     <article class="relative group">
                         <!-- Timeline Node -->
-                        <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
+                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
 
                         <!-- Date/Day -->
                         <div class="mb-3">
-                            <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
+                            <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
                         </div>
 
-                        <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.body_narrative }}</p>
+                        <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%]">{{ post.body_narrative }}</p>
 
                         <!-- Image Gallery -->
                         {% if post.gallery.all %}
-                            <div class="mt-5 md:mt-6 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
+                            <div class="mt-5 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
                                 {% for media in post.gallery.all %}
-                                <div class="rounded-xl overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm transition-all duration-500 hover:shadow-md aspect-[4/3] group/media cursor-pointer">
+                                <div class="rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md aspect-[4/3] group/media cursor-pointer">
                                     <img src="{{ media.image.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
                                 </div>
                                 {% endfor %}
@@ -584,20 +689,20 @@
 
         <!-- GOALS -->
         {% if vision_blocks %}
-        <section id="goals" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">My Goal</h2>
+        <section id="goals" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Goal</h2>
             <div class="grid gap-8">
                 {% for post in vision_blocks %}
-                    <article class="p-8 md:p-12 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_15px_40px_rgba(10,102,194,0.15)] text-white relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] md:text-[140px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
+                    <article class="p-8 md:p-10 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[var(--color-primary)] rounded-xl shadow-lg text-white relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
                         <div class="relative z-10">
-                            <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-6 shadow-sm">Vision</span>
-                            <h3 class="text-[22px] md:text-[30px] font-serif-title font-bold mb-5 md:mb-6 leading-tight">{{ post.title }}</h3>
-                            <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] md:max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
+                            <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">Vision</span>
+                            <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
+                            <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
 
                             {% if post.media_proof %}
-                            <div class="mt-8 md:mt-10 rounded-xl overflow-hidden border border-white/10 shadow-inner max-w-2xl">
-                                <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100">
+                            <div class="mt-8 rounded-lg overflow-hidden border border-white/10 max-w-2xl">
+                                <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90 transition-opacity duration-300 group-hover:opacity-100">
                             </div>
                             {% endif %}
                         </div>
@@ -609,20 +714,20 @@
 
         <!-- THOUGHTS -->
         {% if essays %}
-        <section id="thoughts" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Industry Thoughts</h2>
-            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+        <section id="thoughts" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Industry Thoughts</h2>
+            <div class="grid md:grid-cols-2 gap-6">
                 {% for post in essays %}
-                    <article class="bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-sm flex flex-col card-hover-premium hover:border-[#0A66C2]/30">
+                    <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col card-hover-premium">
                         {% if post.media_proof %}
-                        <div class="h-40 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
+                        <div class="h-48 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                         </div>
                         {% endif %}
-                        <div class="p-6 md:p-8 flex-1 flex flex-col text-break-words">
-                            <span class="text-[9.5px] md:text-[10.5px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
-                            <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
-                            <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
+                        <div class="p-6 flex-1 flex flex-col text-break-words">
+                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
+                            <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
+                            <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line">{{ post.content }}</p>
                         </div>
                     </article>
                 {% endfor %}
@@ -632,23 +737,23 @@
 
         <!-- PROGRESS -->
         {% if progress_logs %}
-        <section id="progress" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Daily Progress</h2>
-            <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+        <section id="progress" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Daily Progress</h2>
+            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in progress_logs %}
                     <article class="relative group">
-                        <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
+                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
 
-                        <div class="flex flex-wrap items-center gap-3 mb-3">
-                            <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
-                            <span class="px-2.5 py-1 border border-slate-200 text-[#0A66C2] text-[9.5px] md:text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
+                            <span class="px-2.5 py-1 border border-slate-200 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-white">{{ post.get_category_display|default:"Log" }}</span>
                         </div>
 
-                        <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2.5 transition-colors group-hover:text-[#0A66C2]">{{ post.title }}</h4>
-                        <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%] text-break-words">{{ post.content }}</p>
+                        <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2.5 transition-colors group-hover:text-[var(--color-primary)]">{{ post.title }}</h4>
+                        <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%] text-break-words">{{ post.content }}</p>
 
                         {% if post.media_proof %}
-                        <div class="mt-5 md:mt-6 max-w-[24rem] h-48 md:h-56 rounded-[1.5rem] overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm md:group-hover:shadow-md transition-all duration-500 md:group-hover:-translate-y-1.5">
+                        <div class="mt-5 max-w-[24rem] h-48 md:h-52 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm md:group-hover:shadow-md transition-all duration-300">
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
                         </div>
                         {% endif %}
@@ -660,18 +765,18 @@
 
         <!-- LANGUAGES -->
         {% if languages %}
-        <section id="languages" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Languages</h2>
+        <section id="languages" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Languages</h2>
             <div class="flex flex-wrap gap-3 md:gap-4">
                 {% for language in languages %}
-                <div class="px-5 py-3 bg-white border border-slate-200/80 rounded-[1.25rem] shadow-sm card-hover-premium flex items-center gap-3 cursor-default">
+                <div class="px-5 py-3 bg-white border border-slate-200 rounded-lg shadow-sm card-hover-premium flex items-center gap-3 cursor-default">
                     <div class="flex flex-col">
                         <span class="text-[15px] md:text-[16px] font-bold text-slate-900">{{ language.get_language_display }}</span>
                         <div class="flex items-center gap-2 mt-1">
                             {% if language.is_primary %}
-                                <span class="px-2 py-0.5 rounded text-[8px] md:text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100/50">Primary</span>
+                                <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100/50">Primary</span>
                             {% endif %}
-                            <span class="px-2 py-0.5 rounded text-[8px] md:text-[9px] font-black uppercase tracking-widest {% if language.proficiency == 'NATIVE' %}bg-emerald-50 text-emerald-600 border border-emerald-100/50{% elif language.proficiency == 'FLUENT' %}bg-purple-50 text-purple-600 border border-purple-100/50{% elif language.proficiency == 'INTERMEDIATE' %}bg-amber-50 text-amber-600 border border-amber-100/50{% else %}bg-slate-100 text-slate-400 border border-slate-200/50{% endif %}">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest {% if language.proficiency == 'NATIVE' %}bg-emerald-50 text-emerald-600 border border-emerald-100/50{% elif language.proficiency == 'FLUENT' %}bg-purple-50 text-purple-600 border border-purple-100/50{% elif language.proficiency == 'INTERMEDIATE' %}bg-amber-50 text-amber-600 border border-amber-100/50{% else %}bg-slate-100 text-slate-400 border border-slate-200/50{% endif %}">
                                 {{ language.get_proficiency_display }}
                             </span>
                         </div>
@@ -683,62 +788,62 @@
         {% endif %}
 
         <!-- CONTACT & CONNECT -->
-        <section id="contact" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Connect</h2>
+        <section id="contact" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Connect</h2>
 
-            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+            <div class="grid md:grid-cols-2 gap-8">
                 <!-- Direct Contact Details -->
                 <div class="space-y-4">
                     {% if request.user == user %}
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.15em]">Private (Only visible to you)</span>
+                            <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em]">Private (Only visible to you)</span>
                         </div>
                         {% if contact_methods %}
                             {% for method in contact_methods %}
-                            <div class="flex items-center gap-4 py-3.5 px-5 bg-white border border-slate-200/80 rounded-[1.25rem] shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 card-hover-premium cursor-default">
-                                <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                                    <i data-lucide="{{ method.icon_name }}" class="w-4 h-4 text-[#0A66C2]"></i>
+                            <div class="flex items-center gap-4 py-3.5 px-5 bg-white border border-slate-200 rounded-lg shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 card-hover-premium cursor-default">
+                                <div class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                                    <i data-lucide="{{ method.icon_name }}" class="w-4 h-4 text-[var(--color-primary)]"></i>
                                 </div>
                                 <span class="break-all">{{ method.value }}</span>
                             </div>
                             {% endfor %}
                         {% else %}
-                            <div class="p-6 border-2 border-dashed border-slate-200 rounded-[1.25rem] text-center text-slate-500 text-[13.5px]">No contact details added yet.</div>
+                            <div class="p-6 border-2 border-dashed border-slate-200 rounded-lg text-center text-slate-500 text-[13.5px]">No contact details added yet.</div>
                         {% endif %}
                     {% else %}
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.15em]">Contact Information</span>
+                            <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em]">Contact Information</span>
                         </div>
 
-                        <div class="relative overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px] group transition-all duration-300 hover:shadow-md hover:border-blue-200">
-                            <div class="absolute inset-0 flex flex-col gap-4 p-6 opacity-30 pointer-events-none select-none transition-opacity duration-500 group-hover:opacity-40">
+                        <div class="relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px] group transition-all duration-300 hover:shadow-md hover:border-blue-200">
+                            <div class="absolute inset-0 flex flex-col gap-4 p-6 opacity-30 pointer-events-none select-none transition-opacity duration-300 group-hover:opacity-40">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-400 shrink-0"></div>
-                                    <div class="h-3.5 bg-slate-400 rounded w-3/4 md:w-48"></div>
+                                    <div class="w-10 h-10 rounded-full bg-slate-400 shrink-0"></div>
+                                    <div class="h-3.5 bg-slate-400 rounded w-3/4"></div>
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-400 shrink-0"></div>
-                                    <div class="h-3.5 bg-slate-400 rounded w-1/2 md:w-32"></div>
+                                    <div class="w-10 h-10 rounded-full bg-slate-400 shrink-0"></div>
+                                    <div class="h-3.5 bg-slate-400 rounded w-1/2"></div>
                                 </div>
                             </div>
 
                             <div class="relative z-10 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center mb-3 border border-blue-100 shadow-sm transition-transform duration-500 group-hover:scale-105">
-                                    <i data-lucide="lock" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-3 border border-blue-100 shadow-sm transition-transform duration-300 group-hover:scale-105">
+                                    <i data-lucide="lock" class="w-5 h-5 text-[var(--color-primary)]"></i>
                                 </div>
                                 <h3 class="text-[17px] md:text-[20px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
 
                                 {% if not request.user.is_authenticated %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium">
-                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-[#0A66C2] font-bold border-b-2 border-blue-200 hover:border-[#0A66C2] transition-colors pb-[1px] focus-visible:outline-none">Login</a> to CoreLink to collaborate.
+                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-[var(--color-primary)] font-semibold border-b-2 border-blue-200 hover:border-[var(--color-primary)] transition-colors pb-[1px] focus-visible:outline-none">Login</a> to CoreLink to collaborate.
                                     </p>
                                 {% else %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium mb-4">
                                         Reach out directly to connect.
                                     </p>
-                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 md:px-7 py-2 md:py-2.5 bg-[#0A66C2] text-white text-[10.5px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-full hover:bg-[#0856A8] transition-all active:scale-95 shadow-md shadow-blue-500/20 hover:shadow-lg focus-visible:outline-none">
+                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-primary)] text-white text-[11px] font-semibold uppercase tracking-[0.15em] rounded-full hover:bg-[var(--color-primary-dark)] transition-all active:scale-95 shadow-md focus-visible:outline-none">
                                         <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Send Message
                                     </a>
                                 {% endif %}
@@ -750,22 +855,22 @@
                 <!-- Social Links -->
                 {% if social_links %}
                 <div>
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4 md:mb-5 block">Digital Presence</span>
-                    <div class="space-y-3 md:space-y-4">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-4 block">Digital Presence</span>
+                    <div class="space-y-3">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-xl md:rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20 focus-visible:outline-none">
-                            <!-- Distinct gradient backgrounds per link -->
-                            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg focus-visible:outline-none">
+                            <!-- Gradient background -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                             <!-- Content -->
-                            <div class="relative p-5 md:p-6 bg-white border border-slate-200 rounded-xl md:rounded-2xl transition-all duration-300 group-hover:border-transparent group-hover:translate-x-1">
+                            <div class="relative p-5 bg-white border border-slate-200 rounded-lg transition-all duration-300 group-hover:border-transparent group-hover:translate-x-1">
                                 <div class="flex items-center justify-between">
                                     <div class="flex flex-col">
                                         <span class="text-[15px] md:text-[17px] font-bold text-slate-900 group-hover:text-white transition-colors duration-300">{{ link.platform_name }}</span>
-                                        <span class="text-[11px] md:text-[12px] font-semibold text-slate-400 group-hover:text-purple-100 transition-colors duration-300 uppercase tracking-[0.2em] mt-1">View Profile</span>
+                                        <span class="text-[11px] md:text-[12px] font-semibold text-slate-400 group-hover:text-purple-100 transition-colors duration-300 uppercase tracking-[0.15em] mt-1">View Profile</span>
                                     </div>
-                                    <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 group-hover:bg-white group-hover:text-purple-600 transition-all duration-300 group-hover:scale-110">
-                                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 group-hover:bg-white group-hover:text-purple-600 transition-all duration-300 group-hover:scale-110">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                         </svg>
                                     </div>
