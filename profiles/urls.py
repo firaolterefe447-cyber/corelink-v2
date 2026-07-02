@@ -16,6 +16,7 @@ urlpatterns = [
     # Handles User Slugs, Company Slugs, and CoreLink IDs dynamically
     path('p/<str:identifier>/', views.public_profile_view, name='public_profile'),
 path('p/<str:identifier>/og-image/', views.profile_og_image, name='profile_og_image'),
+path('p/<str:identifier>/project/<uuid:pk>/', views.project_detail_view, name='public_project_detail'),
     # Optional explicitly routed company profile (kept for backward compatibility)
     path('p/company/<slug:slug>/', views.company_public_profile, name='company_public_profile'),
 

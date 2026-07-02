@@ -264,6 +264,32 @@ def public_profile_view(request, identifier):
     return render(request, 'profiles/public_portfolio.html', context)
 
 
+def project_detail_view(request, identifier, pk):
+    """
+    Public Project Detail View.
+    Shows full project information including gallery, problem statement, solution, and description.
+    """
+    # Get the user profile from identifier (slug or CoreLink ID)
+    target_user = None
+    portfolio = UserProfile.objects.filter(slug=identifier).first()
+    
+    if portfolio:
+        target_user = portfolio.user
+    else:
+        target_user = get_object_or_404(CustomUser, corelink_id=identifier)
+    
+    # Get the specific project
+    project = get_object_or_404(PortfolioProject, pk=pk, profile=target_user.portfolio)
+    
+    context = {
+        'profile': target_user.portfolio,
+        'user': target_user,
+        'project': project,
+    }
+    
+    return render(request, 'profiles/project_detail.html', context)
+
+
 from django.shortcuts import render, get_object_or_404
 from .models import Company
 
