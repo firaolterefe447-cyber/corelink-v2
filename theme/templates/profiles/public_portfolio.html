@@ -830,17 +830,17 @@
         <!-- SELECTED WORKS -->
         {% if projects %}
         <section id="works" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Selected Works</h2>
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Selected Projects and Research</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for project in projects %}
                 <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm card-hover-premium flex flex-col">
                     <!-- Project Gallery -->
                     {% if project.gallery.count > 0 %}
-                        <div class="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100">
+                        <div class="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100 cursor-pointer group" onclick="openProjectGallery({{ project.id }})">
                             {% if project.gallery.count == 1 %}
                                 {% with asset=project.gallery.first %}
                                     {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                        <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover">
+                                        <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     {% else %}
                                         <div class="w-full h-full flex items-center justify-center">
                                             <i data-lucide="file-text" class="w-10 h-10 text-slate-400"></i>
@@ -852,7 +852,7 @@
                                     {% for asset in project.gallery.all|slice:":2" %}
                                         <div class="relative overflow-hidden h-full">
                                             {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                                <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery" class="w-full h-full object-cover">
+                                                <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                             {% else %}
                                                 <div class="w-full h-full flex items-center justify-center bg-slate-200">
                                                     <i data-lucide="image-off" class="w-6 h-6 text-slate-400"></i>
@@ -861,6 +861,14 @@
                                         </div>
                                     {% endfor %}
                                 </div>
+                                {% if project.gallery.count > 2 %}
+                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="text-center text-white">
+                                        <i data-lucide="layout-grid" class="w-8 h-8 mx-auto mb-2"></i>
+                                        <span class="text-sm font-semibold">View all {{ project.gallery.count }} photos</span>
+                                    </div>
+                                </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                     {% else %}
@@ -885,20 +893,12 @@
                         </div>
 
                         <div class="text-[13px] md:text-[14px] text-slate-600 leading-relaxed mb-4 flex-1">
-                            {% if project.main_description or project.problem_statement or project.solution_narrative %}
-                            <div class="expandable-text" id="project-{{ project.id }}">
-                                {% if project.main_description %}
-                                    <p class="line-clamp-3">{{ project.main_description }}</p>
-                                {% elif project.problem_statement %}
-                                    <p class="line-clamp-3">{{ project.problem_statement }}</p>
-                                {% elif project.solution_narrative %}
-                                    <p class="line-clamp-3">{{ project.solution_narrative }}</p>
-                                {% endif %}
-                                <button class="read-more-btn" onclick="toggleExpand('project-{{ project.id }}', this)">
-                                    <span>Read more</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                            {% if project.main_description %}
+                                <p class="line-clamp-3">{{ project.main_description }}</p>
+                            {% elif project.problem_statement %}
+                                <p class="line-clamp-3">{{ project.problem_statement }}</p>
+                            {% elif project.solution_narrative %}
+                                <p class="line-clamp-3">{{ project.solution_narrative }}</p>
                             {% endif %}
                         </div>
 
@@ -935,13 +935,7 @@
                     <h5 class="text-[14px] md:text-[16px] font-serif-title font-semibold text-[var(--color-primary)] md:text-slate-600 mb-3">{{ exp.company_name }}</h5>
 
                     {% if exp.description %}
-                    <div class="expandable-text" id="exp-{{ exp.id }}">
-                        <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%] line-clamp-3">{{ exp.description }}</p>
-                        <button class="read-more-btn" onclick="toggleExpand('exp-{{ exp.id }}', this)">
-                            <span>Read more</span>
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
-                    </div>
+                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%]">{{ exp.description }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}
@@ -967,13 +961,7 @@
                         <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ cred.title }}</h4>
 
                         {% if cred.reflection %}
-                        <div class="expandable-text" id="cred-{{ cred.id }}">
-                            <p class="text-[14.5px] md:text-[15px] text-slate-600 mb-5 leading-[1.7] line-clamp-2">{{ cred.reflection }}</p>
-                            <button class="read-more-btn" onclick="toggleExpand('cred-{{ cred.id }}', this)">
-                                <span>Read more</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </button>
-                        </div>
+                        <p class="text-[14.5px] md:text-[15px] text-slate-600 mb-5 leading-[1.7]">{{ cred.reflection }}</p>
                         {% endif %}
 
                         <div class="mt-auto">
@@ -1013,13 +1001,7 @@
                             <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
                         </div>
 
-                        <div class="expandable-text" id="focus-{{ post.id }}">
-                            <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%] line-clamp-3">{{ post.body_narrative }}</p>
-                            <button class="read-more-btn" onclick="toggleExpand('focus-{{ post.id }}', this)">
-                                <span>Read more</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </button>
-                        </div>
+                        <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%]">{{ post.body_narrative }}</p>
 
                         <!-- Image Gallery -->
                         {% if post.gallery.all %}
@@ -1609,6 +1591,18 @@
                 element.classList.add('expanded');
                 buttonText.textContent = 'Show less';
                 button.classList.add('expanded');
+            }
+        };
+
+        // Project Gallery Function - Opens lightbox with all project images
+        window.openProjectGallery = function(projectId) {
+            // Check if lightbox function exists from original code
+            if (typeof openLightbox === 'function') {
+                openLightbox(projectId, 0);
+            } else {
+                console.log('Project gallery clicked for project ID:', projectId);
+                // Fallback: could open a modal or navigate to project detail page
+                alert('Gallery view for project ' + projectId);
             }
         };
 
