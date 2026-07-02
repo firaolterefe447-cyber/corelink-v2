@@ -32,16 +32,12 @@
 
         <!-- RIGHT: Actions -->
         <div class="flex items-center gap-3 md:gap-4">
-            <button onclick="toggleTheme()" aria-label="Toggle Dark Mode" class="flex items-center justify-center w-10 h-10 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none">
-                <i data-lucide="moon" class="w-4 h-4 dark-icon hidden"></i>
-                <i data-lucide="sun" class="w-4 h-4 light-icon hidden"></i>
-            </button>
             <button onclick="copyProfileLink()" aria-label="Share Profile" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none text-[11px] md:text-[12px] font-extrabold uppercase tracking-[0.1em] shadow-sm">
                 <i data-lucide="share-2" class="w-4 h-4"></i>
                 <span>Share</span>
             </button>
 
-            <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+            <button onclick="smartBack(event)" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span>Back</span>
             </button>
@@ -136,7 +132,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: 
+        background-image:
             radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%),
             radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
         pointer-events: none;
@@ -1341,13 +1337,23 @@
         setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
     }
 
-    // SIMPLIFIED BACK BUTTON - Works reliably across all browsers
-    function smartBack() {
-        // Try to go back in history if there's history
-        if (window.history.length > 1) {
+    // EXTREMELY ROBUST BACK BUTTON - Works reliably across all browsers and devices
+    function smartBack(e) {
+        if (e) e.preventDefault();
+
+        var ref = document.referrer;
+        var currentUrl = window.location.href;
+
+        // 1. If we have a referrer and it's not the exact same page, go directly to it
+        if (ref && ref !== currentUrl && ref !== currentUrl + '/') {
+            window.location.href = ref;
+        }
+        // 2. Fallback to standard history stack if available
+        else if (window.history && window.history.length > 1) {
             window.history.back();
-        } else {
-            // Fallback to home if no history
+        }
+        // 3. Ultimate fallback if opened in a new tab without history
+        else {
             window.location.href = "/";
         }
     }
@@ -1359,32 +1365,7 @@
         }
     }
 
-    function toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcons(newTheme);
-    }
-
-    function updateThemeIcons(theme) {
-        const darkIcon = document.querySelector('.dark-icon');
-        const lightIcon = document.querySelector('.light-icon');
-        if (theme === 'dark') {
-            darkIcon.classList.remove('hidden');
-            lightIcon.classList.add('hidden');
-        } else {
-            darkIcon.classList.add('hidden');
-            lightIcon.classList.remove('hidden');
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcons(savedTheme);
 
         const progressBar = document.getElementById('reading-progress');
         if (progressBar) {
