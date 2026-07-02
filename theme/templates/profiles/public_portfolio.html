@@ -68,9 +68,11 @@
         --font-serif: 'Playfair Display', serif;
         --color-primary: #0A66C2;
         --color-primary-dark: #0856A8;
+        --color-primary-light: #3B82F6;
         --color-slate-50: #F8FAFC;
         --color-slate-100: #F1F5F9;
         --color-slate-200: #E2E8F0;
+        --color-slate-300: #CBD5E1;
         --color-slate-400: #94A3B8;
         --color-slate-600: #475569;
         --color-slate-900: #0F172A;
@@ -78,20 +80,24 @@
         --radius-md: 1rem;
         --radius-lg: 1.25rem;
         --radius-xl: 1.5rem;
+        --radius-2xl: 2rem;
         --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
         --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
         --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+        --shadow-xl: 0 16px 40px rgba(15, 23, 42, 0.15);
+        --shadow-premium: 0 20px 60px rgba(10, 102, 194, 0.15);
         --spacing-xs: 0.5rem;
         --spacing-sm: 1rem;
         --spacing-md: 1.5rem;
         --spacing-lg: 2rem;
         --spacing-xl: 3rem;
+        --spacing-2xl: 4rem;
     }
     html { scroll-behavior: smooth; }
     body {
         font-family: var(--font-main);
         -webkit-font-smoothing: antialiased;
-        background-color: var(--color-slate-50);
+        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
         color: var(--color-slate-900);
         overflow-x: hidden;
         line-height: 1.6;
@@ -99,40 +105,75 @@
 
     .font-serif-title { font-family: var(--font-serif); }
 
+    /* Premium Background Pattern */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
     /* CoreLink Top Loading Bar */
     #top-loading-bar {
         position: fixed;
         top: 0;
         left: 0;
         height: 3px;
-        background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light), var(--color-primary-dark));
+        background-size: 200% 100%;
         z-index: 99999;
         width: 0%;
         pointer-events: none;
-        box-shadow: 0 0 8px rgba(10, 102, 194, 0.4);
+        box-shadow: 0 0 12px rgba(10, 102, 194, 0.5);
         opacity: 0;
-        transition: width 0.3s ease-out, opacity 0.3s ease-in;
+        transition: width 0.4s ease-out, opacity 0.3s ease-in;
+        animation: loadingGradient 2s linear infinite;
+    }
+    @keyframes loadingGradient {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
     }
 
-    /* Unified Card System */
+    /* Unified Card System with Premium Feel */
     .bento-card {
         background: white;
         border: 1px solid var(--color-slate-200);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-sm);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-md);
         position: relative;
+        overflow: hidden;
+    }
+    .bento-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.6s ease;
+    }
+    .bento-card:hover::before {
+        left: 100%;
     }
 
     .cover-container-radius {
-        border-top-left-radius: calc(var(--radius-lg) - 1px);
-        border-top-right-radius: calc(var(--radius-lg) - 1px);
+        border-top-left-radius: calc(var(--radius-xl) - 1px);
+        border-top-right-radius: calc(var(--radius-xl) - 1px);
     }
 
     .cover-placeholder-01 {
         display: block;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, #040F23 0%, #0A66C2 100%);
+        background: linear-gradient(135deg, #040F23 0%, #0A66C2 50%, #0856A8 100%);
         position: relative;
         overflow: hidden;
         pointer-events: none;
@@ -144,15 +185,27 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 50%);
         animation: shimmer 8s infinite linear;
+    }
+    .cover-placeholder-01::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: 
+            linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+        animation: shine 3s infinite;
     }
     @keyframes shimmer {
         0% { transform: translate(-30%, -30%) rotate(0deg); }
         100% { transform: translate(30%, 30%) rotate(360deg); }
     }
+    @keyframes shine {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+    }
 
-    /* Avatar Display */
+    /* Avatar Display with Premium Glow */
     .avatar-circle {
         display: flex;
         align-items: center;
@@ -161,17 +214,29 @@
         height: 110px;
         border-radius: 50%;
         background: white;
-        box-shadow: 0 0 0 4px white, var(--shadow-md);
+        box-shadow: 
+            0 0 0 4px white,
+            0 0 0 6px var(--color-slate-200),
+            var(--shadow-lg),
+            0 0 30px rgba(10, 102, 194, 0.1);
         overflow: hidden;
         position: relative;
         flex-shrink: 0;
         text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .avatar-circle:hover {
+        transform: scale(1.05);
+        box-shadow: 
+            0 0 0 4px white,
+            0 0 0 6px var(--color-primary),
+            var(--shadow-premium),
+            0 0 40px rgba(10, 102, 194, 0.2);
     }
     @media (min-width: 768px) {
         .avatar-circle {
             width: 130px;
             height: 130px;
-            box-shadow: 0 0 0 5px white, var(--shadow-lg);
         }
     }
     .avatar-circle img {
@@ -181,39 +246,57 @@
         background: var(--color-slate-100);
     }
 
-    /* Unified Card Hover */
+    /* Unified Card Hover with Premium Effects */
     .card-hover-premium {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    .card-hover-premium::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s ease;
     }
     .card-hover-premium:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--color-primary);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-premium);
+        border-color: transparent;
+    }
+    .card-hover-premium:hover::after {
+        opacity: 1;
     }
 
-    /* Image Hover */
+    /* Image Hover with Smooth Zoom */
     .img-hover-zoom {
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .group:hover .img-hover-zoom {
-        transform: scale(1.03);
+        transform: scale(1.05);
     }
 
-    /* Scroll Animations */
+    /* Scroll Animations with Premium Feel */
     .reveal-on-scroll {
-        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         will-change: opacity, transform;
     }
     .reveal-on-scroll.js-hiding:not(.is-visible) {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(40px);
     }
     .animate-fade-in {
-        animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
     @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     /* Text Rendering */
@@ -230,43 +313,73 @@
 
     /* Section Spacing */
     section {
-        margin-bottom: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
     }
     @media (min-width: 768px) {
         section {
-            margin-bottom: calc(var(--spacing-xl) * 1.5);
+            margin-bottom: calc(var(--spacing-2xl) * 1.25);
         }
+    }
+
+    /* Premium Section Headers */
+    section h2 {
+        position: relative;
+        display: inline-block;
+    }
+    section h2::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+        border-radius: 2px;
+        transition: width 0.3s ease;
+    }
+    section:hover h2::after {
+        width: 100%;
+    }
+
+    /* Premium Timeline Dots */
+    .timeline-dot {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .timeline-dot:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 20px rgba(10, 102, 194, 0.4);
     }
 </style>
 
 <!-- =========================================================================
      UNIFIED ARCHITECTURE (Mobile + PC)
 ========================================================================== -->
-<div class="w-full bg-[var(--color-slate-50)] pb-24 relative overflow-hidden animate-fade-in pt-16">
+<div class="w-full bg-transparent pb-32 relative overflow-hidden animate-fade-in pt-16">
 
-    <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8 mb-10">
-        <!-- 1. HERO COVER (Bento Card Clean Design) -->
+    <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8 mb-12">
+        <!-- 1. HERO COVER (Premium Card Design) -->
         <div class="bento-card relative flex flex-col w-full bg-white" id="profile-hero">
 
-            <!-- Cover Image -->
-            <div class="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
+            <!-- Cover Image with Premium Overlay -->
+            <div class="relative h-[180px] sm:h-[220px] md:h-[260px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 {% else %}
                     <div class="cover-placeholder-01"></div>
                 {% endif %}
             </div>
 
             <!-- Hero Body Container -->
-            <div class="px-5 sm:px-8 md:px-10 pb-8 md:pb-10 flex flex-col relative z-20">
+            <div class="px-6 sm:px-10 md:px-12 pb-10 md:pb-12 flex flex-col relative z-20">
 
-                <!-- Avatar Block -->
-                <div class="relative -mt-[4rem] sm:-mt-[4.5rem] md:-mt-[5rem] mb-5 md:mb-6 z-30 inline-flex sm:ml-2 md:ml-4">
+                <!-- Avatar Block with Premium Glow -->
+                <div class="relative -mt-[4.5rem] sm:-mt-[5rem] md:-mt-[5.5rem] mb-6 md:mb-7 z-30 inline-flex sm:ml-2 md:ml-4">
                     <div class="avatar-circle">
                         {% if user.avatar %}
                             <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
                         {% else %}
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-[var(--color-primary)]">
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 text-[var(--color-primary)]">
                                 <span class="text-4xl md:text-5xl font-serif-title font-bold">{{ user.display_name|slice:":1"|upper }}</span>
                             </div>
                         {% endif %}
@@ -274,42 +387,42 @@
                 </div>
 
                 <!-- Text & Actions Row -->
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full relative z-30">
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-8 w-full relative z-30">
 
                     <!-- Info Column -->
-                    <div class="flex-1 min-w-0 pr-0 lg:pr-8">
-                        <h1 class="text-[clamp(1.75rem,5vw,2.25rem)] md:text-[32px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-3 break-words w-full">
+                    <div class="flex-1 min-w-0 pr-0 lg:pr-10">
+                        <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-4 break-words w-full">
                             {{ user.display_name }}
                         </h1>
 
-                        <p class="text-[var(--color-primary)] font-bold text-[16px] sm:text-[17px] md:text-[18px] tracking-tight mb-4 break-words w-full font-serif-title">
+                        <p class="text-[var(--color-primary)] font-bold text-[17px] sm:text-[18px] md:text-[20px] tracking-tight mb-5 break-words w-full font-serif-title">
                             {% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}
                         </p>
 
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-5">
                             {% if profile.location %}
-                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[var(--color-primary)]"></i>
+                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-[var(--color-primary)]"></i>
                                 {{ profile.location }}
                             </span>
                             {% endif %}
                             {% if profile.institution %}
-                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
-                                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+                                <i data-lucide="building-2" class="w-4 h-4 text-slate-400"></i>
                                 {{ profile.institution }}
                             </span>
                             {% endif %}
                             {% if profile.field_of_interest %}
-                            <span class="flex items-center gap-1.5 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">
-                                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+                                <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
                                 {{ profile.field_of_interest }}
                             </span>
                             {% endif %}
                         </div>
 
-                        <div class="flex flex-wrap items-center gap-2 mb-5">
+                        <div class="flex flex-wrap items-center gap-2 mb-6">
                             {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                            <span class="inline-flex items-center justify-center border border-slate-200 text-slate-700 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.15em] px-4 py-2 rounded-full bg-slate-50">
+                            <span class="inline-flex items-center justify-center border border-slate-200 text-slate-700 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.15em] px-5 py-2.5 rounded-full bg-slate-50 shadow-sm">
                                 {{ profile.get_current_search_display }}
                             </span>
                             {% endif %}
@@ -319,7 +432,7 @@
                         {% with latest_focus=right_now_posts.first %}
                         {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
                         <div class="relative">
-                            <p class="text-[14px] sm:text-[15px] md:text-[16px] font-serif-title text-slate-600 leading-relaxed border-l-[3px] border-[var(--color-primary)] pl-4">
+                            <p class="text-[14px] sm:text-[15px] md:text-[16px] font-serif-title text-slate-600 leading-relaxed border-l-[3px] border-[var(--color-primary)] pl-5">
                                 {% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}
                             </p>
                         </div>
@@ -327,12 +440,12 @@
                         {% endwith %}
                     </div>
 
-                    <!-- Right Action CTA -->
+                    <!-- Right Action CTA with Premium Styling -->
                     {% if profile.cv_file %}
-                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-2 lg:mt-0">
-                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white text-[13px] font-semibold rounded-xl hover:bg-[var(--color-primary-dark)] transition-all active:scale-95 shadow-md">
-                            <i data-lucide="file-text" class="w-4 h-4"></i>
-                            View Resumé
+                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-4 lg:mt-0">
+                        <a href="{{ profile.cv_file.url }}" target="_blank" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95">
+                            <i data-lucide="file-text" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                            <span>View Resumé</span>
                         </a>
                     </div>
                     {% endif %}
@@ -349,6 +462,35 @@
         <section id="about" class="reveal-on-scroll">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
             <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%]">{{ profile.bio_narrative }}</div>
+        </section>
+        {% endif %}
+
+        <!-- CORE SKILLS -->
+        {% if skills %}
+        <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Core Skills</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                {% for skill in skills %}
+                <article class="p-5 md:p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium cursor-default transition-all">
+                    <div class="flex flex-col gap-2 mb-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
+                            {% if skill.proficiency_level %}
+                            <span class="shrink-0 text-[10px] text-[var(--color-primary)] bg-blue-50 px-2 py-1 rounded-md border border-blue-100 font-semibold uppercase tracking-[0.15em] whitespace-nowrap">{{ skill.get_proficiency_level_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if skill.context %}
+                    <div class="relative">
+                        <div class="absolute -left-2 top-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                        <p class="text-[14px] md:text-[15px] text-slate-600 font-serif-title tracking-wide leading-relaxed pl-5 md:pl-6">{{ skill.context }}</p>
+                        <div class="absolute -right-1 bottom-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
+                    </div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
         </section>
         {% endif %}
 
@@ -559,7 +701,7 @@
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for exp in experiences %}
                 <article class="relative group">
-                    <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] md:border-[3px] {% if exp.is_current %}border-[var(--color-primary)]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
+                    <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] md:border-[3px] {% if exp.is_current %}border-[var(--color-primary)]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)] timeline-dot"></div>
 
                     <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
                         <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
@@ -581,39 +723,10 @@
         </section>
         {% endif %}
 
-        <!-- CORE SKILLS -->
-        {% if skills %}
-        <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Core Skills</h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                {% for skill in skills %}
-                <article class="p-5 md:p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium cursor-default transition-all">
-                    <div class="flex flex-col gap-2 mb-4">
-                        <div class="flex items-center justify-between gap-3">
-                            <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
-                            {% if skill.proficiency_level %}
-                            <span class="shrink-0 text-[10px] text-[var(--color-primary)] bg-blue-50 px-2 py-1 rounded-md border border-blue-100 font-semibold uppercase tracking-[0.15em] whitespace-nowrap">{{ skill.get_proficiency_level_display }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if skill.context %}
-                    <div class="relative">
-                        <div class="absolute -left-2 top-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
-                        <p class="text-[14px] md:text-[15px] text-slate-600 font-serif-title tracking-wide leading-relaxed pl-5 md:pl-6">{{ skill.context }}</p>
-                        <div class="absolute -right-1 bottom-0 text-[var(--color-primary)] text-[20px] md:text-[24px] font-serif-title leading-none opacity-40">"</div>
-                    </div>
-                    {% endif %}
-                </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
-
         <!-- CREDENTIALS -->
         {% if credentials %}
         <section id="certs" class="pt-8 md:pt-10 border-t border-slate-200 reveal-on-scroll">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Credentials</h2>
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Certifications & Credentials</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for cred in credentials %}
                 <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium flex flex-col text-break-words">
@@ -661,7 +774,7 @@
                     {% if post.body_narrative %}
                     <article class="relative group">
                         <!-- Timeline Node -->
-                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
+                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)] timeline-dot"></div>
 
                         <!-- Date/Day -->
                         <div class="mb-3">
@@ -742,7 +855,7 @@
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in progress_logs %}
                     <article class="relative group">
-                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)]"></div>
+                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)] timeline-dot"></div>
 
                         <div class="flex flex-wrap items-center gap-2 mb-3">
                             <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
@@ -855,23 +968,39 @@
                 <!-- Social Links -->
                 {% if social_links %}
                 <div>
-                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-4 block">Digital Presence</span>
-                    <div class="space-y-3">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">Connect Across Platforms</span>
+                    <div class="space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg focus-visible:outline-none">
-                            <!-- Gradient background -->
-                            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-2xl transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 focus-visible:outline-none">
+                            <!-- Premium gradient background with animation -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-100 transition-opacity duration-500"></div>
+                            
+                            <!-- Animated accent line -->
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            <!-- Subtle pattern overlay -->
+                            <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 20px 20px;"></div>
 
                             <!-- Content -->
-                            <div class="relative p-5 bg-white border border-slate-200 rounded-lg transition-all duration-300 group-hover:border-transparent group-hover:translate-x-1">
+                            <div class="relative p-6 transition-all duration-500 group-hover:translate-y-[-2px]">
                                 <div class="flex items-center justify-between">
-                                    <div class="flex flex-col">
-                                        <span class="text-[15px] md:text-[17px] font-bold text-slate-900 group-hover:text-white transition-colors duration-300">{{ link.platform_name }}</span>
-                                        <span class="text-[11px] md:text-[12px] font-semibold text-slate-400 group-hover:text-purple-100 transition-colors duration-300 uppercase tracking-[0.15em] mt-1">View Profile</span>
+                                    <div class="flex items-center gap-4">
+                                        <!-- Platform icon with glow -->
+                                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-[var(--color-primary)] group-hover:border-[var(--color-primary)] transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[var(--color-primary)]/30">
+                                            <svg class="w-6 h-6 text-white group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-[16px] md:text-[18px] font-bold text-white group-hover:text-white transition-colors duration-500">{{ link.platform_name }}</span>
+                                            <span class="text-[11px] md:text-[12px] font-medium text-slate-400 group-hover:text-slate-300 transition-colors duration-500 uppercase tracking-[0.2em] mt-1">View Profile</span>
+                                        </div>
                                     </div>
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 group-hover:bg-white group-hover:text-purple-600 transition-all duration-300 group-hover:scale-110">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    
+                                    <!-- Arrow with animation -->
+                                    <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500 group-hover:scale-110 group-hover:rotate-45">
+                                        <svg class="w-5 h-5 text-white group-hover:text-slate-900 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                                         </svg>
                                     </div>
                                 </div>
