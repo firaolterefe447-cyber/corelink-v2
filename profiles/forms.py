@@ -565,7 +565,7 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
         labels = {
             'name': _("Skill / Tool Name"),
             'proficiency_level': _("Proficiency Level"),
-            'context': _("How did you use this? (Optional)"),
+            'context': _("Where have you applied this and what did you do with it? (Optional)"),
         }
 
         help_texts = {
@@ -575,7 +575,7 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'context': forms.Textarea(attrs={'placeholder': 'Describe how you apply this skill...', 'rows': 2,
+            'context': forms.Textarea(attrs={'placeholder': 'Describe where you have applied this skill and what you did with it...', 'rows': 2,
                                              'class': 'advanced-field'}),
         }
 
