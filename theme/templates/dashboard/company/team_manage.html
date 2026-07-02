@@ -342,8 +342,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {% for member in team %}
                     <div class="flex items-center gap-3 p-4 bg-white border border-slate-200/80 rounded-xl hover:border-slate-300 transition-colors cursor-default group/item">
-                        <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0">
-                            <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover" alt="{{ member.user.full_name }}">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center" data-full-name="{{ member.user.full_name }}">
+                            <img src="{{ member.user.get_avatar_url }}" class="w-full h-full object-cover" alt="{{ member.user.full_name }}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'font-black text-[#0A66C2] text-[14px] tracking-tight\'>' + this.parentElement.dataset.fullName.charAt(0).toUpperCase() + '</span>'; this.parentElement.classList.add('bg-gradient-to-br', 'from-blue-100', 'to-indigo-100');">
                         </div>
                         <div class="overflow-hidden flex-1">
                             <h4 class="font-bold text-slate-800 text-[14px] leading-tight truncate">{{ member.user.full_name }}</h4>
@@ -398,7 +398,19 @@ document.addEventListener("DOMContentLoaded", () => {
     
     userIdentifierInput.addEventListener('input', (e) => {
         clearTimeout(debounceTimer);
-        const query = e.target.value.trim();
+        let query = e.target.value.trim();
+        
+        // Normalize URL - extract username/slug from any URL format
+        if (query.includes('/')) {
+            try {
+                const url = new URL(query.startsWith('http') ? query : `https://${query}`);
+                const pathParts = url.pathname.split('/').filter(p => p);
+                // Get the last meaningful part of the path
+                query = pathParts[pathParts.length - 1] || pathParts[0] || query;
+            } catch (e) {
+                // If URL parsing fails, use the original query
+            }
+        }
         
         if (query.length < 3) {
             userPreview.classList.add('hidden');
@@ -413,7 +425,20 @@ document.addEventListener("DOMContentLoaded", () => {
     
     userIdentifierInput.addEventListener('paste', (e) => {
         setTimeout(() => {
-            const query = userIdentifierInput.value.trim();
+            let query = userIdentifierInput.value.trim();
+            
+            // Normalize URL - extract username/slug from any URL format
+            if (query.includes('/')) {
+                try {
+                    const url = new URL(query.startsWith('http') ? query : `https://${query}`);
+                    const pathParts = url.pathname.split('/').filter(p => p);
+                    // Get the last meaningful part of the path
+                    query = pathParts[pathParts.length - 1] || pathParts[0] || query;
+                } catch (e) {
+                    // If URL parsing fails, use the original query
+                }
+            }
+            
             if (query.length >= 3) {
                 searchUser(query);
             }
@@ -432,6 +457,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     previewAvatar.classList.remove('hidden');
                     avatarInitials.classList.add('hidden');
                     avatarContainer.classList.remove('bg-gradient-to-br', 'from-blue-100', 'to-indigo-100');
+                    // Add error handler for broken images
+                    previewAvatar.onerror = function() {
+                        this.classList.add('hidden');
+                        avatarInitials.classList.remove('hidden');
+                        const firstName = data.user.full_name.split(' ')[0] || data.user.full_name;
+                        avatarInitials.textContent = firstName.charAt(0).toUpperCase();
+                        avatarContainer.classList.add('bg-gradient-to-br', 'from-blue-100', 'to-indigo-100');
+                    };
                 } else {
                     previewAvatar.classList.add('hidden');
                     avatarInitials.classList.remove('hidden');
