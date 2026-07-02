@@ -78,13 +78,13 @@
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[22px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-10 h-10 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
-        <i data-lucide="menu" class="w-5 h-5 pointer-events-none"></i>
+    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
     </button>
 </div>
 {% endblock navbar %}
@@ -128,11 +128,11 @@
     /* Layout & Padding */
     .app-canvas {
         width: 100%; position: relative; z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
-    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
-    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1600px; margin: 0 auto; } }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; } }
 
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-in-up { animation: fadeInUp 0.6s var(--ease-magic) forwards; }
@@ -633,5 +633,61 @@
             btn.disabled = false; btn.classList.remove('opacity-80', 'cursor-not-allowed'); btn.innerHTML = originalContent;
         });
     }
+});
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+{% if not is_inspector and request.user.is_authenticated %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+    <a href="{% url 'company_admin_dashboard' company.slug %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="building" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap tracking-wide">Company</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
+    </a>
+
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
+    </a>
+
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+    </a>
+
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[9px] font-black rounded-full border-2 border-white">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const bottomNav = document.getElementById('mobile-bottom-nav');
+        if (!bottomNav) return;
+        document.addEventListener('focusin', (e) => {
+            if (window.innerWidth < 768 && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) {
+                bottomNav.style.display = 'none';
+            }
+        });
+        document.addEventListener('focusout', (e) => {
+            if (window.innerWidth < 768 && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) {
+                bottomNav.style.display = 'flex';
+            }
+        });
+    });
 </script>
 {% endblock %}
