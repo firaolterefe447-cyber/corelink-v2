@@ -158,15 +158,6 @@
                 <span class="text-sm font-semibold">Back to Profile</span>
             </a>
 
-            <div class="flex flex-wrap items-center gap-3 mb-4">
-                {% if project.role %}
-                <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ project.role }}</span>
-                {% endif %}
-                {% if project.get_context_display %}
-                <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ project.get_context_display }}</span>
-                {% endif %}
-            </div>
-
             <h1 class="text-[clamp(2rem,5vw,3rem)] font-serif-title font-bold text-slate-900 mb-4 leading-tight">{{ project.title }}</h1>
 
             {% if project.client_name %}
@@ -236,6 +227,18 @@
             <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-4 tracking-tight">Description</h2>
             <div class="bento-card p-6">
                 <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ project.main_description }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Project Meta -->
+        {% if project.role %}
+        <section class="mb-8">
+            <div class="bento-card p-6">
+                <div>
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Role</span>
+                    <p class="text-slate-900 mt-1">{{ project.role }}</p>
+                </div>
             </div>
         </section>
         {% endif %}
