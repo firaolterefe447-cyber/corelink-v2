@@ -38,7 +38,7 @@
             </button>
 
             <!-- BULLETPROOF BACK BUTTON -->
-            <a href="/" onclick="return smartBack(event);" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
+            <a href="javascript:void(0)" onclick="smartBack(event);" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span>Back</span>
             </a>
@@ -1340,15 +1340,9 @@
 
     // THE BULLETPROOF BACK FUNCTION
     function smartBack(event) {
-        // If there is actual browser history to go back to
-        if (window.history.length > 1) {
-            event.preventDefault(); // Stop it from going to "/"
-            window.history.back();  // Go exactly to the previous page & remember scroll state
-            return false;
-        }
-
-        // If there is no history (length is 1), we let it naturally click through to the href="/"
-        return true;
+        event.preventDefault();
+        // Go exactly to the previous page & remember scroll state
+        window.history.back();
     }
 
     function scrollToContact() {
