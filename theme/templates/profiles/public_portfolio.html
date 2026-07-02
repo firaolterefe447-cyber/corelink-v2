@@ -48,7 +48,7 @@
                 </button>
             {% else %}
                 <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] transition-colors focus-visible:outline-none rounded-sm">Log In</a>
-                <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
                     <span class="md:hidden">Join</span>
                     <span class="hidden md:block">Join CoreLink Ethiopia</span>
                 </a>
@@ -201,6 +201,7 @@
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         transition: left 0.6s ease;
+        pointer-events: none; /* FIXED INVISIBLE SHIELD */
     }
     .bento-card:hover::before {
         left: 100%;
@@ -248,7 +249,7 @@
         height: 110px;
         border-radius: 50%;
         background: white;
-        box-shadow: 
+        box-shadow:
             0 0 0 4px white,
             0 0 0 6px var(--color-slate-200),
             var(--shadow-lg),
@@ -261,7 +262,7 @@
     }
     .avatar-circle:hover {
         transform: scale(1.05);
-        box-shadow: 
+        box-shadow:
             0 0 0 4px white,
             0 0 0 6px var(--color-primary),
             var(--shadow-premium),
@@ -298,6 +299,7 @@
         mask-composite: exclude;
         opacity: 0;
         transition: opacity 0.4s ease;
+        pointer-events: none; /* FIXED INVISIBLE SHIELD */
     }
     .card-hover-premium:hover {
         transform: translateY(-4px);
@@ -335,14 +337,10 @@
 
     /* Text Rendering */
     .text-break-words {
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
+        overflow-wrap: anywhere; /* FIXED TEXT BREAKING */
     }
     .text-break-words p {
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
+        overflow-wrap: anywhere; /* FIXED TEXT BREAKING */
     }
 
     /* Text Truncation */
@@ -754,7 +752,7 @@
                             {% endif %}
                         </div>
                         {% if profile.cv_file %}
-                        <a href="{{ profile.cv_file.url }}" target="_blank" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95">
+                        <a href="{{ profile.cv_file.url }}" target="_blank" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 no-underline">
                             <i data-lucide="file-text" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                             <span>View Resumé</span>
                         </a>
@@ -772,8 +770,9 @@
         {% if profile.bio_narrative %}
         <section id="about" class="reveal-on-scroll">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
-            <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%]">
-                <div id="bio-content" data-full-bio="{{ profile.bio_narrative|escapejs }}">{{ profile.bio_narrative }}</div>
+            <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%] relative z-10">
+                <!-- FIXED ESCAPEJS BUG -->
+                <div id="bio-content" data-full-bio="{{ profile.bio_narrative }}">{{ profile.bio_narrative }}</div>
                 <button id="bio-toggle" class="hidden mt-4 text-[12px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link focus-visible:outline-none">
                     Read full bio <i data-lucide="chevron-down" class="w-3.5 h-3.5 inline ml-1 transition-transform group-hover/link:translate-y-0.5"></i>
                 </button>
@@ -879,8 +878,8 @@
                         </a>
                     {% endif %}
 
-                    <!-- Project Content -->
-                    <div class="p-5 flex-1 flex flex-col">
+                    <!-- Project Content (FIXED Z-INDEX) -->
+                    <div class="p-5 flex-1 flex flex-col relative z-10">
                         <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline">
                             <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
                         </a>
@@ -973,7 +972,7 @@
                             {% endif %}
 
                             {% if cred.url_link or cred.file_upload %}
-                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link">
+                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-all group/link no-underline">
                                 View Proof <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"></i>
                             </a>
                             {% endif %}
@@ -1031,9 +1030,11 @@
                         <div class="relative z-10">
                             <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">Vision</span>
                             <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
-                            <div class="expandable-text" id="vision-{{ post.id }}" data-full-content="{{ post.content|escapejs }}">
+
+                            <!-- FIXED ESCAPEJS BUG & HIDDEN BUTTON -->
+                            <div class="expandable-text" id="vision-{{ post.id }}" data-full-content="{{ post.content }}">
                                 <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words vision-truncated">{{ post.content }}</p>
-                                <button class="read-more-btn text-blue-200 hover:text-white" onclick="toggleExpand('vision-{{ post.id }}', this)">
+                                <button class="read-more-btn text-blue-200 hover:text-white hidden" onclick="toggleExpand('vision-{{ post.id }}', this)">
                                     <span>Read more</span>
                                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
@@ -1063,12 +1064,15 @@
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                         </div>
                         {% endif %}
-                        <div class="p-6 flex-1 flex flex-col text-break-words">
+                        <!-- FIXED Z-INDEX -->
+                        <div class="p-6 flex-1 flex flex-col text-break-words relative z-10">
                             <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
                             <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
-                            <div class="expandable-text" id="essay-{{ post.id }}" data-full-content="{{ post.content|escapejs }}">
+
+                            <!-- FIXED ESCAPEJS BUG & HIDDEN BUTTON -->
+                            <div class="expandable-text" id="essay-{{ post.id }}" data-full-content="{{ post.content }}">
                                 <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line essay-truncated">{{ post.content }}</p>
-                                <button class="read-more-btn" onclick="toggleExpand('essay-{{ post.id }}', this)">
+                                <button class="read-more-btn hidden" onclick="toggleExpand('essay-{{ post.id }}', this)">
                                     <span>Read more</span>
                                     <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                 </button>
@@ -1182,13 +1186,13 @@
 
                                 {% if not request.user.is_authenticated %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium">
-                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-[var(--color-primary)] font-semibold border-b-2 border-blue-200 hover:border-[var(--color-primary)] transition-colors pb-[1px] focus-visible:outline-none">Login</a> to CoreLink to collaborate.
+                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-[var(--color-primary)] font-semibold border-b-2 border-blue-200 hover:border-[var(--color-primary)] transition-colors pb-[1px] focus-visible:outline-none no-underline">Login</a> to CoreLink to collaborate.
                                     </p>
                                 {% else %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium mb-4">
                                         Reach out directly to connect.
                                     </p>
-                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-primary)] text-white text-[11px] font-semibold uppercase tracking-[0.15em] rounded-full hover:bg-[var(--color-primary-dark)] transition-all active:scale-95 shadow-md focus-visible:outline-none">
+                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-primary)] text-white text-[11px] font-semibold uppercase tracking-[0.15em] rounded-full hover:bg-[var(--color-primary-dark)] transition-all active:scale-95 shadow-md focus-visible:outline-none no-underline">
                                         <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Send Message
                                     </a>
                                 {% endif %}
@@ -1203,13 +1207,13 @@
                     <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">Connect Across Platforms</span>
                     <div class="space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-2xl transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 focus-visible:outline-none">
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="group block relative overflow-hidden rounded-2xl transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 focus-visible:outline-none no-underline">
                             <!-- Premium gradient background with animation -->
                             <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-100 transition-opacity duration-500"></div>
-                            
+
                             <!-- Animated accent line -->
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
+
                             <!-- Subtle pattern overlay -->
                             <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 20px 20px;"></div>
 
@@ -1228,7 +1232,7 @@
                                             <span class="text-[11px] md:text-[12px] font-medium text-slate-400 group-hover:text-slate-300 transition-colors duration-500 uppercase tracking-[0.2em] mt-1">View Profile</span>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Arrow with animation -->
                                     <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500 group-hover:scale-110 group-hover:rotate-45">
                                         <svg class="w-5 h-5 text-white group-hover:text-slate-900 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1301,6 +1305,32 @@
         console.error("CoreLink: Icons failed to load, continuing execution.");
     }
 
+    // FIXED EXPANDABLE TEXT FUNCTION (Moved to Global Scope so buttons can access it immediately)
+    function toggleExpand(elementId, button) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const paragraph = element.querySelector('p');
+        const buttonText = button.querySelector('span');
+        const fullContent = element.getAttribute('data-full-content');
+        const charLimit = 500;
+
+        if (element.classList.contains('expanded')) {
+            element.classList.remove('expanded');
+            paragraph.textContent = fullContent.substring(0, charLimit) + '...';
+            buttonText.textContent = 'Read more';
+            button.classList.remove('expanded');
+        } else {
+            element.classList.add('expanded');
+            paragraph.textContent = fullContent;
+            buttonText.textContent = 'Show less';
+            button.classList.add('expanded');
+        }
+    }
+    // Bind to window to ensure inline onclick handlers can find it
+    window.toggleExpand = toggleExpand;
+
+
     // Project Gallery Data for Lightbox
     const projectGalleries = {};
     {% for project in projects %}
@@ -1334,10 +1364,8 @@
         const lightbox = document.getElementById('lightbox');
         const lightboxImage = document.getElementById('lightbox-image');
         const captionText = document.getElementById('lightbox-caption-text');
-        const captionBox = document.getElementById('lightbox-caption');
         const counter = document.getElementById('lightbox-counter');
 
-        // Hide caption box if no text exists to keep UI clean
         if (gallery[imageIndex].caption.trim() === '') {
             captionText.style.display = 'none';
         } else {
@@ -1349,7 +1377,6 @@
         counter.textContent = `${imageIndex + 1} / ${gallery.length}`;
 
         lightbox.classList.remove('hidden');
-        // Small delay to allow display:block to apply before animating opacity
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 lightbox.classList.remove('opacity-0');
@@ -1364,7 +1391,7 @@
         setTimeout(() => {
             lightbox.classList.add('hidden');
             document.body.style.overflow = '';
-        }, 500); // Matches the updated CSS transition duration
+        }, 500);
         currentProjectId = null;
         currentImageIndex = 0;
     }
@@ -1385,7 +1412,6 @@
         const captionText = document.getElementById('lightbox-caption-text');
         const counter = document.getElementById('lightbox-counter');
 
-        // Add a tiny quick-fade effect when changing images
         lightboxImage.style.opacity = '0.7';
 
         setTimeout(() => {
@@ -1403,7 +1429,6 @@
         }, 150);
     }
 
-    // Keyboard navigation for lightbox
     document.addEventListener('keydown', (e) => {
         const lightbox = document.getElementById('lightbox');
         if (lightbox.classList.contains('hidden')) return;
@@ -1417,10 +1442,8 @@
         }
     });
 
-    // Close lightbox on backdrop click
     document.getElementById('lightbox').addEventListener('click', (e) => {
         if (e.target.id === 'lightbox' || e.target.id === 'lightbox-image') {
-            // Close if clicking anywhere except the buttons or caption
             if(e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
                 closeLightbox();
             }
@@ -1435,13 +1458,11 @@
     }
 
     function smartBack() {
-        // Use document.referrer for robust navigation
         if (document.referrer && document.referrer !== window.location.href) {
             window.location.href = document.referrer;
         } else if (window.history.length > 1) {
             window.history.back();
         } else {
-            // Fallback to dashboard
             window.location.href = "{% url 'dashboard' %}";
         }
     }
@@ -1476,12 +1497,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
 
-        // Initialize Theme
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeIcons(savedTheme);
 
-        // Reading Progress Indicator
         const progressBar = document.getElementById('reading-progress');
         if (progressBar) {
             window.addEventListener('scroll', () => {
@@ -1492,7 +1511,6 @@
             });
         }
 
-        // Floating Action Button Visibility
         const fab = document.getElementById('fab-connect');
         if (fab) {
             window.addEventListener('scroll', () => {
@@ -1504,7 +1522,6 @@
             });
         }
 
-        // Animated Tagline
         const taglineContainer = document.getElementById('tagline-container');
         if (taglineContainer) {
             const taglines = taglineContainer.querySelectorAll('.tagline-text');
@@ -1514,52 +1531,32 @@
                     const current = taglines[currentIndex];
                     const nextIndex = (currentIndex + 1) % taglines.length;
                     const next = taglines[nextIndex];
-                    
+
                     current.classList.remove('fade-in');
                     current.classList.add('fade-out');
                     current.classList.add('hidden');
-                    
+
                     next.classList.remove('hidden');
                     next.classList.remove('fade-out');
                     next.classList.add('fade-in');
-                    
+
                     currentIndex = nextIndex;
                 }, 4000);
             }
         }
 
-        // CoreLink Loading Bar (UX for inner links)
-        const loadingBar = document.getElementById('top-loading-bar');
-        document.addEventListener('click', (e) => {
-            const target = e.target.closest('a');
-            if (target && target.href && !target.href.startsWith('javascript:') && !target.href.includes('#') && target.target !== '_blank') {
-                if (target.hostname === window.location.hostname && loadingBar) {
-                    loadingBar.style.transition = 'none';
-                    loadingBar.style.width = '0%';
-                    loadingBar.style.opacity = '1';
-                    setTimeout(() => {
-                        loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
-                        loadingBar.style.width = '60%';
-                    }, 10);
-                }
-            }
-        });
-
-        // REMOVED: Hide Empty Split Content Sections
-        // Django conditionals handle this server-side. JS hiding was interfering with proper rendering.
-
-        // Bio Truncation Logic
+        // Bio Truncation Logic (Fixed)
         const bioContent = document.getElementById('bio-content');
         const bioToggle = document.getElementById('bio-toggle');
         if (bioContent && bioToggle) {
             const fullBio = bioContent.getAttribute('data-full-bio');
-            const bioLimit = 500; // Character limit for bio truncation
-            
+            const bioLimit = 500;
+
             if (fullBio && fullBio.length > bioLimit) {
                 const truncatedBio = fullBio.substring(0, bioLimit) + '...';
                 bioContent.textContent = truncatedBio;
-                bioToggle.classList.remove('hidden');
-                
+                bioToggle.classList.remove('hidden'); // Only show button if text is long enough
+
                 let isExpanded = false;
                 bioToggle.addEventListener('click', () => {
                     if (isExpanded) {
@@ -1570,70 +1567,54 @@
                         bioToggle.innerHTML = 'Show less <i data-lucide="chevron-up" class="w-3.5 h-3.5 inline ml-1 transition-transform group-hover/link:-translate-y-0.5"></i>';
                     }
                     isExpanded = !isExpanded;
-                    lucide.createIcons();
+                    try { if (typeof lucide !== 'undefined') { lucide.createIcons(); } } catch(e) {}
                 });
             } else {
                 bioContent.textContent = fullBio || '';
+                bioToggle.classList.add('hidden'); // Ensure button stays hidden if text is short
             }
         }
 
-        // Expandable Text Toggle Function
-        window.toggleExpand = function(elementId, button) {
-            const element = document.getElementById(elementId);
-            const paragraph = element.querySelector('p');
-            const buttonText = button.querySelector('span');
-            const fullContent = element.getAttribute('data-full-content');
-            const charLimit = 500;
-            
-            if (element.classList.contains('expanded')) {
-                element.classList.remove('expanded');
-                paragraph.textContent = fullContent.substring(0, charLimit) + '...';
-                buttonText.textContent = 'Read more';
-                button.classList.remove('expanded');
-            } else {
-                element.classList.add('expanded');
-                paragraph.textContent = fullContent;
-                buttonText.textContent = 'Show less';
-                button.classList.add('expanded');
-            }
-        };
+        // Initialize truncation for essays and vision on page load (Fixed)
+        const charLimit = 500;
 
-        // Initialize truncation for essays and vision on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const charLimit = 500;
-            
-            // Truncate essays
-            document.querySelectorAll('.essay-truncated').forEach(p => {
-                const fullContent = p.textContent;
-                if (fullContent.length > charLimit) {
-                    p.textContent = fullContent.substring(0, charLimit) + '...';
-                }
-            });
-            
-            // Truncate vision
-            document.querySelectorAll('.vision-truncated').forEach(p => {
-                const fullContent = p.textContent;
-                if (fullContent.length > charLimit) {
-                    p.textContent = fullContent.substring(0, charLimit) + '...';
-                }
-            });
+        // Truncate essays and only reveal button if text is over limit
+        document.querySelectorAll('.essay-truncated').forEach(p => {
+            const container = p.closest('.expandable-text');
+            const btn = container.querySelector('.read-more-btn');
+            const fullContent = container.getAttribute('data-full-content');
+
+            if (fullContent && fullContent.length > charLimit) {
+                p.textContent = fullContent.substring(0, charLimit) + '...';
+                if(btn) btn.classList.remove('hidden');
+            } else {
+                p.textContent = fullContent || '';
+            }
         });
 
-        // Project Gallery Function - Opens lightbox with all project images
+        // Truncate vision and only reveal button if text is over limit
+        document.querySelectorAll('.vision-truncated').forEach(p => {
+            const container = p.closest('.expandable-text');
+            const btn = container.querySelector('.read-more-btn');
+            const fullContent = container.getAttribute('data-full-content');
+
+            if (fullContent && fullContent.length > charLimit) {
+                p.textContent = fullContent.substring(0, charLimit) + '...';
+                if(btn) btn.classList.remove('hidden');
+            } else {
+                p.textContent = fullContent || '';
+            }
+        });
+
         window.openProjectGallery = function(projectId) {
-            // Check if lightbox function exists from original code
             if (typeof openLightbox === 'function') {
                 openLightbox(projectId, 0);
             } else {
                 console.log('Project gallery clicked for project ID:', projectId);
-                // Fallback: could open a modal or navigate to project detail page
                 alert('Gallery view for project ' + projectId);
             }
         };
 
-        // BULLETPROOF REVEAL ANIMATIONS
-        // The elements are fully visible by default.
-        // We only hide them via Javascript IF the observer is successfully running.
         try {
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -1645,14 +1626,11 @@
             }, { threshold: 0.01, rootMargin: '50px' });
 
             document.querySelectorAll('.reveal-on-scroll').forEach(el => {
-                // By adding 'js-hiding', we tell CSS to make it opacity 0.
                 el.classList.add('js-hiding');
                 revealObserver.observe(el);
             });
         } catch (error) {
             console.error("CoreLink: Scroll animations bypassed due to error.");
-            // If the observer fails, they won't get the 'js-hiding' class,
-            // so they will naturally remain 100% visible on the screen.
         }
     });
 </script>

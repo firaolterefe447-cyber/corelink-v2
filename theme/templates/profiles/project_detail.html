@@ -157,7 +157,7 @@
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span class="text-sm font-semibold">Back to Profile</span>
             </a>
-            
+
             <div class="flex flex-wrap items-center gap-3 mb-4">
                 {% if project.role %}
                 <span class="px-3 py-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ project.role }}</span>
@@ -186,7 +186,6 @@
         <!-- Project Gallery -->
         {% if project.gallery.count > 0 %}
         <section class="mb-8">
-            <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Project Gallery</h2>
             <div class="gallery-grid">
                 {% for asset in project.gallery.all %}
                 <div class="gallery-item bento-card" onclick="openLightbox({{ project.id }}, {{ forloop.counter0 }})">
@@ -240,31 +239,6 @@
             </div>
         </section>
         {% endif %}
-
-        <!-- Project Meta -->
-        <section class="mb-8">
-            <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-4 tracking-tight">Project Details</h2>
-            <div class="bento-card p-6">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Category</span>
-                        <p class="text-slate-900 mt-1">{{ project.get_category_display|default:"Not specified" }}</p>
-                    </div>
-                    <div>
-                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Context</span>
-                        <p class="text-slate-900 mt-1">{{ project.get_context_display }}</p>
-                    </div>
-                    <div>
-                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Role</span>
-                        <p class="text-slate-900 mt-1">{{ project.role|default:"Not specified" }}</p>
-                    </div>
-                    <div>
-                        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Created</span>
-                        <p class="text-slate-900 mt-1">{{ project.created_at|date:"F d, Y" }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
     </div>
 </div>
