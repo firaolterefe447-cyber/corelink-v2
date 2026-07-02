@@ -517,23 +517,11 @@
                     <!-- Actions Column -->
                     <div class="flex flex-col sm:flex-row flex-wrap lg:justify-end items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 relative z-40 lg:pt-2">
                         {% with first_membership=request.user.company_memberships.first %}
-                            {% if user.role == 'FOUNDER' or first_membership %}
-                                {% if company %}
-                                    <a href="{% url 'company_admin_dashboard' company.slug %}" class="btn-profile-secondary btn-manage-company w-full sm:w-auto">
-                                        <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
-                                        <span class="pointer-events-none">{% trans "Manage Company" %}</span>
-                                    </a>
-                                {% elif first_membership %}
-                                    <a href="{% url 'company_admin_dashboard' first_membership.company.slug %}" class="btn-profile-secondary btn-manage-company w-full sm:w-auto">
-                                        <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
-                                        <span class="pointer-events-none">{% trans "Manage Company" %}</span>
-                                    </a>
-                                {% elif user.role == 'FOUNDER' %}
-                                    <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto">
-                                        <i data-lucide="plus-circle" class="w-4 h-4 pointer-events-none"></i>
-                                        <span class="pointer-events-none">{% trans "Add Company" %}</span>
-                                    </a>
-                                {% endif %}
+                            {% if first_membership %}
+                                <a href="{% url 'company_admin_dashboard' first_membership.company.slug %}" class="btn-profile-secondary btn-manage-company w-full sm:w-auto">
+                                    <i data-lucide="building" class="w-4 h-4 pointer-events-none"></i>
+                                    <span class="pointer-events-none">{% trans "Manage Company" %}</span>
+                                </a>
                             {% elif user.role == 'FOUNDER' %}
                                 <a href="{% url 'company_create' %}" class="btn-profile-secondary w-full sm:w-auto">
                                     <i data-lucide="plus-circle" class="w-4 h-4 pointer-events-none"></i>
