@@ -92,7 +92,33 @@ class PortfolioCreateMixin:
         # 2. Attach the profile to the form instance before saving
         form.instance.profile = portfolio
         messages.success(self.request, "Added successfully.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        # 3. ROBUST FALLBACK: Force Oracle update immediately after save
+        from profiles.automatic_rating import CoreLinkOracle
+        try:
+            CoreLinkOracle.update_user_rating(self.request.user.id)
+            logger.info(f"[ORACLE DIRECT] Direct Oracle update triggered for user {self.request.user.id} after creating {form.instance.__class__.__name__}")
+        except Exception as e:
+            logger.error(f"[ORACLE DIRECT] Failed to update user {self.request.user.id}: {str(e)}", exc_info=True)
+        return response
+
+
+class OracleUpdateMixin:
+    """
+    ROBUST FALLBACK: Forces Oracle update after any profile modification.
+    This ensures scores update even if Django signals fail to fire.
+    """
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Force Oracle update immediately after save
+        from profiles.automatic_rating import CoreLinkOracle
+        try:
+            user_id = self.request.user.id
+            CoreLinkOracle.update_user_rating(user_id)
+            logger.info(f"[ORACLE DIRECT] Direct Oracle update triggered for user {user_id} after updating {form.instance.__class__.__name__}")
+        except Exception as e:
+            logger.error(f"[ORACLE DIRECT] Failed to update user {self.request.user.id}: {str(e)}", exc_info=True)
+        return response
 
 class CompanyContextMixin(LoginRequiredMixin):
     """Fetches the user's active company and ensures they are an OWNER or ADMIN."""
@@ -271,7 +297,7 @@ def company_public_profile(request, slug):
 # ║ wrap around their Lego blocks. Avatars, covers, roles, and global intent.  ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-class ProfileSettingsView(RoleAwareFormMixin, LoginRequiredMixin, UpdateView):
+class ProfileSettingsView(OracleUpdateMixin, RoleAwareFormMixin, LoginRequiredMixin, UpdateView):
     model = UserProfile
     form_class = UserProfileForm
     template_name = 'dashboard/portfolio/settings.html'
@@ -313,7 +339,7 @@ class ProfileSettingsView(RoleAwareFormMixin, LoginRequiredMixin, UpdateView):
         return response
 
 
-class IdentityMediaView(LoginRequiredMixin, UpdateView):
+class IdentityMediaView(OracleUpdateMixin, LoginRequiredMixin, UpdateView):
     """Handles updating Avatars and Cover Images."""
     model = CustomUser
     form_class = IdentityMediaForm
@@ -372,7 +398,7 @@ class HeadlineCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecu
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_headlines')
 
-class HeadlineUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class HeadlineUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = ProfileHeadline
     form_class = ProfileHeadlineForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -395,7 +421,7 @@ class SkillCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurit
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_skills')
 
-class SkillUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class SkillUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Skill
     form_class = SkillForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -418,7 +444,7 @@ class CredentialCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSe
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_credentials')
 
-class CredentialUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class CredentialUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Credential
     form_class = CredentialForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -441,7 +467,7 @@ class ExperienceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSe
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_experiences')
 
-class ExperienceUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class ExperienceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = WorkExperience
     form_class = WorkExperienceForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -515,7 +541,7 @@ class ProjectCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView):
         messages.success(self.request, msg)
         return redirect(self.get_success_url())
 
-class ProjectUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class ProjectUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = PortfolioProject
     form_class = PortfolioProjectForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -621,7 +647,7 @@ class ContentPostCreateView(ContentPostSuccessUrlMixin, RoleAwareFormMixin, Port
         kwargs['post_type'] = requested_type
         return kwargs
 
-class ContentPostUpdateView(ContentPostSuccessUrlMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class ContentPostUpdateView(OracleUpdateMixin, ContentPostSuccessUrlMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = ContentPost
     form_class = ContentPostForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -679,7 +705,7 @@ class PreferenceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSe
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_preferences')
 
-class PreferenceUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class PreferenceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = UnifiedJobPreference
     form_class = JobPreferenceForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -702,7 +728,7 @@ class LanguageCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecu
     template_name = 'dashboard/portfolio/language_form.html'
     success_url = reverse_lazy('language_list')
 
-class LanguageUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class LanguageUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Language
     form_class = LanguageForm
     template_name = 'dashboard/portfolio/language_form.html'
@@ -725,7 +751,7 @@ class OpportunityCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioS
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_opportunities')
 
-class OpportunityUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class OpportunityUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = LiveOpportunity
     form_class = LiveOpportunityForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -770,7 +796,7 @@ class RightNowCreateView(RoleAwareFormMixin, PortfolioSecurityMixin, CreateView)
         messages.success(self.request, "Right Now update published successfully.")
         return redirect(self.get_success_url())
 
-class RightNowUpdateView(RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+class RightNowUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = RightNowPost
     form_class = RightNowPostForm
     template_name = 'dashboard/portfolio/right_now_form.html'
@@ -999,7 +1025,7 @@ class SocialCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class SocialUpdateView(LoginRequiredMixin, UpdateView):
+class SocialUpdateView(OracleUpdateMixin, LoginRequiredMixin, UpdateView):
     model = UniversalSocialLink
     form_class = SocialLinkForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -1027,7 +1053,7 @@ class ContactCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class ContactUpdateView(LoginRequiredMixin, UpdateView):
+class ContactUpdateView(OracleUpdateMixin, LoginRequiredMixin, UpdateView):
     model = UniversalContactMethod
     form_class = ContactMethodForm
     template_name = 'dashboard/portfolio/generic_form.html'
@@ -1102,7 +1128,7 @@ class CompanyDashboardView(CompanyContextMixin, DetailView):
         return context
 
 
-class CompanyEditView(LoginRequiredMixin, UpdateView):
+class CompanyEditView(OracleUpdateMixin, LoginRequiredMixin, UpdateView):
     """Class-based view for editing a company profile, perfectly matching urls.py."""
     model = Company
     form_class = CompanyProfileUpdateForm
@@ -1611,7 +1637,7 @@ class ServiceCreateView(CompanyContextMixin, CreateView):
         messages.success(self.request, "Service added successfully!")
         return redirect(self.get_success_url())
 
-class ServiceUpdateView(CompanyContextMixin, UpdateView):
+class ServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyService
     form_class = CompanyServiceForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1660,7 +1686,7 @@ class MilestoneCreateView(CompanyContextMixin, CreateView):
         form.instance.company = self.get_company()
         return super().form_valid(form)
 
-class MilestoneUpdateView(CompanyContextMixin, UpdateView):
+class MilestoneUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyMilestone
     form_class = CompanyMilestoneForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1705,7 +1731,7 @@ class NewsCreateView(CompanyContextMixin, CreateView):
         messages.success(self.request, "Article published successfully!")
         return redirect(self.get_success_url())
 
-class NewsUpdateView(CompanyContextMixin, UpdateView):
+class NewsUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyNews
     form_class = CompanyNewsForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1770,7 +1796,7 @@ class CompanyContactCreateView(CompanyContextMixin, CreateView):
         form.instance.company = self.get_company()
         return super().form_valid(form)
 
-class CompanyContactUpdateView(CompanyContextMixin, UpdateView):
+class CompanyContactUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyContactMethod
     form_class = CompanyContactMethodForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1786,7 +1812,7 @@ class CompanySocialCreateView(CompanyContextMixin, CreateView):
         form.instance.company = self.get_company()
         return super().form_valid(form)
 
-class CompanySocialUpdateView(CompanyContextMixin, UpdateView):
+class CompanySocialUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanySocialLink
     form_class = CompanySocialLinkForm
     template_name = 'dashboard/company/generic_form.html'

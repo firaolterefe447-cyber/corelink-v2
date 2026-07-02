@@ -45,7 +45,18 @@ def generate_unique_slug(klass, field_name, source_text):
 def _trigger_oracle(user_id):
     """Fires the Oracle asynchronously after the DB transaction is committed."""
     if user_id:
-        transaction.on_commit(lambda: CoreLinkOracle.update_user_rating(user_id))
+        logger.info(f"[ORACLE SIGNAL] Triggering Oracle update for user_id: {user_id}")
+        transaction.on_commit(lambda: _execute_oracle_update(user_id))
+
+
+def _execute_oracle_update(user_id):
+    """Executes the Oracle update with error handling and logging."""
+    try:
+        logger.info(f"[ORACLE EXECUTION] Starting Oracle update for user_id: {user_id}")
+        CoreLinkOracle.update_user_rating(user_id)
+        logger.info(f"[ORACLE SUCCESS] Completed Oracle update for user_id: {user_id}")
+    except Exception as e:
+        logger.error(f"[ORACLE ERROR] Failed to update user {user_id}: {str(e)}", exc_info=True)
 
 
 # ==========================================
@@ -56,6 +67,7 @@ def _trigger_oracle(user_id):
 @receiver([post_save, post_delete], sender=UniversalContactMethod)
 def watch_account_matrix(sender, instance, **kwargs):
     user_id = instance.id if sender == CustomUser else instance.user_id
+    logger.info(f"[ORACLE SIGNAL] Account matrix signal fired: {sender.__name__} for user_id: {user_id}")
     _trigger_oracle(user_id)
 
 
@@ -66,8 +78,10 @@ def watch_account_matrix(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=ProfileHeadline)
 def watch_unified_base(sender, instance, **kwargs):
     if sender == UserProfile:
+        logger.info(f"[ORACLE SIGNAL] UserProfile signal fired for user_id: {instance.user_id}")
         _trigger_oracle(instance.user_id)
     elif hasattr(instance, "profile"):
+        logger.info(f"[ORACLE SIGNAL] ProfileHeadline signal fired for user_id: {instance.profile.user_id}")
         _trigger_oracle(instance.profile.user_id)
 
 
@@ -78,6 +92,7 @@ def watch_unified_base(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=ContentPost)
 def watch_unified_portfolio_nodes(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
+        logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
         _trigger_oracle(instance.profile.user_id)
 
 
@@ -85,6 +100,7 @@ def watch_unified_portfolio_nodes(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=RightNowMedia)
 def watch_right_now_ecosystem(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
+        logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
         _trigger_oracle(instance.profile.user_id)
 
 
