@@ -693,14 +693,31 @@
                     </div>
 
                     <!-- Right Action CTA with Premium Styling -->
-                    {% if profile.cv_file %}
                     <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-4 lg:mt-0">
+                        <!-- Stats Bar (Skills & Projects Count) -->
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 lg:mb-5">
+                            {% if skills %}
+                            <div class="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-slate-50 border border-blue-100 rounded-lg shadow-sm">
+                                <i data-lucide="zap" class="w-3.5 h-3.5 text-[var(--color-primary)]"></i>
+                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ skills|length }}</span>
+                                <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Skill{{ skills|length|pluralize }}</span>
+                            </div>
+                            {% endif %}
+                            {% if projects %}
+                            <div class="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-50 to-slate-50 border border-purple-100 rounded-lg shadow-sm">
+                                <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-purple-600"></i>
+                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ projects|length }}</span>
+                                <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Project{{ projects|length|pluralize }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if profile.cv_file %}
                         <a href="{{ profile.cv_file.url }}" target="_blank" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95">
                             <i data-lucide="file-text" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                             <span>View Resumé</span>
                         </a>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
