@@ -56,9 +56,6 @@
 {% endblock navbar %}
 
 {% block content %}
-<div id="top-loading-bar"></div>
-<div id="reading-progress"></div>
-
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,41 +135,6 @@
             radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
         pointer-events: none;
         z-index: 0;
-    }
-
-    /* CoreLink Top Loading Bar */
-    #top-loading-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light), var(--color-primary-dark));
-        background-size: 200% 100%;
-        z-index: 99999;
-        width: 0%;
-        pointer-events: none;
-        box-shadow: 0 0 12px rgba(10, 102, 194, 0.5);
-        opacity: 0;
-        transition: width 0.4s ease-out, opacity 0.3s ease-in;
-        animation: loadingGradient 2s linear infinite;
-    }
-
-    /* Reading Progress Indicator */
-    #reading-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
-        z-index: 99998;
-        width: 0%;
-        pointer-events: none;
-        box-shadow: 0 0 8px rgba(10, 102, 194, 0.4);
-        transition: width 0.1s ease-out;
-    }
-    @keyframes loadingGradient {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
     }
 
     /* Unified Card System with Premium Feel */
@@ -390,26 +352,6 @@
         section {
             margin-bottom: calc(var(--spacing-2xl) * 1.25);
         }
-    }
-
-    /* Premium Section Headers */
-    section h2 {
-        position: relative;
-        display: inline-block;
-    }
-    section h2::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 0;
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
-        border-radius: 2px;
-        transition: width 0.3s ease;
-    }
-    section:hover h2::after {
-        width: 100%;
     }
 
     /* Premium Timeline Dots */
@@ -812,13 +754,17 @@
         </section>
         {% endif %}
 
-        <!-- EXPERIENCE -->
+        <!-- EXPERIENCE (Clean Timeline Format) -->
         {% if experiences %}
         <section id="exp" class="pt-2 md:pt-3 border-t border-slate-200 reveal-on-scroll">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Experience</h2>
-            <div class="space-y-6">
+            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for exp in experiences %}
-                <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm card-hover-premium">
+                <article class="relative group">
+                    <!-- Timeline Dot -->
+                    <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] {% if exp.is_current %}border-[var(--color-primary)]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[var(--color-slate-50)] transition-colors duration-300 group-hover:border-[var(--color-primary)] timeline-dot"></div>
+
+                    <!-- Date & Tags Row -->
                     <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
                         <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
                         <span class="px-2.5 py-1 border border-slate-200 text-slate-500 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-white">{{ exp.get_location_type_display }}</span>
@@ -827,16 +773,18 @@
                         {% endif %}
                     </div>
 
+                    <!-- Role & Company -->
                     <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-1 transition-colors group-hover:text-[var(--color-primary)] flex items-center gap-2">
                         {% if exp.is_current %}
-                        <span class="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-pulse"></span>
+                        <span class="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-pulse shadow-[0_0_8px_rgba(10,102,194,0.5)]"></span>
                         {% endif %}
                         {{ exp.role_title }}
                     </h4>
                     <h5 class="text-[14px] md:text-[16px] font-serif-title font-semibold text-[var(--color-primary)] md:text-slate-600 mb-3">{{ exp.company_name }}</h5>
 
+                    <!-- Description -->
                     {% if exp.description %}
-                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left">{{ exp.description }}</p>
+                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[90%]">{{ exp.description }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}
@@ -1338,16 +1286,6 @@
         const backButton = document.getElementById('back-button');
         if (backButton) {
             backButton.addEventListener('click', smartBack);
-        }
-
-        const progressBar = document.getElementById('reading-progress');
-        if (progressBar) {
-            window.addEventListener('scroll', () => {
-                const scrollTop = window.scrollY;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrollPercent = (scrollTop / docHeight) * 100;
-                progressBar.style.width = scrollPercent + '%';
-            });
         }
 
         const fab = document.getElementById('fab-connect');
