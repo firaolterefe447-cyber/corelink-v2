@@ -10,39 +10,26 @@
 {% endblock %}
 
 {% block navbar %}
-<!-- UNIFIED TOP NAVBAR (Glassmorphic) -->
-<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 transition-all duration-500 h-16 print:hidden">
-    <div class="max-w-[1200px] mx-auto px-5 w-full h-full flex justify-between items-center">
-        <!-- LEFT: Brand -->
-        <a href="{% url 'public_profile' profile.slug %}" class="group flex items-center focus-visible:outline-none rounded-sm">
-            <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase transition-opacity group-hover:opacity-80">core</span>
-            <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-[#0856A8] lowercase transition-opacity group-hover:opacity-80">link</span>
+<!-- MINIMALIST UNIFIED NAVBAR (Matches Profile Glassmorphism) -->
+<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 h-16 print:hidden">
+    <div class="max-w-[1100px] mx-auto px-5 w-full h-full flex items-center justify-start">
+        <!-- EXACT PROFILE BACK BUTTON -->
+        <a href="{% url 'public_profile' profile.slug %}" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 cursor-pointer border-none transition-transform active:scale-95 no-underline">
+            <i data-lucide="arrow-left" class="w-4 h-4 pointer-events-none"></i>
+            <span class="pointer-events-none">Back</span>
         </a>
-
-        <!-- RIGHT: Actions -->
-        <div class="flex items-center gap-3 md:gap-4">
-            <button onclick="toggleTheme()" aria-label="Toggle Dark Mode" class="flex items-center justify-center w-10 h-10 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none">
-                <i data-lucide="moon" class="w-4 h-4 dark-icon hidden"></i>
-                <i data-lucide="sun" class="w-4 h-4 light-icon hidden"></i>
-            </button>
-            <a href="{% url 'public_profile' profile.slug %}" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                <span>Back to Profile</span>
-            </a>
-        </div>
     </div>
 </nav>
 {% endblock navbar %}
 
 {% block content %}
-<div id="top-loading-bar"></div>
-
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
 <style>
+    /* EXACT COPY OF PROFILE VARIABLES & THEME */
     :root {
         --font-main: 'Inter', sans-serif;
         --font-serif: 'Playfair Display', serif;
@@ -55,20 +42,14 @@
         --color-slate-400: #94A3B8;
         --color-slate-600: #475569;
         --color-slate-900: #0F172A;
-        --radius-xl: 1.25rem;
+        --radius-xl: 1.5rem;
+        --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
         --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
-        --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+        --shadow-premium: 0 20px 60px rgba(10, 102, 194, 0.15);
     }
-    [data-theme="dark"] {
-        --color-slate-50: #0F172A;
-        --color-slate-100: #1E293B;
-        --color-slate-200: #334155;
-        --color-slate-300: #475569;
-        --color-slate-400: #64748B;
-        --color-slate-600: #94A3B8;
-        --color-slate-900: #F1F5F9;
-    }
+
     html { scroll-behavior: smooth; }
+
     body {
         font-family: var(--font-main);
         -webkit-font-smoothing: antialiased;
@@ -76,15 +57,26 @@
         color: var(--color-slate-900);
         overflow-x: hidden;
         line-height: 1.6;
-        transition: background 0.3s ease, color 0.3s ease;
     }
-    [data-theme="dark"] body {
-        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+
+    /* Premium Background Pattern (Matches Profile) */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
     }
 
     .font-serif-title { font-family: var(--font-serif); }
 
-    /* Premium Card */
+    /* Bento Card Elements */
     .bento-card {
         background: white;
         border: 1px solid var(--color-slate-200);
@@ -92,184 +84,197 @@
         box-shadow: var(--shadow-md);
         position: relative;
         overflow: hidden;
-        transition: background 0.3s ease, border-color 0.3s ease;
-    }
-    [data-theme="dark"] .bento-card {
-        background: var(--color-slate-100);
-        border-color: var(--color-slate-300);
     }
 
-    /* Gallery Grid */
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
-    }
-    .gallery-item {
-        aspect-ratio: 4/3;
-        border-radius: 0.75rem;
+    .bento-card-dark {
+        background: var(--color-slate-900);
+        border: 1px solid var(--color-slate-900);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-md);
+        position: relative;
         overflow: hidden;
-        cursor: pointer;
-        transition: transform 0.3s ease;
+        color: white;
     }
-    .gallery-item:hover {
-        transform: scale(1.02);
+
+    /* Native Horizontal Scrolling Gallery */
+    .scrolling-gallery {
+        display: flex;
+        overflow-x: auto;
+        gap: 1.5rem;
+        padding: 1rem 5vw 3rem 5vw;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        scroll-padding: 0 5vw;
     }
-    .gallery-item img {
+    .scrolling-gallery::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    .gallery-slide {
+        flex: 0 0 auto;
+        width: 85vw;
+        max-width: 900px;
+        scroll-snap-align: center;
+        aspect-ratio: 16/10;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        background: white;
+        border: 1px solid var(--color-slate-200);
+        box-shadow: var(--shadow-md);
+        position: relative;
+        transition: all 0.5s ease-out;
+    }
+    .gallery-slide:hover {
+        transform: translateY(-0.375rem);
+        box-shadow: 0 20px 40px -15px rgba(10,102,194,0.15);
+        border-color: rgba(10,102,194,0.3);
+    }
+
+    @media (min-width: 768px) {
+        .gallery-slide { width: 75vw; }
+    }
+    @media (min-width: 1024px) {
+        .gallery-slide { width: 65vw; }
+    }
+
+    .gallery-slide img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-
-    /* Section spacing */
-    section {
-        margin-bottom: 3rem;
-    }
-
-    /* Loading Bar */
-    #top-loading-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-primary), #3B82F6, var(--color-primary-dark));
-        background-size: 200% 100%;
-        z-index: 99999;
-        width: 0%;
-        pointer-events: none;
-        box-shadow: 0 0 12px rgba(10, 102, 194, 0.5);
-        opacity: 0;
-        transition: width 0.4s ease-out, opacity 0.3s ease-in;
-        animation: loadingGradient 2s linear infinite;
-    }
-    @keyframes loadingGradient {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-    }
 </style>
 
-<div class="w-full bg-transparent pb-32 relative overflow-hidden pt-16">
-    <div class="max-w-[1000px] mx-auto px-5 md:px-10 pt-6 md:pt-8">
-        
-        <!-- Project Header -->
-        <section class="mb-8">
-            <a href="{% url 'public_profile' profile.slug %}" class="inline-flex items-center gap-2 text-slate-500 hover:text-[var(--color-primary)] transition-colors mb-6">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                <span class="text-sm font-semibold">Back to Profile</span>
-            </a>
+<div class="w-full bg-transparent pb-32 pt-28 relative z-10">
 
-            <h1 class="text-[clamp(2rem,5vw,3rem)] font-serif-title font-bold text-slate-900 mb-4 leading-tight">{{ project.title }}</h1>
+    <!-- Hero Header (Matches Profile Hero Typography & Badges) -->
+    <header class="max-w-[800px] mx-auto px-5 text-center mb-12">
+
+        <!-- Profile-Style Pill Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+            {% if project.role %}
+                <span class="px-3 py-1.5 bg-blue-50/80 border border-blue-100 text-[var(--color-primary-dark)] text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">{{ project.role }}</span>
+            {% endif %}
 
             {% if project.client_name %}
-            <p class="text-lg text-slate-600 mb-6">
-                <span class="font-semibold">Client:</span> {{ project.client_name }}
-            </p>
+                <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">
+                    Client: {{ project.client_name }}
+                </span>
             {% endif %}
+        </div>
 
-            {% if project.link %}
-            <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-sm font-semibold rounded-xl hover:shadow-lg transition-all transform active:scale-95">
-                <i data-lucide="external-link" class="w-4 h-4"></i>
+        <!-- Title -->
+        <h1 class="text-[clamp(2.2rem,5vw,3.5rem)] font-serif-title font-bold text-slate-900 leading-tight mb-8 break-words">
+            {{ project.title }}
+        </h1>
+
+        <!-- View Project CTA (Matches Profile Resume Button) -->
+        {% if project.link %}
+        <div class="flex justify-center">
+            <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 no-underline">
+                <i data-lucide="external-link" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                 <span>View Live Project</span>
             </a>
-            {% endif %}
-        </section>
+        </div>
+        {% endif %}
+    </header>
 
-        <!-- Project Gallery -->
-        {% if project.gallery.count > 0 %}
-        <section class="mb-8">
-            <div class="gallery-grid">
-                {% for asset in project.gallery.all %}
-                <div class="gallery-item bento-card" onclick="openLightbox({{ project.id }}, {{ forloop.counter0 }})">
-                    {% if asset.asset_type == 'IMAGE' and asset.image %}
-                    <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery image">
-                    {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+    <!-- Full-Bleed Scrollable Gallery (Premium UX) -->
+    {% if project.gallery.count > 0 %}
+    <section class="w-full relative mb-12 lg:mb-16">
+        <!-- Scroll hint icon for mobile -->
+        <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[var(--color-primary)] md:hidden pointer-events-none animate-pulse">
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </div>
+
+        <div class="scrolling-gallery">
+            {% for asset in project.gallery.all %}
+            <div class="gallery-slide group">
+                {% if asset.asset_type == 'IMAGE' and asset.image %}
+                    <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
+                    <!-- Overlay Gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                     <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                        <i data-lucide="file-text" class="w-12 h-12 text-red-500 mb-3"></i>
-                        <span class="text-sm font-semibold text-slate-600">Document</span>
-                        <a href="{{ asset.document_file.url }}" target="_blank" class="mt-4 text-[var(--color-primary)] text-sm font-semibold hover:underline">View PDF</a>
+                        <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[var(--color-primary)] transition-all duration-500">
+                            <i data-lucide="file-text" class="w-8 h-8"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
+                        <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[var(--color-primary)] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
                     </div>
-                    {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                     <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                        <i data-lucide="external-link" class="w-12 h-12 text-purple-500 mb-3"></i>
-                        <span class="text-sm font-semibold text-slate-600">External Link</span>
-                        <a href="{{ asset.external_url }}" target="_blank" class="mt-4 text-[var(--color-primary)] text-sm font-semibold hover:underline">Open Link</a>
+                        <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[var(--color-primary)] transition-all duration-500">
+                            <i data-lucide="link" class="w-8 h-8"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">External Resource</span>
+                        <a href="{{ asset.external_url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[var(--color-primary)] shadow-sm transition-colors uppercase tracking-widest no-underline">Open Link</a>
                     </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Editorial Content Sections (Styled like Profile Blocks) -->
+    <div class="max-w-[850px] mx-auto px-5 space-y-8 md:space-y-12">
+
+        <!-- Overview / Description -->
+        {% if project.main_description %}
+        <section class="bento-card p-8 md:p-10">
+            <h2 class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Overview</h2>
+            <div class="text-[15px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left">
+                {{ project.main_description }}
             </div>
         </section>
         {% endif %}
 
-        <!-- Problem Statement -->
+        <!-- Problem Statement (Dark Card to match Profile's "Vision" section) -->
         {% if project.problem_statement %}
-        <section class="mb-8">
-            <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-4 tracking-tight">Problem Statement</h2>
-            <div class="bento-card p-6">
-                <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ project.problem_statement }}</p>
+        <section class="bento-card-dark p-8 md:p-10 relative">
+            <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
+            <div class="relative z-10">
+                <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">The Challenge</span>
+                <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.8] whitespace-pre-line break-words max-w-[90%]">
+                    {{ project.problem_statement }}
+                </p>
             </div>
         </section>
         {% endif %}
 
         <!-- Solution Narrative -->
         {% if project.solution_narrative %}
-        <section class="mb-8">
-            <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-4 tracking-tight">Solution</h2>
-            <div class="bento-card p-6">
-                <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ project.solution_narrative }}</p>
-            </div>
-        </section>
-        {% endif %}
-
-        <!-- Main Description -->
-        {% if project.main_description %}
-        <section class="mb-8">
-            <h2 class="text-2xl font-serif-title font-bold text-slate-900 mb-4 tracking-tight">Description</h2>
-            <div class="bento-card p-6">
-                <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ project.main_description }}</p>
-            </div>
-        </section>
-        {% endif %}
-
-        <!-- Project Meta -->
-        {% if project.role %}
-        <section class="mb-8">
-            <div class="bento-card p-6">
-                <div>
-                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Role</span>
-                    <p class="text-slate-900 mt-1">{{ project.role }}</p>
-                </div>
+        <section class="bento-card p-8 md:p-10">
+            <h2 class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-[var(--color-primary)]"></div> The Solution
+            </h2>
+            <div class="text-[15px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left">
+                {{ project.solution_narrative }}
             </div>
         </section>
         {% endif %}
 
     </div>
+
+    <!-- FOOTER (Matches Profile Footer) -->
+    <footer class="pt-16 pb-8 mt-12 md:mt-16 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px]">
+        <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Project <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ project.title }}</span></p>
+    </footer>
+
 </div>
 
+<script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    // Theme toggle
-    function toggleTheme() {
-        const html = document.documentElement;
-        const current = html.getAttribute('data-theme');
-        html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-        localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark');
-    }
-
-    // Initialize theme
     document.addEventListener('DOMContentLoaded', function() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
+        // Initialize beautiful icons
+        try {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        } catch (e) {
+            console.error("Icons failed to load");
         }
-        
-        // Initialize icons
-        lucide.createIcons();
     });
-
-    // Lightbox function (placeholder - integrate with existing lightbox)
-    function openLightbox(projectId, index) {
-        console.log('Opening lightbox for project:', projectId, 'index:', index);
-        // Integrate with existing lightbox system
-    }
 </script>
 {% endblock %}
