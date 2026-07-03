@@ -307,12 +307,12 @@ class Language(models.Model):
     # Ethiopian Languages (ISO 639-1 codes where available)
     ETHIOPIAN_LANGUAGES = [
         ('am', _('Amharic')),
-        ('om', _('Oromo')),
+        ('om', _('Afan Oromo')),
         ('ti', _('Tigrinya')),
         ('so', _('Somali')),
         ('aa', _('Afar')),
-        ('sid', _('Sidamo')),
-        ('wal', _('Wolaytta')),
+        ('sid', _('Sidamigna')),
+        ('wal', _('Wolayigna')),
         ('gur', _('Gurage (General)')),
     ]
 
