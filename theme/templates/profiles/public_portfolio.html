@@ -1051,24 +1051,14 @@
     // THE BULLETPROOF BACK FUNCTION
     function smartBack() {
         try {
-            // Safely get referrer, default to empty string if undefined
-            const referrer = (document.referrer || "").toLowerCase();
-
             // Safely parse Django authentication into JS boolean
             const isLoggedIn = {{ request.user.is_authenticated|yesno:"true,false" }};
 
             if (isLoggedIn) {
-                if (referrer.indexOf('/nexus') !== -1) {
-                    window.location.href = '/nexus/';
-                    return;
-                } else if (referrer.indexOf('/dashboard') !== -1) {
-                    window.location.href = '/dashboard/';
-                    return;
-                }
+                window.location.href = '/dashboard/';
+            } else {
+                window.location.href = '/';
             }
-
-            // Fallback for everything else (Not logged in, or came from outside)
-            window.location.href = '/';
 
         } catch (error) {
             console.error("CoreLink Routing Error:", error);
