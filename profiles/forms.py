@@ -565,7 +565,7 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
         labels = {
             'name': _("Skill / Tool Name"),
             'proficiency_level': _("Proficiency Level"),
-            'context': _("Where have you applied this and what did you do with it? (Optional)"),
+            'context': _("Describe how you use this skill in your field and where did you use it so far (Optional)"),
         }
 
         help_texts = {
