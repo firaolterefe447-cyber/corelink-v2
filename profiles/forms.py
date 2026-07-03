@@ -575,7 +575,7 @@ class SkillForm(TailwindFormMixin, forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'e.g., Supply Chain Management'}),
-            'context': forms.Textarea(attrs={'placeholder': 'Describe where you have applied this skill and what you did with it...', 'rows': 2,
+            'context': forms.Textarea(attrs={'placeholder': 'Describe how you use this skill in your field and where did you use it so far...', 'rows': 2,
                                              'class': 'advanced-field'}),
         }
 
