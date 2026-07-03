@@ -426,7 +426,6 @@
                             {% endif %}
                         </div>
                         {% if profile.cv_file %}
-                        <!-- Removed hover scales and animations, kept simple link -->
                         <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-3 px-8 py-4 lg:px-10 lg:py-4 bg-[var(--color-primary)] text-white text-[13px] lg:text-[14px] font-semibold rounded-2xl no-underline">
                             <i data-lucide="file-text" class="w-5 h-5"></i>
                             <span>View Resumé</span>
@@ -438,7 +437,7 @@
         </div>
     </div>
 
-    <!-- 2. CONTENT SECTIONS (Also expanded to 1100px max width to match hero) -->
+    <!-- 2. CONTENT SECTIONS (Expanded to 1100px max width to match hero) -->
     <div class="max-w-[1100px] mx-auto px-5 md:px-10">
 
         <!-- ABOUT ME -->
@@ -497,50 +496,50 @@
         </section>
         {% endif %}
 
-        <!-- SELECTED WORKS -->
+        <!-- SELECTED WORKS (REBUILT & PROFESSIONAL) -->
         {% if projects %}
         <section id="works" class="pt-2 md:pt-3 border-t border-slate-200">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {% for project in projects %}
-                <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
-                    <!-- Project Gallery / Placeholder -->
+                <article class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col relative overflow-hidden">
+
+                    <!-- Project Gallery (16:9 Aspect Ratio, only renders if image exists) -->
                     {% if project.gallery.count > 0 %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100 cursor-pointer block no-underline rounded-t-[calc(var(--radius-xl)-1px)]">
-                            {% with asset=project.gallery.first %}
-                                {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                    <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover">
-                                {% else %}
-                                    <div class="w-full h-full flex items-center justify-center">
-                                        <i data-lucide="file-text" class="w-10 h-10 text-slate-400"></i>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        </a>
-                    {% else %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="aspect-[4/3] bg-slate-100 flex items-center justify-center border-b border-slate-100 cursor-pointer block no-underline rounded-t-[calc(var(--radius-xl)-1px)]">
-                            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-                                <i data-lucide="layout" class="w-8 h-8 text-[var(--color-primary)]"></i>
-                            </div>
-                        </a>
+                        {% with asset=project.gallery.first %}
+                            {% if asset.asset_type == 'IMAGE' and asset.image %}
+                            <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block aspect-[16/9] w-full bg-slate-50 border-b border-slate-200 overflow-hidden">
+                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover">
+                            </a>
+                            {% endif %}
+                        {% endwith %}
                     {% endif %}
 
                     <!-- Project Content -->
-                    <div class="p-5 flex-1 flex flex-col relative z-10">
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline">
-                            <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
-                        </a>
+                    <div class="p-6 md:p-8 flex flex-col flex-1">
 
-                        <div class="flex flex-wrap gap-2 mb-3">
+                        <!-- Clean Meta Tags -->
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4">
                             {% if project.role %}
-                                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] bg-slate-50 px-2 py-1 rounded">{{ project.role }}</span>
+                                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.15em]">{{ project.role }}</span>
                             {% endif %}
+
+                            {% if project.role and project.client_name %}
+                                <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                            {% endif %}
+
                             {% if project.client_name %}
-                                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em] bg-white border border-slate-200 px-2 py-1 rounded">{{ project.client_name }}</span>
+                                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.15em]">{{ project.client_name }}</span>
                             {% endif %}
                         </div>
 
-                        <div class="text-[13px] md:text-[14px] text-slate-600 leading-relaxed mb-4 flex-1">
+                        <!-- Title -->
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline mb-3">
+                            <h3 class="text-[20px] md:text-[22px] font-serif-title font-bold text-slate-900 leading-snug hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
+                        </a>
+
+                        <!-- Description -->
+                        <div class="text-[14px] md:text-[15px] text-slate-600 leading-relaxed mb-6 flex-1">
                             {% if project.main_description %}
                                 <p class="line-clamp-3">{{ project.main_description }}</p>
                             {% elif project.problem_statement %}
@@ -550,8 +549,9 @@
                             {% endif %}
                         </div>
 
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-0.5 transition-colors no-underline">
-                            View Project Detail <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                        <!-- View Project CTA -->
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--color-primary)] uppercase tracking-[0.15em] no-underline mt-auto hover:text-[var(--color-primary-dark)] transition-colors w-fit">
+                            View Project <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </a>
                     </div>
                 </article>
@@ -560,7 +560,7 @@
         </section>
         {% endif %}
 
-        <!-- EXPERIENCE (Clean Timeline Format) -->
+        <!-- EXPERIENCE -->
         {% if experiences %}
         <section id="exp" class="pt-2 md:pt-3 border-t border-slate-200">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Experience</h2>
@@ -848,7 +848,7 @@
                     <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">Connect Across Platforms</span>
                     <div class="space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline group shadow-sm">
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-[var(--color-primary)] transition-colors shadow-sm group">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[var(--color-primary)] group-hover:bg-blue-50 transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
