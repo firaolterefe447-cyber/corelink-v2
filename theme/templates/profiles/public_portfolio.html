@@ -38,10 +38,10 @@
             </button>
 
             <!-- BULLETPROOF BACK BUTTON -->
-            <a href="javascript:void(0)" onclick="smartBack(event)" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline">
+            <button id="back-button" aria-label="Go back" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 cursor-pointer border-none">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 <span>Back</span>
-            </a>
+            </button>
 
             {% if not request.user.is_authenticated %}
                 <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] transition-colors focus-visible:outline-none rounded-sm">Log In</a>
@@ -1339,8 +1339,7 @@
     }
 
     // THE BULLETPROOF BACK FUNCTION
-    function smartBack(event) {
-        event.preventDefault();
+    function smartBack() {
         if (window.history.length > 1) {
             window.history.back();
         } else {
@@ -1356,6 +1355,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.addEventListener('click', smartBack);
+        }
 
         const progressBar = document.getElementById('reading-progress');
         if (progressBar) {
