@@ -83,6 +83,12 @@
         --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
         --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
         --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+        --spacing-2xl: 4rem;
     }
     [data-theme="dark"] {
         --color-slate-50: #0F172A;
@@ -765,9 +771,10 @@
         <section id="contact" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Connect</h2>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="flex flex-col md:grid md:grid-cols-2 gap-8">
+
                 <!-- Direct Contact Details -->
-                <div class="space-y-4">
+                <div class="space-y-4 order-2 md:order-1">
                     {% if request.user == user %}
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -828,8 +835,8 @@
 
                 <!-- Clean, Static Social Links -->
                 {% if social_links %}
-                <div>
-                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">Connect Across Platforms</span>
+                <div class="order-1 md:order-2">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">My Social Links</span>
                     <div class="space-y-4">
                         {% for link in social_links %}
                         <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-[var(--color-primary)] transition-colors shadow-sm group">
@@ -1040,11 +1047,21 @@
 
     // THE BULLETPROOF BACK FUNCTION
     function smartBack() {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            window.location.href = "/";
+        const referrer = document.referrer.toLowerCase();
+        const isLoggedIn = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
+
+        if (isLoggedIn) {
+            if (referrer.includes('/nexus')) {
+                window.location.href = '/nexus/';
+                return;
+            } else if (referrer.includes('/dashboard')) {
+                window.location.href = '/dashboard/';
+                return;
+            }
         }
+
+        // Fallback for everything else
+        window.location.href = '/';
     }
 
     function scrollToContact() {
