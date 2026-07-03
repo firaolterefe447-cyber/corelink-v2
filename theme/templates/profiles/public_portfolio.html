@@ -83,12 +83,6 @@
         --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
         --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
         --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 1rem;
-        --spacing-md: 1.5rem;
-        --spacing-lg: 2rem;
-        --spacing-xl: 3rem;
-        --spacing-2xl: 4rem;
     }
     [data-theme="dark"] {
         --color-slate-50: #0F172A;
@@ -238,16 +232,6 @@
         overflow: hidden;
     }
 
-    /* Section Spacing */
-    section {
-        margin-bottom: var(--spacing-2xl);
-    }
-    @media (min-width: 768px) {
-        section {
-            margin-bottom: calc(var(--spacing-2xl) * 1.25);
-        }
-    }
-
     /* Static Tagline */
     .animated-tagline {
         display: inline-flex;
@@ -311,12 +295,12 @@
 ========================================================================== -->
 <div class="w-full bg-transparent pb-32 relative overflow-hidden pt-16">
 
-    <!-- Hero container max width increased to 1100px for slight expansion on PC -->
-    <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8 mb-8">
+    <!-- Hero container max width 1100px -->
+    <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8">
         <!-- 1. HERO COVER (Premium Card Design) -->
         <div class="bento-card relative flex flex-col w-full bg-white" id="profile-hero">
 
-            <!-- Cover Image (Height increased slightly on lg breakpoint) -->
+            <!-- Cover Image -->
             <div class="relative h-[180px] sm:h-[220px] md:h-[260px] lg:h-[320px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
                 {% if user.cover_image %}
                     <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
@@ -437,12 +421,12 @@
         </div>
     </div>
 
-    <!-- 2. CONTENT SECTIONS (Expanded to 1100px max width to match hero) -->
+    <!-- 2. CONTENT SECTIONS (Expanded max-width + Generous symmetrical spacing) -->
     <div class="max-w-[1100px] mx-auto px-5 md:px-10">
 
         <!-- ABOUT ME -->
         {% if profile.bio_narrative %}
-        <section id="about" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="about" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">About Me</h2>
             <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%] relative z-10">
                 <div>{{ profile.bio_narrative }}</div>
@@ -452,7 +436,7 @@
 
         <!-- CORE SKILLS -->
         {% if skills %}
-        <section id="skills" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="skills" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Core Skills</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -475,7 +459,7 @@
 
         <!-- LIVE SIGNALS -->
         {% if live_opportunities %}
-        <section id="signals" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="signals" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight flex items-center gap-3">
                 <div class="w-3 h-3 rounded-full bg-[var(--color-primary)]"></div> Signals
             </h2>
@@ -498,7 +482,7 @@
 
         <!-- SELECTED WORKS (REBUILT & PROFESSIONAL) -->
         {% if projects %}
-        <section id="works" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="works" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Projects</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {% for project in projects %}
@@ -562,7 +546,7 @@
 
         <!-- EXPERIENCE -->
         {% if experiences %}
-        <section id="exp" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="exp" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Experience</h2>
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for exp in experiences %}
@@ -600,7 +584,7 @@
 
         <!-- CREDENTIALS -->
         {% if credentials %}
-        <section id="certs" class="pt-2 md:pt-3 border-t border-slate-200">
+        <section id="certs" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Certifications & Credentials</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for cred in credentials %}
@@ -642,7 +626,7 @@
 
         <!-- MY FOCUS HISTORY -->
         {% if right_now_posts %}
-        <section id="focus-history" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="focus-history" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Focus History</h2>
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in right_now_posts %}
@@ -677,7 +661,7 @@
 
         <!-- GOALS -->
         {% if vision_blocks %}
-        <section id="goals" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="goals" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Goal</h2>
             <div class="grid gap-8">
                 {% for post in vision_blocks %}
@@ -703,7 +687,7 @@
 
         <!-- THOUGHTS -->
         {% if essays %}
-        <section id="thoughts" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="thoughts" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Industry Thoughts</h2>
             <div class="grid gap-8">
                 {% for post in essays %}
@@ -727,7 +711,7 @@
 
         <!-- PROGRESS -->
         {% if progress_logs %}
-        <section id="progress" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="progress" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Daily Progress</h2>
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in progress_logs %}
@@ -755,7 +739,7 @@
 
         <!-- LANGUAGES -->
         {% if languages %}
-        <section id="languages" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="languages" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Languages</h2>
             <div class="flex flex-wrap gap-3 md:gap-4">
                 {% for language in languages %}
@@ -778,7 +762,7 @@
         {% endif %}
 
         <!-- CONTACT & CONNECT -->
-        <section id="contact" class="pt-8 md:pt-10 border-t border-slate-200">
+        <section id="contact" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Connect</h2>
 
             <div class="grid md:grid-cols-2 gap-8">
@@ -874,7 +858,7 @@
         </section>
 
         <!-- FOOTER -->
-        <footer class="pt-16 pb-8 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px]">
+        <footer class="pt-16 pb-8 mt-12 md:mt-16 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px]">
             <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Profile <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ user.display_name }}</span></p>
         </footer>
 
