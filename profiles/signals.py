@@ -8,14 +8,23 @@ from django.utils.text import slugify
 from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMethod
 from core.services import optimize_standard_image
 from .automatic_rating import CoreLinkOracle
+from .models import (
+    Company,
+    CompanyMember,
+    CompanyService,
+    CompanyMilestone,
+    CompanyNews,
+)
 from .models.new_unified_profile import (
     UserProfile,
     ProfileHeadline,
     Skill,
     Credential,
     PortfolioProject,
+    ProjectGallery,
     WorkExperience,
     ContentPost,
+    Language,
     RightNowPost,
     RightNowMedia,
     RightNowLike,
@@ -88,8 +97,10 @@ def watch_unified_base(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=Skill)
 @receiver([post_save, post_delete], sender=Credential)
 @receiver([post_save, post_delete], sender=PortfolioProject)
+@receiver([post_save, post_delete], sender=ProjectGallery)
 @receiver([post_save, post_delete], sender=WorkExperience)
 @receiver([post_save, post_delete], sender=ContentPost)
+@receiver([post_save, post_delete], sender=Language)
 def watch_unified_portfolio_nodes(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
         logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
@@ -102,6 +113,33 @@ def watch_right_now_ecosystem(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
         logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
         _trigger_oracle(instance.profile.user_id)
+
+
+# ==========================================
+# 3. WATCH COMPANY ASSETS (Corporate Override)
+# ==========================================
+@receiver([post_save, post_delete], sender=Company)
+@receiver([post_save, post_delete], sender=CompanyMember)
+@receiver([post_save, post_delete], sender=CompanyService)
+@receiver([post_save, post_delete], sender=CompanyMilestone)
+@receiver([post_save, post_delete], sender=CompanyNews)
+def watch_company_assets(sender, instance, **kwargs):
+    user_id = None
+    if sender == Company:
+        # Get all active members of this company
+        for member in instance.members.filter(is_active=True):
+            user_id = member.user_id
+            logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {user_id}")
+            _trigger_oracle(user_id)
+    elif sender == CompanyMember:
+        user_id = instance.user_id
+        logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {user_id}")
+        _trigger_oracle(user_id)
+    elif hasattr(instance, "company"):
+        user_id = instance.company.members.filter(is_active=True).first().user_id if instance.company.members.filter(is_active=True).exists() else None
+        if user_id:
+            logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {user_id}")
+            _trigger_oracle(user_id)
 
 
 # ==============================================================================
