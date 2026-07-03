@@ -268,6 +268,15 @@
         overflow: hidden;
     }
 
+    /* Card Hover Animations */
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
 </style>
 
 <!-- =========================================================================
@@ -424,7 +433,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {% for skill in skills %}
-                <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <div class="card-hover p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-[18px] md:text-[20px] font-bold text-slate-900">{{ skill.name }}</span>
                         {% if skill.proficiency_level %}
@@ -448,7 +457,7 @@
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for opp in live_opportunities %}
-                <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <article class="card-hover p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
                     <div class="relative z-20">
                         <div class="flex justify-between items-start mb-4">
                             <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
@@ -496,13 +505,6 @@
                             </a>
                             {% endif %}
                         {% endwith %}
-                    {% else %}
-                        <!-- Beautiful Placeholder for missing image -->
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 border-b border-slate-100 z-10 flex items-center justify-center">
-                            <div class="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 group-hover:scale-110 group-hover:text-[var(--color-primary)] transition-all duration-500">
-                                <i data-lucide="folder-kanban" class="w-7 h-7"></i>
-                            </div>
-                        </a>
                     {% endif %}
 
                     <!-- Project Content -->
@@ -596,7 +598,7 @@
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Certifications & Credentials</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for cred in credentials %}
-                <article class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col text-break-words">
+                <article class="card-hover p-6 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col text-break-words">
                     <div class="relative z-20 flex flex-col h-full">
                         <div class="flex flex-wrap items-center gap-2 mb-4">
                             {% if cred.issuer %}
@@ -673,10 +675,9 @@
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Goal</h2>
             <div class="grid gap-8">
                 {% for post in vision_blocks %}
-                    <article class="p-8 md:p-10 bg-slate-900 rounded-xl shadow-lg text-white relative overflow-hidden">
+                    <article class="card-hover p-8 md:p-10 bg-slate-900 rounded-xl shadow-lg text-white relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
                         <div class="relative z-10">
-                            <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">Vision</span>
                             <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
 
                             <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
@@ -699,7 +700,7 @@
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Industry Thoughts</h2>
             <div class="grid gap-8">
                 {% for post in essays %}
-                    <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                    <article class="card-hover bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
                         {% if post.media_proof %}
                         <div class="h-48 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
                             <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
@@ -751,7 +752,7 @@
             <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Languages</h2>
             <div class="flex flex-wrap gap-3 md:gap-4">
                 {% for language in languages %}
-                <div class="px-5 py-3 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center gap-3 cursor-default">
+                <div class="card-hover px-5 py-3 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center gap-3 cursor-default">
                     <div class="flex flex-col">
                         <span class="text-[15px] md:text-[16px] font-bold text-slate-900">{{ language.get_language_display }}</span>
                         <div class="flex items-center gap-2 mt-1">
@@ -841,7 +842,7 @@
                     <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">My Social Links</span>
                     <div class="space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-[var(--color-primary)] transition-colors shadow-sm group">
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="card-hover flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-[var(--color-primary)] transition-colors shadow-sm group">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[var(--color-primary)] group-hover:bg-blue-50 transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
