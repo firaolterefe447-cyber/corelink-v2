@@ -924,23 +924,41 @@
 
 
     const projectGalleries = {};
+    /* Gallery data temporarily disabled to fix JavaScript syntax error
     {% for project in projects %}
         {% if project.gallery.count > 0 %}
-            projectGalleries[{{ project.id }}] = [
-                {% for asset in project.gallery.all %}
-                    {
-                        {% if asset.asset_type == 'IMAGE' and asset.image %}
-                        url: "{{ asset.image.url|escapejs }}",
-                        {% else %}
-                        url: "",
-                        {% endif %}
-                        caption: "{{ asset.caption|default:''|escapejs }}",
-                        type: "{{ asset.asset_type|escapejs }}"
-                    }{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ];
+            (function() {
+                try {
+                    projectGalleries[{{ project.id }}] = [
+                        {% for asset in project.gallery.all %}
+                            (function() {
+                                try {
+                                    return {
+                                        {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                        "url": "{{ asset.image.url|escapejs }}",
+                                        {% else %}
+                                        "url": "",
+                                        {% endif %}
+                                        "caption": "{{ asset.caption|default:''|escapejs }}",
+                                        "type": "{{ asset.asset_type|escapejs }}"
+                                    };
+                                } catch(e) {
+                                    return {
+                                        "url": "",
+                                        "caption": "",
+                                        "type": "{{ asset.asset_type|escapejs }}"
+                                    };
+                                }
+                            }()){% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ];
+                } catch(e) {
+                    console.error("Error loading gallery for project {{ project.id }}:", e);
+                }
+            }());
         {% endif %}
     {% endfor %}
+    */
 
     let currentProjectId = null;
     let currentImageIndex = 0;
@@ -1050,13 +1068,23 @@
 
     // THE BULLETPROOF BACK FUNCTION
     function smartBack() {
+        console.log("smartBack called");
         try {
-            // Safely parse Django authentication into JS boolean
-            const isLoggedIn = {{ request.user.is_authenticated|yesno:"true,false" }};
+            // Check referrer to see where user came from
+            const referrer = document.referrer || "";
+            console.log("Referrer:", referrer);
 
-            if (isLoggedIn) {
-                window.location.href = '/dashboard/';
+            // If came from nexus or dashboard, redirect directly to referrer
+            if (referrer && (referrer.indexOf('/nexus') !== -1 || referrer.indexOf('/dashboard') !== -1)) {
+                console.log("Came from nexus/dashboard, redirecting to referrer");
+                window.location.href = referrer;
+            } else if (window.history.length > 1) {
+                // Has history, go back
+                console.log("Has history, going back");
+                window.history.back();
             } else {
+                // No history, go to home
+                console.log("No history, going to home");
                 window.location.href = '/';
             }
 
