@@ -128,27 +128,23 @@ class OpportunitySubmissionForm(forms.ModelForm):
             # SET CONTEXT FOR HTML: Hide external company inputs if they already have one
             self.has_company_context = bool(has_company or is_founder)
 
-            # LOGIC: If they have a company, give them the CHOICE to post as company OR user
-            if has_company:
-                # Build choices for company owners
-                choices = []
-                user_name = self.user.get_full_name() or getattr(self.user, 'phone_number', 'User')
-                choices.append(('USER', f'👤 Myself ({user_name})'))
+            # LOGIC: If they are a Founder or have a company, force the default and hide the 'post_as' field.
+            if self.has_company_context:
+                if has_company:
+                    # Default completely to their first linked company
+                    first_company = valid_memberships.first().company
+                    choice_val = f"COMPANY_{first_company.id}"
+                    self.fields['post_as'].choices = [(choice_val, first_company.name)]
+                    self.initial['post_as'] = choice_val
+                else:
+                    # Edge Case: They are a founder but haven't created a company yet.
+                    user_name = self.user.get_full_name() or getattr(self.user, 'phone_number', 'User')
+                    choice_val = 'USER'
+                    self.fields['post_as'].choices = [(choice_val, f'👤 Myself ({user_name})')]
+                    self.initial['post_as'] = choice_val
 
-                # Add all their companies as options
-                for membership in valid_memberships:
-                    company = membership.company
-                    choice_val = f"COMPANY_{company.id}"
-                    choices.append((choice_val, f'🏢 {company.name}'))
-
-                self.fields['post_as'].choices = choices
-
-                # Default to their first company (but user can change it)
-                first_company = valid_memberships.first().company
-                self.initial['post_as'] = f"COMPANY_{first_company.id}"
-
-                # Keep the field VISIBLE so they can choose
-                self.fields['post_as'].widget = forms.Select(attrs={'class': 'form-select'})
+                # Crucial: Change the widget to a hidden input so it disappears from the page
+                self.fields['post_as'].widget = forms.HiddenInput()
 
             else:
                 # Normal Users & Admins (Show the dropdown)

@@ -327,17 +327,7 @@
                     {% if not form.post_as.is_hidden %}
                         <div>
                             <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Posting As" %}</label>
-                            <div class="relative">
-                                <select name="post_as" class="premium-input appearance-none cursor-pointer" required>
-                                    {% for value, label in form.post_as.field.choices %}
-                                        <option value="{{ value }}" {% if form.post_as.value == value %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                                </div>
-                            </div>
-                            <p class="text-[11.5px] text-slate-500 font-medium mt-1.5">{% trans "Choose whether to post this opportunity as yourself or on behalf of your company." %}</p>
+                            {{ form.post_as }}
                         </div>
                     {% else %}
                         {{ form.post_as }}

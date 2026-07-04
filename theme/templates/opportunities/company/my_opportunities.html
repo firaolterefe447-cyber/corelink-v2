@@ -239,19 +239,6 @@
             </div>
         </div>
 
-        <!-- TABS FOR COMPANY VS PERSONAL JOBS -->
-        <div class="flex gap-2 mb-6 border-b border-slate-200">
-            <button onclick="showTab('all')" id="tab-all" class="px-4 py-2.5 text-sm font-bold text-[#0A66C2] border-b-2 border-[#0A66C2] transition-colors">
-                {% trans "All Jobs" %} ({{ total_jobs }})
-            </button>
-            <button onclick="showTab('company')" id="tab-company" class="px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-colors">
-                {% trans "Company Jobs" %} ({{ company_jobs_count }})
-            </button>
-            <button onclick="showTab('personal')" id="tab-personal" class="px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-colors">
-                {% trans "Personal Jobs" %} ({{ personal_jobs_count }})
-            </button>
-        </div>
-
         <!-- ==============================================
              ACTIVE POSTINGS LIST (ATS STYLE)
              ============================================== -->
@@ -265,8 +252,7 @@
             <div class="flex flex-col gap-4">
                 {% if my_opportunities %}
                     {% for job in my_opportunities %}
-                    <div class="job-item border border-slate-200/80 rounded-[1rem] p-5 bg-white hover:border-blue-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-5 group/job relative hover:shadow-[0_4px_20px_-8px_rgba(10,102,194,0.15)]" 
-                         data-type="{% if job.company %}company{% else %}personal{% endif %}">
+                    <div class="border border-slate-200/80 rounded-[1rem] p-5 bg-white hover:border-blue-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-5 group/job relative hover:shadow-[0_4px_20px_-8px_rgba(10,102,194,0.15)]">
 
                         <!-- Left: Job Info -->
                         <div class="flex-1 min-w-0 pr-0 md:pr-6">
@@ -274,10 +260,9 @@
                                 <h4 class="font-bold text-slate-900 text-[16px] leading-tight truncate">
                                     {{ job.title }}
                                 </h4>
-                                <!-- Dynamic Posting Label -->
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border shrink-0
-                                    {% if job.company %}bg-blue-50 text-[#0A66C2] border-blue-100{% else %}bg-emerald-50 text-emerald-600 border-emerald-100{% endif %}">
-                                    {% if job.company %}{% trans "Company" %}{% else %}{% trans "Personal" %}{% endif %}
+                                <!-- Company Posting Label -->
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-blue-50 text-[#0A66C2] border border-blue-100 shrink-0">
+                                    {% trans "Company Posting" %}
                                 </span>
                                 <!-- Semantic Status Badge -->
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border shrink-0
@@ -537,35 +522,6 @@
             dw.classList.replace('drawer-closed', 'drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
-    }
-
-    // Tab filtering for Company vs Personal jobs
-    function showTab(tabName) {
-        // Update tab button styles
-        const tabs = ['all', 'company', 'personal'];
-        tabs.forEach(tab => {
-            const button = document.getElementById(`tab-${tab}`);
-            if (tab === tabName) {
-                button.classList.remove('text-slate-500', 'border-transparent');
-                button.classList.add('text-[#0A66C2]', 'border-[#0A66C2]');
-            } else {
-                button.classList.remove('text-[#0A66C2]', 'border-[#0A66C2]');
-                button.classList.add('text-slate-500', 'border-transparent');
-            }
-        });
-
-        // Filter job items
-        const jobItems = document.querySelectorAll('.job-item');
-        jobItems.forEach(item => {
-            const itemType = item.getAttribute('data-type');
-            if (tabName === 'all') {
-                item.style.display = 'flex';
-            } else if (tabName === itemType) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
     }
 </script>
 {% endblock content %}
