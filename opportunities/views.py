@@ -714,12 +714,12 @@ class UserApplicantBoardView(LoginRequiredMixin, DetailView):
         return JobPost.objects.filter(
             posted_by=self.request.user,
             company=None
-        ).prefetch_related('jobapplication_set__applicant')
+        ).prefetch_related('applications__applicant')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         job = self.object
-        applications = job.jobapplication_set.all().order_by('-created_at')
+        applications = job.applications.all().order_by('-created_at')
 
         # Group by status - using correct JobApplication.Status values
         context['applications'] = applications
