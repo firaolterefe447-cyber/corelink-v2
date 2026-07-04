@@ -245,7 +245,18 @@
 
             <!-- ACTIVE: Discover Companies -->
             <a href="{% url 'company_nexus' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2]">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-[0.15em] whitespace-nowrap">{% trans "Discover Companies" %}</span>
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                        {% trans "Discover Companies" %}
+                    </span>
+                    <div class="flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-[2px] md:px-2.5 md:py-[3px] rounded-full shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0">
+                        <span class="relative flex h-1.5 w-1.5 shrink-0">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
+                        </span>
+                        <span class="text-[9px] font-black text-white tracking-widest leading-none mt-[1px]">NEW</span>
+                    </div>
+                </div>
             </a>
         </div>
         {% endif %}
@@ -255,22 +266,13 @@
              ============================================== -->
         <div class="w-full flex flex-col items-center justify-center text-center mt-4 md:mt-6 mb-12 md:mb-16 relative z-10 anim-smooth-appear">
 
-            <!-- Pill -->
-            <div class="inline-flex items-center p-1.5 px-4 bg-white/80 backdrop-blur-md border border-blue-200 rounded-full shadow-sm mb-8 md:mb-10 text-[#0A66C2] cursor-default">
-                <i data-lucide="building-2" class="w-4 h-4 mr-2"></i>
-                <span class="text-[11px] md:text-[12px] font-black tracking-[0.1em] uppercase">{% trans "Corelink Business Hub" %}</span>
-            </div>
-
-            <h1 class="text-[clamp(2rem,5vw,3.8rem)] font-black text-slate-900 tracking-tighter leading-[1.1] md:leading-[1.05] mb-5 font-heading max-w-4xl mx-auto drop-shadow-sm">
-                {% trans "Explore the businesses, startups, and organizations building the future of Ethiopia" %}
-            </h1>
-            <p class="text-slate-500 text-[15px] md:text-[17px] font-medium max-w-2xl mx-auto leading-relaxed px-2 md:mt-2">
+            <h1 class="text-[clamp(1.75rem,4vw,2.5rem)] font-black text-slate-900 tracking-tighter leading-[1.15] md:leading-[1.1] mb-5 font-heading max-w-3xl mx-auto drop-shadow-sm">
                 {% trans "Explore the companies and businesses in our community to find services, partnerships, or your next career move" %}
-            </p>
+            </h1>
 
             <!-- GUEST CTA -->
             {% if not request.user.is_authenticated %}
-            <div class="mt-10 flex justify-center w-full relative z-20">
+            <div class="mt-8 flex justify-center w-full relative z-20">
                 <a href="{% url 'unified_onboarding' %}" class="bg-gradient-to-r from-[#0A66C2] to-blue-600 hover:shadow-lg hover:shadow-blue-500/30 text-white font-bold text-[15px] md:text-[16px] px-8 py-4 rounded-full transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-3">
                     {% trans "Join Business Hub" %} <i data-lucide="sparkles" class="w-5 h-5"></i>
                 </a>
