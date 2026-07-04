@@ -466,24 +466,66 @@
                     <!-- Glowing Background Effect -->
                     <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
-                    <!-- Project Gallery (Image) -->
-                    {% if project.gallery.count > 0 %}
-                        {% with asset=project.gallery.first %}
-                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                            <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block relative aspect-[16/10] w-full overflow-hidden bg-slate-100 z-10">
-                                <!-- Image -->
-                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
+                    <!-- Project Gallery (Stacked like right now feed) -->
+                    {% if project.gallery.all %}
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="mb-5 relative group/gallery block">
+                            {% with count=project.gallery.count %}
+                            <div class="media-grid overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-slate-200 shadow-md bg-white transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-lg">
 
-                                <!-- Overlay Gradient -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                                <!-- Floating View Icon -->
-                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xl opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out z-20">
-                                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-[var(--color-primary)]"></i>
-                                </div>
-                            </a>
-                            {% endif %}
-                        {% endwith %}
+                                {% if count == 1 %}
+                                    <div class="relative w-full aspect-[4/3] overflow-hidden">
+                                        {% with asset=project.gallery.first %}
+                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                                <img src="{{ asset.image.url }}" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% elif count == 2 %}
+                                    <div class="grid grid-cols-2 gap-1 aspect-[4/3]">
+                                        {% for media in project.gallery.all|slice:":2" %}
+                                            <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.25rem] sm:rounded-l-[1.5rem]{% endif %} {% if forloop.last %}rounded-r-[1.25rem] sm:rounded-r-[1.5rem]{% endif %}">
+                                                {% if media.asset_type == 'IMAGE' and media.image %}
+                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elif count == 3 %}
+                                    <div class="grid grid-cols-2 gap-1">
+                                        {% with first_media=project.gallery.all.0 %}
+                                            <div class="col-span-2 aspect-[16/9] rounded-t-[1.25rem] sm:rounded-t-[1.5rem] overflow-hidden">
+                                                {% if first_media.asset_type == 'IMAGE' and first_media.image %}
+                                                    <img src="{{ first_media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                                {% endif %}
+                                            </div>
+                                        {% endwith %}
+                                        {% for media in project.gallery.all|slice:"1:" %}
+                                            <div class="aspect-square {% if forloop.first %}rounded-bl-[1.25rem] sm:rounded-bl-[1.5rem]{% endif %} {% if forloop.last %}rounded-br-[1.25rem] sm:rounded-br-[1.5rem]{% endif %} overflow-hidden">
+                                                {% if media.asset_type == 'IMAGE' and media.image %}
+                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elif count >= 4 %}
+                                    <div class="grid grid-cols-2 gap-1 aspect-square">
+                                        {% for media in project.gallery.all|slice:":4" %}
+                                            <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.25rem] sm:rounded-tl-[1.5rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.25rem] sm:rounded-tr-[1.5rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.25rem] sm:rounded-bl-[1.5rem]{% endif %} {% if forloop.last %}rounded-br-[1.25rem] sm:rounded-br-[1.5rem]{% endif %}">
+                                                {% if media.asset_type == 'IMAGE' and media.image %}
+                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                                {% endif %}
+                                                {% if forloop.last and count > 4 %}
+                                                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                                        <span class="text-white font-black text-[18px] sm:text-[20px]">+{{ count|add:"-4" }}</span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        </a>
                     {% endif %}
 
                     <!-- Project Content -->
@@ -509,11 +551,11 @@
                         <!-- Description -->
                         <div class="text-[14px] md:text-[15.5px] text-slate-600 leading-[1.8] mb-8 flex-1 group-hover:text-slate-700 transition-colors duration-300">
                             {% if project.main_description %}
-                                <p class="line-clamp-3">{{ project.main_description }}</p>
+                                <p class="line-clamp-6">{{ project.main_description }}</p>
                             {% elif project.problem_statement %}
-                                <p class="line-clamp-3">{{ project.problem_statement }}</p>
+                                <p class="line-clamp-6">{{ project.problem_statement }}</p>
                             {% elif project.solution_narrative %}
-                                <p class="line-clamp-3">{{ project.solution_narrative }}</p>
+                                <p class="line-clamp-6">{{ project.solution_narrative }}</p>
                             {% endif %}
                         </div>
 
@@ -764,15 +806,15 @@
                         </div>
                         {% if contact_methods %}
                             {% for method in contact_methods %}
-                            <div class="flex items-center gap-4 py-3.5 px-5 bg-white border border-slate-200 rounded-lg shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 cursor-default">
-                                <div class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                                    <i data-lucide="{{ method.icon_name }}" class="w-4 h-4 text-[var(--color-primary)]"></i>
+                            <div class="flex items-center gap-4 py-4 px-6 bg-gradient-to-r from-white to-slate-50 border border-slate-200 rounded-xl shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 cursor-default hover:shadow-md hover:border-blue-300 transition-all duration-300 group">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <i data-lucide="{{ method.icon_name }}" class="w-5 h-5 text-blue-600"></i>
                                 </div>
                                 <span class="break-all">{{ method.value }}</span>
                             </div>
                             {% endfor %}
                         {% else %}
-                            <div class="p-6 border-2 border-dashed border-slate-200 rounded-lg text-center text-slate-500 text-[13.5px]">No contact details added yet.</div>
+                            <div class="p-6 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-500 text-[13.5px] bg-slate-50/50">No contact details added yet.</div>
                         {% endif %}
                     {% else %}
                         <div class="flex items-center gap-2 mb-3">
@@ -780,34 +822,29 @@
                             <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em]">Contact Information</span>
                         </div>
 
-                        <div class="relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px]">
-                            <div class="absolute inset-0 flex flex-col gap-4 p-6 opacity-30 pointer-events-none select-none">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-slate-400 shrink-0"></div>
-                                    <div class="h-3.5 bg-slate-400 rounded w-3/4"></div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-slate-400 shrink-0"></div>
-                                    <div class="h-3.5 bg-slate-400 rounded w-1/2"></div>
-                                </div>
+                        <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-lg p-8 flex flex-col items-center justify-center min-h-[220px] hover:shadow-xl transition-shadow duration-300">
+                            <!-- Animated Background Pattern -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-0 left-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
+                                <div class="absolute bottom-0 right-0 w-32 h-32 bg-purple-500 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
                             </div>
 
                             <div class="relative z-10 flex flex-col items-center text-center">
-                                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-3 border border-blue-100 shadow-sm">
-                                    <i data-lucide="lock" class="w-5 h-5 text-[var(--color-primary)]"></i>
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30 animate-bounce" style="animation-duration: 2s;">
+                                    <i data-lucide="lock" class="w-7 h-7 text-white"></i>
                                 </div>
-                                <h3 class="text-[17px] md:text-[20px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
+                                <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
 
                                 {% if not request.user.is_authenticated %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium">
-                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-[var(--color-primary)] font-semibold border-b-2 border-blue-200 hover:border-[var(--color-primary)] transition-colors pb-[1px] focus-visible:outline-none no-underline">Login</a> to CoreLink to collaborate.
+                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-blue-600 font-semibold border-b-2 border-blue-200 hover:border-blue-500 transition-colors pb-[1px] focus-visible:outline-none no-underline">Login</a> to CoreLink to collaborate.
                                     </p>
                                 {% else %}
                                     <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium mb-4">
                                         Reach out directly to connect.
                                     </p>
-                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-primary)] text-white text-[11px] font-semibold uppercase tracking-[0.15em] rounded-full hover:bg-[var(--color-primary-dark)] transition-colors shadow-md focus-visible:outline-none no-underline">
-                                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Send Message
+                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[12px] font-semibold uppercase tracking-[0.15em] rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 focus-visible:outline-none no-underline">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Send Message
                                     </a>
                                 {% endif %}
                             </div>
@@ -815,26 +852,26 @@
                     {% endif %}
                 </div>
 
-                <!-- Clean, Static Social Links -->
+                <!-- Animated Social Links -->
                 {% if social_links %}
                 <div class="order-1 md:order-2">
                     <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">My Social Links</span>
                     <div class="space-y-4">
                         {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="card-hover flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-[var(--color-primary)] transition-colors shadow-sm group">
+                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-gradient-to-r from-white via-white to-slate-50 border border-slate-200 rounded-xl no-underline hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group hover:-translate-y-1">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:text-[var(--color-primary)] group-hover:bg-blue-50 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300 flex items-center justify-center group-hover:from-blue-100 group-hover:to-indigo-100 group-hover:border-blue-300 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                                    <svg class="w-7 h-7 text-slate-600 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                                     </svg>
                                 </div>
                                 <div class="flex flex-col">
-                                    <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ link.platform_name }}</span>
+                                    <span class="text-[16px] md:text-[18px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ link.platform_name }}</span>
                                     <span class="text-[11px] md:text-[12px] font-medium text-slate-500 uppercase tracking-widest mt-1">View Profile</span>
                                 </div>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-[var(--color-primary)] group-hover:bg-blue-50 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                                 </svg>
                             </div>
