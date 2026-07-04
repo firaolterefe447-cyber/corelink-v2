@@ -150,6 +150,100 @@
 
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+
+    /* Form Field Styling */
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0f172a;
+        background: white;
+        transition: all 0.2s var(--ease-magic);
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: #0A66C2;
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    }
+    .form-input::placeholder {
+        color: #94a3b8;
+    }
+    .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0f172a;
+        background: white;
+        transition: all 0.2s var(--ease-magic);
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+    }
+    .form-select:focus {
+        outline: none;
+        border-color: #0A66C2;
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    }
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0f172a;
+        background: white;
+        transition: all 0.2s var(--ease-magic);
+        resize: vertical;
+        min-height: 120px;
+    }
+    .form-textarea:focus {
+        outline: none;
+        border-color: #0A66C2;
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    }
+    .form-checkbox {
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s var(--ease-magic);
+    }
+    .form-checkbox:checked {
+        background: #0A66C2;
+        border-color: #0A66C2;
+    }
+    .form-checkbox:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    }
+    .form-file {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px dashed #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0f172a;
+        background: #f8fafc;
+        transition: all 0.2s var(--ease-magic);
+        cursor: pointer;
+    }
+    .form-file:hover {
+        border-color: #0A66C2;
+        background: #f0f9ff;
+    }
 </style>
 
 <main class="app-canvas anim-smooth-appear">
@@ -171,15 +265,123 @@
 
         <!-- FORM -->
         <div class="form-card p-6 md:p-8">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="job-form">
                 {% csrf_token %}
-                {{ form.as_p }}
-                
+
+                <!-- Title -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.help_text %}
+                    <p class="text-xs text-slate-500 mt-1">{{ form.title.help_text }}</p>
+                    {% endif %}
+                    {% if form.title.errors %}
+                    <p class="text-xs text-rose-500 mt-1">{{ form.title.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Job Type & Level -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.job_type.label }}</label>
+                        {{ form.job_type }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.level.label }}</label>
+                        {{ form.level }}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.help_text %}
+                    <p class="text-xs text-slate-500 mt-1">{{ form.description.help_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Location & Remote -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.location.label }}</label>
+                    <div class="flex items-center gap-4">
+                        {{ form.location }}
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            {{ form.is_remote }}
+                            <span class="text-sm font-medium text-slate-600">{% trans "Remote" %}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.required_skills.label }}</label>
+                    {{ form.required_skills }}
+                </div>
+
+                <!-- Compensation -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.compensation_text.label }}</label>
+                    {{ form.compensation_text }}
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_min.label }}</label>
+                            {{ form.salary_min }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_max.label }}</label>
+                            {{ form.salary_max }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deadline -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{% trans "Deadline" %}</label>
+                    <div class="flex items-center gap-4 mb-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            {{ form.is_open_ended }}
+                            <span class="text-sm font-medium text-slate-600">{% trans "Open until filled" %}</span>
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_date.label }}</label>
+                            {{ form.deadline_date }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_text.label }}</label>
+                            {{ form.deadline_text }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenge Mode -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <label class="flex items-center gap-3 cursor-pointer mb-3">
+                        {{ form.requires_challenge }}
+                        <div>
+                            <span class="text-sm font-bold text-slate-800">{% trans "Challenge Mode" %}</span>
+                            <p class="text-xs text-slate-600">{% trans "Require candidates to attach a project as proof of work" %}</p>
+                        </div>
+                    </label>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.challenge_description.label }}</label>
+                        {{ form.challenge_description }}
+                    </div>
+                </div>
+
+                <!-- Cover Image -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.cover_image.label }}</label>
+                    {{ form.cover_image }}
+                </div>
+
                 <div class="flex items-center gap-3 mt-8 pt-6 border-t border-slate-200">
                     <a href="{% url 'opportunities:user_job_management' %}" class="btn-secondary">
                         {% trans "Cancel" %}
                     </a>
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary" id="submit-btn">
                         <i data-lucide="send" class="w-4 h-4"></i> {% trans "Post Job" %}
                     </button>
                 </div>
@@ -188,6 +390,14 @@
 
     </div>
 </main>
+
+<script>
+document.getElementById('job-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Posting..." %}';
+});
+</script>
 
 <!-- MOBILE BOTTOM NAVIGATION -->
 {% if not is_inspector %}

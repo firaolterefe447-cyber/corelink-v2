@@ -274,7 +274,34 @@
             </div>
         </div>
 
-        <!-- MY APPLICATIONS SECTION -->
+        <!-- PAGINATION -->
+        {% if is_paginated %}
+        <div class="flex justify-center mt-8 gap-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50">Previous</a>
+            {% endif %}
+            <span class="px-4 py-2 text-sm font-bold text-slate-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50">Next</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- EMPTY STATE -->
+        <div class="bento-card p-12 text-center">
+            <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="briefcase" class="w-8 h-8 text-[#0A66C2]"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 mb-2">{% trans "No jobs posted yet" %}</h3>
+            <p class="text-slate-500 mb-6">{% trans "Start posting opportunities to find the right talent." %}</p>
+            <a href="{% url 'opportunities:user_job_create' %}" class="btn-add-solid inline-flex">
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Post your first job" %}
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- MY APPLICATIONS SECTION - Always show regardless of jobs -->
         <div class="bento-card p-6 md:p-8 flex flex-col relative mt-6">
             <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
                 <h3 class="text-[15px] font-extrabold text-slate-800 tracking-tight uppercase">{% trans "My Applications" %}</h3>
@@ -307,16 +334,14 @@
 
                         <div class="flex items-center justify-between md:justify-end gap-3 mt-2 md:mt-0 pt-3 md:pt-0 border-t border-slate-200/60 md:border-none">
                             <!-- Smart Premium Status Badges -->
-                            {% if app.status == 'ACCEPTED' or app.status == 'HIRED' %}
+                            {% if app.status == 'SHORTLISTED' or app.status == 'HIRED' %}
                                 <span class="px-2.5 py-1.5 bg-blue-50 text-[#0A66C2] rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-blue-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> {% trans "Accepted" %}</span>
                             {% elif app.status == 'REJECTED' %}
                                 <span class="px-2.5 py-1.5 bg-slate-100 text-slate-500 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> {% trans "Declined" %}</span>
-                            {% elif app.status == 'REVIEWING' %}
+                            {% elif app.status == 'VIEWED' %}
                                 <span class="px-2.5 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-indigo-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="eye" class="w-3.5 h-3.5"></i> {% trans "Reviewing" %}</span>
-                            {% elif app.status == 'INTERVIEWING' %}
+                            {% elif app.status == 'INTERVIEW' %}
                                 <span class="px-2.5 py-1.5 bg-violet-50 text-violet-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-violet-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="video" class="w-3.5 h-3.5"></i> {% trans "Interview" %}</span>
-                            {% elif app.status == 'WAITLISTED' %}
-                                <span class="px-2.5 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="clock-4" class="w-3.5 h-3.5"></i> {% trans "Waitlisted" %}</span>
                             {% else %}
                                 <span class="px-2.5 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[10.5px] font-black uppercase tracking-widest border border-slate-200 shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i data-lucide="send" class="w-3.5 h-3.5"></i> {% trans "Applied" %}</span>
                             {% endif %}
@@ -339,33 +364,6 @@
                 {% endif %}
             </div>
         </div>
-
-        <!-- PAGINATION -->
-        {% if is_paginated %}
-        <div class="flex justify-center mt-8 gap-2">
-            {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50">Previous</a>
-            {% endif %}
-            <span class="px-4 py-2 text-sm font-bold text-slate-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50">Next</a>
-            {% endif %}
-        </div>
-        {% endif %}
-
-        {% else %}
-        <!-- EMPTY STATE -->
-        <div class="bento-card p-12 text-center">
-            <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="briefcase" class="w-8 h-8 text-[#0A66C2]"></i>
-            </div>
-            <h3 class="text-xl font-black text-slate-900 mb-2">{% trans "No jobs posted yet" %}</h3>
-            <p class="text-slate-500 mb-6">{% trans "Start posting opportunities to find the right talent." %}</p>
-            <a href="{% url 'opportunities:create' %}" class="btn-add-solid inline-flex">
-                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Post your first job" %}
-            </a>
-        </div>
-        {% endif %}
 
     </div>
 </main>

@@ -38,33 +38,56 @@ class OpportunitySubmissionForm(forms.ModelForm):
             'is_external', 'external_url', 'external_company_name', 'external_company_logo',
         ]
         widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Senior Software Engineer'
+            }),
             'level': forms.Select(attrs={'class': 'form-select'}),
             'description': forms.Textarea(attrs={
                 'rows': 5,
                 'placeholder': 'Describe the mission, requirements, and impact...',
-                'class': 'form-control'
+                'class': 'form-textarea'
             }),
             'challenge_description': forms.Textarea(attrs={
                 'rows': 3,
                 'placeholder': 'E.g. Attach a GitHub repo where you built a REST API or a Figma link to a landing page design...',
-                'class': 'form-control'
+                'class': 'form-textarea'
             }),
             # Deadline Widgets
             'deadline_date': forms.DateInput(attrs={
                 'type': 'date',
-                'class': 'form-control'
+                'class': 'form-input'
             }),
             'deadline_text': forms.TextInput(attrs={
                 'placeholder': "e.g., 'Rolling basis', 'End of Month', 'Apply ASAP'",
-                'class': 'form-control'
+                'class': 'form-input'
             }),
             'required_skills': forms.SelectMultiple(attrs={
-                'class': 'select2-multiple form-control'
+                'class': 'form-select'
             }),
-            'is_external': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_remote': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_open_ended': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'requires_challenge': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'location': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Addis Ababa'
+            }),
+            'compensation_text': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g., Competitive, Negotiable'
+            }),
+            'salary_min': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Min'
+            }),
+            'salary_max': forms.NumberInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Max'
+            }),
+            'cover_image': forms.FileInput(attrs={
+                'class': 'form-file'
+            }),
+            'is_external': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+            'is_remote': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+            'is_open_ended': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+            'requires_challenge': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
         }
         help_texts = {
             'is_external': _(

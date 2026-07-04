@@ -702,6 +702,14 @@ class UserApplicantBoardView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = 'slug'
     context_object_name = 'job'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.job = get_object_or_404(JobPost, slug=self.kwargs['slug'])
+
+        if not can_manage_job(request.user, self.job):
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         return JobPost.objects.filter(
             posted_by=self.request.user,
@@ -713,11 +721,11 @@ class UserApplicantBoardView(LoginRequiredMixin, DetailView):
         job = self.object
         applications = job.jobapplication_set.all().order_by('-created_at')
 
-        # Group by status
+        # Group by status - using correct JobApplication.Status values
         context['applications'] = applications
-        context['pending_count'] = applications.filter(status='PENDING').count()
-        context['reviewing_count'] = applications.filter(status='REVIEWING').count()
-        context['accepted_count'] = applications.filter(status='ACCEPTED').count()
-        context['rejected_count'] = applications.filter(status='REJECTED').count()
+        context['pending_count'] = applications.filter(status=JobApplication.Status.LINKED).count()
+        context['reviewing_count'] = applications.filter(status=JobApplication.Status.VIEWED).count()
+        context['accepted_count'] = applications.filter(status=JobApplication.Status.SHORTLISTED).count()
+        context['rejected_count'] = applications.filter(status=JobApplication.Status.REJECTED).count()
 
         return context
