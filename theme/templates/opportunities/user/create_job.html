@@ -268,113 +268,142 @@
             <form method="post" enctype="multipart/form-data" id="job-form">
                 {% csrf_token %}
 
-                <!-- Title -->
+                <!-- Title - Enhanced -->
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.title.label }}</label>
-                    {{ form.title }}
+                    <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.title.label }}</label>
+                    <div class="relative">
+                        {{ form.title }}
+                        <i data-lucide="type" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                    </div>
                     {% if form.title.help_text %}
-                    <p class="text-xs text-slate-500 mt-1">{{ form.title.help_text }}</p>
+                    <p class="text-xs text-slate-500 mt-1.5">{{ form.title.help_text }}</p>
                     {% endif %}
                     {% if form.title.errors %}
-                    <p class="text-xs text-rose-500 mt-1">{{ form.title.errors }}</p>
+                    <p class="text-xs text-rose-500 mt-1.5">{{ form.title.errors }}</p>
                     {% endif %}
                 </div>
 
-                <!-- Job Type & Level -->
+                <!-- Job Type & Level - Enhanced Styling -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.job_type.label }}</label>
-                        {{ form.job_type }}
+                        <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.job_type.label }}</label>
+                        <div class="relative">
+                            {{ form.job_type }}
+                            <i data-lucide="briefcase" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.level.label }}</label>
-                        {{ form.level }}
+                        <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.level.label }}</label>
+                        <div class="relative">
+                            {{ form.level }}
+                            <i data-lucide="bar-chart-2" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Description -->
+                <!-- Description - Enhanced -->
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.description.label }}</label>
+                    <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.description.label }}</label>
                     {{ form.description }}
                     {% if form.description.help_text %}
-                    <p class="text-xs text-slate-500 mt-1">{{ form.description.help_text }}</p>
+                    <p class="text-xs text-slate-500 mt-1.5">{{ form.description.help_text }}</p>
                     {% endif %}
                 </div>
 
-                <!-- Location & Remote -->
+                <!-- Location & Remote - Enhanced -->
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.location.label }}</label>
-                    <div class="flex items-center gap-4">
-                        {{ form.location }}
-                        <label class="flex items-center gap-2 cursor-pointer">
+                    <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.location.label }}</label>
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <div class="flex-1 w-full relative">
+                            {{ form.location }}
+                            <i data-lucide="map-pin" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                        </div>
+                        <label class="flex items-center gap-2.5 cursor-pointer px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors">
                             {{ form.is_remote }}
-                            <span class="text-sm font-medium text-slate-600">{% trans "Remote" %}</span>
+                            <span class="text-sm font-bold text-slate-700">{% trans "Remote" %}</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Skills -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.required_skills.label }}</label>
-                    {{ form.required_skills }}
-                </div>
-
-                <!-- Compensation -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.compensation_text.label }}</label>
-                    {{ form.compensation_text }}
-                    <div class="grid grid-cols-2 gap-4 mt-3">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_min.label }}</label>
-                            {{ form.salary_min }}
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_max.label }}</label>
-                            {{ form.salary_max }}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Deadline -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{% trans "Deadline" %}</label>
-                    <div class="flex items-center gap-4 mb-3">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            {{ form.is_open_ended }}
-                            <span class="text-sm font-medium text-slate-600">{% trans "Open until filled" %}</span>
-                        </label>
+                <!-- Compensation - Enhanced -->
+                <div class="mb-6 p-5 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-200">
+                    <label class="block text-sm font-black text-slate-800 mb-3">{{ form.compensation_text.label }}</label>
+                    <div class="relative mb-4">
+                        {{ form.compensation_text }}
+                        <i data-lucide="banknote" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_date.label }}</label>
-                            {{ form.deadline_date }}
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ form.salary_min.label }}</label>
+                            <div class="relative">
+                                {{ form.salary_min }}
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_text.label }}</label>
-                            {{ form.deadline_text }}
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ form.salary_max.label }}</label>
+                            <div class="relative">
+                                {{ form.salary_max }}
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Challenge Mode -->
-                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <label class="flex items-center gap-3 cursor-pointer mb-3">
-                        {{ form.requires_challenge }}
+                <!-- Deadline - Enhanced -->
+                <div class="mb-6 p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                    <label class="block text-sm font-black text-slate-800 mb-3">{% trans "Deadline" %}</label>
+                    <div class="flex items-center gap-4 mb-4">
+                        <label class="flex items-center gap-2.5 cursor-pointer px-4 py-2.5 bg-white rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors shadow-sm">
+                            {{ form.is_open_ended }}
+                            <span class="text-sm font-bold text-slate-700">{% trans "Open until filled" %}</span>
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <span class="text-sm font-bold text-slate-800">{% trans "Challenge Mode" %}</span>
-                            <p class="text-xs text-slate-600">{% trans "Require candidates to attach a project as proof of work" %}</p>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ form.deadline_date.label }}</label>
+                            <div class="relative">
+                                {{ form.deadline_date }}
+                                <i data-lucide="calendar" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ form.deadline_text.label }}</label>
+                            <div class="relative">
+                                {{ form.deadline_text }}
+                                <i data-lucide="clock" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenge Mode - Premium Design -->
+                <div class="mb-6 p-5 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-200 shadow-sm">
+                    <label class="flex items-center gap-3 cursor-pointer mb-4">
+                        <div class="relative">
+                            {{ form.requires_challenge }}
+                            <div class="absolute -inset-1 bg-violet-400/20 rounded-lg opacity-0 transition-opacity"></div>
+                        </div>
+                        <div>
+                            <span class="text-sm font-black text-slate-800">{% trans "Challenge Mode" %}</span>
+                            <p class="text-xs text-slate-600 mt-0.5">{% trans "Require candidates to attach a project as proof of work" %}</p>
                         </div>
                     </label>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.challenge_description.label }}</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ form.challenge_description.label }}</label>
                         {{ form.challenge_description }}
                     </div>
                 </div>
 
-                <!-- Cover Image -->
+                <!-- Cover Image - Enhanced -->
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.cover_image.label }}</label>
-                    {{ form.cover_image }}
+                    <label class="block text-sm font-black text-slate-800 mb-2.5">{{ form.cover_image.label }}</label>
+                    <div class="relative">
+                        {{ form.cover_image }}
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <i data-lucide="image" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-3 mt-8 pt-6 border-t border-slate-200">

@@ -42,6 +42,7 @@ class OpportunitySubmissionForm(forms.ModelForm):
                 'class': 'form-input',
                 'placeholder': 'e.g., Senior Software Engineer'
             }),
+            'job_type': forms.Select(attrs={'class': 'form-select'}),
             'level': forms.Select(attrs={'class': 'form-select'}),
             'description': forms.Textarea(attrs={
                 'rows': 5,
