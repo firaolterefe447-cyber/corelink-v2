@@ -85,7 +85,7 @@
         <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
         <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <a href="{% url 'opportunities:workspace_list' %}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white font-bold text-[13px] shadow-md active:scale-95 transition-all">
+    <a href="{% url 'opportunities:user_job_management' %}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white font-bold text-[13px] shadow-md active:scale-95 transition-all">
         <i data-lucide="briefcase" class="w-4 h-4"></i>
         <span>{% trans "My Jobs" %}</span>
     </a>
@@ -243,7 +243,7 @@
                 </a>
             </div>
             {% if request.user.is_authenticated %}
-            <a href="{% url 'opportunities:workspace_list' %}" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white font-bold text-[13px] hover:from-[#0856A8] hover:to-blue-700 transition-all active:scale-95 shadow-md shrink-0">
+            <a href="{% url 'opportunities:user_job_management' %}" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#0A66C2] to-blue-600 text-white font-bold text-[13px] hover:from-[#0856A8] hover:to-blue-700 transition-all active:scale-95 shadow-md shrink-0">
                 <i data-lucide="briefcase" class="w-4 h-4"></i>
                 <span>{% trans "My Jobs" %}</span>
             </a>
@@ -410,14 +410,14 @@
 
 <!-- PC FLOATING ACTION BUTTON: POST JOB -->
 {% if request.user.is_authenticated %}
-<a href="{% url 'opportunities:create' %}" class="hidden md:flex fixed bottom-8 right-8 z-[80] h-14 px-6 bg-gradient-to-br from-[#0A66C2] to-blue-600 rounded-full shadow-xl shadow-blue-500/30 items-center justify-center text-white hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 transition-all active:scale-95">
+<a href="{% url 'opportunities:user_job_create' %}" class="hidden md:flex fixed bottom-8 right-8 z-[80] h-14 px-6 bg-gradient-to-br from-[#0A66C2] to-blue-600 rounded-full shadow-xl shadow-blue-500/30 items-center justify-center text-white hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 transition-all active:scale-95">
     <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
     <span class="text-[14px] font-bold">Post for free</span>
 </a>
 {% endif %}
 
 <!-- MOBILE FLOATING ACTION BUTTON: POST JOB -->
-<a href="{% if user.is_authenticated %}{% url 'opportunities:create' %}{% else %}{% url 'opportunities:public_post' %}{% endif %}" class="md:hidden fixed bottom-20 right-4 z-[110] h-14 px-5 bg-gradient-to-br from-[#0A66C2] to-blue-600 rounded-full shadow-xl shadow-blue-500/30 flex items-center justify-center text-white hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 transition-all active:scale-95">
+<a href="{% if user.is_authenticated %}{% url 'opportunities:user_job_create' %}{% else %}{% url 'opportunities:public_post' %}{% endif %}" class="md:hidden fixed bottom-20 right-4 z-[110] h-14 px-5 bg-gradient-to-br from-[#0A66C2] to-blue-600 rounded-full shadow-xl shadow-blue-500/30 flex items-center justify-center text-white hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 transition-all active:scale-95">
     <span class="text-[13px] font-bold">Post for free</span>
 </a>
 

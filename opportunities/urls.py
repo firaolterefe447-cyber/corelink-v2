@@ -42,4 +42,13 @@ path('post-job/', views.PublicOpportunityCreateView.as_view(), name='public_post
 
     path('workspace/application/<uuid:application_id>/inspect/', views.inspect_applicant_profile, name='inspect_profile'),
     path('workspace/application/<uuid:application_id>/update/', views.update_application_status, name='update_status'),
+
+    # ==========================================
+    # 5. INDIVIDUAL USER JOB MANAGEMENT (New System)
+    # ==========================================
+    path('my-jobs/', views.UserJobManagementView.as_view(), name='user_job_management'),
+    path('my-jobs/create/', views.UserJobCreateView.as_view(), name='user_job_create'),
+    path('my-jobs/<slug:slug>/edit/', views.UserJobUpdateView.as_view(), name='user_job_update'),
+    path('my-jobs/<slug:slug>/delete/', views.UserJobDeleteView.as_view(), name='user_job_delete'),
+    path('my-jobs/<slug:slug>/applicants/', views.UserApplicantBoardView.as_view(), name='user_applicant_board'),
 ]
