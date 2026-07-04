@@ -227,18 +227,18 @@
         background: #f1f5f9;
     }
 
-    /* Bold Manage Company Button */
+    /* Bold Manage Company Button - Emerald to match Company Dashboard Personal Profile button */
     .btn-profile-secondary.btn-manage-company {
         font-weight: 900 !important;
-        color: #0A66C2 !important;
-        border-color: #0A66C2 !important;
-        background: #EFF6FF !important;
+        color: #059669 !important;
+        border-color: #059669 !important;
+        background: #ECFDF5 !important;
     }
     .btn-profile-secondary.btn-manage-company:hover {
-        color: #0856A8 !important;
-        border-color: #0856A8 !important;
-        background: #E0F2FE !important;
-        box-shadow: 0 6px 20px rgba(10, 102, 194, 0.25) !important;
+        color: #047857 !important;
+        border-color: #047857 !important;
+        background: #D1FAE5 !important;
+        box-shadow: 0 6px 20px rgba(5, 150, 105, 0.25) !important;
     }
 
     /* ACTION TEXT BUTTONS */
@@ -1412,6 +1412,15 @@
             <i data-lucide="bell-ring" class="w-5 h-5 text-[#0A66C2]"></i>
             My Application
         </a>
+
+        {% with first_membership=request.user.company_memberships.first %}
+            {% if first_membership %}
+                <button onclick="window.location.href='{% url 'company_admin_dashboard' first_membership.company.slug %}'" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50/80 rounded-[0.85rem] text-[14.5px] font-black text-emerald-600 flex items-center gap-3.5 transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-white border border-emerald-100/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Manage Company" %}
+                </button>
+            {% endif %}
+        {% endwith %}
 
         <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3 transition-colors">
             <i data-lucide="globe" class="w-5 h-5 text-slate-600"></i>

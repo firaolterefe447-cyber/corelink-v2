@@ -21,6 +21,11 @@
                     {% trans "My Company" %}
                 </a>
 
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-emerald-50/80 hover:border-emerald-100/50 text-emerald-600 hover:text-emerald-700 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div>
+                    {% trans "Personal Profile" %}
+                </a>
+
                 {% if request.user.role == 'ADMIN' %}
                 <a href="{% url 'admin_curation' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-purple-50/80 hover:border-purple-100/50 text-purple-600 hover:text-purple-700 font-semibold transition-colors text-[14px]">
                     <div class="w-8 h-8 rounded-full bg-purple-50 border border-purple-100/50 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4 text-purple-600"></i></div>
@@ -542,6 +547,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
         <a href="{% url 'company_admin_dashboard' company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
+        <button onclick="window.location.href='{% url 'dashboard' %}'" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50/80 rounded-xl text-[15px] font-black text-emerald-600 flex items-center gap-4 min-h-[44px]">
+            <div class="w-8 h-8 rounded-full bg-white border border-emerald-100/80 shadow-sm flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-emerald-600"></i></div>
+            {% trans "Personal Profile" %}
+        </button>
         <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]">
             <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
             <span class="flex-1 flex justify-between items-center">
