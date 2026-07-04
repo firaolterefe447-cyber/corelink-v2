@@ -228,23 +228,6 @@
         background: var(--color-slate-100);
     }
 
-    /* Animated Tagline Logic */
-    .animated-tagline {
-        display: inline-flex;
-        align-items: center;
-        min-height: 1.2em;
-    }
-    .tagline-text {
-        transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .tagline-text.fade-out {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    .tagline-text.fade-in {
-        opacity: 1;
-        transform: translateY(0);
-    }
 
     /* Text Rendering */
     .text-break-words {
@@ -327,14 +310,10 @@
                             {{ user.display_name }}
                         </h1>
 
-                        <!-- Animated Tagline -->
+                        <!-- Static Tagline (All titles separated by |) -->
                         <p class="text-[var(--color-primary)] font-bold text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] tracking-tight mb-5 lg:mb-8 break-words w-full font-serif-title">
                             {% if headlines %}
-                                <div class="animated-tagline" id="tagline-container">
-                                    {% for headline in headlines %}
-                                        <span class="tagline-text {% if forloop.first %}fade-in{% else %}hidden{% endif %}" data-index="{{ forloop.counter0 }}">{{ headline.title }}</span>
-                                    {% endfor %}
-                                </div>
+                                {% for headline in headlines %}{{ headline.title }}{% if not forloop.last %} | {% endif %}{% endfor %}
                             {% else %}
                                 {{ role_title }}
                             {% endif %}
@@ -1103,29 +1082,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
 
-        // Hero Tagline Animation Logic
-        const taglineContainer = document.getElementById('tagline-container');
-        if (taglineContainer) {
-            const taglines = taglineContainer.querySelectorAll('.tagline-text');
-            if (taglines.length > 1) {
-                let currentIndex = 0;
-                setInterval(() => {
-                    const current = taglines[currentIndex];
-                    const nextIndex = (currentIndex + 1) % taglines.length;
-                    const next = taglines[nextIndex];
-
-                    current.classList.remove('fade-in');
-                    current.classList.add('fade-out');
-                    current.classList.add('hidden');
-
-                    next.classList.remove('hidden');
-                    next.classList.remove('fade-out');
-                    next.classList.add('fade-in');
-
-                    currentIndex = nextIndex;
-                }, 4000);
-            }
-        }
 
         const fab = document.getElementById('fab-connect');
         if (fab) {
