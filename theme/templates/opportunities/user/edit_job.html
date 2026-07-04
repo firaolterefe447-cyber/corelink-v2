@@ -7,50 +7,53 @@
 
 {% block navbar %}
 <!-- LEFT SIDEBAR NAVIGATION (PC) -->
-<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/90 backdrop-blur-3xl border-r border-slate-200/80 z-[100] shadow-[4px_0_24px_rgba(0,0,0,0.02)] overflow-y-auto custom-scroll">
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
 
         <div class="flex-1">
-            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-black text-[28px] tracking-[-0.06em] text-slate-900 lowercase">core</span>
+                <span class="font-black text-[28px] tracking-[-0.06em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase relative">
+                    link
+                    <div class="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#0A66C2] to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></div>
+                </span>
             </div>
 
-            <nav class="flex flex-col gap-1.5">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
+            <nav class="flex flex-col gap-2">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="user" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     My profile
                 </a>
 
-                <a href="{% url 'opportunities:user_job_management' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                <a href="{% url 'opportunities:user_job_management' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] bg-blue-50/80 text-[#0A66C2] font-black transition-all border border-blue-100/50 shadow-[0_2px_15px_rgba(10,102,194,0.08)] text-[15px] group" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i></div>
                     {% trans "My Jobs" %}
                 </a>
 
-                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="compass" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Discover" %}
                 </a>
 
-                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="zap" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Updates" %}
                 </a>
 
-                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i></div>
                     {% trans "Opportunities" %}
                 </a>
 
-                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                <a href="/workspace/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[1.25rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-bold transition-all text-[15px] group relative">
                     <div class="flex items-center gap-4">
-                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
-                            <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
+                        <div class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-white border border-slate-200/50 flex items-center justify-center shadow-sm transition-all relative">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-hover:text-slate-900"></i>
                         </div>
                         {% trans "Inbox" %}
                     </div>
                     {% if unread_msg_count > 0 %}
-                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full shadow-sm animate-pulse">
                             {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
                         </span>
                     {% endif %}
@@ -58,13 +61,13 @@
             </nav>
         </div>
 
-        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
-                <i data-lucide="globe" class="w-4 h-4"></i>
+        <div class="pt-6 border-t border-slate-200/80 flex flex-col gap-2 mt-auto">
+            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
+                <i data-lucide="globe" class="w-5 h-5"></i>
                 <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
             </button>
-            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[1rem] text-[14.5px] font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>{% trans "Logout" %}</span>
             </a>
         </div>
@@ -73,355 +76,371 @@
 </aside>
 
 <!-- MOBILE TOP BAR -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-slate-200/80 flex items-center justify-between px-5 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
     <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+        <span class="font-black text-[24px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
+        <span class="font-black text-[24px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-indigo-500 lowercase">link</span>
     </div>
-    <button aria-label="{% trans 'Open Navigation' %}" onclick="toggleMobileNavDrawer()" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
-        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
+    <button onclick="toggleMobileNavDrawer()" aria-label="Open Menu" class="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-700 transition-all active:scale-95 shadow-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-tr from-slate-200/50 to-transparent opacity-0 group-active:opacity-100 transition-opacity"></div>
+        <i data-lucide="menu" class="w-6 h-6 relative z-10 stroke-[2.5]"></i>
     </button>
 </div>
 {% endblock navbar %}
 
 {% block content %}
-<div id="global-page-loader" class="fixed top-0 left-0 h-[3.5px] md:h-[4px] bg-gradient-to-r from-blue-400 via-[#0A66C2] to-blue-500 z-[99999] pointer-events-none opacity-0 transition-all ease-out" style="width: 0%; box-shadow: 0 0 10px rgba(10,102,194,0.5);"></div>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
+        --app-bg: #F8FAFC;
         --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
-    body {
-        font-family: var(--font-body);
-        background-color: #F0F4F8;
-        background-image:
-            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
-            radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
-        background-attachment: fixed;
-        color: #0F172A;
-        -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
-    }
-
-    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
     .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 
+    /* Elegant Desktop Scrollbars */
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+    .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+    @media (max-width: 767px) {
+        .custom-scroll::-webkit-scrollbar { display: none; }
+        .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+
+    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
     .app-canvas {
-        width: 100%; position: relative; z-index: 10;
-        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
-    }
-    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; } }
-    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3rem; } }
-    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; } }
-
-    .form-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1rem;
-        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
-    }
-    @media (min-width: 768px) { .form-card { border-radius: 1.25rem; } }
-
-    .btn-secondary {
-        height: 42px; padding: 0 1.25rem; border-radius: 0.75rem; background: white;
-        color: #64748b; font-size: 14px; font-weight: 700; border: 1.5px solid #e2e8f0;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        transition: all 0.2s var(--ease-magic); text-decoration: none; white-space: nowrap;
-    }
-    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #f8fafc; }
-
-    .btn-primary {
-        height: 42px; padding: 0 1.25rem; border-radius: 0.75rem; background: #0A66C2; color: #ffffff;
-        font-size: 14px; font-weight: 800; border: none;
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        transition: all 0.2s var(--ease-magic); text-decoration: none; white-space: nowrap;
-        box-shadow: 0 4px 12px -4px rgba(10, 102, 194, 0.4);
-    }
-    .btn-primary:hover { background: #0856A8; transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.5); }
-    .btn-primary:active { transform: scale(0.96); }
-
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
-
-    /* Form Field Styling */
-    .form-input {
         width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 14px;
-        font-weight: 500;
-        color: #0f172a;
-        background: white;
-        transition: all 0.2s var(--ease-magic);
+        position: relative;
+        z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    .form-input:focus {
-        outline: none;
-        border-color: #0A66C2;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
+
+    /* BENTO CARD DESIGN (Aligned with global feed) */
+    .bento-card {
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px -10px rgba(15, 23, 42, 0.05);
+        transition: all 0.4s var(--ease-magic);
+        overflow: hidden;
     }
-    .form-input::placeholder {
-        color: #94a3b8;
+    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
+
+    /* UNIFIED BUTTON STYLES (CoreLink Blue Theme for Jobs) */
+    .btn-action { background: linear-gradient(135deg, #0A66C2, #0856A8); color: white; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; min-height: 44px; width: 100%; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.35); }
+    .btn-action:active { transform: scale(0.96); }
+
+    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; min-height: 44px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; width: 100%; }
+    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #EEF2FF; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
+    .btn-secondary:active { transform: scale(0.96); }
+
+    /* EDITOR INPUT STYLES */
+    .canvas-editor input[type="text"] {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1rem 1.25rem;
+        font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; outline: none; transition: all 0.2s;
     }
-    .form-select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 14px;
-        font-weight: 500;
-        color: #0f172a;
-        background: white;
-        transition: all 0.2s var(--ease-magic);
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1rem;
-        padding-right: 2.5rem;
+    .canvas-editor input[type="text"]::placeholder { color: #94A3B8; font-weight: 600; }
+    .canvas-editor input[type="text"]:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
+
+    .canvas-editor textarea {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1.25rem;
+        font-family: var(--font-body); font-size: 1.05rem; font-weight: 500; color: #334155; line-height: 1.7; min-height: 140px; resize: none; overflow: hidden; outline: none; transition: all 0.2s;
     }
-    .form-select:focus {
-        outline: none;
-        border-color: #0A66C2;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+    .canvas-editor textarea::placeholder { color: #94A3B8; font-weight: 500; }
+    .canvas-editor textarea:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
+
+    .control-panel select, .control-panel input[type="url"], .control-panel input[type="text"], .control-panel input[type="number"], .control-panel input[type="date"] {
+        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 0.95rem 1.15rem;
+        font-size: 14px; font-weight: 600; color: #334155; background: #F8FAFC; outline: none; transition: all 0.2s;
     }
-    .form-textarea {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 14px;
-        font-weight: 500;
-        color: #0f172a;
-        background: white;
-        transition: all 0.2s var(--ease-magic);
-        resize: vertical;
-        min-height: 120px;
-    }
-    .form-textarea:focus {
-        outline: none;
-        border-color: #0A66C2;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
-    }
-    .form-checkbox {
-        width: 1.25rem;
-        height: 1.25rem;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: all 0.2s var(--ease-magic);
-    }
-    .form-checkbox:checked {
-        background: #0A66C2;
-        border-color: #0A66C2;
-    }
-    .form-checkbox:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
-    }
-    .form-file {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1.5px dashed #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 14px;
-        font-weight: 500;
-        color: #0f172a;
-        background: #f8fafc;
-        transition: all 0.2s var(--ease-magic);
-        cursor: pointer;
-    }
-    .form-file:hover {
-        border-color: #0A66C2;
-        background: #f0f9ff;
-    }
+    .control-panel select:focus, .control-panel input[type="url"]:focus, .control-panel input[type="text"]:focus, .control-panel input[type="number"]:focus, .control-panel input[type="date"]:focus { border-color: #0A66C2; background: #ffffff; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
+    .control-panel select { appearance: none; cursor: pointer; padding-right: 2.5rem; }
+
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-down { animation: fadeDown 0.6s var(--ease-magic) forwards; }
+
+    /* Drawer Utils */
+    .drawer-closed { transform: translateY(100%); }
+    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
+    .body-lock { overflow: hidden !important; touch-action: none; }
 </style>
 
-<main class="app-canvas anim-smooth-appear">
-    <div class="max-w-[800px] mx-auto w-full relative z-10">
+<main class="app-canvas animate-fade-down">
 
-        <!-- HEADER -->
-        <div class="mb-8">
-            <a href="{% url 'opportunities:user_job_management' %}" class="inline-flex items-center gap-2 text-[13px] font-bold text-slate-500 hover:text-[#0A66C2] transition-colors mb-4 bg-white/50 px-3 py-1.5 rounded-lg border border-slate-200/60 w-max hover:shadow-sm">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                {% trans "Back to My Jobs" %}
+    <!-- WRAPPER: Limits form width for a clean centralized reading/writing experience -->
+    <div class="max-w-5xl mx-auto w-full relative z-10">
+
+        <!-- Header Controls (Back & Tag) -->
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+            <!-- SMART BACK NAVIGATION: Relies on browser history to return exactly to the previous page (My Jobs) -->
+            <a href="#" onclick="window.history.back(); return false;" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)] w-max">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
             </a>
-            <h1 class="font-heading text-[1.75rem] md:text-[2.25rem] font-black text-slate-900 tracking-tight leading-none mb-2">
+
+            <span class="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-[11px] font-black tracking-widest shadow-sm border border-amber-100 uppercase w-max">
                 {% trans "Edit Job" %}
-            </h1>
-            <p class="text-[14px] text-slate-500 font-medium">
-                {% trans "Update your job posting details." %}
+            </span>
+        </div>
+
+        <!-- HERO SECTION (Matches the global App visual language) -->
+        <div class="bento-card p-6 md:p-10 flex flex-col relative overflow-hidden bg-gradient-to-br from-white via-white to-amber-50/40 border-amber-200/60 shadow-[0_4px_20px_rgba(245,158,11,0.06)] mb-8 md:mb-10 z-30">
+            <!-- Subtle Background Glows -->
+            <div class="absolute -top-32 -right-32 w-[400px] h-[400px] bg-amber-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+            <div class="absolute -bottom-32 -left-32 w-[300px] h-[300px] bg-blue-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+
+            <div class="relative z-10 flex items-center gap-4 mb-3">
+                <div class="w-12 h-12 rounded-xl bg-amber-100/50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+                    <i data-lucide="edit-3" class="w-6 h-6"></i>
+                </div>
+                <h1 class="font-heading text-[1.75rem] md:text-[2.2rem] font-extrabold text-slate-900 tracking-[-0.03em] leading-none">
+                    {% trans "Edit Job" %}
+                </h1>
+            </div>
+            <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-[1.7] md:pr-10 max-w-3xl relative z-10">
+                {% trans "Update your job posting details to attract the right talent." %}
             </p>
         </div>
 
-        <!-- FORM -->
-        <div class="form-card p-6 md:p-8">
-            <form method="post" enctype="multipart/form-data" id="job-form">
-                {% csrf_token %}
+        <!-- THE EDITOR GRID -->
+        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-20">
+            {% csrf_token %}
+            {{ form.post_as }}
 
-                <!-- Title -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.title.label }}</label>
-                    {{ form.title }}
-                    {% if form.title.errors %}
-                    <p class="text-xs text-rose-500 mt-1">{{ form.title.errors }}</p>
-                    {% endif %}
+            {% if form.errors %}
+            <div class="lg:col-span-12 p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-4">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="text-[14px] font-bold text-rose-800 mb-1">{% trans "Please correct the following errors:" %}</p>
+                    <div class="text-[13px] font-medium text-rose-600">{{ form.errors }}</div>
                 </div>
+            </div>
+            {% endif %}
 
-                <!-- Job Type & Level -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.job_type.label }}</label>
-                        {{ form.job_type }}
+            <!-- ==========================================
+                 LEFT COLUMN: MAIN CONTENT
+                 ========================================== -->
+            <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
+
+                <!-- Card 1: Job Title -->
+                <div class="bento-card bg-white flex flex-col shadow-sm overflow-hidden">
+                    <div class="bg-gradient-to-r from-slate-50/80 to-amber-50/30 border-b border-slate-100 px-6 sm:px-8 py-5">
+                        <h2 class="text-[17px] font-black text-slate-900 tracking-tight mb-1 nav-heading flex items-center gap-2">
+                            <i data-lucide="type" class="w-4 h-4 text-amber-500"></i> {% trans "Job Title" %}
+                        </h2>
+                        <p class="text-[13px] text-slate-500 font-medium">{% trans "Be specific. Clear titles like 'Senior Frontend Engineer' perform 3x better." %}</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.level.label }}</label>
-                        {{ form.level }}
-                    </div>
-                </div>
 
-                <!-- Description -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.description.label }}</label>
-                    {{ form.description }}
-                </div>
-
-                <!-- Location & Remote -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.location.label }}</label>
-                    <div class="flex items-center gap-4">
-                        {{ form.location }}
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            {{ form.is_remote }}
-                            <span class="text-sm font-medium text-slate-600">{% trans "Remote" %}</span>
-                        </label>
+                    <div class="canvas-editor px-6 sm:px-8 py-6 sm:py-8">
+                        <label class="block text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">{% trans "Title" %}</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.title.errors.0 }}</p>{% endif %}
                     </div>
                 </div>
 
-                <!-- Skills -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.required_skills.label }}</label>
-                    {{ form.required_skills }}
-                </div>
-
-                <!-- Compensation -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.compensation_text.label }}</label>
-                    {{ form.compensation_text }}
-                    <div class="grid grid-cols-2 gap-4 mt-3">
+                <!-- Card 2: Job Type & Level -->
+                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_min.label }}</label>
-                            {{ form.salary_min }}
+                            <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                                <i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i> {% trans "Job Type" %}
+                            </label>
+                            {{ form.job_type }}
+                            {% if form.job_type.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.job_type.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.salary_max.label }}</label>
-                            {{ form.salary_max }}
+                            <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-500"></i> {% trans "Experience Level" %}
+                            </label>
+                            {{ form.level }}
+                            {% if form.level.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.level.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
 
-                <!-- Deadline -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{% trans "Deadline" %}</label>
-                    <div class="flex items-center gap-4 mb-3">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            {{ form.is_open_ended }}
-                            <span class="text-sm font-medium text-slate-600">{% trans "Open until filled" %}</span>
-                        </label>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_date.label }}</label>
-                            {{ form.deadline_date }}
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.deadline_text.label }}</label>
-                            {{ form.deadline_text }}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Challenge Mode -->
-                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <label class="flex items-center gap-3 cursor-pointer mb-3">
-                        {{ form.requires_challenge }}
-                        <div>
-                            <span class="text-sm font-bold text-slate-800">{% trans "Challenge Mode" %}</span>
-                            <p class="text-xs text-slate-600">{% trans "Require candidates to attach a project as proof of work" %}</p>
-                        </div>
+                <!-- Card 3: Description -->
+                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
+                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                        <i data-lucide="file-text" class="w-4 h-4 text-blue-500"></i> {% trans "Job Description" %}
                     </label>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">{{ form.challenge_description.label }}</label>
-                        {{ form.challenge_description }}
+                    {{ form.description }}
+                    {% if form.description.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.description.errors.0 }}</p>{% endif %}
+
+                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5 sm:mt-0"></i>
+                        <span><strong class="font-bold text-slate-800">{% trans "Pro tip:" %}</strong> {% trans "What will they build? Why should they join? Top talent values authenticity." %}</span>
                     </div>
                 </div>
 
-                <!-- Cover Image -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">{{ form.cover_image.label }}</label>
-                    {{ form.cover_image }}
+                <!-- Card 4: Required Skills -->
+                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
+                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
+                        <i data-lucide="tags" class="w-4 h-4 text-purple-500"></i> {% trans "Required Skills" %}
+                    </label>
+                    {{ form.required_skills }}
+                    {% if form.required_skills.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.required_skills.errors.0 }}</p>{% endif %}
+
+                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <i data-lucide="zap" class="w-4 h-4 text-purple-500 shrink-0 mt-0.5 sm:mt-0"></i>
+                        <span>{% trans "List specific skills like 'React', 'Python', or 'Project Management'." %}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 RIGHT COLUMN: SETTINGS & PUBLISHING
+                 ========================================== -->
+            <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 control-panel">
+
+                <!-- Settings Card -->
+                <div class="bento-card p-6 bg-white space-y-6 shadow-sm">
+                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                        <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                            <i data-lucide="settings-2" class="w-4 h-4 text-slate-600"></i>
+                        </div>
+                        <h3 class="text-[17px] font-black text-slate-900 tracking-tight">{% trans "Settings" %}</h3>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="space-y-1.5">
+                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Location" %}</label>
+                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "City and country, or 'Anywhere'." %}</p>
+                        {{ form.location }}
+                        {% if form.location.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.location.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <!-- Remote Toggle -->
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            {{ form.is_remote }}
+                            <span class="text-[13.5px] font-bold text-slate-800">{% trans "Remote Allowed" %}</span>
+                        </label>
+                    </div>
+
+                    <!-- Compensation -->
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
+                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Compensation" %}</label>
+                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "e.g. 50,000 ETB/month, or 10% Equity" %}</p>
+                        {{ form.compensation_text }}
+                        {% if form.compensation_text.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.compensation_text.errors.0 }}</p>{% endif %}
+                    </div>
+
+                    <!-- Salary Range -->
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
+                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Salary Range (Optional)" %}</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
+                                <input type="number" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="!pl-[2.5rem]" placeholder="Min">
+                            </div>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
+                                <input type="number" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="!pl-[2.5rem]" placeholder="Max">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
+                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Application Deadline" %}</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                {{ form.is_open_ended }}
+                                <span class="text-[13px] font-medium text-slate-700">{% trans "Open until filled" %}</span>
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-medium text-slate-600 mb-1">{% trans "Date" %}</label>
+                                    {{ form.deadline_date }}
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-medium text-slate-600 mb-1">{% trans "Custom Text" %}</label>
+                                    {{ form.deadline_text }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cover Image -->
+                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
+                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Cover Image" %} <span class="bg-slate-100 border border-slate-200 text-slate-500 px-2 py-0.5 rounded-md text-[10px] uppercase font-black tracking-widest">{% trans "Optional" %}</label>
+                        {{ form.cover_image }}
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-3 mt-8 pt-6 border-t border-slate-200">
-                    <a href="{% url 'opportunities:user_job_management' %}" class="btn-secondary">
-                        {% trans "Cancel" %}
-                    </a>
-                    <button type="submit" class="btn-primary" id="submit-btn">
-                        <i data-lucide="save" class="w-4 h-4"></i> {% trans "Save Changes" %}
-                    </button>
-                </div>
-            </form>
-        </div>
+                <!-- Publishing Card -->
+                <div class="bento-card p-6 bg-gradient-to-b from-amber-50/50 to-white border-amber-100 shadow-[0_10px_40px_rgba(245,158,11,0.06)] sticky top-[calc(6rem+env(safe-area-inset-top))]">
 
+                    <div class="flex items-start gap-3 mb-6 bg-white p-4 rounded-xl border border-amber-100 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 border border-amber-100">
+                            <i data-lucide="save" class="w-5 h-5 text-amber-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[14.5px] font-bold text-slate-900 mb-1">{% trans "Save Changes?" %}</h4>
+                            <p class="text-[12.5px] text-slate-500 font-medium leading-snug">
+                                {% trans "Your changes will be live immediately after saving." %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <button type="submit" class="btn-action">
+                            <i data-lucide="save" class="w-4 h-4"></i> {% trans "Save Changes" %}
+                        </button>
+                        <!-- Back Cancel Button using browser history -->
+                        <a href="#" onclick="window.history.back(); return false;" class="btn-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </main>
 
 <script>
-document.getElementById('job-form').addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> {% trans "Saving..." %}';
-});
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+    });
 </script>
 
 <!-- MOBILE BOTTOM NAVIGATION -->
 {% if not is_inspector %}
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] px-1">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="user" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap">My profile</span>
     </a>
-
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="compass" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
     </a>
-
-    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
         <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
     </a>
-
-    <!-- ACTIVE STATE: Opportunities -->
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
-        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
-        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Opportunities" %}</span>
+    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="briefcase" class="w-6 h-6 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
     </a>
-
-    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
+    <a href="/workspace/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all relative">
         <div class="relative">
-            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
-            {% if unread_msg_count > 0 %}<span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>{% endif %}
+            <i data-lucide="mail" class="w-6 h-6 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}
+                <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white animate-pulse">
+                    {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                </span>
+            {% endif %}
         </div>
         <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
     </a>

@@ -64,7 +64,7 @@ class OpportunitySubmissionForm(forms.ModelForm):
                 'class': 'form-input'
             }),
             'required_skills': forms.SelectMultiple(attrs={
-                'class': 'form-select'
+                'class': 'form-select control-panel-select'
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-input',
