@@ -318,24 +318,14 @@
 
                     <!-- CARD HEADER -->
                     <div class="flex items-start justify-between mb-5">
-                        <!-- COMPANY LOGO - Enhanced -->
+                        <!-- COMPANY LOGO - Only show if available -->
+                        {% if job.get_company_logo %}
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-50 to-white border border-slate-200 p-2 shadow-md shrink-0 group-hover/card:shadow-lg group-hover/card:shadow-blue-500/10 transition-all">
                             <div class="w-full h-full flex items-center justify-center">
-                                {% if job.get_company_logo %}
-                                    <img src="{{ job.get_company_logo }}" class="w-full h-full object-contain" alt="Logo">
-                                {% else %}
-                                    <span class="font-black text-2xl text-slate-400 font-heading">
-                                        {% if job.company and job.company.name %}
-                                            {{ job.company.name|slice:":1"|upper }}
-                                        {% elif job.external_company_name %}
-                                            {{ job.external_company_name|slice:":1"|upper }}
-                                        {% else %}
-                                            <i data-lucide="briefcase" class="w-6 h-6"></i>
-                                        {% endif %}
-                                    </span>
-                                {% endif %}
+                                <img src="{{ job.get_company_logo }}" class="w-full h-full object-contain" alt="Logo">
                             </div>
                         </div>
+                        {% endif %}
 
                         <!-- JOB TYPE BADGE - Premium -->
                         <span class="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 text-[#0A66C2] text-[10.5px] font-black uppercase tracking-widest rounded-xl shadow-sm">
