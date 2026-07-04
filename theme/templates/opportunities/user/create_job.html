@@ -2,11 +2,13 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<title>{% trans "Post a Job" %} - CoreLink</title>
+<title>{% if is_edit_mode %}{% trans "Edit Job Posting" %}{% else %}{% trans "Post a Job" %}{% endif %} - CoreLink</title>
 {% endblock %}
 
 {% block navbar %}
-<!-- LEFT SIDEBAR NAVIGATION (PC) -->
+<!-- ==============================================================
+     EXACT ORIGINAL LEFT SIDEBAR NAVIGATION (PC)
+     ============================================================== -->
 <aside class="hidden md:flex flex-col fixed top-0 left-0 w-[260px] lg:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
     <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
 
@@ -85,339 +87,371 @@
 {% endblock navbar %}
 
 {% block content %}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --app-bg: #F8FAFC;
         --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
     }
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: var(--font-body); background-color: var(--app-bg); color: #0F172A; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-    h1, h2, h3, h4, h5, h6, .nav-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
-    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
-    /* Elegant Desktop Scrollbars */
-    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
-    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
-    .custom-scroll { scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
-    @media (max-width: 767px) {
-        .custom-scroll::-webkit-scrollbar { display: none; }
-        .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Premium Background Context */
+    body {
+        font-family: var(--font-body);
+        background-color: #F0F4F8;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
     }
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    /* PREMIUM FLUID CANVAS LAYOUT WITH SIDEBAR OFFSET */
+    /* Layout Positioning */
     .app-canvas {
-        width: 100%;
-        position: relative;
-        z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+        width: 100%; position: relative; z-index: 10;
+        padding: calc(4.5rem + env(safe-area-inset-top)) 1.25rem calc(6rem + env(safe-area-inset-bottom)) 1.25rem;
     }
-    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; } }
-    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; } }
-    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; } }
+    @media (min-width: 768px) { .app-canvas { padding-left: calc(260px + 2.5rem); padding-right: 2.5rem; padding-top: 3rem; padding-bottom: 5rem; } }
+    @media (min-width: 1024px) { .app-canvas { padding-left: calc(280px + 3rem); padding-right: 3rem; padding-top: 3.5rem; } }
+    @media (min-width: 1280px) { .app-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1000px; margin: 0 auto; } }
 
-    /* BENTO CARD DESIGN (Aligned with global feed) */
+    /* World-class Bento UI */
     .bento-card {
-        background: #ffffff;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: 1.5rem;
-        box-shadow: 0 4px 20px -10px rgba(15, 23, 42, 0.05);
-        transition: all 0.4s var(--ease-magic);
-        overflow: hidden;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        position: relative; overflow: hidden;
     }
-    @media (min-width: 768px) { .bento-card { border-radius: 2rem; } }
+    @media (min-width: 768px) { .bento-card { border-radius: 1.5rem; } }
 
-    /* UNIFIED BUTTON STYLES (CoreLink Blue Theme for Jobs) */
-    .btn-action { background: linear-gradient(135deg, #0A66C2, #0856A8); color: white; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; min-height: 44px; width: 100%; }
-    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10, 102, 194, 0.35); }
-    .btn-action:active { transform: scale(0.96); }
-
-    .btn-secondary { background: white; border: 1px solid #E2E8F0; color: #475569; font-weight: 800; padding: 0.75rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; min-height: 44px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; width: 100%; }
-    .btn-secondary:hover { border-color: #0A66C2; color: #0A66C2; background: #EEF2FF; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04); }
-    .btn-secondary:active { transform: scale(0.96); }
-
-    /* EDITOR INPUT STYLES */
-    .canvas-editor input[type="text"] {
-        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1rem 1.25rem;
-        font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; outline: none; transition: all 0.2s;
+    /* High-end Input Styling overriding default Django classes */
+    .premium-input {
+        width: 100%; border: 1.5px solid rgba(226, 232, 240, 0.9); border-radius: 0.75rem;
+        background: #ffffff; transition: all 0.25s var(--ease-magic); color: #0f172a;
+        font-size: 14px; font-weight: 600; padding: 0.95rem 1rem; outline: none; appearance: none;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.01) inset;
     }
-    .canvas-editor input[type="text"]::placeholder { color: #94A3B8; font-weight: 600; }
-    .canvas-editor input[type="text"]:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
-
-    .canvas-editor textarea {
-        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; background: #F8FAFC; padding: 1.25rem;
-        font-family: var(--font-body); font-size: 1.05rem; font-weight: 500; color: #334155; line-height: 1.7; min-height: 140px; resize: none; overflow: hidden; outline: none; transition: all 0.2s;
+    .premium-input::placeholder { color: #94A3B8; font-weight: 500; }
+    textarea.premium-input { min-height: 140px; resize: vertical; line-height: 1.6; }
+    .premium-input:focus {
+        background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1);
     }
-    .canvas-editor textarea::placeholder { color: #94A3B8; font-weight: 500; }
-    .canvas-editor textarea:focus { background: #ffffff; border-color: #0A66C2; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
 
-    .control-panel select, .control-panel input[type="url"], .control-panel input[type="text"], .control-panel input[type="number"], .control-panel input[type="date"] {
-        width: 100%; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 0.95rem 1.15rem;
-        font-size: 14px; font-weight: 600; color: #334155; background: #F8FAFC; outline: none; transition: all 0.2s;
+    /* Custom Dropdown arrow */
+    select.premium-input {
+        padding-right: 2.5rem; cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em;
     }
-    .control-panel select:focus, .control-panel input[type="url"]:focus, .control-panel input[type="text"]:focus, .control-panel input[type="number"]:focus, .control-panel input[type="date"]:focus { border-color: #0A66C2; background: #ffffff; box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1); }
-    .control-panel select { appearance: none; cursor: pointer; padding-right: 2.5rem; }
 
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-down { animation: fadeDown 0.6s var(--ease-magic) forwards; }
+    /* Custom iOS-style Toggle Switch */
+    .toggle-wrapper { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; user-select: none; }
+    .toggle-checkbox { display: none; }
+    .toggle-slider {
+        width: 42px; height: 24px; background: #CBD5E1; border-radius: 100px;
+        position: relative; transition: all 0.3s var(--ease-magic); flex-shrink: 0;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .toggle-slider::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+        background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: all 0.3s var(--ease-magic);
+    }
+    .toggle-checkbox:checked + .toggle-slider { background: #0A66C2; }
+    .toggle-checkbox:checked + .toggle-slider::after { transform: translateX(18px); }
 
-    /* Drawer Utils */
-    .drawer-closed { transform: translateY(100%); }
-    .drawer-open { transform: translateY(0); box-shadow: 0 -24px 48px rgba(0,0,0,0.15); }
-    .body-lock { overflow: hidden !important; touch-action: none; }
+    /* Radio Cards */
+    .radio-card-input:checked + .radio-card-content {
+        border-color: #0A66C2; background-color: rgba(10,102,194,0.03); box-shadow: 0 0 0 2px rgba(10,102,194,0.15);
+    }
+
+    /* Buttons */
+    .btn-action {
+        height: 48px; border-radius: 0.85rem; background: #0A66C2; color: #ffffff;
+        font-size: 14.5px; font-weight: 800; border: none; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s var(--ease-magic); box-shadow: 0 4px 12px -4px rgba(10, 102, 194, 0.4);
+    }
+    .btn-action:hover { background: #0856A8; transform: translateY(-2px); box-shadow: 0 6px 16px -4px rgba(10, 102, 194, 0.5); }
+    .btn-action:active { transform: scale(0.97); }
+
+    .btn-secondary {
+        height: 48px; border-radius: 0.85rem; background: #ffffff; color: #475569;
+        font-size: 14px; font-weight: 700; border: 1.5px solid #E2E8F0; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s var(--ease-magic); text-decoration: none;
+    }
+    .btn-secondary:hover { background: #F8FAFC; color: #0f172a; border-color: #CBD5E1; }
+
+    /* Utility to hide dynamic fields gracefully */
+    .dynamic-field-group { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.4s ease, opacity 0.4s ease, margin 0.4s ease; }
+    .dynamic-field-group.is-visible { max-height: 500px; opacity: 1; margin-top: 1.25rem; }
+
+    @keyframes smoothAppear { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.5s var(--ease-magic) forwards; }
 </style>
 
-<main class="app-canvas animate-fade-down">
+<main class="app-canvas anim-smooth-appear">
+    <div class="max-w-[760px] mx-auto w-full relative z-10">
 
-    <!-- WRAPPER: Limits form width for a clean centralized reading/writing experience -->
-    <div class="max-w-5xl mx-auto w-full relative z-10">
-
-        <!-- Header Controls (Back & Tag) -->
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
-            <!-- SMART BACK NAVIGATION: Relies on browser history to return exactly to the previous page (My Jobs) -->
-            <a href="#" onclick="window.history.back(); return false;" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)] w-max">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
-            </a>
-
-            <span class="px-3 py-1.5 bg-blue-50 text-[#0A66C2] rounded-lg text-[11px] font-black tracking-widest shadow-sm border border-blue-100 uppercase w-max">
-                {% trans "New Job Posting" %}
-            </span>
-        </div>
-
-        <!-- HERO SECTION (Matches the global App visual language) -->
-        <div class="bento-card p-6 md:p-10 flex flex-col relative overflow-hidden bg-gradient-to-br from-white via-white to-blue-50/40 border-blue-200/60 shadow-[0_4px_20px_rgba(10,102,194,0.06)] mb-8 md:mb-10 z-30">
-            <!-- Subtle Background Glows -->
-            <div class="absolute -top-32 -right-32 w-[400px] h-[400px] bg-blue-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
-            <div class="absolute -bottom-32 -left-32 w-[300px] h-[300px] bg-emerald-400/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
-
-            <div class="relative z-10 flex items-center gap-4 mb-3">
-                <div class="w-12 h-12 rounded-xl bg-blue-100/50 border border-blue-200 flex items-center justify-center text-[#0A66C2] shrink-0">
-                    <i data-lucide="briefcase" class="w-6 h-6"></i>
-                </div>
-                <h1 class="font-heading text-[1.75rem] md:text-[2.2rem] font-extrabold text-slate-900 tracking-[-0.03em] leading-none">
-                    {% trans "Post a Job" %}
+        <!-- HEADER -->
+        <div class="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <a href="javascript:history.back()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200/80 rounded-lg text-[13px] font-bold text-slate-600 hover:text-[#0A66C2] hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm w-max mb-4">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back" %}
+                </a>
+                <h1 class="font-heading text-[1.75rem] md:text-[2.25rem] font-black text-slate-900 tracking-tight leading-none mb-2">
+                    {% if is_edit_mode %}{% trans "Edit Opportunity" %}{% else %}{% trans "Post an Opportunity" %}{% endif %}
                 </h1>
+                <p class="text-[14px] text-slate-500 font-medium max-w-xl">
+                    {% trans "Provide a clear and detailed description to attract the best talent on CoreLink." %}
+                </p>
             </div>
-            <p class="text-[14px] md:text-[15px] text-slate-500 font-medium leading-[1.7] md:pr-10 max-w-3xl relative z-10">
-                {% trans "Share your opportunity with the CoreLink community. Be specific about the role to attract the right talent." %}
-            </p>
+            <div class="hidden md:flex w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/50 items-center justify-center text-[#0A66C2] shadow-sm shrink-0">
+                <i data-lucide="briefcase" class="w-6 h-6"></i>
+            </div>
         </div>
 
-        <!-- THE EDITOR GRID -->
-        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-20">
+        <form method="post" enctype="multipart/form-data" class="flex flex-col gap-6 lg:gap-8 relative z-20 pb-12">
             {% csrf_token %}
-            {% if form.post_as.field.widget.input_type == 'hidden' %}
-                {{ form.post_as }}
-            {% else %}
-                <div class="lg:col-span-12 mb-6">
-                    <label class="block text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">{% trans "Post As" %}</label>
-                    {{ form.post_as }}
-                </div>
-            {% endif %}
 
+            <!-- GLOBAL ERRORS -->
             {% if form.errors %}
-            <div class="lg:col-span-12 p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-4">
-                <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
+            <div class="bento-card p-5 bg-rose-50 border-rose-200 flex items-start gap-4 shadow-sm">
+                <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
                 <div>
-                    <p class="text-[14px] font-bold text-rose-800 mb-1">{% trans "Please correct the following errors:" %}</p>
-                    <div class="text-[13px] font-medium text-rose-600">{{ form.errors }}</div>
+                    <p class="text-[14px] font-bold text-rose-900 mb-1">{% trans "Please correct the following errors:" %}</p>
+                    <div class="text-[13px] font-medium text-rose-700 leading-relaxed">{{ form.errors }}</div>
                 </div>
             </div>
             {% endif %}
 
-            <!-- ==========================================
-                 LEFT COLUMN: MAIN CONTENT
-                 ========================================== -->
-            <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
-
-                <!-- Card 1: Job Title -->
-                <div class="bento-card bg-white flex flex-col shadow-sm overflow-hidden">
-                    <div class="bg-gradient-to-r from-slate-50/80 to-blue-50/30 border-b border-slate-100 px-6 sm:px-8 py-5">
-                        <h2 class="text-[17px] font-black text-slate-900 tracking-tight mb-1 nav-heading flex items-center gap-2">
-                            <i data-lucide="type" class="w-4 h-4 text-[#0A66C2]"></i> {% trans "Job Title" %}
-                        </h2>
-                        <p class="text-[13px] text-slate-500 font-medium">{% trans "Be specific. Clear titles like 'Senior Frontend Engineer' perform 3x better." %}</p>
-                    </div>
-
-                    <div class="canvas-editor px-6 sm:px-8 py-6 sm:py-8">
-                        <label class="block text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">{% trans "Title" %}</label>
-                        {{ form.title }}
-                        {% if form.title.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.title.errors.0 }}</p>{% endif %}
-                    </div>
+            <!-- GUEST POSTING INFO (If not logged in) -->
+            {% if not user.is_authenticated %}
+            <div class="bento-card p-6 md:p-8 bg-blue-50/50 border-blue-100">
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="info" class="w-5 h-5 text-[#0A66C2]"></i>
+                    <h3 class="font-bold text-[#0A66C2] text-[15px]">{% trans "Guest Posting" %}</h3>
                 </div>
-
-                <!-- Card 2: Job Type & Level -->
-                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
-                                <i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i> {% trans "Job Type" %}
-                            </label>
-                            {{ form.job_type }}
-                            {% if form.job_type.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.job_type.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
-                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-500"></i> {% trans "Experience Level" %}
-                            </label>
-                            {{ form.level }}
-                            {% if form.level.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.level.errors.0 }}</p>{% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3: Description -->
-                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
-                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
-                        <i data-lucide="file-text" class="w-4 h-4 text-blue-500"></i> {% trans "Job Description" %}
-                    </label>
-                    {{ form.description }}
-                    {% if form.description.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.description.errors.0 }}</p>{% endif %}
-
-                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5 sm:mt-0"></i>
-                        <span><strong class="font-bold text-slate-800">{% trans "Pro tip:" %}</strong> {% trans "What will they build? Why should they join? Top talent values authenticity." %}</span>
-                    </div>
-                </div>
-
-                <!-- Card 4: Required Skills -->
-                <div class="bento-card bg-white px-6 sm:px-8 py-6 sm:py-8 shadow-sm canvas-editor flex flex-col">
-                    <label class="flex items-center gap-2 text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">
-                        <i data-lucide="tags" class="w-4 h-4 text-purple-500"></i> {% trans "Required Skills" %}
-                    </label>
-                    {{ form.required_skills }}
-                    {% if form.required_skills.errors %}<p class="text-rose-500 text-[13px] font-bold mt-2">{{ form.required_skills.errors.0 }}</p>{% endif %}
-
-                    <div class="mt-4 flex items-start sm:items-center gap-3 text-[13px] text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <i data-lucide="zap" class="w-4 h-4 text-purple-500 shrink-0 mt-0.5 sm:mt-0"></i>
-                        <span>{% trans "List specific skills like 'React', 'Python', or 'Project Management'." %}</span>
-                    </div>
-                </div>
+                <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Your Contact Info" %} <span class="text-rose-500">*</span></label>
+                <p class="text-[13px] text-slate-500 font-medium mb-3">{% trans "How should we contact you when your post goes live? (e.g. Telegram or Email. This will NOT be public)." %}</p>
+                {{ form.submitter_contact }}
             </div>
+            {% endif %}
 
-            <!-- ==========================================
-                 RIGHT COLUMN: SETTINGS & PUBLISHING
-                 ========================================== -->
-            <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 control-panel">
+            <!-- 1. JOB BASICS -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 text-slate-500"><i data-lucide="layout" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Job Basics" %}</h2>
+                </div>
 
-                <!-- Settings Card -->
-                <div class="bento-card p-6 bg-white space-y-6 shadow-sm">
-                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
-                            <i data-lucide="settings-2" class="w-4 h-4 text-slate-600"></i>
+                {% if user.is_authenticated %}
+                    {% if not form.post_as.is_hidden %}
+                        <div>
+                            <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Posting As" %}</label>
+                            {{ form.post_as }}
                         </div>
-                        <h3 class="text-[17px] font-black text-slate-900 tracking-tight">{% trans "Settings" %}</h3>
-                    </div>
+                    {% else %}
+                        {{ form.post_as }}
+                    {% endif %}
+                {% endif %}
 
-                    <!-- Location -->
-                    <div class="space-y-1.5">
-                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Location" %}</label>
-                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "City and country, or 'Anywhere'." %}</p>
-                        {{ form.location }}
-                        {% if form.location.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.location.errors.0 }}</p>{% endif %}
-                    </div>
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Job Title" %} <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" value="{{ form.title.value|default:'' }}" class="premium-input font-bold" placeholder="e.g. Senior Frontend Developer" required>
+                    {% if form.title.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.title.errors.0 }}</p>{% endif %}
+                </div>
 
-                    <!-- Remote Toggle -->
-                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            {{ form.is_remote }}
-                            <span class="text-[13.5px] font-bold text-slate-800">{% trans "Remote Allowed" %}</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Job Type" %}</label>
+                        {{ form.job_type }}
+                        {% if form.job_type.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.job_type.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Experience Level" %}</label>
+                        {{ form.level }}
+                        {% if form.level.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.level.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. THE ROLE -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100 text-[#0A66C2]"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "The Role" %}</h2>
+                </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-1">{% trans "Job Description" %} <span class="text-rose-500">*</span></label>
+                    <p class="text-[12.5px] text-slate-500 font-medium mb-3">{% trans "Describe the responsibilities, expectations, and the impact this role will have." %}</p>
+                    <textarea name="description" class="premium-input" placeholder="We are looking for..." required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.description.errors.0 }}</p>{% endif %}
+                </div>
+            </section>
+
+            <!-- 3. LOGISTICS & COMPENSATION -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-100 text-emerald-600"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Logistics & Compensation" %}</h2>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
+                    <div class="w-full">
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Location" %}</label>
+                        <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="premium-input" placeholder="e.g. Addis Ababa, Ethiopia">
+                        {% if form.location.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.location.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div class="sm:pt-[26px]">
+                        <label class="toggle-wrapper bg-slate-50 border border-slate-200 px-4 py-[11px] rounded-[0.75rem] w-full justify-between sm:w-max">
+                            <span class="text-[13px] font-bold text-slate-700">{% trans "Remote Allowed?" %}</span>
+                            <input type="checkbox" name="is_remote" id="id_is_remote" class="toggle-checkbox form-check-input" {% if form.is_remote.value %}checked{% endif %}>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Compensation Info" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                    <input type="text" name="compensation_text" value="{{ form.compensation_text.value|default:'' }}" class="premium-input" placeholder="e.g. Competitive Salary + Equity">
+                    {% if form.compensation_text.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.compensation_text.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Salary Range (ETB)" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="number" step="0.01" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="premium-input" placeholder="Min Amount">
+                        <input type="number" step="0.01" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="premium-input" placeholder="Max Amount">
+                    </div>
+                    {% if form.salary_min.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.salary_min.errors.0 }}</p>{% endif %}
+                </div>
+            </section>
+
+            <!-- 4. TIMELINE & ROUTING -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center border border-amber-100 text-amber-600"><i data-lucide="clock" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Timeline & Routing" %}</h2>
+                </div>
+
+                <!-- Timeline / Deadline -->
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-3">{% trans "Application Deadline" %}</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="ui_deadline_type" id="dl_open" value="open" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-[0.75rem] border border-slate-200/80 bg-slate-50 text-center text-[13px] font-bold text-slate-600 peer-checked:bg-blue-50 peer-checked:text-[#0A66C2] peer-checked:border-[#0A66C2] transition-all">{% trans "Open-Ended" %}</div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="ui_deadline_type" id="dl_date" value="date" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-[0.75rem] border border-slate-200/80 bg-slate-50 text-center text-[13px] font-bold text-slate-600 peer-checked:bg-blue-50 peer-checked:text-[#0A66C2] peer-checked:border-[#0A66C2] transition-all">{% trans "Specific Date" %}</div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="ui_deadline_type" id="dl_text" value="text" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-[0.75rem] border border-slate-200/80 bg-slate-50 text-center text-[13px] font-bold text-slate-600 peer-checked:bg-blue-50 peer-checked:text-[#0A66C2] peer-checked:border-[#0A66C2] transition-all">{% trans "Custom Text" %}</div>
                         </label>
                     </div>
 
-                    <!-- Compensation -->
-                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
-                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Compensation" %}</label>
-                        <p class="text-[12px] text-slate-500 font-medium mb-2 leading-tight">{% trans "e.g. 50,000 ETB/month, or 10% Equity" %}</p>
-                        {{ form.compensation_text }}
-                        {% if form.compensation_text.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1">{{ form.compensation_text.errors.0 }}</p>{% endif %}
-                    </div>
+                    <input type="checkbox" name="is_open_ended" id="id_is_open_ended" class="hidden" {% if form.is_open_ended.value %}checked{% endif %}>
 
-                    <!-- Salary Range -->
-                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
-                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Salary Range (Optional)" %}</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
-                                <input type="number" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="!pl-[2.5rem]" placeholder="Min">
-                            </div>
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">ETB</span>
-                                <input type="number" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="!pl-[2.5rem]" placeholder="Max">
-                            </div>
-                        </div>
+                    <div id="wrapper_deadline_date" class="hidden">
+                        <input type="date" name="deadline_date" id="id_deadline_date" value="{{ form.deadline_date.value|date:'Y-m-d'|default:'' }}" class="premium-input text-slate-600">
                     </div>
-
-                    <!-- Deadline -->
-                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
-                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Application Deadline" %}</label>
-                        <div class="space-y-3">
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                {{ form.is_open_ended }}
-                                <span class="text-[13px] font-medium text-slate-700">{% trans "Open until filled" %}</span>
-                            </label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[11px] font-medium text-slate-600 mb-1">{% trans "Date" %}</label>
-                                    {{ form.deadline_date }}
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] font-medium text-slate-600 mb-1">{% trans "Custom Text" %}</label>
-                                    {{ form.deadline_text }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cover Image -->
-                    <div class="space-y-1.5 pt-5 border-t border-slate-100">
-                        <label class="block text-[13.5px] font-bold text-slate-800">{% trans "Cover Image" %} <span class="bg-slate-100 border border-slate-200 text-slate-500 px-2 py-0.5 rounded-md text-[10px] uppercase font-black tracking-widest">{% trans "Optional" %}</label>
-                        {{ form.cover_image }}
+                    <div id="wrapper_deadline_text" class="hidden">
+                        <input type="text" name="deadline_text" id="id_deadline_text" value="{{ form.deadline_text.value|default:'' }}" class="premium-input" placeholder="e.g. 'Rolling basis', 'Apply ASAP'">
                     </div>
                 </div>
 
-                <!-- Publishing Card -->
-                <div class="bento-card p-6 bg-gradient-to-b from-blue-50/50 to-white border-blue-100 shadow-[0_10px_40px_rgba(10,102,194,0.06)] sticky top-[calc(6rem+env(safe-area-inset-top))]">
+                <div class="h-px bg-slate-100 my-2"></div>
 
-                    <div class="flex items-start gap-3 mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-sm">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
-                            <i data-lucide="rocket" class="w-5 h-5 text-[#0A66C2]"></i>
+                <!-- Routing (External / Internal) -->
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-3">{% trans "How should candidates apply?" %}</label>
+
+                    {% if user.is_authenticated %}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="ui_mode" id="mode_internal" value="internal" class="hidden peer radio-card-input" onchange="toggleExternalMode(false)" {% if not form.is_external.value %}checked{% endif %}>
+                                <div class="radio-card-content p-4 rounded-[0.85rem] border border-slate-200/80 bg-slate-50 peer-checked:bg-blue-50/50 peer-checked:border-[#0A66C2] transition-all flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 peer-checked:border-blue-200 peer-checked:text-[#0A66C2]"><i data-lucide="inbox" class="w-4 h-4"></i></div>
+                                    <span class="text-[13.5px] font-bold text-slate-700 peer-checked:text-[#0A66C2]">{% trans "Apply on Platform" %}</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative group">
+                                <input type="radio" name="ui_mode" id="mode_external" value="external" class="hidden peer radio-card-input" onchange="toggleExternalMode(true)" {% if form.is_external.value %}checked{% endif %}>
+                                <div class="radio-card-content p-4 rounded-[0.85rem] border border-slate-200/80 bg-slate-50 peer-checked:bg-blue-50/50 peer-checked:border-[#0A66C2] transition-all flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 peer-checked:border-blue-200 peer-checked:text-[#0A66C2]"><i data-lucide="external-link" class="w-4 h-4"></i></div>
+                                    <span class="text-[13.5px] font-bold text-slate-700 peer-checked:text-[#0A66C2]">{% trans "External Link" %}</span>
+                                </div>
+                            </label>
                         </div>
+                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" {% if form.is_external.value %}checked{% endif %}>
+                    {% else %}
+                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" checked>
+                    {% endif %}
+
+                    <!-- External Fields Dynamic Dropdown -->
+                    <div id="external-fields-container" class="hidden bg-slate-50 border border-slate-200/60 rounded-[1rem] p-5 mt-4 transition-all">
+                        <div class="mb-4">
+                            <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "External URL" %} <span class="text-rose-500">*</span></label>
+                            <input type="url" name="external_url" id="id_external_url" value="{{ form.external_url.value|default:'' }}" class="premium-input bg-white" placeholder="https://..." {% if not user.is_authenticated %}required{% endif %}>
+                            {% if form.external_url.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.external_url.errors.0 }}</p>{% endif %}
+                        </div>
+
+                        {% if not form.has_company_context %}
                         <div>
-                            <h4 class="text-[14.5px] font-bold text-slate-900 mb-1">{% trans "Ready to Post?" %}</h4>
-                            <p class="text-[12.5px] text-slate-500 font-medium leading-snug">
-                                {% trans "Once submitted, your job will be live in the opportunities feed." %}
-                            </p>
+                            <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "External Company Name" %} {% if not user.is_authenticated %}<span class="text-rose-500">*</span>{% endif %}</label>
+                            <input type="text" name="external_company_name" value="{{ form.external_company_name.value|default:'' }}" class="premium-input bg-white" placeholder="e.g. Acme Corp" {% if not user.is_authenticated %}required{% endif %}>
+                            {% if form.external_company_name.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.external_company_name.errors.0 }}</p>{% endif %}
                         </div>
+                        {% endif %}
                     </div>
+                </div>
+            </section>
 
-                    <div class="flex flex-col gap-3">
-                        <button type="submit" class="btn-action">
-                            <i data-lucide="send" class="w-4 h-4"></i> {% trans "Post Job" %}
-                        </button>
-                        <!-- Back Cancel Button using browser history -->
-                        <a href="#" onclick="window.history.back(); return false;" class="btn-secondary">
+            <!-- PUBLISH AREA -->
+            <div class="bento-card p-6 md:p-8 bg-gradient-to-r from-slate-900 to-slate-800 border-none flex flex-col sm:flex-row items-center justify-between gap-5 mt-2">
+                <div class="text-center sm:text-left text-white w-full sm:w-auto">
+                    <h4 class="font-heading text-[1.25rem] font-black tracking-tight mb-1">{% trans "Ready to post?" %}</h4>
+                    <p class="text-[13px] text-slate-400 font-medium">
+                        {% if form.instance.pk and form.title.value %}
+                            {% trans "Your edits will be saved and reflected immediately." %}
+                        {% else %}
+                            {% trans "Our team reviews all posts. It usually takes less than 2 hours." %}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button type="submit" class="w-full sm:w-auto btn-action !px-8">
+                        <i data-lucide="rocket" class="w-4 h-4"></i>
+                        {% if form.instance.pk and form.title.value %}{% trans "Save Changes" %}{% else %}{% trans "Post Job" %}{% endif %}
+                    </button>
+                    {% if user.is_authenticated %}
+                        <a href="javascript:history.back()" class="w-full sm:w-auto btn-secondary !border-transparent !bg-white/10 !text-white hover:!bg-white/20">
                             {% trans "Cancel" %}
                         </a>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
+
         </form>
     </div>
 </main>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
-    });
-</script>
-
-<!-- MOBILE BOTTOM NAVIGATION -->
+<!-- ==============================================================
+     EXACT ORIGINAL MOBILE NAVIGATION DOCK
+     ============================================================== -->
 {% if not is_inspector %}
 <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[75px] pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.08)] px-1">
     <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1.5 text-slate-400 hover:text-slate-800 transition-all">
@@ -449,4 +483,58 @@
     </a>
 </nav>
 {% endif %}
+
+<script>
+    // External Routing logic
+    function toggleExternalMode(isExternal) {
+        document.getElementById('id_is_external').checked = isExternal;
+        const container = document.getElementById('external-fields-container');
+        const urlInput = document.getElementById('id_external_url');
+
+        if (isExternal) {
+            container.classList.remove('hidden');
+            if(urlInput) urlInput.setAttribute('required', 'required');
+        } else {
+            container.classList.add('hidden');
+            if(urlInput) urlInput.removeAttribute('required');
+        }
+    }
+
+    // Deadline Routing Logic
+    function updateDeadlineUI() {
+        const selectedType = document.querySelector('input[name="ui_deadline_type"]:checked')?.value;
+        if (!selectedType) return;
+        const wrapperDate = document.getElementById('wrapper_deadline_date');
+        const wrapperText = document.getElementById('wrapper_deadline_text');
+        const checkOpen = document.getElementById('id_is_open_ended');
+
+        wrapperDate.classList.toggle('hidden', selectedType !== 'date');
+        wrapperText.classList.toggle('hidden', selectedType !== 'text');
+        checkOpen.checked = (selectedType === 'open');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Add premium classes to django fields automatically
+        document.querySelectorAll('select:not(.premium-input)').forEach(s => s.classList.add('premium-input'));
+        document.querySelectorAll('input[type="text"]:not(.premium-input), input[type="url"]:not(.premium-input), input[type="number"]:not(.premium-input)').forEach(s => {
+            if(!s.classList.contains('radio-card-input') && s.type !== 'hidden') s.classList.add('premium-input');
+        });
+
+        // Initialize Application Routing based on current form state
+        const extBox = document.getElementById('id_is_external');
+        if (extBox) toggleExternalMode(extBox.checked);
+
+        // Initialize Deadlines based on current form state
+        const initDate = document.getElementById('id_deadline_date')?.value;
+        const initText = document.getElementById('id_deadline_text')?.value;
+        if (initDate) { document.getElementById('dl_date').checked = true; }
+        else if (initText) { document.getElementById('dl_text').checked = true; }
+        else { document.getElementById('dl_open').checked = true; }
+
+        updateDeadlineUI();
+        document.querySelectorAll('input[name="ui_deadline_type"]').forEach(radio => radio.addEventListener('change', updateDeadlineUI));
+    });
+</script>
 {% endblock %}
