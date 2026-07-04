@@ -75,15 +75,18 @@
         --color-slate-400: #94A3B8;
         --color-slate-600: #475569;
         --color-slate-900: #0F172A;
-        --radius-sm: 0.75rem;
-        --radius-md: 1rem;
-        --radius-lg: 1.25rem;
-        --radius-xl: 1.5rem;
-        --radius-2xl: 2rem;
-        --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-        --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
-        --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
-        --shadow-premium: 0 20px 60px rgba(10, 102, 194, 0.15);
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.25rem;
+        --radius-2xl: 1.5rem;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.06);
+        --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
+        --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
         --spacing-xs: 0.5rem;
         --spacing-sm: 1rem;
         --spacing-md: 1.5rem;
@@ -134,23 +137,75 @@
         z-index: 0;
     }
 
-    /* Hero Bento Card */
+    /* Hero Bento Card - Premium Design */
     .bento-card {
-        background: #FFFEFA;
-        border: 1px solid rgba(200, 190, 170, 0.3);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 50%, #F9F7F2 100%);
+        border: 1px solid rgba(200, 190, 170, 0.25);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-card);
         position: relative;
         overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bento-card:hover {
+        box-shadow: var(--shadow-card-hover);
+        border-color: rgba(200, 190, 170, 0.4);
     }
     [data-theme="dark"] .bento-card {
-        background: #1F1F1F;
-        border-color: rgba(255, 255, 255, 0.1);
+        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 50%, #252525 100%);
+        border-color: rgba(255, 255, 255, 0.08);
     }
 
     .cover-container-radius {
-        border-top-left-radius: calc(var(--radius-xl) - 1px);
-        border-top-right-radius: calc(var(--radius-xl) - 1px);
+        border-top-left-radius: calc(var(--radius-2xl) - 1px);
+        border-top-right-radius: calc(var(--radius-2xl) - 1px);
+    }
+
+    /* Premium Card Style */
+    .premium-card {
+        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
+        border: 1px solid rgba(200, 190, 170, 0.2);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-card);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 1.5rem;
+    }
+    .premium-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-card-hover);
+        border-color: rgba(200, 190, 170, 0.4);
+    }
+    .premium-card.p-0 {
+        padding: 0;
+    }
+    [data-theme="dark"] .premium-card {
+        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+    [data-theme="dark"] .premium-card:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Project Card Specific */
+    .project-card {
+        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
+        border: 1px solid rgba(200, 190, 170, 0.25);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-card);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-card-hover);
+        border-color: rgba(200, 190, 170, 0.45);
+    }
+    [data-theme="dark"] .project-card {
+        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+    [data-theme="dark"] .project-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
     }
 
     .cover-placeholder-01 {
@@ -407,12 +462,12 @@
 
         <!-- CORE SKILLS -->
         {% if skills %}
-        <section id="skills" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Core Skills</h2>
+        <section id="skills" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Core Skills</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {% for skill in skills %}
-                <div class="card-hover p-6 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] rounded-xl shadow-sm">
+                <div class="premium-card card-hover">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-[18px] md:text-[20px] font-bold text-slate-900">{{ skill.name }}</span>
                         {% if skill.proficiency_level %}
@@ -430,13 +485,13 @@
 
         <!-- LIVE SIGNALS -->
         {% if live_opportunities %}
-        <section id="signals" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight flex items-center gap-3">
+        <section id="signals" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
                 <div class="w-3 h-3 rounded-full bg-[var(--color-primary)]"></div> Signals
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for opp in live_opportunities %}
-                <article class="card-hover p-6 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] rounded-xl shadow-sm">
+                <article class="premium-card card-hover">
                     <div class="relative z-20">
                         <div class="flex justify-between items-start mb-4">
                             <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
@@ -453,24 +508,24 @@
 
         <!-- SELECTED WORKS (PREMIUM ANIMATED DESIGN) -->
         {% if projects %}
-        <section id="works" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <div class="flex items-center justify-between mb-8 md:mb-10">
+        <section id="works" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <div class="flex items-center justify-between mb-10 md:mb-12">
                 <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight">Selected Projects</h2>
                 <div class="hidden md:block h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent ml-8"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
                 {% for project in projects %}
-                <article class="group relative bg-[#FFFEFA] rounded-2xl md:rounded-[2rem] border border-[rgba(200,190,170,0.4)] shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(10,102,194,0.15)] hover:border-[var(--color-primary)]/30 overflow-hidden flex flex-col transition-all duration-500 ease-out hover:-translate-y-1.5">
+                <article class="group relative project-card flex flex-col">
 
                     <!-- Glowing Background Effect -->
                     <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                     <!-- Project Gallery (Stacked like right now feed) -->
                     {% if project.gallery.all %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="mb-5 relative group/gallery block">
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="mb-6 relative group/gallery block">
                             {% with count=project.gallery.count %}
-                            <div class="media-grid overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-[rgba(200,190,170,0.3)] shadow-md bg-[#FFFEFA] transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-lg">
+                            <div class="media-grid overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-[rgba(200,190,170,0.25)] shadow-md bg-white transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-lg">
 
                                 {% if count == 1 %}
                                     <div class="relative w-full aspect-[4/3] overflow-hidden">
@@ -531,43 +586,41 @@
                     <!-- Project Content -->
                     <div class="p-6 md:p-8 flex flex-col flex-1 relative z-10">
                         <!-- Badges -->
-                        <div class="flex flex-wrap items-center gap-2 mb-5">
+                        <div class="flex flex-wrap items-center gap-2 mb-4">
                             {% if project.role %}
-                                <span class="px-3 py-1.5 bg-blue-50/80 border border-blue-100 text-[var(--color-primary-dark)] text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">{{ project.role }}</span>
+                                <span class="px-2.5 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 text-[var(--color-primary)] text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">{{ project.role }}</span>
                             {% endif %}
 
                             {% if project.client_name %}
-                                <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">
-                                    Client: {{ project.client_name }}
+                                <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">
+                                    {{ project.client_name }}
                                 </span>
                             {% endif %}
                         </div>
 
                         <!-- Title -->
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline mb-3 group-hover:text-[var(--color-primary)] transition-colors">
-                            <h3 class="text-[22px] md:text-[26px] font-serif-title font-extrabold text-slate-900 leading-tight">{{ project.title }}</h3>
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline mb-3">
+                            <h3 class="text-[20px] md:text-[24px] font-serif-title font-bold text-slate-900 leading-tight group-hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
                         </a>
 
                         <!-- Description -->
-                        <div class="text-[14px] md:text-[15.5px] text-slate-600 leading-[1.8] mb-8 flex-1 group-hover:text-slate-700 transition-colors duration-300">
+                        <div class="text-[13px] md:text-[14.5px] text-slate-600 leading-[1.7] mb-4 flex-1">
                             {% if project.main_description %}
-                                <p class="line-clamp-6">{{ project.main_description }}</p>
+                                <p class="line-clamp-4">{{ project.main_description }}</p>
                             {% elif project.problem_statement %}
-                                <p class="line-clamp-6">{{ project.problem_statement }}</p>
+                                <p class="line-clamp-4">{{ project.problem_statement }}</p>
                             {% elif project.solution_narrative %}
-                                <p class="line-clamp-6">{{ project.solution_narrative }}</p>
+                                <p class="line-clamp-4">{{ project.solution_narrative }}</p>
                             {% endif %}
                         </div>
 
-                        <!-- View Project CTA -->
-                        <div class="mt-auto pt-4 border-t border-slate-100">
-                            <a href="{% url 'public_project_detail' profile.slug project.id %}" class="group/btn flex items-center justify-between w-full no-underline text-slate-900 group-hover:text-[var(--color-primary)] transition-colors duration-300">
-                                <span class="text-[12px] font-extrabold uppercase tracking-[0.15em]">See Project Detail</span>
-                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover/btn:bg-[var(--color-primary)] group-hover/btn:text-white transition-all duration-300 shadow-sm group-hover/btn:shadow-md">
-                                    <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform"></i>
-                                </div>
-                            </a>
-                        </div>
+                        <!-- View Project Link -->
+                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors no-underline">
+                            View Project
+                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </a>
                     </div>
                 </article>
                 {% endfor %}
@@ -577,8 +630,8 @@
 
         <!-- EXPERIENCE -->
         {% if experiences %}
-        <section id="exp" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Experience</h2>
+        <section id="exp" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Experience</h2>
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for exp in experiences %}
                 <article class="relative">
@@ -615,11 +668,11 @@
 
         <!-- CREDENTIALS -->
         {% if credentials %}
-        <section id="certs" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Certifications & Credentials</h2>
+        <section id="certs" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Certifications & Credentials</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 {% for cred in credentials %}
-                <article class="card-hover p-6 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] rounded-xl shadow-sm flex flex-col text-break-words">
+                <article class="premium-card card-hover flex flex-col text-break-words">
                     <div class="relative z-20 flex flex-col h-full">
                         <div class="flex flex-wrap items-center gap-2 mb-4">
                             {% if cred.issuer %}
@@ -657,8 +710,8 @@
 
         <!-- MY FOCUS HISTORY -->
         {% if right_now_posts %}
-        <section id="focus-history" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Focus History</h2>
+        <section id="focus-history" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">My Focus History</h2>
             <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
                 {% for post in right_now_posts %}
                     {% if post.body_narrative %}
@@ -769,11 +822,11 @@
 
         <!-- LANGUAGES -->
         {% if languages %}
-        <section id="languages" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Languages</h2>
-            <div class="flex flex-wrap gap-3 md:gap-4">
+        <section id="languages" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Languages</h2>
+            <div class="flex flex-wrap gap-4 md:gap-5">
                 {% for language in languages %}
-                <div class="card-hover px-5 py-3 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center gap-3 cursor-default">
+                <div class="premium-card card-hover px-5 py-3 flex items-center gap-3 cursor-default">
                     <div class="flex flex-col">
                         <span class="text-[15px] md:text-[16px] font-bold text-slate-900">{{ language.get_language_display }}</span>
                         <div class="flex items-center gap-2 mt-1">
@@ -792,8 +845,8 @@
         {% endif %}
 
         <!-- CONTACT & CONNECT -->
-        <section id="contact" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Connect</h2>
+        <section id="contact" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
+            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Connect</h2>
 
             <div class="flex flex-col md:grid md:grid-cols-2 gap-8">
 
