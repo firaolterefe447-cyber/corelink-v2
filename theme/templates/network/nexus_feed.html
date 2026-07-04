@@ -699,5 +699,44 @@
             btn.style.pointerEvents = 'auto';
         }, 1800);
     }
+
+    // Custom Coming Soon Modal Functions
+    function openComingSoonModal() {
+        const modal = document.getElementById('comingSoonModal');
+        modal.classList.remove('invisible', 'opacity-0');
+        modal.children[0].classList.remove('-translate-y-4', 'opacity-0');
+        document.body.classList.add('body-lock');
+    }
+
+    function closeComingSoonModal() {
+        const modal = document.getElementById('comingSoonModal');
+        modal.children[0].classList.add('-translate-y-4', 'opacity-0');
+        modal.classList.add('invisible', 'opacity-0');
+        document.body.classList.remove('body-lock');
+    }
 </script>
+
+<!-- Custom Coming Soon Modal -->
+<div id="comingSoonModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 invisible transition-all duration-300 ease-in-out">
+    <div class="bg-white rounded-3xl shadow-xl max-w-md w-full mx-4 p-8 text-center transform -translate-y-4 opacity-0 transition-all duration-300 ease-in-out">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i data-lucide="construction" class="w-10 h-10 text-[#0A66C2]"></i>
+        </div>
+        <h3 class="font-heading font-bold text-3xl text-slate-900 mb-3">Coming Soon!</h3>
+        <p class="text-slate-600 mb-8">We're working hard to bring you this feature. Stay tuned for exciting updates!</p>
+        <button onclick="closeComingSoonModal()" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold px-8 py-4 rounded-full transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl">Got it!</button>
+    </div>
+</div>
+
+<script>
+    // Replace the alert call with the custom modal call
+    const companyNexusLink = document.querySelector('a[onclick="alert(\'Coming Soon!\')"]');
+    if (companyNexusLink) {
+        companyNexusLink.onclick = function(event) {
+            event.preventDefault();
+            openComingSoonModal();
+        };
+    }
+</script>
+
 {% endblock content %}
