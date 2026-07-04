@@ -215,7 +215,14 @@
         <!-- THE EDITOR GRID -->
         <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative z-20">
             {% csrf_token %}
-            {{ form.post_as }}
+            {% if form.post_as.field.widget.input_type == 'hidden' %}
+                {{ form.post_as }}
+            {% else %}
+                <div class="lg:col-span-12 mb-6">
+                    <label class="block text-[13px] font-black text-slate-800 uppercase tracking-widest mb-3">{% trans "Post As" %}</label>
+                    {{ form.post_as }}
+                </div>
+            {% endif %}
 
             {% if form.errors %}
             <div class="lg:col-span-12 p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-4">
