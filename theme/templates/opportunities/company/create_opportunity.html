@@ -3,16 +3,16 @@
 
 {% block meta_tags %}
     <!-- 1. Primary Meta Tags -->
-    <title>Post an Opportunity | CoreLink</title>
-    <meta name="title" content="Post an Opportunity on CoreLink">
-    <meta name="description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
+    <title>{% if form.instance.pk and form.title.value %}{% trans "Edit Job Posting" %}{% else %}{% trans "Post a Company Job" %}{% endif %} | CoreLink</title>
+    <meta name="title" content="Post a Company Job on CoreLink">
+    <meta name="description" content="Hire top talent for your company. Bypass resumes and require Proof-of-Work portfolios.">
 
     <!-- 2. Open Graph / Facebook / Telegram -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://corelink.et{{ request.path }}">
     <meta property="og:site_name" content="CoreLink Ethiopia">
-    <meta property="og:title" content="Post an Opportunity on CoreLink">
-    <meta property="og:description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
+    <meta property="og:title" content="Post a Company Job on CoreLink">
+    <meta property="og:description" content="Hire top talent for your company. Bypass resumes and require Proof-of-Work portfolios.">
     <meta property="og:image" content="https://corelink.et/static/img/corelink-job-share-default.jpg">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
@@ -22,8 +22,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:domain" content="corelink.et">
     <meta name="twitter:url" content="https://corelink.et{{ request.path }}">
-    <meta name="twitter:title" content="Post an Opportunity on CoreLink 🇪🇹">
-    <meta name="twitter:description" content="Hire top talent in Ethiopia. Bypass resumes and require Proof-of-Work portfolios.">
+    <meta name="twitter:title" content="Post a Company Job on CoreLink 🇪🇹">
+    <meta name="twitter:description" content="Hire top talent for your company. Bypass resumes and require Proof-of-Work portfolios.">
     <meta name="twitter:image" content="https://corelink.et/static/img/corelink-job-share-default.jpg">
 {% endblock %}
 
@@ -187,6 +187,22 @@
     textarea.premium-input { min-height: 180px; resize: vertical; line-height: 1.6; }
     select.premium-input { padding-right: 2.5rem; cursor: pointer; }
 
+    /* Custom iOS-style Toggle Switch */
+    .toggle-wrapper { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; user-select: none; }
+    .toggle-checkbox { display: none; }
+    .toggle-slider {
+        width: 42px; height: 24px; background: #CBD5E1; border-radius: 100px;
+        position: relative; transition: all 0.3s var(--ease-magic); flex-shrink: 0;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .toggle-slider::after {
+        content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+        background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: all 0.3s var(--ease-magic);
+    }
+    .toggle-checkbox:checked + .toggle-slider { background: #0A66C2; }
+    .toggle-checkbox:checked + .toggle-slider::after { transform: translateX(18px); }
+
     /* Buttons */
     .btn-action {
         position: relative !important; z-index: 60 !important; pointer-events: auto !important; cursor: pointer !important;
@@ -196,6 +212,18 @@
     }
     .btn-action:hover { background: #0856A8; box-shadow: 0 6px 16px -4px rgba(10,102,194,0.5); transform: translateY(-1px); }
     .btn-action:active { transform: translateY(0); box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); }
+
+    .btn-secondary {
+        height: 48px; border-radius: 0.85rem; background: #ffffff; color: #475569;
+        font-size: 14px; font-weight: 700; border: 1.5px solid #E2E8F0; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        transition: all 0.2s var(--ease-magic); text-decoration: none;
+    }
+    .btn-secondary:hover { background: #F8FAFC; color: #0f172a; border-color: #CBD5E1; }
+
+    /* Utility to hide dynamic fields gracefully */
+    .dynamic-field-group { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.4s ease, opacity 0.4s ease, margin 0.4s ease; }
+    .dynamic-field-group.is-visible { max-height: 500px; opacity: 1; margin-top: 1.25rem; }
 
     /* Custom Radio Cards */
     .radio-card-input:checked + .radio-card-content {
@@ -229,10 +257,10 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="font-heading text-[1.75rem] md:text-[2.25rem] font-black text-slate-900 tracking-tight leading-none">
-                        {% if form.instance.pk and form.title.value %}{% trans "Edit Opportunity" %}{% else %}{% trans "Post an Opportunity" %}{% endif %}
+                        {% if form.instance.pk and form.title.value %}{% trans "Edit Job Posting" %}{% else %}{% trans "Post a Company Job" %}{% endif %}
                     </h1>
                     <p class="text-[14px] text-slate-500 font-medium mt-1">
-                        {% trans "Hire top talent. Detail the role perfectly below." %}
+                        {% trans "Hire top talent for your company. Detail the role perfectly below." %}
                     </p>
                 </div>
             </div>
@@ -283,255 +311,162 @@
             </div>
             {% endif %}
 
-            <!-- ======================================================= -->
-            <!-- STEP 1: CATEGORY SELECTION                              -->
-            <!-- ======================================================= -->
-            <section id="category-selection-area" class="bento-card p-6 md:p-8">
-                <div class="flex items-center gap-3 mb-5 md:mb-6">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center font-black text-[13px]">1</div>
-                    <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "What are you looking for?" %}</h3>
-                </div>
-                <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-6 md:pr-10">{% trans "Select the type that best fits your needs. This determines how the opportunity is displayed to candidates." %}</p>
-
-                <!-- STATE A: THE GRID -->
-                <div id="type-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                    {% for value, name in form.job_type.field.choices %}
-                    <label class="cursor-pointer block relative h-full group">
-                        <input type="radio" name="job_type" value="{{ value }}" class="hidden peer radio-card-input" onchange="handleTypeSelection('{{ value }}')">
-                        <div class="radio-card-content p-3.5 sm:p-4 rounded-xl border border-slate-200/80 bg-white hover:border-blue-300 hover:shadow-sm transition-all h-full flex flex-col items-start relative z-20">
-                            <!-- Responsive Icon Size -->
-                            <div class="icon-wrapper w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center mb-3 sm:mb-4 transition-all duration-300 peer-checked:bg-blue-100 peer-checked:text-[#0A66C2] border border-slate-100" data-type="{{ value }}">
-                                <i data-lucide="circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                            </div>
-                            <!-- Responsive Text Sizes -->
-                            <span class="block text-[13px] md:text-[14.5px] font-bold text-slate-800 mb-1 leading-tight group-hover:text-[#0A66C2] transition-colors">{{ name }}</span>
-                            <span class="block text-[11px] md:text-[12.5px] text-slate-500 font-medium config-subtitle leading-snug" data-type="{{ value }}"></span>
-                        </div>
-                    </label>
-                    {% endfor %}
+            <!-- 1. JOB BASICS -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 text-slate-500"><i data-lucide="layout" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Job Basics" %}</h2>
                 </div>
 
-                <!-- STATE B: SLEEK COLLAPSED SUMMARY -->
-                <div id="type-summary" class="hidden flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-blue-50/50 border border-blue-100 rounded-xl gap-4">
-                    <div class="flex items-center gap-4">
-                        <div id="summary-icon-box" class="w-10 h-10 rounded-lg bg-white text-[#0A66C2] flex items-center justify-center shrink-0 border border-blue-100 shadow-sm">
-                            <i data-lucide="check-circle" class="w-5 h-5"></i>
-                        </div>
+                {% if user.is_authenticated %}
+                    {% if not form.post_as.is_hidden %}
                         <div>
-                            <p class="text-[10px] font-black text-[#0A66C2] uppercase tracking-widest mb-0.5">{% trans "Selected Type" %}</p>
-                            <h4 id="summary-title" class="text-[15px] font-extrabold text-slate-900 leading-tight">...</h4>
+                            <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Posting As" %}</label>
+                            {{ form.post_as }}
                         </div>
+                    {% else %}
+                        {{ form.post_as }}
+                    {% endif %}
+                {% endif %}
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Job Title" %} <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" value="{{ form.title.value|default:'' }}" class="premium-input font-bold" placeholder="e.g. Senior Frontend Developer" required>
+                    {% if form.title.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.title.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Job Type" %}</label>
+                        {{ form.job_type }}
+                        {% if form.job_type.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.job_type.errors.0 }}</p>{% endif %}
                     </div>
-                    <button type="button" onclick="resetGrid()" class="w-full sm:w-auto px-4 py-2 bg-white rounded-lg text-[13px] font-bold text-slate-600 border border-slate-200 hover:border-blue-500 hover:text-[#0A66C2] shadow-sm transition-all active:scale-95 shrink-0 flex items-center justify-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Change" %}
-                    </button>
+                    <div>
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Experience Level" %}</label>
+                        {{ form.level }}
+                        {% if form.level.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.level.errors.0 }}</p>{% endif %}
+                    </div>
                 </div>
             </section>
 
-            <!-- ======================================================= -->
-            <!-- THE REST OF THE FORM (Magical Slide Up)                 -->
-            <!-- ======================================================= -->
-            <div id="rest-of-form" class="hidden opacity-0 flex-col gap-5 lg:gap-6">
-
-                <!-- STEP 2: DETAILS -->
-                <section class="bento-card p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-5 md:mb-6">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center font-black text-[13px]">2</div>
-                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "Tell us about the role" %}</h3>
-                    </div>
-
-                    <div class="flex flex-col gap-5 md:gap-6">
-
-                        {% if user.is_authenticated %}
-                            <!-- ONLY RENDER POST_AS DROPDOWN VISUALLY IF IT IS NOT FORCED BY CONTEXT -->
-                            {% if not form.post_as.is_hidden %}
-                                <div>
-                                    <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Posting As" %}</label>
-                                    <p class="text-[13px] text-slate-500 font-medium mb-2">{% trans "Are you posting this personally, or linking it to your verified company profile?" %}</p>
-                                    <div class="relative group max-w-md">
-                                        {{ form.post_as }}
-                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i></div>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <!-- Renders the hidden input safely without breaking the page -->
-                                {{ form.post_as }}
-                            {% endif %}
-                        {% endif %}
-
-                        <div>
-                            <label id="label-title" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "What is the title?" %} <span class="text-rose-500">*</span></label>
-                            <p class="text-[13px] text-slate-500 font-medium mb-2">{% trans "Be specific. Clear titles like 'Senior Frontend Engineer' perform 3x better than vague ones." %}</p>
-                            <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="premium-input text-[15px] font-bold" placeholder="e.g. Senior Frontend Engineer" required>
-                        </div>
-
-                        <div id="section-level" class="transition-all duration-300">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Experience Level" %}</label>
-                            <div class="relative group max-w-md">
-                                {{ form.level }}
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"><i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label id="label-description" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Tell the full story" %} <span class="text-rose-500">*</span></label>
-                            <p class="text-[13px] text-slate-500 font-medium mb-2 max-w-3xl">{% trans "What will they build? Why should they join? Top talent values authenticity." %}</p>
-                            <textarea id="input-description" name="description" class="premium-input" required>{{ form.description.value|default:'' }}</textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 3: LOGISTICS -->
-                <section class="bento-card p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-5 md:mb-6">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center font-black text-[13px]">3</div>
-                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "Logistics & Compensation" %}</h3>
-                    </div>
-
-                    <div class="flex flex-col gap-5 md:gap-6">
-                        <div id="section-location" class="transition-all duration-300">
-                            <div class="flex flex-col sm:flex-row sm:items-start justify-between mb-2 gap-3">
-                                <div>
-                                    <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Where will they work?" %}</label>
-                                    <p class="text-[13px] text-slate-500 font-medium">{% trans "City and country, or 'Anywhere'." %}</p>
-                                </div>
-                                <label class="flex items-center justify-center gap-2 text-[13px] font-bold cursor-pointer text-[#0A66C2] hover:bg-blue-50 px-3 py-2 rounded-lg border border-blue-200/60 bg-white shadow-sm transition-all">
-                                    <input type="checkbox" name="is_remote" class="w-4 h-4 rounded text-[#0A66C2] border-slate-300 focus:ring-[#0A66C2]" {% if form.is_remote.value %}checked{% endif %}> {% trans "Remote Allowed" %}
-                                </label>
-                            </div>
-                            <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="premium-input" placeholder="e.g. Addis Ababa, Ethiopia">
-                        </div>
-
-                        <div id="section-compensation" class="transition-all duration-300">
-                            <label id="label-compensation" class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "What's the reward?" %}</label>
-                            <input type="text" name="compensation_text" value="{{ form.compensation_text.value|default:'' }}" class="premium-input" placeholder="e.g. 50,000 ETB/month, or 10% Equity">
-                        </div>
-
-                        <div id="section-salary" class="transition-all duration-300">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Exact Salary Range" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px]">ETB</span></div>
-                                    <input type="number" step="0.01" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="premium-input !pl-[3.25rem]" placeholder="Min">
-                                </div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="text-slate-400 font-bold text-[14px]">ETB</span></div>
-                                    <input type="number" step="0.01" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="premium-input !pl-[3.25rem]" placeholder="Max">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-2">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">{% trans "Application Deadline" %}</label>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="ui_deadline_type" id="dl_open" value="open" class="hidden peer radio-card-input">
-                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Open-Ended" %}</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="ui_deadline_type" id="dl_date" value="date" class="hidden peer radio-card-input">
-                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Specific Date" %}</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="ui_deadline_type" id="dl_text" value="text" class="hidden peer radio-card-input">
-                                    <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Custom Text" %}</div>
-                                </label>
-                            </div>
-
-                            <input type="checkbox" name="is_open_ended" id="id_is_open_ended" class="hidden" {% if form.is_open_ended.value %}checked{% endif %}>
-
-                            <div id="wrapper_deadline_date" class="hidden">
-                                <input type="date" name="deadline_date" id="id_deadline_date" value="{{ form.deadline_date.value|date:'Y-m-d'|default:'' }}" class="premium-input text-slate-600">
-                            </div>
-
-                            <div id="wrapper_deadline_text" class="hidden">
-                                <input type="text" name="deadline_text" id="id_deadline_text" value="{{ form.deadline_text.value|default:'' }}" class="premium-input" placeholder="e.g. 'Rolling basis', 'Apply ASAP'">
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- STEP 4: APPLICATION ROUTING (Moved here just before submit) -->
-                <section class="bento-card p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-5 md:mb-6">
-                        <div class="w-8 h-8 rounded-full bg-blue-50 text-[#0A66C2] flex items-center justify-center font-black text-[13px]">4</div>
-                        <h3 class="font-heading text-[1.25rem] md:text-[1.5rem] font-black text-slate-900 tracking-tight leading-none pt-1">{% trans "How should candidates apply?" %}</h3>
-                    </div>
-
-                    {% if user.is_authenticated %}
-                        <p class="text-[13.5px] text-slate-500 font-medium leading-relaxed mb-5 md:pr-10">{% trans "Choose whether candidates apply directly through their CoreLink profiles, or if you want to route them to an external form." %}</p>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                            <label class="cursor-pointer relative group">
-                                <input type="radio" name="ui_mode" id="mode_internal" value="internal" class="hidden peer radio-card-input" onchange="toggleExternalMode(false)" {% if not form.is_external.value %}checked{% endif %}>
-                                <div class="radio-card-content p-4 rounded-xl border border-slate-200/80 bg-white hover:border-blue-300 transition-all flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 peer-checked:bg-blue-100 peer-checked:text-[#0A66C2]"><i data-lucide="inbox" class="w-4 h-4"></i></div>
-                                    <span class="text-[14px] font-bold text-slate-700 peer-checked:text-[#0A66C2]">{% trans "Apply on Platform" %}</span>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer relative group">
-                                <input type="radio" name="ui_mode" id="mode_external" value="external" class="hidden peer radio-card-input" onchange="toggleExternalMode(true)" {% if form.is_external.value %}checked{% endif %}>
-                                <div class="radio-card-content p-4 rounded-xl border border-slate-200/80 bg-white hover:border-blue-300 transition-all flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 peer-checked:bg-blue-100 peer-checked:text-[#0A66C2]"><i data-lucide="external-link" class="w-4 h-4"></i></div>
-                                    <span class="text-[14px] font-bold text-slate-700 peer-checked:text-[#0A66C2]">{% trans "External Link" %}</span>
-                                </div>
-                            </label>
-                        </div>
-                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" {% if form.is_external.value %}checked{% endif %}>
-                    {% else %}
-                        <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex gap-3 items-start mb-6">
-                            <i data-lucide="info" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
-                            <p class="text-[13.5px] text-blue-800 font-semibold leading-relaxed">
-                                {% trans "As a guest, candidates will be securely routed to your external link below to apply." %}
-                            </p>
-                        </div>
-                        <input type="checkbox" name="is_external" id="id_is_external" class="hidden" checked>
-                    {% endif %}
-
-                    <!-- External Fields Expansion -->
-                    <div id="external-fields-container" class="hidden bg-slate-50 border border-slate-200/60 rounded-xl p-5 md:p-6 mt-2 transition-all">
-                        <div class="mb-5">
-                            <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Destination URL" %} <span class="text-rose-500">*</span></label>
-                            <p class="text-[12.5px] text-slate-500 font-medium mb-2">{% trans "Paste the exact link where candidates should go (e.g. Google Form). Must include https://" %}</p>
-                            <input type="url" name="external_url" id="id_external_url" value="{{ form.external_url.value|default:'' }}" class="premium-input bg-white" placeholder="https://forms.google.com/..." {% if not user.is_authenticated %}required{% endif %}>
-                        </div>
-
-                        <!-- AUTOMATICALLY HIDE COMPANY FIELDS FOR FOUNDERS / LINKED USERS -->
-                        {% if not form.has_company_context %}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Company Name" %} {% if user.is_authenticated %}<span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span>{% else %}<span class="text-rose-500">*</span>{% endif %}</label>
-                                <input type="text" name="external_company_name" value="{{ form.external_company_name.value|default:'' }}" class="premium-input bg-white" placeholder="e.g. Acme Corp" {% if not user.is_authenticated %}required{% endif %}>
-                            </div>
-                            <div>
-                                <label class="text-[11.5px] font-black text-slate-500 uppercase tracking-widest block mb-1 px-1">{% trans "Company Logo" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
-                                <input type="file" name="external_company_logo" class="premium-input bg-white !p-2 text-[13px] cursor-pointer file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-all">
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                </section>
-
-                <!-- PUBLISH BUTTON AREA -->
-                <div id="publish-area" class="bento-card p-6 md:p-8 !bg-slate-900 border-none mt-2 flex flex-col sm:flex-row items-center justify-between gap-6 opacity-0 transition-opacity duration-700">
-                    <div class="text-center sm:text-left text-white w-full sm:w-auto">
-                        <h4 class="font-heading text-[1.25rem] font-black tracking-tight mb-1">{% trans "Ready to go live?" %}</h4>
-                        <p class="text-[13px] text-slate-400 font-medium">
-                            {% if form.instance.pk and form.title.value %}
-                                {% trans "Your edits will be saved and reflected immediately." %}
-                            {% else %}
-                                {% trans "Our team reviews all posts. It usually takes less than 2 hours." %}
-                            {% endif %}
-                        </p>
-                    </div>
-                    <button type="submit" class="w-full sm:w-auto btn-action !px-8 !py-3 flex items-center justify-center gap-2 text-[15px]">
-                        <i data-lucide="rocket" class="w-4 h-4"></i>
-                        <span class="pointer-events-none">
-                        {% if form.instance.pk and form.title.value %}{% trans "Save Changes" %}{% else %}{% trans "Submit for Review" %}{% endif %}
-                        </span>
-                    </button>
+            <!-- 2. THE ROLE -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100 text-[#0A66C2]"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "The Role" %}</h2>
                 </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-1">{% trans "Job Description" %} <span class="text-rose-500">*</span></label>
+                    <p class="text-[12.5px] text-slate-500 font-medium mb-3">{% trans "Describe the responsibilities, expectations, and the impact this role will have." %}</p>
+                    <textarea name="description" class="premium-input" placeholder="We are looking for..." required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.description.errors.0 }}</p>{% endif %}
+                </div>
+            </section>
+
+            <!-- 3. LOGISTICS & COMPENSATION -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-100 text-emerald-600"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Logistics & Compensation" %}</h2>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
+                    <div class="w-full">
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Location" %}</label>
+                        <input type="text" name="location" value="{{ form.location.value|default:'' }}" class="premium-input" placeholder="e.g. Addis Ababa, Ethiopia">
+                        {% if form.location.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.location.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div class="sm:pt-[26px]">
+                        <label class="toggle-wrapper bg-slate-50 border border-slate-200 px-4 py-[11px] rounded-[0.75rem] w-full justify-between sm:w-max">
+                            <span class="text-[13px] font-bold text-slate-700">{% trans "Remote Allowed?" %}</span>
+                            <input type="checkbox" name="is_remote" id="id_is_remote" class="toggle-checkbox form-check-input" {% if form.is_remote.value %}checked{% endif %}>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Compensation Info" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                    <input type="text" name="compensation_text" value="{{ form.compensation_text.value|default:'' }}" class="premium-input" placeholder="e.g. Competitive Salary + Equity">
+                    {% if form.compensation_text.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.compensation_text.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Salary Range (ETB)" %} <span class="text-slate-400 font-normal normal-case ml-1">({% trans "Optional" %})</span></label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="number" step="0.01" name="salary_min" value="{{ form.salary_min.value|default:'' }}" class="premium-input" placeholder="Min Amount">
+                        <input type="number" step="0.01" name="salary_max" value="{{ form.salary_max.value|default:'' }}" class="premium-input" placeholder="Max Amount">
+                    </div>
+                    {% if form.salary_min.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.salary_min.errors.0 }}</p>{% endif %}
+                </div>
+            </section>
+
+            <!-- 4. TIMELINE & ROUTING -->
+            <section class="bento-card p-6 md:p-8 flex flex-col gap-5">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center border border-amber-100 text-amber-600"><i data-lucide="clock" class="w-4 h-4"></i></div>
+                    <h2 class="text-[15px] font-extrabold text-slate-800 uppercase tracking-wide">{% trans "Timeline & Routing" %}</h2>
+                </div>
+
+                <!-- Timeline / Deadline -->
+                <div>
+                    <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "Application Deadline" %}</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ui_deadline_type" id="dl_open" value="open" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Open-Ended" %}</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ui_deadline_type" id="dl_date" value="date" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Specific Date" %}</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ui_deadline_type" id="dl_text" value="text" class="hidden peer radio-card-input">
+                            <div class="radio-card-content px-3 py-2.5 rounded-xl border border-slate-200/80 bg-white text-center text-[13px] font-bold text-slate-600 peer-checked:text-[#0A66C2] transition-all">{% trans "Custom Text" %}</div>
+                        </label>
+                    </div>
+
+                    <input type="checkbox" name="is_open_ended" id="id_is_open_ended" class="hidden" {% if form.is_open_ended.value %}checked{% endif %}>
+
+                    <div id="wrapper_deadline_date" class="hidden">
+                        <input type="date" name="deadline_date" id="id_deadline_date" value="{{ form.deadline_date.value|date:'Y-m-d'|default:'' }}" class="premium-input text-slate-600">
+                    </div>
+
+                    <div id="wrapper_deadline_text" class="hidden">
+                        <input type="text" name="deadline_text" id="id_deadline_text" value="{{ form.deadline_text.value|default:'' }}" class="premium-input" placeholder="e.g. 'Rolling basis', 'Apply ASAP'">
+                    </div>
+                </div>
+
+                <!-- External Application Routing -->
+                {% if user.is_authenticated %}
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="toggle-wrapper bg-slate-50 border border-slate-200 px-4 py-[11px] rounded-[0.75rem] w-full justify-between">
+                            <div>
+                                <span class="text-[13px] font-bold text-slate-700 block">{% trans "External Application?" %}</span>
+                                <span class="text-[11px] text-slate-500 font-medium">{% trans "Route candidates to external link instead of CoreLink profile" %}</span>
+                            </div>
+                            <input type="checkbox" name="is_external" id="id_is_external" class="toggle-checkbox form-check-input" {% if form.is_external.value %}checked{% endif %}>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
+
+                    <div id="external-url-wrapper" class="dynamic-field-group {% if form.is_external.value %}is-visible{% endif %}">
+                        <label class="block text-[12px] font-black text-slate-700 uppercase mb-2">{% trans "External Application URL" %} <span class="text-rose-500">*</span></label>
+                        <input type="url" name="external_url" value="{{ form.external_url.value|default:'' }}" class="premium-input" placeholder="https://your-ats.com/job/123">
+                        {% if form.external_url.errors %}<p class="text-rose-500 text-[12px] font-bold mt-1.5">{{ form.external_url.errors.0 }}</p>{% endif %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <!-- SUBMIT BUTTONS -->
+            <div class="flex items-center justify-between gap-4 pt-4">
+                <a href="javascript:history.back()" class="btn-secondary">
+                    {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="btn-action">
+                    {% if form.instance.pk and form.title.value %}{% trans "Update Job Posting" %}{% else %}{% trans "Post Job" %}{% endif %}
+                </button>
             </div>
         </form>
     </div>

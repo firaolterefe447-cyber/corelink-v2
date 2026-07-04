@@ -53,7 +53,7 @@ def can_manage_job(user, job):
 class OpportunityCreateView(LoginRequiredMixin, CreateView):
     model = JobPost
     form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/workspace/create_opportunity.html'
+    template_name = 'opportunities/company/create_opportunity.html'
     success_url = reverse_lazy('opportunities:workspace_list')
 
     def get_form_kwargs(self):
@@ -101,7 +101,7 @@ class OpportunityCreateView(LoginRequiredMixin, CreateView):
 
 class WorkspaceOpportunityListView(LoginRequiredMixin, ListView):
     model = JobPost
-    template_name = 'opportunities/workspace/my_opportunities.html'
+    template_name = 'opportunities/company/my_opportunities.html'
     context_object_name = 'my_opportunities'
 
     def get_queryset(self):
@@ -110,6 +110,10 @@ class WorkspaceOpportunityListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        context['total_jobs'] = queryset.count()
+        context['active_jobs'] = queryset.filter(status='ACTIVE').count()
+        context['pending_jobs'] = queryset.filter(status='PENDING').count()
         context['my_applications'] = JobApplication.objects.filter(
             applicant=self.request.user
         ).select_related('job').order_by('-created_at')
@@ -119,7 +123,7 @@ class WorkspaceOpportunityListView(LoginRequiredMixin, ListView):
 class OpportunityUpdateView(LoginRequiredMixin, UpdateView):
     model = JobPost
     form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/workspace/create_opportunity.html'
+    template_name = 'opportunities/company/create_opportunity.html'
     success_url = reverse_lazy('opportunities:workspace_list')
     slug_url_kwarg = 'slug'
 
@@ -142,7 +146,7 @@ class OpportunityUpdateView(LoginRequiredMixin, UpdateView):
 
 class OpportunityDeleteView(LoginRequiredMixin, DeleteView):
     model = JobPost
-    template_name = 'opportunities/workspace/opportunity_confirm_delete.html'
+    template_name = 'opportunities/company/opportunity_confirm_delete.html'
     success_url = reverse_lazy('opportunities:workspace_list')
     slug_url_kwarg = 'slug'
 
@@ -443,7 +447,7 @@ from .models import JobApplication, JobPost
 
 class ApplicantBoardView(LoginRequiredMixin, ListView):
     model = JobApplication
-    template_name = 'opportunities/workspace/applicant_board.html'
+    template_name = 'opportunities/company/applicant_board.html'
     context_object_name = 'applications'
 
     def dispatch(self, request, *args, **kwargs):
@@ -542,7 +546,7 @@ class PublicOpportunityCreateView(CreateView):
     """
     model = JobPost
     form_class = PublicOpportunitySubmissionForm
-    template_name = 'opportunities/workspace/create_opportunity.html'  # Create this template next
+    template_name = 'opportunities/company/create_opportunity.html'  # Create this template next
     success_url = reverse_lazy('opportunities:feed')
 
     def dispatch(self, request, *args, **kwargs):
@@ -584,7 +588,7 @@ class UserJobCreateView(LoginRequiredMixin, CreateView):
     """Create a job as an individual user (not company)."""
     model = JobPost
     form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/user/create_job.html'
+    template_name = 'opportunities/user/create_opportunity.html'
     success_url = reverse_lazy('opportunities:user_job_management')
 
     def get_form_kwargs(self):
@@ -618,7 +622,7 @@ class UserJobCreateView(LoginRequiredMixin, CreateView):
 class UserJobManagementView(LoginRequiredMixin, ListView):
     """Main dashboard for individual users to manage their posted jobs."""
     model = JobPost
-    template_name = 'opportunities/user/my_jobs.html'
+    template_name = 'opportunities/user/my_opportunities.html'
     context_object_name = 'jobs'
     paginate_by = 12
 
@@ -650,7 +654,7 @@ class UserJobUpdateView(LoginRequiredMixin, UpdateView):
     """Edit a job posted by individual user."""
     model = JobPost
     form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/user/edit_job.html'
+    template_name = 'opportunities/user/edit_opportunity.html'
     slug_url_kwarg = 'slug'
 
     def get_queryset(self):
@@ -680,7 +684,7 @@ class UserJobUpdateView(LoginRequiredMixin, UpdateView):
 class UserJobDeleteView(LoginRequiredMixin, DeleteView):
     """Delete a job posted by individual user."""
     model = JobPost
-    template_name = 'opportunities/user/delete_job.html'
+    template_name = 'opportunities/user/delete_opportunity.html'
     slug_url_kwarg = 'slug'
     success_url = reverse_lazy('opportunities:user_job_management')
 

@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<title>{% trans "Recruitment Pipeline" %} - CoreLink</title>
+<title>{% trans "My Jobs" %} - CoreLink</title>
 {% endblock %}
 
 {% block navbar %}
@@ -183,10 +183,10 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-5">
                 <div>
                     <h1 class="font-heading text-[1.75rem] md:text-[2.25rem] font-black text-slate-900 tracking-tight leading-none mb-2">
-                        {% trans "Recruitment Pipeline" %}
+                        {% trans "My Jobs" %}
                     </h1>
                     <p class="text-[14px] text-slate-500 font-medium">
-                        {% trans "Manage your active postings, review applicants, and edit listing details." %}
+                        {% trans "Manage your company's job postings and track applications." %}
                     </p>
                 </div>
 
@@ -198,6 +198,39 @@
                         <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Post New Role" %}
                     </a>
                 </div>
+            </div>
+        </div>
+
+        <!-- STATS CARDS (Matching User System) -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[13px] font-bold text-slate-500 uppercase tracking-wider">{% trans "Total Jobs" %}</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i>
+                    </div>
+                </div>
+                <div class="text-[28px] font-black text-slate-900 leading-none">{{ total_jobs|default:0 }}</div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[13px] font-bold text-slate-500 uppercase tracking-wider">{% trans "Active" %}</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                        <i data-lucide="zap" class="w-4 h-4 text-[#0A66C2]"></i>
+                    </div>
+                </div>
+                <div class="text-[28px] font-black text-[#0A66C2] leading-none">{{ active_jobs|default:0 }}</div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[13px] font-bold text-slate-500 uppercase tracking-wider">{% trans "Pending" %}</span>
+                    <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                    </div>
+                </div>
+                <div class="text-[28px] font-black text-amber-600 leading-none">{{ pending_jobs|default:0 }}</div>
             </div>
         </div>
 
@@ -222,6 +255,10 @@
                                 <h4 class="font-bold text-slate-900 text-[16px] leading-tight truncate">
                                     {{ job.title }}
                                 </h4>
+                                <!-- Company Posting Label -->
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-blue-50 text-[#0A66C2] border border-blue-100 shrink-0">
+                                    {% trans "Company Posting" %}
+                                </span>
                                 <!-- Semantic Status Badge -->
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border shrink-0
                                     {% if job.status == 'ACTIVE' %}bg-emerald-50 text-emerald-600 border-emerald-100
@@ -283,165 +320,8 @@
             </div>
         </div>
 
-        <!-- ==============================================
-             HOW TALENT RECRUITMENT WORKS (TEASER SECTION)
-             ============================================== -->
-        <div class="bento-card p-6 md:p-8 mt-6 bg-gradient-to-br from-white to-slate-50/50">
-            <div class="flex flex-col md:flex-row md:items-start gap-6">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                    <i data-lucide="lightbulb" class="w-6 h-6 text-[#0A66C2]"></i>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-heading text-[18px] font-black text-slate-900 tracking-tight mb-2">{% trans "How Talent Recruitment Works on CoreLink" %}</h3>
-                    <p class="text-slate-600 text-[14.5px] font-medium leading-relaxed mb-5 max-w-3xl">
-                        {% trans "Welcome to the future of hiring. CoreLink completely eliminates the outdated, static CV approach. Instead, we match your job listings with living, verified professional profiles. Our smart algorithm automatically distributes your opportunities directly into the 'For You' feeds of highly qualified candidates, while giving you deeply curated, ranked applicants with just one click." %}
-                    </p>
-                    <button onclick="toggleGuideModal()" class="btn-manage-text !bg-blue-50 !text-[#0A66C2] hover:!bg-blue-100 !border-blue-200/50 !px-5 !py-2.5 transition-all shadow-sm hover:shadow">
-                        <i data-lucide="book-open" class="w-4 h-4"></i> {% trans "Read the Full Guide for Founders" %}
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </div>
 </main>
-
-<!-- ==============================================
-     FULL GUIDE MODAL (POPUP)
-     ============================================== -->
-<div id="guide-modal-backdrop" onclick="toggleGuideModal()" class="fixed inset-0 bg-slate-900/60 z-[200] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-
-<div id="guide-modal" class="fixed top-1/2 left-1/2 w-[95%] max-w-[850px] h-[85vh] max-h-[850px] bg-white rounded-3xl shadow-2xl z-[210] flex flex-col transition-all duration-400 ease-out guide-modal-closed">
-
-    <!-- Modal Header with Back Navigation -->
-    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 shrink-0">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleGuideModal()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 flex items-center justify-center transition-colors shadow-sm" aria-label="Close Guide">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            </button>
-            <div>
-                <h2 class="font-heading font-black text-[18px] md:text-[20px] text-slate-900 leading-tight">{% trans "The CoreLink Recruitment Manifesto" %}</h2>
-                <span class="text-[12px] font-bold text-[#0A66C2] uppercase tracking-wider">{% trans "A Guide for Founders & Company Owners" %}</span>
-            </div>
-        </div>
-        <button onclick="toggleGuideModal()" class="hidden md:flex w-10 h-10 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 items-center justify-center transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-    </div>
-
-    <!-- Modal Body: 1000+ Word Comprehensive Guide -->
-    <div class="flex-1 overflow-y-auto custom-scroll p-6 md:p-10 bg-[#FAFCFF]">
-        <div class="max-w-[700px] mx-auto space-y-10 pb-8">
-
-            <!-- Intro -->
-            <section class="space-y-4">
-                <h3 class="font-heading font-black text-[24px] text-slate-900 tracking-tight leading-snug">The End of the Traditional Resume</h3>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    For decades, the recruitment industry has relied on the static CV—a rigid, outdated document that forces dynamic, multi-dimensional professionals into a two-page PDF. As a founder or company owner, you know the pain of sifting through hundreds of these generic files. They are filled with keyword-stuffed bullet points, exaggerated claims, and formatting inconsistencies. They tell you what a candidate claims they did, but they rarely show you who they are, what they are truly capable of, or how their skills actively map to your current open roles.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    <strong>CoreLink radically alters this paradigm.</strong> We do not operate on a CV-based approach. Instead, we have engineered a sophisticated, profile-driven ecosystem designed specifically for the modern professional and the forward-thinking enterprise. CoreLink transforms talent acquisition from a passive, document-heavy chore into an active, data-rich matching engine.
-                </p>
-            </section>
-
-            <hr class="border-slate-200">
-
-            <!-- Section 1: The Profile -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4">
-                    <i data-lucide="user-check" class="w-6 h-6 text-indigo-600"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">1. Comprehensive Professional Profiles (The Living CV)</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    When a professional joins CoreLink, they don't upload a static document. They build a deeply comprehensive, continuously evolving professional identity. This profile acts as a verified ledger of their capabilities. Candidates list their technical and soft skills, chronologically document their real-world project portfolios, detail their educational background, and highlight measurable achievements.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    Because this data is standardized across our platform, our backend systems can read, analyze, and map these profiles with incredible precision. You aren't just looking at a word document; you are looking at structured data that our platform knows how to interpret and validate against your specific job requirements.
-                </p>
-            </section>
-
-            <!-- Section 2: Distribution -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
-                    <i data-lucide="radar" class="w-6 h-6 text-[#0A66C2]"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">2. Intelligent Distribution & The "For You" Feed</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    Posting a job on legacy platforms means waiting for candidates to stumble upon your listing. CoreLink reverses this dynamic. When you post an opportunity—whether it is a full-time executive role, a freelance gig, or a specialized technical contract—our proprietary matching algorithm immediately springs into action.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    The system scans the complex data points within your job posting (required skills, experience level, industry context) and cross-references them against our entire database of active professional profiles.
-                    Once an optimal match is identified, the system automatically pushes your opportunity directly into the highly personalized <strong>"For You"</strong> section of the candidate's dashboard. This means your job is placed directly in front of the most qualified eyes on the platform, without you having to spend a dime on external sourcing or headhunters.
-                </p>
-            </section>
-
-            <!-- Section 3: Opportunity Board -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
-                    <i data-lucide="globe" class="w-6 h-6 text-amber-600"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">3. Global Visibility on the Opportunities Platform</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    While our algorithm works behind the scenes to laser-target top talent, we also guarantee broad, platform-wide visibility. Every role you publish is elegantly displayed on the global <strong>CoreLink Opportunities Platform</strong>.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    This public-facing job board is highly categorized and searchable, allowing active job seekers to discover your company natively. The interface is clean, distraction-free, and designed to highlight your brand's unique value proposition, ensuring you capture both passive talent (via the "For You" feed) and active talent (via the global board).
-                </p>
-            </section>
-
-            <!-- Section 4: One-Click Application -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4">
-                    <i data-lucide="zap" class="w-6 h-6 text-emerald-600"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">4. Frictionless "Link Profile" Applications</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    The application process is where most companies lose their best candidates. Long, tedious forms and mandatory cover letters drive top-tier talent away. CoreLink solves this through our seamless <strong>"Link Profile"</strong> mechanism.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    When a candidate finds your opportunity, they simply click a single button. Instantly, the platform securely links their comprehensive CoreLink profile directly to your specific job pipeline. There are no forms to fill out, no PDFs to upload, and zero friction. They get a confirmation, and you immediately receive a standardized, easily readable snapshot of a top performer.
-                </p>
-            </section>
-
-            <!-- Section 5: Curated Ranking -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center mb-4">
-                    <i data-lucide="bar-chart-2" class="w-6 h-6 text-purple-600"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">5. Curated & Ranked Candidate Dashboards</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    As a founder, your time is your most valuable asset. When you visit your recruitment pipeline, you won't see a messy, chronological list of random applicants. Instead, our system intelligently processes every submitted profile.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    Candidates are <strong>highly curated and algorithmically ranked</strong>. The system assesses their linked profiles against your job criteria, scoring their skill alignment, experience, and profile completeness. The most relevant, high-potential candidates bubble up to the top of your ATS (Applicant Tracking System) view automatically. You can review a deeply informative profile in seconds, securely message the candidate through CoreLink's workspace, and move them through your hiring stages seamlessly.
-                </p>
-            </section>
-
-            <!-- Section 6: External Support -->
-            <section class="space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center mb-4">
-                    <i data-lucide="external-link" class="w-6 h-6 text-rose-600"></i>
-                </div>
-                <h4 class="font-heading font-extrabold text-[20px] text-slate-900 tracking-tight">6. Absolute Flexibility: External Opportunity Routing</h4>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    We understand that enterprise companies and established founders may already have entrenched hiring workflows, such as Workday, Greenhouse, or internal HR software. CoreLink embraces this reality.
-                </p>
-                <p class="text-[15.5px] text-slate-700 leading-relaxed font-medium">
-                    When creating an opportunity, you have the option to post it as an <strong>External Opportunity</strong>. Instead of utilizing our "Link Profile" application flow, the apply button will seamlessly redirect the candidate to the specific external URL you provide. You still benefit from CoreLink's powerful algorithm pushing your role to the right candidates and granting you global visibility, while maintaining complete control over your final application intake process.
-                </p>
-            </section>
-
-            <!-- Conclusion -->
-            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100 mt-8">
-                <h4 class="font-heading font-black text-[18px] text-blue-900 mb-3">Empowering Founders to Build Better Teams</h4>
-                <p class="text-[14.5px] text-blue-800 leading-relaxed font-medium m-0">
-                    CoreLink is not just a job board; it is an intelligent talent acquisition ecosystem. By moving away from resumes to living profiles, utilizing proactive matching algorithms, and curating applicant data, we dramatically reduce your time-to-hire and elevate the quality of your team. Welcome to the new standard of recruitment.
-                </p>
-            </div>
-
-        </div>
-    </div>
-</div>
 
 <!-- ==============================================
      MOBILE BOTTOM NAVIGATION & DRAWERS (MATCHES DASHBOARD EXACTLY)
