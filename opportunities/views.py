@@ -105,15 +105,36 @@ class WorkspaceOpportunityListView(LoginRequiredMixin, ListView):
     context_object_name = 'my_opportunities'
 
     def get_queryset(self):
-        # Sort by most recent changes in the workspace
+        # Show ALL jobs posted by this user (both company and personal)
         return JobPost.objects.filter(posted_by=self.request.user).select_related('company').order_by('-updated_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
+        
+        # Separate company vs personal jobs
+        company_jobs = queryset.filter(company__isnull=False)
+        personal_jobs = queryset.filter(company__isnull=True)
+        
         context['total_jobs'] = queryset.count()
         context['active_jobs'] = queryset.filter(status='ACTIVE').count()
         context['pending_jobs'] = queryset.filter(status='PENDING').count()
+        
+        # Add separated counts
+        context['company_jobs_count'] = company_jobs.count()
+        context['personal_jobs_count'] = personal_jobs.count()
+        
+        # Add separated job lists for tabs
+        context['company_jobs'] = company_jobs
+        context['personal_jobs'] = personal_jobs
+        
+        # Get user's companies for context
+        from profiles.models import CompanyMember
+        context['user_managed_companies'] = CompanyMember.objects.filter(
+            user=self.request.user,
+            is_active=True
+        ).select_related('company')
+        
         context['my_applications'] = JobApplication.objects.filter(
             applicant=self.request.user
         ).select_related('job').order_by('-created_at')
@@ -585,151 +606,38 @@ class PublicOpportunityCreateView(CreateView):
 # ==============================================================================
 
 class UserJobCreateView(LoginRequiredMixin, CreateView):
-    """Create a job as an individual user (not company)."""
-    model = JobPost
-    form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/user/create_opportunity.html'
-    success_url = reverse_lazy('opportunities:user_job_management')
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            opportunity = form.save(commit=False)
-            opportunity.posted_by = self.request.user
-            # Force individual user posting (not company)
-            opportunity.company = None
-            opportunity.is_official_admin_post = False
-
-            if opportunity.external_url:
-                opportunity.is_external = True
-
-            # Force pending for non-admins
-            is_admin = getattr(self.request.user, 'role', None) == 'ADMIN' or self.request.user.is_staff
-            if not is_admin:
-                opportunity.status = JobPost.Status.PENDING
-
-            opportunity.save()
-            form.save_m2m()
-
-        messages.success(self.request, "🚀 Job posted successfully!")
-        return super().form_valid(form)
+    """Redirect to unified workspace - personal jobs are now handled there."""
+    def get(self, request, *args, **kwargs):
+        # Redirect to the unified workspace create
+        return redirect('opportunities:create')
 
 
 class UserJobManagementView(LoginRequiredMixin, ListView):
-    """Main dashboard for individual users to manage their posted jobs."""
-    model = JobPost
-    template_name = 'opportunities/user/my_opportunities.html'
-    context_object_name = 'jobs'
-    paginate_by = 12
-
-    def get_queryset(self):
-        # Only show jobs posted by this user (not company jobs)
-        return JobPost.objects.filter(
-            posted_by=self.request.user,
-            company=None  # Exclude company jobs
-        ).select_related('posted_by').annotate(
-            applicant_count=Count('applications')
-        ).order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['total_jobs'] = self.get_queryset().count()
-        context['active_jobs'] = self.get_queryset().filter(status='ACTIVE').count()
-        context['pending_jobs'] = self.get_queryset().filter(status='PENDING').count()
-        
-        # Add user's job applications
-        from .models import JobApplication
-        context['my_applications'] = JobApplication.objects.filter(
-            applicant=self.request.user
-        ).select_related('job', 'job__company').order_by('-created_at')
-        
-        return context
+    """Redirect to unified workspace - personal jobs are now handled there."""
+    def get(self, request, *args, **kwargs):
+        # Redirect to the unified workspace with personal filter
+        return redirect('opportunities:workspace_list')
 
 
 class UserJobUpdateView(LoginRequiredMixin, UpdateView):
-    """Edit a job posted by individual user."""
-    model = JobPost
-    form_class = OpportunitySubmissionForm
-    template_name = 'opportunities/user/edit_opportunity.html'
-    slug_url_kwarg = 'slug'
-
-    def get_queryset(self):
-        return JobPost.objects.filter(
-            posted_by=self.request.user,
-            company=None
-        )
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            opportunity = form.save(commit=False)
-            # Ensure it stays as user post (not company)
-            opportunity.company = None
-            opportunity.is_official_admin_post = False
-            opportunity.save()
-            form.save_m2m()
-
-        messages.success(self.request, "✅ Job updated successfully!")
-        return redirect('opportunities:user_job_management')
+    """Redirect to unified workspace - personal jobs are now handled there."""
+    def get(self, request, *args, **kwargs):
+        # Redirect to the unified workspace update
+        slug = kwargs.get('slug')
+        return redirect('opportunities:update', slug=slug)
 
 
 class UserJobDeleteView(LoginRequiredMixin, DeleteView):
-    """Delete a job posted by individual user."""
-    model = JobPost
-    template_name = 'opportunities/user/delete_opportunity.html'
-    slug_url_kwarg = 'slug'
-    success_url = reverse_lazy('opportunities:user_job_management')
-
-    def get_queryset(self):
-        return JobPost.objects.filter(
-            posted_by=self.request.user,
-            company=None
-        )
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "🗑️ Job deleted successfully!")
-        return super().delete(request, *args, **kwargs)
+    """Redirect to unified workspace - personal jobs are now handled there."""
+    def get(self, request, *args, **kwargs):
+        # Redirect to the unified workspace delete
+        slug = kwargs.get('slug')
+        return redirect('opportunities:delete', slug=slug)
 
 
 class UserApplicantBoardView(LoginRequiredMixin, DetailView):
-    """View and manage applicants for a user's posted job."""
-    model = JobPost
-    template_name = 'opportunities/user/applicant_board.html'
-    slug_url_kwarg = 'slug'
-    context_object_name = 'job'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.job = get_object_or_404(JobPost, slug=self.kwargs['slug'])
-
-        if not can_manage_job(request.user, self.job):
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return JobPost.objects.filter(
-            posted_by=self.request.user,
-            company=None
-        ).prefetch_related('applications__applicant')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        job = self.object
-        applications = job.applications.all().order_by('-created_at')
-
-        # Group by status - using correct JobApplication.Status values
-        context['applications'] = applications
-        context['pending_count'] = applications.filter(status=JobApplication.Status.LINKED).count()
-        context['reviewing_count'] = applications.filter(status=JobApplication.Status.VIEWED).count()
-        context['accepted_count'] = applications.filter(status=JobApplication.Status.SHORTLISTED).count()
-        context['rejected_count'] = applications.filter(status=JobApplication.Status.REJECTED).count()
-
-        return context
+    """Redirect to unified workspace - personal jobs are now handled there."""
+    def get(self, request, *args, **kwargs):
+        # Redirect to the unified workspace applicant board
+        slug = kwargs.get('slug')
+        return redirect('opportunities:applicant_board', slug=slug)
