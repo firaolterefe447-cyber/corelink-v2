@@ -444,7 +444,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     # ---------------------------------------------------------
     list_display = [
         'display_header',
-        'is_contacted',
         'contact_details',
         'role_and_rating',
         'is_verified',
@@ -457,7 +456,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     ]
 
     list_editable = [
-        'is_contacted',
         'is_verified',
         'is_nexus_visible',
         'is_selected',
@@ -468,7 +466,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
     ]
 
     list_filter = [
-        'is_contacted',
         'role',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
@@ -629,22 +626,29 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             mark_safe(phone), mark_safe(email), mark_safe(email_status)
         )
 
-    @display(description=_("Role & Rating"))
+    @display(description=_("Rating & CV"))
     def role_and_rating(self, obj):
         profile = get_user_profile(obj)
         rating_html = ""
+        cv_html = ""
+
         if profile:
             rating = profile.admin_rating
             is_locked = getattr(profile, 'is_rating_locked', False)
             stars = "⭐" * rating + "☆" * (5 - rating)
             lock_icon = ' <span title="Rating Locked">🔒</span>' if is_locked else ''
             rating_html = f'<div style="color: #ca8a04; font-size: 11px; margin-top: 6px; white-space: nowrap;" title="Rating: {rating}/5">{stars}{lock_icon}</div>'
+
+            # CV indicator
+            if profile.cv_file:
+                cv_html = '<div style="color: #16a34a; font-size: 10px; margin-top: 4px; font-weight: bold;">📄 CV Uploaded</div>'
+            else:
+                cv_html = '<div style="color: #9ca3af; font-size: 10px; margin-top: 4px;">No CV</div>'
         else:
             rating_html = '<div style="color: #9ca3af; font-size: 10px; margin-top: 6px;">No Profile</div>'
+            cv_html = '<div style="color: #9ca3af; font-size: 10px; margin-top: 4px;">No CV</div>'
 
-        role_badge = f'<span style="background: #e0e7ff; color: #3730a3; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #c7d2fe; display: inline-block;">{obj.role}</span>'
-
-        return format_html('<div style="min-width: 90px;">{}{}</div>', mark_safe(role_badge), mark_safe(rating_html))
+        return format_html('<div style="min-width: 90px;">{}{}</div>', mark_safe(rating_html), mark_safe(cv_html))
 
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
