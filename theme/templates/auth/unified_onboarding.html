@@ -594,6 +594,14 @@
                         {% if form.bio_narrative.errors %}<span class="field-error">{{ form.bio_narrative.errors }}</span>{% endif %}
                     </div>
 
+                    <!-- 7.5. CV Upload (Optional) -->
+                    <div id="cv-upload-field" class="field-group">
+                        <label class="form-label">{% trans "Upload CV (Optional)" %}</label>
+                        {{ form.cv_file }}
+                        {% if form.cv_file.help_text %}<span class="field-hint">{{ form.cv_file.help_text }}</span>{% endif %}
+                        {% if form.cv_file.errors %}<span class="field-error">{{ form.cv_file.errors }}</span>{% endif %}
+                    </div>
+
                     <!-- 8. Individual Path Fields (Role & Institution) -->
                     <div id="path-individual" class="space-y">
                         <div class="field-group">
@@ -809,6 +817,7 @@
         const sectorField = document.getElementById('sector-field');
         const compBio = document.getElementById('path-company-bio');
         const indBio = document.getElementById('path-individual-bio');
+        const cvField = document.getElementById('cv-upload-field');
         const indPath = document.getElementById('path-individual');
         const fndRole = document.getElementById('founder-role-field');
         const founderHeader = document.getElementById('founder-names-header');
@@ -839,6 +848,7 @@
             s3.appendChild(locField);
             s3.appendChild(indPath);
             s4.appendChild(indBio);
+            s4.appendChild(cvField);
             s4.appendChild(avatarField);
 
             document.getElementById('founder-divider').style.display = 'none';

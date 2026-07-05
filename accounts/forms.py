@@ -419,6 +419,13 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
         min_length=150,
     )
 
+    cv_file = forms.FileField(
+        label=_("Upload CV (PDF)"),
+        required=False,
+        widget=forms.FileInput(),
+        help_text=_("Optional: Upload your CV or Resume (PDF only, max 5MB).")
+    )
+
     # ---------------------------------------------------------
     # FOUNDER / COMPANY SPECIFIC FIELDS
     # ---------------------------------------------------------
@@ -515,6 +522,19 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
                 bio_narrative=bio_text if role in ["EXPERT", "VISIONARY"] else "",
                 years_experience=0,
             )
+
+            # Handle CV file upload if provided
+            cv_file = self.cleaned_data.get("cv_file")
+            if cv_file:
+                # Validate it's a PDF
+                if not cv_file.name.lower().endswith('.pdf'):
+                    self.add_error("cv_file", _("CV must be a PDF document."))
+                    raise ValidationError(_("CV must be a PDF document."))
+                if cv_file.size > 5 * 1024 * 1024:
+                    self.add_error("cv_file", _("CV file size must be under 5MB."))
+                    raise ValidationError(_("CV file size must be under 5MB."))
+                profile.cv_file = cv_file
+                profile.save(update_fields=["cv_file"])
 
             # 3. ROUTE BASED ON ROLE (THE LEGO BLOCK ARCHITECTURE)
             snapshot_data = {
