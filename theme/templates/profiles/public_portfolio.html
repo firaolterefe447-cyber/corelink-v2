@@ -221,6 +221,14 @@
    .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
    .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+   /* Text Rendering */
+   .text-break-words {
+       overflow-wrap: anywhere;
+   }
+   .text-break-words p {
+       overflow-wrap: anywhere;
+   }
 </style>
 
 
@@ -626,17 +634,15 @@
            <div class="grid gap-8">
                {% for post in content_posts %}
                    {% if post.post_type == 'VISION_BLOCK' %}
-                   <article class="p-8 md:p-12 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_15px_40px_rgba(10,102,194,0.15)] text-white relative overflow-hidden group">
-                       <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] md:text-[140px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
+                   <article class="card-hover p-8 md:p-10 bg-slate-900 rounded-xl shadow-lg text-white relative overflow-hidden">
+                       <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
                        <div class="relative z-10">
-                           <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-6 shadow-sm">Vision</span>
-                           <h3 class="text-[22px] md:text-[30px] font-serif-title font-bold mb-5 md:mb-6 leading-tight">{{ post.title }}</h3>
-                           <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
-
+                           <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
+                           <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
 
                            {% if post.media_proof %}
-                           <div class="mt-8 md:mt-10 rounded-xl overflow-hidden border border-white/10 shadow-inner max-w-2xl">
-                               <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100">
+                           <div class="mt-8 rounded-lg overflow-hidden border border-white/10 max-w-2xl">
+                               <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90">
                            </div>
                            {% endif %}
                        </div>
@@ -650,19 +656,19 @@
        <!-- THOUGHTS -->
        <section id="thoughts" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Industry Thoughts</h2>
-           <div class="grid gap-8 md:gap-12">
+           <div class="grid gap-8">
                {% for post in content_posts %}
                    {% if post.post_type == 'ESSAY' %}
-                   <article class="bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-sm card-hover-premium hover:border-[#0A66C2]/30">
+                   <article class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm card-hover-premium hover:border-[#0A66C2]/30 flex flex-col">
                        {% if post.media_proof %}
-                       <div class="h-48 md:h-64 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
+                       <div class="h-48 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
                            <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                        </div>
                        {% endif %}
-                       <div class="p-6 md:p-10 lg:p-12">
-                           <span class="text-[10px] md:text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4 block">{{ post.created_at|date:"M d, Y" }}</span>
-                           <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold text-slate-900 mb-6 leading-tight">{{ post.title }}</h3>
-                           <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.9] whitespace-pre-line max-w-none">{{ post.content }}</div>
+                       <div class="p-6 flex-1 flex flex-col text-break-words relative z-10">
+                           <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
+                           <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
+                           <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line">{{ post.content }}</p>
                        </div>
                    </article>
                    {% endif %}
