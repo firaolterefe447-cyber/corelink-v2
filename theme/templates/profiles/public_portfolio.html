@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block meta_tags %}
 <!-- ESSENTIAL METADATA -->
 <meta property="og:type" content="profile">
@@ -9,10 +10,12 @@
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
 <meta property="og:description" content="{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
 
+
 <!-- MAGIC OPENGRAPH IMAGE TAGS -->
 <meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}?v={% now 'U' %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ user.display_name }}">
@@ -20,1163 +23,762 @@
 <meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}?v={% now 'U' %}">
 {% endblock %}
 
+
 {% block navbar %}
 <!-- UNIFIED TOP NAVBAR (Glassmorphic) -->
-<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 h-16 print:hidden">
-    <div class="max-w-[1200px] mx-auto px-5 w-full h-full flex justify-between items-center">
-        <!-- LEFT: Brand -->
-        <a href="#" onclick="window.scrollTo({top: 0}); return false;" class="group flex items-center focus-visible:outline-none rounded-sm">
-            <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase">core</span>
-            <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-[#0856A8] lowercase">link</span>
-        </a>
+<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 transition-all duration-500 h-16 print:hidden">
+   <div class="max-w-[1200px] mx-auto px-5 w-full h-full flex justify-between items-center">
+       <!-- LEFT: Brand -->
+       <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="group flex items-center focus-visible:outline-none rounded-sm">
+           <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase transition-opacity group-hover:opacity-80">core</span>
+           <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-[#0856A8] lowercase transition-opacity group-hover:opacity-80">link</span>
+       </a>
 
-        <!-- RIGHT: Actions -->
-        <div class="flex items-center gap-3 md:gap-4">
-            <button onclick="copyProfileLink()" aria-label="Share Profile" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 focus-visible:outline-none text-[11px] md:text-[12px] font-extrabold uppercase tracking-[0.1em] shadow-sm transition-transform active:scale-95">
-                <i data-lucide="share-2" class="w-4 h-4"></i>
-                <span>Share</span>
-            </button>
 
-            <!-- BULLETPROOF BACK BUTTON -->
-            <button type="button" onclick="smartBack()" aria-label="Go back" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 cursor-pointer border-none transition-transform active:scale-95">
-                <i data-lucide="arrow-left" class="w-4 h-4 pointer-events-none"></i>
-                <span class="pointer-events-none">Back</span>
-            </button>
+       <!-- RIGHT: Actions -->
+       <div class="flex items-center gap-3 md:gap-4">
+           <button onclick="copyProfileLink()" aria-label="Share Profile" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none text-[11px] md:text-[12px] font-extrabold uppercase tracking-[0.1em] shadow-sm">
+               <i data-lucide="share-2" class="w-4 h-4"></i>
+               <span>Share</span>
+           </button>
 
-            {% if not request.user.is_authenticated %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] focus-visible:outline-none rounded-sm">Log In</a>
-                <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 no-underline transition-transform active:scale-95">
-                    <span class="md:hidden">Join</span>
-                    <span class="hidden md:block">Join CoreLink Ethiopia</span>
-                </a>
-            {% endif %}
-        </div>
-    </div>
+
+           {% if request.user.is_authenticated %}
+               <button onclick="smartBack()" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                   <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                   <span>Back</span>
+               </button>
+           {% else %}
+               <a href="{% url 'login' %}?next={{ request.path }}" class="hidden md:block text-[12px] font-extrabold text-slate-600 hover:text-[#0A66C2] uppercase tracking-[0.2em] transition-colors focus-visible:outline-none rounded-sm">Log In</a>
+               <a href="/#join" class="text-[11px] md:text-[12px] font-extrabold text-white bg-gradient-to-r from-[#0A66C2] to-[#0856A8] px-5 md:px-6 py-2.5 rounded-full hover:opacity-90 shadow-md shadow-blue-500/20 transition-all transform active:scale-95 uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2">
+                   <span class="md:hidden">Join</span>
+                   <span class="hidden md:block">Join CoreLink Ethiopia</span>
+               </a>
+           {% endif %}
+       </div>
+   </div>
 </nav>
 {% endblock navbar %}
 
+
 {% block content %}
+<div id="top-loading-bar"></div>
+
+
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
+
 <style>
-    :root {
-        --font-main: 'Inter', sans-serif;
-        --font-serif: 'Playfair Display', serif;
-        --color-primary: #0A66C2;
-        --color-primary-dark: #0856A8;
-        --color-primary-light: #3B82F6;
-        --color-slate-50: #F8FAFC;
-        --color-slate-100: #F1F5F9;
-        --color-slate-200: #E2E8F0;
-        --color-slate-300: #CBD5E1;
-        --color-slate-400: #94A3B8;
-        --color-slate-600: #475569;
-        --color-slate-900: #0F172A;
-        --radius-sm: 0.5rem;
-        --radius-md: 0.75rem;
-        --radius-lg: 1rem;
-        --radius-xl: 1.25rem;
-        --radius-2xl: 1.5rem;
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
-        --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.06);
-        --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
-        --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 1rem;
-        --spacing-md: 1.5rem;
-        --spacing-lg: 2rem;
-        --spacing-xl: 3rem;
-        --spacing-2xl: 4rem;
-    }
-    [data-theme="dark"] {
-        --color-slate-50: #0F172A;
-        --color-slate-100: #1E293B;
-        --color-slate-200: #334155;
-        --color-slate-300: #475569;
-        --color-slate-400: #64748B;
-        --color-slate-600: #94A3B8;
-        --color-slate-900: #F1F5F9;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-        --shadow-premium: 0 20px 60px rgba(10, 102, 194, 0.3);
-    }
-    html { scroll-behavior: auto; }
-    body {
-        font-family: var(--font-main);
-        -webkit-font-smoothing: antialiased;
-        background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 40%, #EDE4D8 100%);
-        color: var(--color-slate-900);
-        overflow-x: hidden;
-        line-height: 1.6;
-    }
-    [data-theme="dark"] body {
-        background: linear-gradient(135deg, #1A1A1A 0%, #252525 50%, #2D2D2D 100%);
-    }
-
-    .font-serif-title { font-family: var(--font-serif); }
-
-    /* Premium Background Pattern */
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image:
-            radial-gradient(circle at 15% 40%, rgba(10, 102, 194, 0.04) 0%, transparent 50%),
-            radial-gradient(circle at 85% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    /* Hero Bento Card - Premium Design */
-    .bento-card {
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 50%, #F9F7F2 100%);
-        border: 1px solid rgba(200, 190, 170, 0.25);
-        border-radius: var(--radius-2xl);
-        box-shadow: var(--shadow-card);
-        position: relative;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .bento-card:hover {
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(200, 190, 170, 0.4);
-    }
-    [data-theme="dark"] .bento-card {
-        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 50%, #252525 100%);
-        border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .cover-container-radius {
-        border-top-left-radius: calc(var(--radius-2xl) - 1px);
-        border-top-right-radius: calc(var(--radius-2xl) - 1px);
-    }
-
-    /* Premium Card Style */
-    .premium-card {
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
-        border: 1px solid rgba(200, 190, 170, 0.2);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-card);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        padding: 1.5rem;
-    }
-    .premium-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(200, 190, 170, 0.4);
-    }
-    .premium-card.p-0 {
-        padding: 0;
-    }
-    [data-theme="dark"] .premium-card {
-        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
-        border-color: rgba(255, 255, 255, 0.06);
-    }
-    [data-theme="dark"] .premium-card:hover {
-        border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    /* Project Card Specific */
-    .project-card {
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
-        border: 1px solid rgba(200, 190, 170, 0.25);
-        border-radius: var(--radius-2xl);
-        box-shadow: var(--shadow-card);
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: hidden;
-    }
-    .project-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(200, 190, 170, 0.45);
-    }
-    [data-theme="dark"] .project-card {
-        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
-        border-color: rgba(255, 255, 255, 0.08);
-    }
-    [data-theme="dark"] .project-card:hover {
-        border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .cover-placeholder-01 {
-        display: block;
-        width: 100%;
-        height: 100%;
-        background-color: #040F23;
-        position: relative;
-        overflow: hidden;
-        pointer-events: none;
-    }
-    .cover-placeholder-01 .glow-left {
-        position: absolute;
-        top: -20%;
-        left: -20%;
-        width: 70%;
-        height: 140%;
-        background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%);
-        border-radius: 50%;
-    }
-    .cover-placeholder-01 .glow-right {
-        position: absolute;
-        bottom: -20%;
-        right: -20%;
-        width: 70%;
-        height: 140%;
-        background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%);
-        border-radius: 50%;
-    }
-
-    /* Avatar Display with Animated Glow */
-    .avatar-circle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        background: white;
-        box-shadow:
-            0 0 0 4px white,
-            0 0 0 6px var(--color-slate-200),
-            var(--shadow-lg),
-            0 0 30px rgba(10, 102, 194, 0.1);
-        overflow: hidden;
-        position: relative;
-        flex-shrink: 0;
-        text-decoration: none;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .avatar-circle:hover {
-        transform: scale(1.05);
-        box-shadow:
-            0 0 0 4px white,
-            0 0 0 6px var(--color-primary),
-            var(--shadow-premium),
-            0 0 40px rgba(10, 102, 194, 0.2);
-    }
-    @media (min-width: 768px) {
-        .avatar-circle {
-            width: 140px;
-            height: 140px;
-        }
-    }
-    @media (min-width: 1024px) {
-        .avatar-circle {
-            width: 150px;
-            height: 150px;
-        }
-    }
-    .avatar-circle img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        background: var(--color-slate-100);
-    }
+   :root { --font-main: 'Inter', sans-serif; --font-serif: 'Playfair Display', serif; }
+   html { scroll-behavior: smooth; }
+   body { font-family: var(--font-main); -webkit-font-smoothing: antialiased; background-color: #F8FAFC; color: #0F172A; overflow-x: hidden; }
 
 
-    /* Text Rendering */
-    .text-break-words {
-        overflow-wrap: anywhere;
-    }
-    .text-break-words p {
-        overflow-wrap: anywhere;
-    }
+   .font-serif-title { font-family: var(--font-serif); }
 
-    /* Text Truncation */
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    .line-clamp-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
 
-    /* Card Hover Animations */
-    .card-hover {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card-hover:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-    }
+   /* CoreLink Top Loading Bar */
+   #top-loading-bar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb); z-index: 99999; width: 0%; pointer-events: none; box-shadow: 0 0 10px rgba(10, 102, 194, 0.5); opacity: 0; transition: width 0.4s ease-out, opacity 0.4s ease-in; }
 
+
+   /* Clean Card Architecture */
+   .bento-card {
+       background: rgba(255, 255, 255, 0.95);
+       border: 1px solid rgba(226, 232, 240, 0.9);
+       border-radius: 1rem;
+       box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+       position: relative;
+   }
+   @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
+
+
+   .cover-container-radius {
+       border-top-left-radius: calc(1rem - 1px);
+       border-top-right-radius: calc(1rem - 1px);
+   }
+   @media (min-width: 768px) {
+       .cover-container-radius { border-top-left-radius: calc(1.25rem - 1px); border-top-right-radius: calc(1.25rem - 1px); }
+   }
+
+
+   .cover-placeholder-01 {
+       display: block; width: 100%; height: 100%; background-color: #040F23; position: relative; overflow: hidden; pointer-events: none;
+   }
+   .cover-placeholder-01 .glow-left { position: absolute; top: -20%; left: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(13, 71, 161, 0.45) 0%, transparent 60%); border-radius: 50%; }
+   .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
+
+
+   /* Avatar Display */
+   .avatar-circle {
+       display: flex; align-items: center; justify-content: center;
+       width: 100px; height: 100px;
+       border-radius: 50%; background: #ffffff;
+       box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
+       overflow: hidden; position: relative; flex-shrink: 0; text-decoration: none;
+   }
+   @media (min-width: 640px) { .avatar-circle { width: 120px; height: 120px; } }
+   @media (min-width: 768px) {
+       .avatar-circle {
+           width: 136px; height: 136px;
+           box-shadow: 0 0 0 5px #ffffff, 0 2px 10px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
+       }
+   }
+   .avatar-circle img { width: 100%; height: 100%; object-fit: cover; background: #f8fafc; }
+
+
+   /* Hover & Animations */
+   .img-hover-zoom { transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+   .group:hover .img-hover-zoom { transform: scale(1.05); }
+   .card-hover-premium { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+   .card-hover-premium:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(10, 102, 194, 0.08); border-color: rgba(10, 102, 194, 0.15); }
+
+
+   .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+   .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+   .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
 
+
 <!-- =========================================================================
-     UNIFIED ARCHITECTURE (Mobile + PC)
+    UNIFIED ARCHITECTURE (Mobile + PC)
 ========================================================================== -->
-<div class="w-full bg-transparent pb-32 relative overflow-hidden pt-16">
+<div class="w-full bg-[#F8FAFC] pb-24 relative overflow-hidden animate-fade-in pt-16">
 
-    <!-- Hero container max width 1100px -->
-    <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8">
-        <!-- 1. HERO COVER (Premium Animated Card Design) -->
-        <div class="bento-card relative flex flex-col w-full bg-white" id="profile-hero">
 
-            <!-- Cover Image -->
-            <div class="relative h-[180px] sm:h-[220px] md:h-[260px] lg:h-[320px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
-                {% if user.cover_image %}
-                    <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                {% else %}
-                    <div class="cover-placeholder-01">
-                        <div class="glow-left"></div>
-                        <div class="glow-right"></div>
-                    </div>
-                {% endif %}
-            </div>
+   <div class="max-w-[1100px] mx-auto px-4 md:px-6 pt-6 md:pt-8 mb-10">
+       <!-- 1. HERO COVER (Bento Card Clean Design) -->
+       <div class="bento-card relative flex flex-col w-full bg-white shadow-sm" id="profile-hero">
 
-            <!-- Hero Body Container -->
-            <div class="px-6 sm:px-10 md:px-12 lg:px-14 pb-10 md:pb-12 lg:pb-16 flex flex-col relative z-20">
 
-                <!-- Avatar Block (Animated Hover) -->
-                <div class="relative -mt-[4.5rem] md:-mt-[5rem] lg:-mt-[6rem] mb-6 md:mb-8 z-30 inline-flex">
-                    <div class="avatar-circle">
-                        {% if user.avatar %}
-                            <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
-                        {% else %}
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 text-[var(--color-primary)]">
-                                <span class="text-4xl md:text-5xl lg:text-6xl font-serif-title font-bold">{{ user.display_name|slice:":1"|upper }}</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+           <!-- Cover Image (FIXED HEIGHT FOR PC) -->
+           <div class="relative h-[110px] sm:h-[140px] md:h-[250px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
+               {% if user.cover_image %}
+                   <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
+               {% else %}
+                   <div class="cover-placeholder-01">
+                       <div class="glow-left"></div>
+                       <div class="glow-right"></div>
+                   </div>
+               {% endif %}
+           </div>
 
-                <!-- Text & Actions Row -->
-                <div class="flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-12 w-full relative z-30">
 
-                    <!-- Info Column -->
-                    <div class="flex-1 min-w-0 pr-0">
-                        <h1 class="text-[clamp(1.75rem,5vw,2.5rem)] md:text-[40px] lg:text-[46px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-3 lg:mb-5 break-words w-full">
-                            {{ user.display_name }}
-                        </h1>
+           <!-- Hero Body Container -->
+           <div class="px-5 sm:px-8 md:px-10 pb-8 md:pb-10 flex flex-col relative z-20">
 
-                        <!-- Static Tagline (All titles separated by |) -->
-                        <p class="text-[var(--color-primary)] font-bold text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] tracking-tight mb-5 lg:mb-8 break-words w-full font-serif-title">
-                            {% if headlines %}
-                                {% for headline in headlines %}{{ headline.title }}{% if not forloop.last %} | {% endif %}{% endfor %}
-                            {% else %}
-                                {{ role_title }}
-                            {% endif %}
-                        </p>
 
-                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-5 lg:mb-6">
-                            {% if profile.location %}
-                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] px-4 py-2 rounded-xl shadow-sm">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-[var(--color-primary)]"></i>
-                                {{ profile.location }}
-                            </span>
-                            {% endif %}
-                            {% if profile.institution %}
-                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] px-4 py-2 rounded-xl shadow-sm">
-                                <i data-lucide="building-2" class="w-4 h-4 text-slate-400"></i>
-                                {{ profile.institution }}
-                            </span>
-                            {% endif %}
-                            {% if profile.field_of_interest %}
-                            <span class="flex items-center gap-2 text-[12px] sm:text-[13px] md:text-[14px] font-medium text-slate-600 bg-[#FFFEFA] border border-[rgba(200,190,170,0.3)] px-4 py-2 rounded-xl shadow-sm">
-                                <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
-                                {{ profile.field_of_interest }}
-                            </span>
-                            {% endif %}
-                        </div>
+               <!-- Avatar Block -->
+               <div class="relative -mt-[3rem] md:-mt-[4.5rem] mb-4 md:mb-5 z-30 inline-flex sm:ml-2 md:ml-4">
+                   <div class="avatar-circle">
+                       {% if user.avatar %}
+                           <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
+                       {% else %}
+                           <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-[#0A66C2]">
+                               <span class="text-4xl md:text-5xl font-serif-title font-bold">{{ user.display_name|slice:":1"|upper }}</span>
+                           </div>
+                       {% endif %}
+                   </div>
+               </div>
 
-                        <div class="flex flex-wrap items-center gap-2 mb-6 lg:mb-8">
-                            {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
-                            <span class="inline-flex items-center justify-center border border-slate-200 text-slate-700 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.15em] px-5 py-2.5 rounded-full bg-slate-50 shadow-sm">
-                                {{ profile.get_current_search_display }}
-                            </span>
-                            {% endif %}
-                        </div>
 
-                        <!-- Current Focus -->
-                        {% with latest_focus=right_now_posts.first %}
-                        {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
-                        <div class="relative">
-                            <p class="text-[14px] sm:text-[15px] md:text-[16px] font-serif-title text-slate-600 leading-relaxed border-l-[3px] border-[var(--color-primary)] pl-5">
-                                {% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}
-                            </p>
-                        </div>
-                        {% endif %}
-                        {% endwith %}
-                    </div>
+               <!-- Text & Actions Row -->
+               <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full relative z-30">
 
-                    <!-- Right Action CTA -->
-                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-2 lg:mt-0">
-                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 lg:mb-6">
-                            {% if skills %}
-                            <div class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg shadow-sm">
-                                <i data-lucide="zap" class="w-3.5 h-3.5 text-[var(--color-primary)]"></i>
-                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ skills|length }}</span>
-                                <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Skill{{ skills|length|pluralize }}</span>
-                            </div>
-                            {% endif %}
-                            {% if projects %}
-                            <div class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-100 rounded-lg shadow-sm">
-                                <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-purple-600"></i>
-                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ projects|length }}</span>
-                                <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Project{{ projects|length|pluralize }}</span>
-                            </div>
-                            {% endif %}
-                        </div>
 
-                        {% if profile.cv_file %}
-                        <!-- Animated Resume Button -->
-                        <a href="{{ profile.cv_file.url }}" target="_blank" class="group flex items-center justify-center gap-3 px-8 py-4 lg:px-10 lg:py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] lg:text-[14px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 no-underline">
-                            <i data-lucide="file-text" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                            <span>View Resumé</span>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                   <!-- Info Column -->
+                   <div class="flex-1 min-w-0 pr-0 lg:pr-8">
+                       <h1 class="text-[clamp(1.5rem,4vw,2.25rem)] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-2 break-words w-full">
+                           {{ user.display_name }}
+                       </h1>
 
-    <!-- 2. CONTENT SECTIONS (CLEAN, STATIC, EXPANDED & SPACIOUS) -->
-    <div class="max-w-[1100px] mx-auto px-5 md:px-10">
 
-        <!-- ABOUT ME -->
-        {% if profile.bio_narrative %}
-        <section id="about" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">About Me</h2>
-            <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium max-w-[90%] relative z-10">
-                <div>{{ profile.bio_narrative }}</div>
-            </div>
-        </section>
-        {% endif %}
+                       <p class="text-[#0A66C2] font-bold text-[15px] sm:text-[16px] md:text-[18px] tracking-tight mb-0 break-words w-full font-serif-title">
+                           {% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}
+                       </p>
 
-        <!-- CORE SKILLS -->
-        {% if skills %}
-        <section id="skills" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Core Skills</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {% for skill in skills %}
-                <div class="premium-card card-hover">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[18px] md:text-[20px] font-bold text-slate-900">{{ skill.name }}</span>
-                        {% if skill.proficiency_level %}
-                        <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ skill.get_proficiency_level_display }}</span>
-                        {% endif %}
-                    </div>
-                    {% if skill.context %}
-                    <p class="text-[14px] md:text-[15px] text-slate-600 leading-relaxed italic">"{{ skill.context }}"</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+                       <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-4 md:mt-5">
+                           {% if profile.location %}
+                           <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
+                               <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
+                               {{ profile.location }}
+                           </span>
+                           {% endif %}
+                           {% if profile.institution %}
+                           <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
+                               <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+                               {{ profile.institution }}
+                           </span>
+                           {% endif %}
+                           {% if profile.field_of_interest %}
+                           <span class="flex items-center gap-1.5 text-[12px] md:text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-lg cursor-default shadow-sm">
+                               <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i>
+                               {{ profile.field_of_interest }}
+                           </span>
+                           {% endif %}
+                       </div>
 
-        <!-- LIVE SIGNALS -->
-        {% if live_opportunities %}
-        <section id="signals" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-[var(--color-primary)]"></div> Signals
-            </h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                {% for opp in live_opportunities %}
-                <article class="premium-card card-hover">
-                    <div class="relative z-20">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ opp.get_request_type_display }}</span>
-                            {% if opp.expires_at %}<span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
-                        </div>
-                        <h3 class="text-[18px] md:text-[19px] font-bold text-slate-900 mb-3 leading-snug">{{ opp.title }}</h3>
-                        <p class="text-[14px] md:text-[15px] text-slate-600 leading-[1.7] text-left">{{ opp.details }}</p>
-                    </div>
-                </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- SELECTED WORKS (PREMIUM ANIMATED DESIGN) -->
-        {% if projects %}
-        <section id="works" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <div class="flex items-center justify-between mb-10 md:mb-12">
-                <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 tracking-tight">Selected Projects</h2>
-                <div class="hidden md:block h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent ml-8"></div>
-            </div>
+                       <div class="flex flex-wrap items-center gap-2 md:gap-3 mt-3">
+                           {% if profile.current_search and profile.get_current_search_display|lower != 'just focusing on studying' %}
+                           <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
+                               {{ profile.get_current_search_display }}
+                           </span>
+                           {% endif %}
+                           {% if profile.collaboration_status %}
+                           <span class="inline-flex items-center justify-center border border-slate-200/80 text-slate-800 text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full bg-slate-50 shadow-sm">
+                               {{ profile.get_collaboration_status_display }}
+                           </span>
+                           {% endif %}
+                       </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-                {% for project in projects %}
-                <article class="group relative project-card flex flex-col">
 
-                    <!-- Glowing Background Effect -->
-                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                       <!-- Current Focus (Right Now Top Snippet) -->
+                       {% with latest_focus=right_now_posts.first %}
+                       {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
+                       <div class="mt-5 md:mt-6 relative">
+                           <p class="text-[14px] md:text-[16px] font-serif-title text-slate-600 italic leading-relaxed md:border-l-[3px] md:border-[#0A66C2] md:pl-4">
+                               "{% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}"
+                           </p>
+                       </div>
+                       {% endif %}
+                       {% endwith %}
+                   </div>
 
-                    <!-- Project Gallery (Stacked like right now feed) -->
-                    {% if project.gallery.all %}
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="mb-6 relative group/gallery block">
-                            {% with count=project.gallery.count %}
-                            <div class="media-grid overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem] border border-[rgba(200,190,170,0.25)] shadow-md bg-white transition-all duration-300 hover:border-[var(--color-primary)]/30 hover:shadow-lg">
 
-                                {% if count == 1 %}
-                                    <div class="relative w-full aspect-[4/3] overflow-hidden">
-                                        {% with asset=project.gallery.first %}
-                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                                <img src="{{ asset.image.url }}" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
-                                            {% endif %}
-                                        {% endwith %}
-                                    </div>
-                                {% elif count == 2 %}
-                                    <div class="grid grid-cols-2 gap-1 aspect-[4/3]">
-                                        {% for media in project.gallery.all|slice:":2" %}
-                                            <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.25rem] sm:rounded-l-[1.5rem]{% endif %} {% if forloop.last %}rounded-r-[1.25rem] sm:rounded-r-[1.5rem]{% endif %}">
-                                                {% if media.asset_type == 'IMAGE' and media.image %}
-                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% elif count == 3 %}
-                                    <div class="grid grid-cols-2 gap-1">
-                                        {% with first_media=project.gallery.all.0 %}
-                                            <div class="col-span-2 aspect-[16/9] rounded-t-[1.25rem] sm:rounded-t-[1.5rem] overflow-hidden">
-                                                {% if first_media.asset_type == 'IMAGE' and first_media.image %}
-                                                    <img src="{{ first_media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
-                                                {% endif %}
-                                            </div>
-                                        {% endwith %}
-                                        {% for media in project.gallery.all|slice:"1:" %}
-                                            <div class="aspect-square {% if forloop.first %}rounded-bl-[1.25rem] sm:rounded-bl-[1.5rem]{% endif %} {% if forloop.last %}rounded-br-[1.25rem] sm:rounded-br-[1.5rem]{% endif %} overflow-hidden">
-                                                {% if media.asset_type == 'IMAGE' and media.image %}
-                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% elif count >= 4 %}
-                                    <div class="grid grid-cols-2 gap-1 aspect-square">
-                                        {% for media in project.gallery.all|slice:":4" %}
-                                            <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.25rem] sm:rounded-tl-[1.5rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.25rem] sm:rounded-tr-[1.5rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.25rem] sm:rounded-bl-[1.5rem]{% endif %} {% if forloop.last %}rounded-br-[1.25rem] sm:rounded-br-[1.5rem]{% endif %}">
-                                                {% if media.asset_type == 'IMAGE' and media.image %}
-                                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
-                                                {% endif %}
-                                                {% if forloop.last and count > 4 %}
-                                                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                                                        <span class="text-white font-black text-[18px] sm:text-[20px]">+{{ count|add:"-4" }}</span>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            {% endwith %}
-                        </a>
-                    {% endif %}
+                   <!-- Right Action CTA -->
+                   {% if profile.cv_file %}
+                   <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-4 lg:mt-0">
+                       <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50">
+                           <i data-lucide="file-text" class="w-4 h-4"></i>
+                           View Resumé
+                       </a>
+                   </div>
+                   {% endif %}
+               </div>
+           </div>
+       </div>
+   </div>
 
-                    <!-- Project Content -->
-                    <div class="p-6 md:p-8 flex flex-col flex-1 relative z-10">
-                        <!-- Badges -->
-                        <div class="flex flex-wrap items-center gap-2 mb-4">
-                            {% if project.role %}
-                                <span class="px-2.5 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 text-[var(--color-primary)] text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">{{ project.role }}</span>
-                            {% endif %}
 
-                            {% if project.client_name %}
-                                <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">
-                                    {{ project.client_name }}
-                                </span>
-                            {% endif %}
-                        </div>
+   <!-- 2. CONTENT SECTIONS (Clean Layout) -->
+   <div class="max-w-[1000px] mx-auto px-5 md:px-10 space-y-16 md:space-y-24">
 
-                        <!-- Title -->
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="block no-underline mb-3">
-                            <h3 class="text-[20px] md:text-[24px] font-serif-title font-bold text-slate-900 leading-tight group-hover:text-[var(--color-primary)] transition-colors">{{ project.title }}</h3>
-                        </a>
 
-                        <!-- Description -->
-                        <div class="text-[13px] md:text-[14.5px] text-slate-600 leading-[1.7] mb-4 flex-1">
-                            {% if project.main_description %}
-                                <p class="line-clamp-4">{{ project.main_description }}</p>
-                            {% elif project.problem_statement %}
-                                <p class="line-clamp-4">{{ project.problem_statement }}</p>
-                            {% elif project.solution_narrative %}
-                                <p class="line-clamp-4">{{ project.solution_narrative }}</p>
-                            {% endif %}
-                        </div>
+       <!-- ABOUT ME -->
+       {% if profile.bio_narrative %}
+       <section id="about" class="reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">About Me</h2>
+           <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] text-left whitespace-pre-line font-medium md:max-w-[90%]">{{ profile.bio_narrative }}</div>
+       </section>
+       {% endif %}
 
-                        <!-- View Project Link -->
-                        <a href="{% url 'public_project_detail' profile.slug project.id %}" class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors no-underline">
-                            View Project
-                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- EXPERIENCE -->
-        {% if experiences %}
-        <section id="exp" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Experience</h2>
-            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
-                {% for exp in experiences %}
-                <article class="relative">
-                    <!-- Timeline Dot -->
-                    <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-[#FFFEFA] border-[3px] {% if exp.is_current %}border-[var(--color-primary)]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[rgba(200,190,170,0.2)]"></div>
+       <!-- LIVE SIGNALS -->
+       {% if live_opportunities %}
+       <section id="signals" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight flex items-center gap-3">
+               <div class="w-3 h-3 rounded-full bg-[#0A66C2] animate-pulse shadow-[0_0_8px_rgba(10,102,194,0.6)]"></div> Signals
+           </h2>
+           <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+               {% for opp in live_opportunities %}
+               <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] shadow-sm card-hover-premium">
+                   <div class="relative z-20">
+                       <div class="flex justify-between items-start mb-5">
+                           <span class="px-3.5 py-1 bg-blue-50 border border-blue-100 text-[#0A66C2] text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ opp.get_request_type_display }}</span>
+                           {% if opp.expires_at %}<span class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Ends {{ opp.expires_at|date:"M d" }}</span>{% endif %}
+                       </div>
+                       <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ opp.title }}</h3>
+                       <p class="text-[14px] md:text-[15px] text-slate-600 leading-[1.8] text-left">{{ opp.details }}</p>
+                   </div>
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
 
-                    <!-- Date & Tags Row -->
-                    <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-3">
-                        <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
-                        <span class="px-2.5 py-1 border border-[rgba(200,190,170,0.3)] text-slate-500 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-[#FFFEFA]">{{ exp.get_location_type_display }}</span>
-                        {% if exp.employment_type %}
-                        <span class="px-2.5 py-1 border border-[rgba(200,190,170,0.3)] text-slate-500 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-[#FFFEFA]">{{ exp.get_employment_type_display }}</span>
-                        {% endif %}
-                    </div>
 
-                    <!-- Role & Company -->
-                    <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-1 flex items-center gap-2">
-                        {% if exp.is_current %}
-                        <span class="w-2 h-2 bg-[var(--color-primary)] rounded-full"></span>
-                        {% endif %}
-                        {{ exp.role_title }}
-                    </h4>
-                    <h5 class="text-[14px] md:text-[16px] font-serif-title font-semibold text-[var(--color-primary)] md:text-slate-600 mb-3">{{ exp.company_name }}</h5>
+       <!-- SELECTED WORKS -->
+       {% if projects %}
+       <section id="works" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Works</h2>
+           <div class="grid gap-12 md:gap-16">
+               {% for project in projects %}
+               <article class="group/project">
+                   {% if project.gallery.count == 0 %}
+                       <div class="w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30">
+                           <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
+                               <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                           </div>
+                           <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
+                       </div>
+                   {% elif project.gallery.count == 1 %}
+                       <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500">
+                           <img src="{{ project.gallery.first.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
+                           {% if project.gallery.first.caption %}
+                           <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                               {{ project.gallery.first.caption }}
+                           </div>
+                           {% endif %}
+                       </div>
+                   {% else %}
+                       <div class="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 mb-2 -mx-5 px-5 md:mx-0 md:px-0 pb-4" style="scrollbar-width: none;">
+                           {% for img in project.gallery.all %}
+                           <div class="shrink-0 w-[85%] md:w-[75%] aspect-[4/3] md:aspect-[16/10] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden snap-center relative bg-slate-100 shadow-sm border border-slate-200/50 group/img">
+                               <img src="{{ img.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1s] group-hover/img:scale-105">
+                               {% if img.caption %}
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                                   {{ img.caption }}
+                               </div>
+                               {% endif %}
+                           </div>
+                           {% endfor %}
+                       </div>
+                       <div class="md:hidden text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-center gap-1 opacity-70">
+                           Swipe to see more <i data-lucide="arrow-right" class="w-3 h-3 text-[#0A66C2]"></i>
+                       </div>
+                   {% endif %}
 
-                    <!-- Description -->
-                    {% if exp.description %}
-                    <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[90%]">{{ exp.description }}</p>
-                    {% endif %}
-                </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- CREDENTIALS -->
-        {% if credentials %}
-        <section id="certs" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Certifications & Credentials</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                {% for cred in credentials %}
-                <article class="premium-card card-hover flex flex-col text-break-words">
-                    <div class="relative z-20 flex flex-col h-full">
-                        <div class="flex flex-wrap items-center gap-2 mb-4">
-                            {% if cred.issuer %}
-                            <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-lg">{{ cred.issuer }}</span>
-                            {% endif %}
-                            {% if cred.issue_date %}<span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
-                        </div>
+                   <div class="md:px-2">
+                       {% if project.gallery.count > 0 %}
+                       <h3 class="text-[22px] md:text-[26px] font-bold text-slate-900 mb-3 transition-colors group-hover/project:text-[#0A66C2]">{{ project.title }}</h3>
+                       {% endif %}
 
-                        <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ cred.title }}</h4>
 
-                        {% if cred.reflection %}
-                        <p class="text-[14.5px] md:text-[15px] text-slate-600 mb-5 leading-[1.7]">{{ cred.reflection }}</p>
-                        {% endif %}
+                       <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-5 text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em]">
+                           {% if project.role %}<span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-md">{{ project.role }}</span>{% endif %}
+                           {% if project.client_name %}<span class="px-3 py-1.5 border border-slate-200 rounded-md bg-white shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
+                       </div>
 
-                        <div class="mt-auto">
-                            {% if cred.key_takeaways %}
-                            <div class="bg-blue-50/50 p-4 rounded-lg mb-5 border border-blue-100/50">
-                                <span class="block text-[10px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] mb-2">Key Takeaway</span>
-                                <p class="text-[13.5px] md:text-[14px] text-slate-700 font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
-                            </div>
-                            {% endif %}
 
-                            {% if cred.url_link or cred.file_upload %}
-                            <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[11px] font-semibold text-[var(--color-primary)] uppercase tracking-[0.15em] border-b-2 border-[var(--color-primary)]/30 hover:border-[var(--color-primary)] pb-1 transition-colors no-underline">
-                                View Proof <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+                       <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] space-y-3 mb-6 text-left md:max-w-[90%]">
+                           {% if project.main_description %}<p>{{ project.main_description }}</p>{% endif %}
+                           {% if project.problem_statement %}<p>{{ project.problem_statement }}</p>{% endif %}
+                           {% if project.solution_narrative %}<p>{{ project.solution_narrative }}</p>{% endif %}
+                       </div>
 
-        <!-- MY UPDATES -->
-        {% if right_now_posts %}
-        <section id="focus-history" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">My Updates</h2>
-            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
-                {% for post in right_now_posts %}
-                    {% if post.body_narrative %}
-                    <article class="relative">
-                        <!-- Timeline Node -->
-                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-[#FFFEFA] border-[3px] border-slate-300 rounded-full ring-[3px] ring-[rgba(200,190,170,0.2)]"></div>
 
-                        <!-- Date/Day -->
-                        <div class="mb-3">
-                            <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
-                        </div>
+                       {% if project.link %}
+                       <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-2 border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link focus-visible:outline-none">
+                           View Full Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
+                       </a>
+                       {% endif %}
+                   </div>
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
 
-                        <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%]">{{ post.body_narrative }}</p>
 
-                        <!-- Image Gallery -->
-                        {% if post.gallery.all %}
-                            <div class="mt-5 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
-                                {% for media in post.gallery.all %}
-                                <div class="rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm aspect-[4/3] cursor-pointer">
-                                    <img src="{{ media.image.url }}" loading="lazy" class="w-full h-full object-cover">
-                                </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </article>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+       <!-- EXPERIENCE -->
+       {% if experiences %}
+       <section id="exp" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Experience</h2>
+           <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+               {% for exp in experiences %}
+               <article class="relative group">
+                   <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] {% if exp.is_current %}border-[#0A66C2]{% else %}border-slate-300{% endif %} rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
 
-        <!-- GOALS -->
-        {% if vision_blocks %}
-        <section id="goals" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">My Goal</h2>
-            <div class="grid gap-8">
-                {% for post in vision_blocks %}
-                    <article class="card-hover p-8 md:p-10 bg-slate-900 rounded-xl shadow-lg text-white relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
-                        <div class="relative z-10">
-                            <h3 class="text-[22px] md:text-[28px] font-serif-title font-bold mb-5 leading-tight">{{ post.title }}</h3>
 
-                            <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.7] max-w-[85%] whitespace-pre-line text-break-words">{{ post.content }}</p>
+                   <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-3">
+                       <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
+                       <span class="px-3 py-1 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ exp.get_location_type_display }}</span>
+                   </div>
 
-                            {% if post.media_proof %}
-                            <div class="mt-8 rounded-lg overflow-hidden border border-white/10 max-w-2xl">
-                                <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90">
-                            </div>
-                            {% endif %}
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- THOUGHTS -->
-        {% if essays %}
-        <section id="thoughts" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Industry Thoughts</h2>
-            <div class="grid gap-8">
-                {% for post in essays %}
-                    <article class="card-hover bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
-                        {% if post.media_proof %}
-                        <div class="h-48 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
-                            <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover">
-                        </div>
-                        {% endif %}
-                        <div class="p-6 flex-1 flex flex-col text-break-words relative z-10">
-                            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
-                            <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
+                   <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-1 transition-colors group-hover:text-[#0A66C2]">{{ exp.role_title }}</h4>
+                   <h5 class="text-[14px] md:text-[16px] font-serif-title font-bold text-[#0A66C2] md:text-slate-600 mb-4">{{ exp.company_name }}</h5>
 
-                            <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line">{{ post.content }}</p>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- PROGRESS -->
-        {% if progress_logs %}
-        <section id="progress" class="pt-12 md:pt-16 mt-12 md:mt-16 border-t border-slate-200/80">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Daily Progress</h2>
-            <div class="space-y-10 md:space-y-12 border-l-[2px] border-slate-200 ml-3 md:ml-4 pl-8 md:pl-10">
-                {% for post in progress_logs %}
-                    <article class="relative">
-                        <div class="absolute -left-[39px] md:-left-[50px] top-1.5 w-3.5 h-3.5 md:w-5 md:h-5 bg-white border-[3px] border-slate-300 rounded-full ring-[3px] ring-[var(--color-slate-50)]"></div>
+                   {% if exp.description %}
+                   <p class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ exp.description }}</p>
+                   {% endif %}
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
 
-                        <div class="flex flex-wrap items-center gap-2 mb-3">
-                            <span class="text-[12px] md:text-[13px] font-semibold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
-                            <span class="px-2.5 py-1 border border-slate-200 text-[var(--color-primary)] text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md bg-white">{{ post.get_category_display|default:"Log" }}</span>
-                        </div>
 
-                        <h4 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2.5">{{ post.title }}</h4>
-                        <p class="text-[14.5px] md:text-[15px] text-slate-600 leading-[1.7] whitespace-pre-line text-left max-w-[85%] text-break-words">{{ post.content }}</p>
+       <!-- CORE SKILLS -->
+       {% if skills %}
+       <section id="skills" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Core Skills</h2>
+           <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+               {% for skill in skills %}
+               <article class="p-6 md:p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium cursor-default">
+                   <div class="flex flex-col gap-1.5 md:gap-2 mb-3 md:mb-4">
+                       <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ skill.name }}</span>
+                       <!-- Displaying ONLY what the user actually entered in the form -->
+                       {% if skill.proficiency_level %}
+                       <span class="inline-block w-max text-[9px] md:text-[10px] text-[#0A66C2] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100/50 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_proficiency_level_display }}</span>
+                       {% endif %}
+                   </div>
+                   {% if skill.context %}
+                   <p class="text-[13.5px] md:text-[15px] text-slate-600 font-serif-title italic tracking-wide leading-relaxed">"{{ skill.context }}"</p>
+                   {% endif %}
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
 
-                        {% if post.media_proof %}
-                        <div class="mt-5 max-w-[24rem] h-48 md:h-52 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-                            <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full h-full object-cover">
-                        </div>
-                        {% endif %}
-                    </article>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- LANGUAGES -->
-        {% if languages %}
-        <section id="languages" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Languages</h2>
-            <div class="flex flex-wrap gap-4 md:gap-5">
-                {% for language in languages %}
-                <div class="premium-card card-hover px-5 py-3 flex items-center gap-3 cursor-default">
-                    <div class="flex flex-col">
-                        <span class="text-[15px] md:text-[16px] font-bold text-slate-900">{{ language.get_language_display }}</span>
-                        <div class="flex items-center gap-2 mt-1">
-                            {% if language.is_primary %}
-                                <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100/50">Primary</span>
-                            {% endif %}
-                            <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest {% if language.proficiency == 'NATIVE' %}bg-emerald-50 text-emerald-600 border border-emerald-100/50{% elif language.proficiency == 'FLUENT' %}bg-purple-50 text-purple-600 border border-purple-100/50{% elif language.proficiency == 'INTERMEDIATE' %}bg-amber-50 text-amber-600 border border-amber-100/50{% else %}bg-slate-100 text-slate-400 border border-slate-200/50{% endif %}">
-                                {{ language.get_proficiency_display }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
+       <!-- CREDENTIALS -->
+       {% if credentials %}
+       <section id="certs" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Credentials</h2>
+           <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+               {% for cred in credentials %}
+               <article class="p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium flex flex-col">
+                   <div class="relative z-20 flex flex-col h-full">
+                       <div class="flex flex-wrap items-center gap-3 mb-5">
+                           <span class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ cred.issuer }}</span>
+                           {% if cred.issue_date %}<span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{{ cred.issue_date|date:"Y" }}</span>{% endif %}
+                       </div>
 
-        <!-- CONTACT & CONNECT -->
-        <section id="contact" class="pt-16 md:pt-20 mt-16 md:mt-20 border-t border-slate-200/60">
-            <h2 class="text-[26px] md:text-[32px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Connect</h2>
 
-            <div class="flex flex-col md:grid md:grid-cols-2 gap-8">
+                       <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-4 leading-snug">{{ cred.title }}</h4>
 
-                <!-- Direct Contact Details -->
-                <div class="space-y-4 order-2 md:order-1">
-                    {% if request.user == user %}
-                        <div class="flex items-center gap-2 mb-3">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em]">Private (Only visible to you)</span>
-                        </div>
-                        {% if contact_methods %}
-                            {% for method in contact_methods %}
-                            <div class="flex items-center gap-4 py-4 px-6 bg-gradient-to-r from-white to-slate-50 border border-slate-200 rounded-xl shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 cursor-default hover:shadow-md hover:border-blue-300 transition-all duration-300 group">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                    <i data-lucide="{{ method.icon_name }}" class="w-5 h-5 text-blue-600"></i>
-                                </div>
-                                <span class="break-all">{{ method.value }}</span>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="p-6 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-500 text-[13.5px] bg-slate-50/50">No contact details added yet.</div>
-                        {% endif %}
-                    {% else %}
-                        <div class="flex items-center gap-2 mb-3">
-                            <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.15em]">Contact Information</span>
-                        </div>
 
-                        <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg p-8 flex flex-col items-center justify-center min-h-[220px] hover:shadow-xl transition-shadow duration-300">
-                            <div class="relative z-10 flex flex-col items-center text-center">
-                                <div class="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mb-4 shadow-md border border-slate-300">
-                                    <i data-lucide="lock" class="w-7 h-7 text-slate-600"></i>
-                                </div>
-                                <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
+                       {% if cred.reflection %}
+                       <p class="text-[14.5px] md:text-[15.5px] text-slate-600 mb-6 leading-[1.8]">{{ cred.reflection }}</p>
+                       {% endif %}
 
-                                {% if not request.user.is_authenticated %}
-                                    <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium">
-                                        <a href="{% url 'login' %}?next={{ request.path }}" class="text-blue-600 font-semibold border-b-2 border-blue-200 hover:border-blue-500 transition-colors pb-[1px] focus-visible:outline-none no-underline">Login</a> to CoreLink to collaborate.
-                                    </p>
-                                {% else %}
-                                    <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium mb-4">
-                                        Reach out directly to connect.
-                                    </p>
-                                    <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[12px] font-semibold uppercase tracking-[0.15em] rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-0.5 focus-visible:outline-none no-underline">
-                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Send Message
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
 
-                <!-- Animated Social Links -->
-                {% if social_links %}
-                <div class="order-1 md:order-2">
-                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-5 block">My Social Links</span>
-                    <div class="space-y-4">
-                        {% for link in social_links %}
-                        <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-xl no-underline hover:border-slate-300 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
-                            <div class="flex items-center gap-4">
-                                <div class="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center group-hover:bg-slate-200 transition-all duration-300 group-hover:scale-110">
-                                    <svg class="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-[16px] md:text-[18px] font-bold text-slate-900">{{ link.platform_name }}</span>
-                                    <span class="text-[11px] md:text-[12px] font-medium text-slate-500 uppercase tracking-widest mt-1">View Profile</span>
-                                </div>
-                            </div>
-                            <div class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-all duration-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                </svg>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </section>
+                       <div class="mt-auto">
+                           {% if cred.key_takeaways %}
+                           <div class="bg-blue-50/50 p-5 rounded-[1rem] mb-6 border border-blue-100/50">
+                               <span class="block text-[9.5px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] mb-2">Key Takeaway</span>
+                               <p class="text-[13.5px] md:text-[14.5px] text-slate-700 italic font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
+                           </div>
+                           {% endif %}
 
-        <!-- FOOTER -->
-        <footer class="pt-16 pb-8 mt-12 md:mt-16 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px]">
-            <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Profile <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ user.display_name }}</span></p>
-        </footer>
 
-    </div>
+                           {% if cred.url_link or cred.file_upload %}
+                           <a href="{% firstof cred.url_link cred.file_upload.url %}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[10.5px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-[1.5px] border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link">
+                               View Proof <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
+                           </a>
+                           {% endif %}
+                       </div>
+                   </div>
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
+
+
+       <!-- MY FOCUS HISTORY -->
+       {% if right_now_posts %}
+       <section id="focus-history" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">My Focus History</h2>
+           <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+               {% for post in right_now_posts %}
+                   {% if post.body_narrative %}
+                   <article class="relative group">
+                       <!-- Timeline Node -->
+                       <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
+
+
+                       <!-- Date/Day -->
+                       <div class="mb-3">
+                           <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
+                       </div>
+
+
+                       <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.body_narrative }}</p>
+
+
+                       <!-- Image Gallery -->
+                       {% if post.gallery.all %}
+                           <div class="mt-5 md:mt-6 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
+                               {% for media in post.gallery.all %}
+                               <div class="rounded-xl overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm transition-all duration-500 hover:shadow-md aspect-[4/3] group/media cursor-pointer">
+                                   <img src="{{ media.image.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
+                               </div>
+                               {% endfor %}
+                           </div>
+                       {% endif %}
+                   </article>
+                   {% endif %}
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
+
+
+       <!-- SPLIT CONTENT SECTIONS -->
+       {% if content_posts %}
+
+
+       <!-- GOALS -->
+       <section id="goals" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">My Goal</h2>
+           <div class="grid gap-8">
+               {% for post in content_posts %}
+                   {% if post.post_type == 'VISION_BLOCK' %}
+                   <article class="p-8 md:p-12 bg-gradient-to-br from-slate-900 via-[#0a1930] to-[#0A66C2] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_15px_40px_rgba(10,102,194,0.15)] text-white relative overflow-hidden group">
+                       <div class="absolute top-0 right-0 p-6 opacity-10 text-[100px] md:text-[140px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
+                       <div class="relative z-10">
+                           <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-6 shadow-sm">Vision</span>
+                           <h3 class="text-[22px] md:text-[30px] font-serif-title font-bold mb-5 md:mb-6 leading-tight">{{ post.title }}</h3>
+                           <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] md:max-w-[85%] whitespace-pre-line">{{ post.content }}</p>
+
+
+                           {% if post.media_proof %}
+                           <div class="mt-8 md:mt-10 rounded-xl overflow-hidden border border-white/10 shadow-inner max-w-2xl">
+                               <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100">
+                           </div>
+                           {% endif %}
+                       </div>
+                   </article>
+                   {% endif %}
+               {% endfor %}
+           </div>
+       </section>
+
+
+       <!-- THOUGHTS -->
+       <section id="thoughts" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Industry Thoughts</h2>
+           <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+               {% for post in content_posts %}
+                   {% if post.post_type == 'ESSAY' %}
+                   <article class="bg-white border border-slate-200/80 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-sm flex flex-col card-hover-premium hover:border-[#0A66C2]/30">
+                       {% if post.media_proof %}
+                       <div class="h-40 md:h-56 w-full bg-slate-100 relative overflow-hidden border-b border-slate-100">
+                           <img src="{{ post.media_proof.url }}" loading="lazy" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
+                       </div>
+                       {% endif %}
+                       <div class="p-6 md:p-8 flex-1 flex flex-col">
+                           <span class="text-[9.5px] md:text-[10.5px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-3">{{ post.created_at|date:"M d, Y" }}</span>
+                           <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-3 leading-snug">{{ post.title }}</h3>
+                           <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
+                       </div>
+                   </article>
+                   {% endif %}
+               {% endfor %}
+           </div>
+       </section>
+
+
+       <!-- PROGRESS -->
+       <section id="progress" class="content-section-wrapper pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-10 tracking-tight">Daily Progress</h2>
+           <div class="space-y-12 md:space-y-16 border-l-[2.5px] border-slate-200 ml-3 md:ml-6 pl-8 md:pl-10">
+               {% for post in content_posts %}
+                   {% if post.post_type != 'VISION_BLOCK' and post.post_type != 'ESSAY' %}
+                   <article class="relative group">
+                       <div class="absolute -left-[41px] md:-left-[53px] top-1.5 w-4 h-4 md:w-6 md:h-6 bg-white border-[3px] md:border-[4px] border-slate-300 rounded-full ring-[3px] ring-[#F8FAFC] transition-colors duration-500 group-hover:border-[#0A66C2]"></div>
+
+
+                       <div class="flex flex-wrap items-center gap-3 mb-3">
+                           <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ post.created_at|date:"M d, Y" }}</span>
+                           <span class="px-2.5 py-1 border border-slate-200 text-[#0A66C2] text-[9.5px] md:text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ post.get_category_display|default:"Log" }}</span>
+                       </div>
+
+
+                       <h4 class="text-[18px] md:text-[22px] font-bold text-slate-900 mb-2.5 transition-colors group-hover:text-[#0A66C2]">{{ post.title }}</h4>
+                       <p class="text-[14.5px] md:text-[15.5px] text-slate-600 leading-[1.8] whitespace-pre-line text-left md:max-w-[85%]">{{ post.content }}</p>
+
+
+                       {% if post.media_proof %}
+                       <div class="mt-5 md:mt-6 max-w-[24rem] h-48 md:h-56 rounded-[1.5rem] overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm md:group-hover:shadow-md transition-all duration-500 md:group-hover:-translate-y-1.5">
+                           <img src="{{ post.media_proof.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
+                       </div>
+                       {% endif %}
+                   </article>
+                   {% endif %}
+               {% endfor %}
+           </div>
+       </section>
+
+
+       {% endif %}
+
+
+       <!-- CONTACT & CONNECT -->
+       <section id="contact" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Connect</h2>
+
+
+           <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+               <!-- Direct Contact Details -->
+               <div class="space-y-4">
+                   {% if request.user == user %}
+                       <div class="flex items-center gap-2 mb-3">
+                           <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                           <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.15em]">Private (Only visible to you)</span>
+                       </div>
+                       {% if contact_methods %}
+                           {% for method in contact_methods %}
+                           <div class="flex items-center gap-4 py-3.5 px-5 bg-white border border-slate-200/80 rounded-[1.25rem] shadow-sm text-[14px] md:text-[15px] font-medium text-slate-800 card-hover-premium cursor-default">
+                               <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                                   <i data-lucide="{{ method.icon_name }}" class="w-4 h-4 text-[#0A66C2]"></i>
+                               </div>
+                               <span class="break-all">{{ method.value }}</span>
+                           </div>
+                           {% endfor %}
+                       {% else %}
+                           <div class="p-6 border-2 border-dashed border-slate-200 rounded-[1.25rem] text-center text-slate-500 text-[13.5px]">No contact details added yet.</div>
+                       {% endif %}
+                   {% else %}
+                       <div class="flex items-center gap-2 mb-3">
+                           <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                           <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.15em]">Contact Information</span>
+                       </div>
+
+
+                       <div class="relative overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-sm p-8 flex flex-col items-center justify-center min-h-[200px] group transition-all duration-300 hover:shadow-md hover:border-blue-200">
+                           <div class="absolute inset-0 flex flex-col gap-4 p-6 blur-[8px] opacity-30 pointer-events-none select-none transition-opacity duration-500 group-hover:opacity-40">
+                               <div class="flex items-center gap-4">
+                                   <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-400 shrink-0"></div>
+                                   <div class="h-3.5 bg-slate-400 rounded w-3/4 md:w-48"></div>
+                               </div>
+                               <div class="flex items-center gap-4">
+                                   <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-400 shrink-0"></div>
+                                   <div class="h-3.5 bg-slate-400 rounded w-1/2 md:w-32"></div>
+                               </div>
+                           </div>
+
+
+                           <div class="relative z-10 flex flex-col items-center text-center">
+                               <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center mb-3 border border-blue-100 shadow-sm transition-transform duration-500 group-hover:scale-105">
+                                   <i data-lucide="lock" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                               </div>
+                               <h3 class="text-[17px] md:text-[20px] font-bold text-slate-900 mb-2">Contact Info Locked</h3>
+
+
+                               {% if not request.user.is_authenticated %}
+                                   <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium">
+                                       <a href="{% url 'login' %}?next={{ request.path }}" class="text-[#0A66C2] font-bold border-b-2 border-blue-200 hover:border-[#0A66C2] transition-colors pb-[1px] focus-visible:outline-none">Login</a> to CoreLink to collaborate.
+                                   </p>
+                               {% else %}
+                                   <p class="text-[13px] md:text-[14.5px] text-slate-500 font-medium mb-4">
+                                       Reach out directly to connect.
+                                   </p>
+                                   <a href="{% url 'chat_with' user.id %}" class="inline-flex items-center gap-2 px-6 md:px-7 py-2 md:py-2.5 bg-[#0A66C2] text-white text-[10.5px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-full hover:bg-[#0856A8] transition-all active:scale-95 shadow-md shadow-blue-500/20 hover:shadow-lg focus-visible:outline-none">
+                                       <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Send Message
+                                   </a>
+                               {% endif %}
+                           </div>
+                       </div>
+                   {% endif %}
+               </div>
+
+
+               <!-- Social Links -->
+               {% if social_links %}
+               <div>
+                   <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-3 md:mb-4 block">Digital Presence</span>
+                   <div class="flex flex-col gap-3.5">
+                       {% for link in social_links %}
+                       <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-4 md:p-5 bg-white border border-slate-200 rounded-[1.25rem] shadow-sm transition-all active:scale-95 hover:border-[#0A66C2] hover:shadow-md group focus-visible:outline-none">
+                           <div class="flex items-center gap-4">
+                               <div class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-[#0A66C2] transition-colors">
+                                   <i data-lucide="{{ link.icon_slug }}" class="w-4 h-4 md:w-5 md:h-5"></i>
+                               </div>
+                               <span class="text-[14.5px] md:text-[15.5px] font-bold text-slate-800 group-hover:text-[#0A66C2] transition-colors">{{ link.platform_name }}</span>
+                           </div>
+                           <i data-lucide="arrow-up-right" class="w-4 h-4 md:w-5 md:h-5 text-slate-300 group-hover:text-[#0A66C2] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"></i>
+                       </a>
+                       {% endfor %}
+                   </div>
+               </div>
+               {% endif %}
+           </div>
+       </section>
+
+
+       <!-- FOOTER -->
+       <footer class="pt-16 pb-8 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px] reveal-on-scroll">
+           <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Profile <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ user.display_name }}</span></p>
+       </footer>
+
+
+   </div>
 </div>
 
-<!-- Floating Action Button -->
-{% if request.user != user %}
-<button class="fab-connect" id="fab-connect" aria-label="Quick Connect" onclick="scrollToContact()">
-    <i data-lucide="message-circle" class="w-6 h-6"></i>
-</button>
-{% endif %}
 
 <!-- Copy Toast -->
 <div id="share-toast" aria-live="polite" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-[0_20px_40px_rgba(15,23,42,0.25)] transition-all duration-500 transform translate-y-32 opacity-0 z-[200] font-extrabold text-[11px] md:text-[12px] uppercase tracking-[0.2em] flex items-center gap-2.5 pointer-events-none">
-    <i data-lucide="check" class="w-4 h-4 text-blue-400"></i> Link Copied
+   <i data-lucide="check" class="w-4 h-4 text-blue-400"></i> Link Copied
 </div>
 
-<!-- Lightbox Gallery -->
-<div id="lightbox" class="fixed inset-0 z-[300] bg-slate-900/95 backdrop-blur-xl hidden opacity-0 transition-opacity duration-500 ease-out" aria-hidden="true">
-    <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 z-[310] w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50">
-        <i data-lucide="x" class="w-6 h-6"></i>
-    </button>
-
-    <button onclick="navigateLightbox(-1)" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-[310] w-12 h-12 md:w-14 md:h-14 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50">
-        <i data-lucide="chevron-left" class="w-7 h-7"></i>
-    </button>
-
-    <button onclick="navigateLightbox(1)" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-[310] w-12 h-12 md:w-14 md:h-14 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50">
-        <i data-lucide="chevron-right" class="w-7 h-7"></i>
-    </button>
-
-    <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8 md:px-24">
-        <div class="relative max-w-6xl max-h-[90vh] w-full flex items-center justify-center">
-            <img id="lightbox-image" src="" alt="" class="w-full h-full object-contain max-h-[85vh] rounded-xl shadow-2xl transition-opacity duration-300">
-            <div id="lightbox-caption" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent text-white p-6 md:p-8 pt-20 rounded-b-xl">
-                <p id="lightbox-caption-text" class="text-sm md:text-lg font-medium tracking-wide"></p>
-                <p id="lightbox-counter" class="text-xs md:text-sm font-bold text-white/50 mt-2 uppercase tracking-[0.2em]"></p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    try {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-    } catch (e) {
-        console.error("CoreLink: Icons failed to load, continuing execution.");
-    }
+   lucide.createIcons();
 
 
-    const projectGalleries = {};
-    /* Gallery data temporarily disabled to fix JavaScript syntax error
-    {% for project in projects %}
-        {% if project.gallery.count > 0 %}
-            (function() {
-                try {
-                    projectGalleries[{{ project.id }}] = [
-                        {% for asset in project.gallery.all %}
-                            (function() {
-                                try {
-                                    return {
-                                        {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                        "url": "{{ asset.image.url|escapejs }}",
-                                        {% else %}
-                                        "url": "",
-                                        {% endif %}
-                                        "caption": "{{ asset.caption|default:''|escapejs }}",
-                                        "type": "{{ asset.asset_type|escapejs }}"
-                                    };
-                                } catch(e) {
-                                    return {
-                                        "url": "",
-                                        "caption": "",
-                                        "type": "{{ asset.asset_type|escapejs }}"
-                                    };
-                                }
-                            }()){% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                    ];
-                } catch(e) {
-                    console.error("Error loading gallery for project {{ project.id }}:", e);
-                }
-            }());
-        {% endif %}
-    {% endfor %}
-    */
-
-    let currentProjectId = null;
-    let currentImageIndex = 0;
-
-    function openLightbox(projectId, imageIndex) {
-        currentProjectId = projectId;
-        currentImageIndex = imageIndex;
-
-        const gallery = projectGalleries[projectId];
-        if (!gallery || !gallery[imageIndex]) return;
-
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImage = document.getElementById('lightbox-image');
-        const captionText = document.getElementById('lightbox-caption-text');
-        const counter = document.getElementById('lightbox-counter');
-
-        if (gallery[imageIndex].caption.trim() === '') {
-            captionText.style.display = 'none';
-        } else {
-            captionText.style.display = 'block';
-            captionText.textContent = gallery[imageIndex].caption;
-        }
-
-        lightboxImage.src = gallery[imageIndex].url;
-        counter.textContent = `${imageIndex + 1} / ${gallery.length}`;
-
-        lightbox.classList.remove('hidden');
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                lightbox.classList.remove('opacity-0');
-            });
-        });
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-        const lightbox = document.getElementById('lightbox');
-        lightbox.classList.add('opacity-0');
-        setTimeout(() => {
-            lightbox.classList.add('hidden');
-            document.body.style.overflow = '';
-        }, 500);
-        currentProjectId = null;
-        currentImageIndex = 0;
-    }
-
-    function navigateLightbox(direction) {
-        const gallery = projectGalleries[currentProjectId];
-        if (!gallery) return;
-
-        currentImageIndex += direction;
-
-        if (currentImageIndex < 0) {
-            currentImageIndex = gallery.length - 1;
-        } else if (currentImageIndex >= gallery.length) {
-            currentImageIndex = 0;
-        }
-
-        const lightboxImage = document.getElementById('lightbox-image');
-        const captionText = document.getElementById('lightbox-caption-text');
-        const counter = document.getElementById('lightbox-counter');
-
-        lightboxImage.style.opacity = '0.7';
-
-        setTimeout(() => {
-            lightboxImage.src = gallery[currentImageIndex].url;
-
-            if (gallery[currentImageIndex].caption.trim() === '') {
-                captionText.style.display = 'none';
-            } else {
-                captionText.style.display = 'block';
-                captionText.textContent = gallery[currentImageIndex].caption;
-            }
-
-            counter.textContent = `${currentImageIndex + 1} / ${gallery.length}`;
-            lightboxImage.style.opacity = '1';
-        }, 150);
-    }
-
-    document.addEventListener('keydown', (e) => {
-        const lightbox = document.getElementById('lightbox');
-        if (lightbox.classList.contains('hidden')) return;
-
-        if (e.key === 'Escape') {
-            closeLightbox();
-        } else if (e.key === 'ArrowLeft') {
-            navigateLightbox(-1);
-        } else if (e.key === 'ArrowRight') {
-            navigateLightbox(1);
-        }
-    });
-
-    document.getElementById('lightbox').addEventListener('click', (e) => {
-        if (e.target.id === 'lightbox' || e.target.id === 'lightbox-image') {
-            if(e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
-                closeLightbox();
-            }
-        }
-    });
-
-    function copyProfileLink() {
-        navigator.clipboard.writeText(window.location.href);
-        const toast = document.getElementById('share-toast');
-        toast.classList.remove('translate-y-32', 'opacity-0');
-        setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
-    }
-
-    // THE BULLETPROOF BACK FUNCTION
-    function smartBack() {
-        console.log("smartBack called");
-        try {
-            // Check referrer to see where user came from
-            const referrer = document.referrer || "";
-            console.log("Referrer:", referrer);
-
-            // If came from nexus or dashboard, redirect directly to referrer
-            if (referrer && (referrer.indexOf('/nexus') !== -1 || referrer.indexOf('/dashboard') !== -1)) {
-                console.log("Came from nexus/dashboard, redirecting to referrer");
-                window.location.href = referrer;
-            } else if (window.history.length > 1) {
-                // Has history, go back
-                console.log("Has history, going back");
-                window.history.back();
-            } else {
-                // No history, go to home
-                console.log("No history, going to home");
-                window.location.href = '/';
-            }
-
-        } catch (error) {
-            console.error("CoreLink Routing Error:", error);
-            window.location.href = '/'; // Ultimate safety net
-        }
-    }
-
-    function scrollToContact() {
-        const contactSection = document.getElementById('contact');
-        if (contactSection) {
-            contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
+   function copyProfileLink() {
+       navigator.clipboard.writeText(window.location.href);
+       const toast = document.getElementById('share-toast');
+       toast.classList.remove('translate-y-32', 'opacity-0');
+       setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3000);
+   }
 
 
-        const fab = document.getElementById('fab-connect');
-        if (fab) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 400) {
-                    fab.classList.add('visible');
-                } else {
-                    fab.classList.remove('visible');
-                }
-            });
-        }
-    });
+   function smartBack() {
+       if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+           window.location.href = document.referrer;
+       } else {
+           window.history.back();
+           setTimeout(() => {
+               // If history.back() fails (e.g., direct link or new tab with no referrer), fallback safely
+               window.location.href = '/';
+           }, 200);
+       }
+   }
+
+
+   document.addEventListener('DOMContentLoaded', () => {
+
+
+       // CoreLink Loading Bar (UX for inner links)
+       const loadingBar = document.getElementById('top-loading-bar');
+       document.addEventListener('click', (e) => {
+           const target = e.target.closest('a');
+           if (target && target.href && !target.href.startsWith('javascript:') && !target.href.includes('#') && target.target !== '_blank') {
+               if (target.hostname === window.location.hostname && loadingBar) {
+                   loadingBar.style.transition = 'none';
+                   loadingBar.style.width = '0%';
+                   loadingBar.style.opacity = '1';
+                   setTimeout(() => {
+                       loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+                       loadingBar.style.width = '60%';
+                   }, 10);
+               }
+           }
+       });
+
+
+       // Hide Empty Split Content Sections
+       document.querySelectorAll('.content-section-wrapper').forEach(section => {
+           if (section.querySelectorAll('article').length === 0) {
+               section.style.display = 'none';
+           }
+       });
+
+
+       // Reveal Animations
+       const revealObserver = new IntersectionObserver((entries, observer) => {
+           entries.forEach(entry => {
+               if (entry.isIntersecting) {
+                   entry.target.classList.add('is-visible');
+                   observer.unobserve(entry.target);
+               }
+           });
+       }, { threshold: 0.1 });
+       document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+   });
 </script>
 {% endblock %}
+
