@@ -72,9 +72,54 @@
 
 
 <style>
-   :root { --font-main: 'Inter', sans-serif; --font-serif: 'Playfair Display', serif; }
+   :root {
+       --font-main: 'Inter', sans-serif;
+       --font-serif: 'Playfair Display', serif;
+       --color-primary: #0A66C2;
+       --color-primary-dark: #0856A8;
+       --color-slate-50: #F8FAFC;
+       --color-slate-100: #F1F5F9;
+       --color-slate-200: #E2E8F0;
+       --color-slate-300: #CBD5E1;
+       --color-slate-400: #94A3B8;
+       --color-slate-600: #475569;
+       --color-slate-900: #0F172A;
+   }
+   [data-theme="dark"] {
+       --color-slate-50: #0F172A;
+       --color-slate-100: #1E293B;
+       --color-slate-200: #334155;
+       --color-slate-300: #475569;
+       --color-slate-400: #64748B;
+       --color-slate-600: #94A3B8;
+       --color-slate-900: #F1F5F9;
+   }
    html { scroll-behavior: smooth; }
-   body { font-family: var(--font-main); -webkit-font-smoothing: antialiased; background-color: #F8FAFC; color: #0F172A; overflow-x: hidden; }
+   body {
+       font-family: var(--font-main);
+       -webkit-font-smoothing: antialiased;
+       background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 40%, #EDE4D8 100%);
+       color: var(--color-slate-900);
+       overflow-x: hidden;
+   }
+   [data-theme="dark"] body {
+       background: linear-gradient(135deg, #1A1A1A 0%, #252525 50%, #2D2D2D 100%);
+   }
+
+   /* Premium Background Pattern */
+   body::before {
+       content: '';
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background-image:
+           radial-gradient(circle at 15% 40%, rgba(10, 102, 194, 0.04) 0%, transparent 50%),
+           radial-gradient(circle at 85% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+       pointer-events: none;
+       z-index: 0;
+   }
 
 
    .font-serif-title { font-family: var(--font-serif); }
@@ -86,11 +131,21 @@
 
    /* Clean Card Architecture */
    .bento-card {
-       background: rgba(255, 255, 255, 0.95);
-       border: 1px solid rgba(226, 232, 240, 0.9);
+       background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 50%, #F9F7F2 100%);
+       border: 1px solid rgba(200, 190, 170, 0.25);
        border-radius: 1rem;
-       box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
        position: relative;
+       overflow: hidden;
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+   .bento-card:hover {
+       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
+       border-color: rgba(200, 190, 170, 0.4);
+   }
+   [data-theme="dark"] .bento-card {
+       background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 50%, #252525 100%);
+       border-color: rgba(255, 255, 255, 0.08);
    }
    @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
 
@@ -648,6 +703,31 @@
        </section>
 
 
+       {% endif %}
+
+
+       <!-- LANGUAGES -->
+       {% if languages %}
+       <section id="languages" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Languages</h2>
+           <div class="flex flex-wrap gap-4 md:gap-5">
+               {% for language in languages %}
+               <div class="p-5 md:p-8 bg-white border border-slate-200/80 rounded-[1.5rem] shadow-sm card-hover-premium px-5 py-3 flex items-center gap-3 cursor-default">
+                   <div class="flex flex-col">
+                       <span class="text-[15px] md:text-[16px] font-bold text-slate-900">{{ language.get_language_display }}</span>
+                       <div class="flex items-center gap-2 mt-1">
+                           {% if language.is_primary %}
+                               <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100/50">Primary</span>
+                           {% endif %}
+                           <span class="px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest {% if language.proficiency == 'NATIVE' %}bg-emerald-50 text-emerald-600 border border-emerald-100/50{% elif language.proficiency == 'FLUENT' %}bg-purple-50 text-purple-600 border border-purple-100/50{% elif language.proficiency == 'INTERMEDIATE' %}bg-amber-50 text-amber-600 border border-amber-100/50{% else %}bg-slate-100 text-slate-400 border border-slate-200/50{% endif %}">
+                               {{ language.get_proficiency_display }}
+                           </span>
+                       </div>
+                   </div>
+               </div>
+               {% endfor %}
+           </div>
+       </section>
        {% endif %}
 
 
