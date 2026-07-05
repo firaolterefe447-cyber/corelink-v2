@@ -71,7 +71,7 @@ class WorkExperienceInline(StackedInline):
     extra = 0
     tab = True
     fieldsets = (
-        (None, {'fields': (('company_name', 'role_title'), ('start_date', 'end_date'), ('is_current', 'location_type'), 'description')}),
+        (None, {'fields': (('company_name', 'role_title'), ('start_date', 'end_date', 'date_display'), ('is_current', 'location_type'), 'description')}),
     )
 
 class LiveOpportunityInline(TabularInline):

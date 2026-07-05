@@ -320,12 +320,19 @@ class MonthYearField(forms.MultiValueField):
 
 
 class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
-    start_date = MonthYearField(label=_("Timeline"), required=True, help_text=_("Select month and year (GC Calendar)"))
-    end_date = MonthYearField(label=_(" "), required=False, help_text=_("Leave blank if this is your current role."))
+    start_date = MonthYearField(label=_("Start Date"), required=False, help_text=_("Select month and year (GC Calendar) - Optional if using custom display"))
+    end_date = MonthYearField(label=_("End Date"), required=False, help_text=_("Leave blank if this is your current role - Optional if using custom display"))
+    date_display = forms.CharField(
+        label=_("Custom Date Display"),
+        required=False,
+        max_length=100,
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., 2023-2024, Summer 2023, 2023 - Present'}),
+        help_text=_("Enter date in any format. This will be displayed on your portfolio exactly as you type it.")
+    )
 
     class Meta:
         model = WorkExperience
-        fields = ['company_name', 'role_title', 'description', 'location_type', 'employment_type', 'start_date', 'end_date', 'is_current']
+        fields = ['company_name', 'role_title', 'description', 'location_type', 'employment_type', 'start_date', 'end_date', 'date_display', 'is_current']
 
         labels = {
             'company_name': _("Organization Name"),
@@ -354,18 +361,23 @@ class WorkExperienceForm(TailwindFormMixin, forms.ModelForm):
 
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
+        date_display = cleaned_data.get('date_display')
         is_current = cleaned_data.get('is_current')
 
-        if not start_date:
-            self.add_error('start_date', _("Please select a start month and year."))
+        # Either use custom date display OR structured dates
+        if not date_display and not start_date:
+            self.add_error('date_display', _("Please either enter a custom date display or select start month and year."))
+            self.add_error('start_date', _("Please either enter a custom date display or select start month and year."))
 
-        if is_current:
-            cleaned_data['end_date'] = None
-        elif not end_date:
-            self.add_error('end_date', _("Please provide an end month and year, or check 'I currently work here'."))
+        # If using structured dates, validate them
+        if start_date and not date_display:
+            if is_current:
+                cleaned_data['end_date'] = None
+            elif not end_date:
+                self.add_error('end_date', _("Please provide an end month and year, or check 'I currently work here'."))
 
-        if start_date and end_date and start_date > end_date:
-            self.add_error('end_date', _("End date cannot be earlier than the start date."))
+            if start_date and end_date and start_date > end_date:
+                self.add_error('end_date', _("End date cannot be earlier than the start date."))
 
         return cleaned_data
 

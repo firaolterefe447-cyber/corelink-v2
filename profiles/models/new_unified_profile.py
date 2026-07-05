@@ -236,8 +236,9 @@ class WorkExperience(models.Model):
         null=True
     )
 
-    start_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    date_display = models.CharField(_("Custom Date Display"), max_length=100, blank=True, help_text=_("Enter date in any format (e.g., '2023-2024', 'Summer 2023', '2023 - Present'). This will be displayed on your portfolio."))
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True)
 

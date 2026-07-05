@@ -515,7 +515,7 @@
 
 
                    <div class="flex flex-wrap items-center gap-3 md:gap-4 mb-3">
-                       <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</span>
+                       <span class="text-[12px] md:text-[13px] font-bold font-mono text-slate-500 tracking-[0.1em]">{% if exp.date_display %}{{ exp.date_display }}{% else %}{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}{% endif %}</span>
                        <span class="px-3 py-1 border border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md bg-white shadow-sm">{{ exp.get_location_type_display }}</span>
                    </div>
 
