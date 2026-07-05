@@ -196,72 +196,77 @@ def public_profile_view(request, identifier):
     Universal Profile Router.
     Routes identifiers to Company pages or Unified User Portfolios.
     """
-    # 1. Check for Company Slug
-    company = Company.objects.filter(slug=identifier).first()
-    if company:
-        return company_public_profile(request, slug=company.slug)
+    try:
+        # 1. Check for Company Slug
+        company = Company.objects.filter(slug=identifier).first()
+        if company:
+            return company_public_profile(request, slug=company.slug)
 
-    # 2. Check for Unified Portfolio Slug
-    target_user = None
-    portfolio = UserProfile.objects.filter(slug=identifier).first()
+        # 2. Check for Unified Portfolio Slug
+        target_user = None
+        portfolio = UserProfile.objects.filter(slug=identifier).first()
 
-    if portfolio:
-        target_user = portfolio.user
-    else:
-        # 3. Fallback: Search by CoreLink ID (e.g., VIS-2024-001)
-        target_user = get_object_or_404(CustomUser, corelink_id=identifier)
+        if portfolio:
+            target_user = portfolio.user
+        else:
+            # 3. Fallback: Search by CoreLink ID (e.g., VIS-2024-001)
+            target_user = get_object_or_404(CustomUser, corelink_id=identifier)
 
-        # SEO Redirect: If found by ID, force-redirect to their proper Slug
-        found_slug = getattr(target_user.portfolio, 'slug', None) if hasattr(target_user, 'portfolio') else None
-        if found_slug:
-            return redirect('public_profile', identifier=found_slug)
+            # SEO Redirect: If found by ID, force-redirect to their proper Slug
+            found_slug = getattr(target_user.portfolio, 'slug', None) if hasattr(target_user, 'portfolio') else None
+            if found_slug:
+                return redirect('public_profile', identifier=found_slug)
 
-    # 4. Gather Data (Founder Routing Block skipped to allow personal portfolios)
-    if not hasattr(target_user, 'portfolio'):
-        raise Http404("Profile not found.")
+        # 4. Gather Data (Founder Routing Block skipped to allow personal portfolios)
+        if not hasattr(target_user, 'portfolio'):
+            raise Http404("Profile not found.")
 
-    profile = target_user.portfolio
-    contact_methods = UniversalContactMethod.objects.filter(user=target_user).order_by('-created_at')
-    social_links = UniversalSocialLink.objects.filter(user=target_user).order_by('order')
+        profile = target_user.portfolio
+        contact_methods = UniversalContactMethod.objects.filter(user=target_user).order_by('-created_at')
+        social_links = UniversalSocialLink.objects.filter(user=target_user).order_by('order')
 
-    # 5. Build Context with Modular Blocks
-    context = {
-        'profile': profile,
-        'user': target_user,
-        'role_title': target_user.get_role_display(),
+        # 5. Build Context with Modular Blocks
+        context = {
+            'profile': profile,
+            'user': target_user,
+            'role_title': target_user.get_role_display(),
 
-        # Infrastructure
-        'contact_methods': contact_methods,
-        'social_links': social_links,
+            # Infrastructure
+            'contact_methods': contact_methods,
+            'social_links': social_links,
 
-        # Identity Blocks
-        'headlines': profile.headlines.all(),
-        'skills': profile.skills.all(),
-        'languages': profile.languages.all(),
-        'credentials': profile.credentials.all().order_by('-issue_date'),
-        'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
+            # Identity Blocks
+            'headlines': profile.headlines.all(),
+            'skills': profile.skills.all(),
+            'languages': profile.languages.all(),
+            'credentials': profile.credentials.all().order_by('-issue_date'),
+            'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
 
-        # Assets & Content
-        'projects': profile.projects.all().prefetch_related('gallery'),
-        'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
-        'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY').order_by('-created_at'),
-        'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK').order_by('-created_at'),
-        'progress_logs': profile.content_posts.filter(visibility='PUBLIC').exclude(post_type__in=['VISION_BLOCK', 'ESSAY']).order_by('-created_at'),
+            # Assets & Content
+            'projects': profile.projects.all().prefetch_related('gallery'),
+            'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
+            'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY').order_by('-created_at'),
+            'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK').order_by('-created_at'),
+            'progress_logs': profile.content_posts.filter(visibility='PUBLIC').exclude(post_type__in=['VISION_BLOCK', 'ESSAY']).order_by('-created_at'),
 
-        # 🔥 THE NEW FOCUS HISTORY FEED
-        'right_now_posts': profile.right_now_posts.filter(
-            is_published=True
-        ).prefetch_related('gallery').order_by('-created_at'),
+            # 🔥 THE NEW FOCUS HISTORY FEED
+            'right_now_posts': profile.right_now_posts.filter(
+                is_published=True
+            ).prefetch_related('gallery').order_by('-created_at'),
 
-        # Intent & 10X Opportunities
-        'job_preferences': profile.job_preferences.filter(is_active=True),
-        'live_opportunities': profile.live_opportunities.filter(
-            is_active=True,
-            expires_at__gt=timezone.now()
-        )
-    }
+            # Intent & 10X Opportunities
+            'job_preferences': profile.job_preferences.filter(is_active=True),
+            'live_opportunities': profile.live_opportunities.filter(
+                is_active=True,
+                expires_at__gt=timezone.now()
+            )
+        }
 
-    return render(request, 'profiles/public_portfolio.html', context)
+        return render(request, 'profiles/public_portfolio.html', context)
+
+    except Exception as e:
+        logger.error(f"Error loading profile for identifier '{identifier}': {str(e)}", exc_info=True)
+        raise
 
 
 def project_detail_view(request, identifier, pk):
