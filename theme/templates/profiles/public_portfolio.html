@@ -222,8 +222,12 @@
                        </h1>
 
 
-                       <p class="text-[#0A66C2] font-bold text-[15px] sm:text-[16px] md:text-[18px] tracking-tight mb-0 break-words w-full font-serif-title">
-                           {% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %}
+                       <p class="text-[#0A66C2] font-bold text-[17px] sm:text-[18px] md:text-[20px] lg:text-[22px] tracking-tight mb-5 lg:mb-8 break-words w-full font-serif-title">
+                           {% if headlines %}
+                               {% for headline in headlines %}{{ headline.title }}{% if not forloop.last %} | {% endif %}{% endfor %}
+                           {% else %}
+                               {{ role_title }}
+                           {% endif %}
                        </p>
 
 
