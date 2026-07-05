@@ -111,19 +111,45 @@
    .cover-placeholder-01 .glow-right { position: absolute; bottom: -20%; right: -20%; width: 70%; height: 140%; background: radial-gradient(circle, rgba(25, 118, 210, 0.25) 0%, transparent 60%); border-radius: 50%; }
 
 
-   /* Avatar Display */
+   /* Avatar Display with Animated Glow */
    .avatar-circle {
-       display: flex; align-items: center; justify-content: center;
-       width: 100px; height: 100px;
-       border-radius: 50%; background: #ffffff;
-       box-shadow: 0 0 0 4px #ffffff, 0 2px 8px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
-       overflow: hidden; position: relative; flex-shrink: 0; text-decoration: none;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 110px;
+       height: 110px;
+       border-radius: 50%;
+       background: white;
+       box-shadow:
+           0 0 0 4px white,
+           0 0 0 6px #E2E8F0,
+           0 10px 15px rgba(0, 0, 0, 0.08),
+           0 4px 6px rgba(0, 0, 0, 0.05),
+           0 0 30px rgba(10, 102, 194, 0.1);
+       overflow: hidden;
+       position: relative;
+       flex-shrink: 0;
+       text-decoration: none;
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
    }
-   @media (min-width: 640px) { .avatar-circle { width: 120px; height: 120px; } }
+   .avatar-circle:hover {
+       transform: scale(1.05);
+       box-shadow:
+           0 0 0 4px white,
+           0 0 0 6px #0A66C2,
+           0 25px 50px -12px rgba(0, 0, 0, 0.15),
+           0 0 40px rgba(10, 102, 194, 0.2);
+   }
    @media (min-width: 768px) {
        .avatar-circle {
-           width: 136px; height: 136px;
-           box-shadow: 0 0 0 5px #ffffff, 0 2px 10px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(0,0,0,0.05);
+           width: 140px;
+           height: 140px;
+       }
+   }
+   @media (min-width: 1024px) {
+       .avatar-circle {
+           width: 150px;
+           height: 150px;
        }
    }
    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; background: #f8fafc; }
@@ -155,7 +181,7 @@
 
 
            <!-- Cover Image (FIXED HEIGHT FOR PC) -->
-           <div class="relative h-[110px] sm:h-[140px] md:h-[250px] lg:h-[300px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
+           <div class="relative h-[180px] sm:h-[220px] md:h-[260px] lg:h-[320px] w-full shrink-0 overflow-hidden cover-container-radius bg-slate-100">
                {% if user.cover_image %}
                    <img src="{{ user.get_cover_image_url }}" class="w-full h-full object-cover object-center" alt="Cover">
                {% else %}
@@ -168,11 +194,11 @@
 
 
            <!-- Hero Body Container -->
-           <div class="px-5 sm:px-8 md:px-10 pb-8 md:pb-10 flex flex-col relative z-20">
+           <div class="px-6 sm:px-10 md:px-12 lg:px-14 pb-10 md:pb-12 lg:pb-16 flex flex-col relative z-20">
 
 
                <!-- Avatar Block -->
-               <div class="relative -mt-[3rem] md:-mt-[4.5rem] mb-4 md:mb-5 z-30 inline-flex sm:ml-2 md:ml-4">
+               <div class="relative -mt-[4.5rem] md:-mt-[5rem] lg:-mt-[6rem] mb-6 md:mb-8 z-30 inline-flex">
                    <div class="avatar-circle">
                        {% if user.avatar %}
                            <img src="{{ user.get_avatar_url }}" alt="{{ user.display_name }}">
@@ -251,14 +277,31 @@
 
 
                    <!-- Right Action CTA -->
-                   {% if profile.cv_file %}
                    <div class="shrink-0 flex flex-col items-start lg:items-end w-full lg:w-auto mt-4 lg:mt-0">
+                       <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 lg:mb-6">
+                           {% if skills %}
+                           <div class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg shadow-sm">
+                               <i data-lucide="zap" class="w-3.5 h-3.5 text-[#0A66C2]"></i>
+                               <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ skills|length }}</span>
+                               <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Skill{{ skills|length|pluralize }}</span>
+                           </div>
+                           {% endif %}
+                           {% if projects %}
+                           <div class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-100 rounded-lg shadow-sm">
+                               <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-purple-600"></i>
+                               <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ projects|length }}</span>
+                               <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Project{{ projects|length|pluralize }}</span>
+                           </div>
+                           {% endif %}
+                       </div>
+
+                       {% if profile.cv_file %}
                        <a href="{{ profile.cv_file.url }}" target="_blank" class="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50">
                            <i data-lucide="file-text" class="w-4 h-4"></i>
                            View Resumé
                        </a>
+                       {% endif %}
                    </div>
-                   {% endif %}
                </div>
            </div>
        </div>
@@ -529,7 +572,7 @@
                        <div class="relative z-10">
                            <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[10px] font-extrabold uppercase tracking-[0.2em] rounded-md mb-6 shadow-sm">Vision</span>
                            <h3 class="text-[22px] md:text-[30px] font-serif-title font-bold mb-5 md:mb-6 leading-tight">{{ post.title }}</h3>
-                           <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] md:max-w-[85%] whitespace-pre-line">{{ post.content }}</p>
+                           <p class="text-[14.5px] md:text-[16px] text-blue-100/90 leading-[1.8] whitespace-pre-line">{{ post.content }}</p>
 
 
                            {% if post.media_proof %}
