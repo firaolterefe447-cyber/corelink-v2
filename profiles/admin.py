@@ -21,14 +21,25 @@ from .models import (
     # Unified Profile Cluster (New Architecture)
     UserProfile, ProfileHeadline, Skill, Credential,
     PortfolioProject, ProjectGallery, WorkExperience,
-    ContentPost, UnifiedJobPreference, LiveOpportunity,
+    ContentPost, UnifiedJobPreference, LiveOpportunity, Language,
 
     # Right Now Ecosystem
     RightNowPost, RightNowMedia, RightNowLike, RightNowComment,
 
     # Company Cluster (Legacy)
     Company, CompanyMember, CompanyService, ServiceGalleryImage,
-    CompanyMilestone, CompanyNews, NewsGalleryImage, CompanySocialLink, CompanyContactMethod
+    CompanyMilestone, CompanyNews, NewsGalleryImage, CompanySocialLink, CompanyContactMethod,
+
+    # Expert Profile Cluster
+    ExpertProfile, ExpertHeadline, ExpertSkill, ExpertCredential,
+    ExpertProject, ProjectGalleryImage, ExpertExperience, JobPreference, ExpertThought,
+
+    # Visionary Profile Cluster
+    VisionaryProfile, Certification, Project, ProjectImage,
+    GrowthLog, LearningTarget, VisionBlock,
+
+    # Founder Profile Cluster
+    FounderProfile
 )
 
 # ==============================================================================
@@ -623,4 +634,438 @@ class CompanyMemberAdmin(ModelAdmin):
 # ==============================================================================
 # 8. REGULAR MODELS
 # ==============================================================================
-admin.site.register(Skill)
+
+@admin.register(Skill)
+class SkillAdmin(ModelAdmin):
+    list_display = ('name', 'profile_link', 'status', 'proficiency_level', 'progress_bar', 'admin_status')
+    list_filter = ('status', 'proficiency_level', 'admin_status')
+    search_fields = ('name', 'context', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(WorkExperience)
+class WorkExperienceAdmin(ModelAdmin):
+    list_display = ('profile_link', 'company_name', 'role_title', 'start_date', 'end_date', 'is_current')
+    list_filter = ('is_current', 'location_type', 'employment_type', 'start_date')
+    search_fields = ('company_name', 'role_title', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(Language)
+class LanguageAdmin(ModelAdmin):
+    list_display = ('profile_link', 'language_display', 'proficiency', 'is_primary')
+    list_filter = ('proficiency', 'is_primary', 'language_code')
+    search_fields = ('custom_language_name', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+    @display(description=_("Language"))
+    def language_display(self, obj):
+        return obj.get_language_display()
+
+
+@admin.register(ProfileHeadline)
+class ProfileHeadlineAdmin(ModelAdmin):
+    list_display = ('profile_link', 'title', 'is_primary', 'order')
+    list_filter = ('is_primary',)
+    search_fields = ('title', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(UnifiedJobPreference)
+class UnifiedJobPreferenceAdmin(ModelAdmin):
+    list_display = ('profile_link', 'role_title', 'work_arrangement', 'commitment_type', 'is_active')
+    list_filter = ('is_active', 'work_arrangement', 'commitment_type')
+    search_fields = ('role_title', 'description', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ProjectGallery)
+class ProjectGalleryAdmin(ModelAdmin):
+    list_display = ('project_link', 'asset_type', 'caption', 'order')
+    list_filter = ('asset_type',)
+    search_fields = ('caption', 'project__title')
+    autocomplete_fields = ['project']
+
+    @display(description=_("Project"))
+    def project_link(self, obj):
+        url = get_admin_url(obj.project)
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.project.title)
+
+
+@admin.register(RightNowMedia)
+class RightNowMediaAdmin(ModelAdmin):
+    list_display = ('post_link', 'image_preview', 'order_index')
+    search_fields = ('post__title', 'post__profile__user__email')
+    autocomplete_fields = ['post']
+
+    @display(description=_("Post"))
+    def post_link(self, obj):
+        url = get_admin_url(obj.post)
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.post.title)
+
+    @display(description='Preview')
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" class="h-12 w-auto rounded border border-gray-200 shadow-sm" />', obj.image.url)
+        return "-"
+
+
+# ==============================================================================
+# 9. EXPERT PROFILE CLUSTER ADMINS
+# ==============================================================================
+
+@admin.register(ExpertProfile)
+class ExpertProfileAdmin(ModelAdmin):
+    list_display = ('user_identity', 'location', 'current_search', 'collaboration_status', 'rating_display', 'last_signal_update')
+    list_filter = ('collaboration_status', 'current_search', 'is_rating_locked', ('admin_rating', RangeNumericFilter))
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'slug', 'location', 'bio_narrative')
+    readonly_fields = ('slug', 'last_signal_update', 'created_at', 'updated_at')
+    autocomplete_fields = ['user']
+
+    fieldsets = (
+        (_('👑 Core Identity'), {
+            'fields': (('user', 'slug'), 'cv_file'),
+            "classes": ("tab-content",),
+        }),
+        (_('📡 Real-Time Intent'), {
+            'fields': (('current_search', 'collaboration_status'), 'right_now'),
+            "classes": ("tab-content", "bg-gray-50"),
+        }),
+        (_('📜 Professional Narrative'), {
+            'fields': ('bio_narrative', 'years_experience'),
+            "classes": ("tab-content",),
+        }),
+        (_('⭐ System & Scoring'), {
+            'fields': (('admin_rating', 'is_rating_locked'), 'last_signal_update', ('created_at', 'updated_at')),
+            "classes": ("collapse",),
+        }),
+    )
+
+    @display(description=_("User Identity"), ordering='user__last_name')
+    def user_identity(self, obj):
+        name = getattr(obj.user, 'full_name', str(obj.user))
+        return format_html(
+            '<div class="font-semibold text-gray-900">{}</div><div class="text-xs text-gray-500 font-mono">{}</div>',
+            name, obj.slug or 'No slug'
+        )
+
+    @display(description=_("Rating"), ordering='admin_rating')
+    def rating_display(self, obj):
+        lock_icon = " 🔒" if obj.is_rating_locked else ""
+        return format_html('{} <span class="text-xs">{}</span>', star_rating(obj.admin_rating), lock_icon)
+
+
+@admin.register(ExpertSkill)
+class ExpertSkillAdmin(ModelAdmin):
+    list_display = ('profile_link', 'name', 'level', 'admin_status')
+    list_filter = ('level', 'admin_status')
+    search_fields = ('name', 'description', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ExpertCredential)
+class ExpertCredentialAdmin(ModelAdmin):
+    list_display = ('profile_link', 'degree_title', 'institution', 'year', 'admin_status')
+    list_filter = ('year', 'admin_status')
+    search_fields = ('degree_title', 'institution', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ExpertProject)
+class ExpertProjectAdmin(ModelAdmin):
+    list_display = ('profile_link', 'title', 'client_name', 'role', 'order')
+    list_filter = ('order',)
+    search_fields = ('title', 'client_name', 'role', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ExpertExperience)
+class ExpertExperienceAdmin(ModelAdmin):
+    list_display = ('profile_link', 'company_name', 'role_title', 'start_date', 'end_date', 'is_current')
+    list_filter = ('is_current', 'location_type', 'start_date')
+    search_fields = ('company_name', 'role_title', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ExpertThought)
+class ExpertThoughtAdmin(ModelAdmin):
+    list_display = ('profile_link', 'title', 'visibility', 'created_at')
+    list_filter = ('visibility', 'created_at')
+    search_fields = ('title', 'content', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(JobPreference)
+class JobPreferenceAdmin(ModelAdmin):
+    list_display = ('expert_link', 'role_title', 'work_arrangement', 'commitment_type', 'is_active')
+    list_filter = ('is_active', 'work_arrangement', 'commitment_type')
+    search_fields = ('role_title', 'description', 'expert__user__email', 'expert__user__first_name', 'expert__user__last_name')
+    autocomplete_fields = ['expert']
+
+    @display(description=_("Expert"))
+    def expert_link(self, obj):
+        url = get_admin_url(obj.expert)
+        name = getattr(obj.expert.user, 'full_name', str(obj.expert.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+# ==============================================================================
+# 10. VISIONARY PROFILE CLUSTER ADMINS
+# ==============================================================================
+
+@admin.register(VisionaryProfile)
+class VisionaryProfileAdmin(ModelAdmin):
+    list_display = ('user_identity', 'institution', 'field_of_interest', 'current_search', 'collaboration_status', 'rating_display', 'last_signal_update')
+    list_filter = ('collaboration_status', 'current_search', 'is_rating_locked', 'field_of_interest', ('admin_rating', RangeNumericFilter))
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'slug', 'location', 'institution', 'bio_narrative')
+    readonly_fields = ('slug', 'last_signal_update', 'created_at', 'updated_at')
+    autocomplete_fields = ['user']
+
+    fieldsets = (
+        (_('👑 Core Identity'), {
+            'fields': (('user', 'slug'), ('institution', 'location')),
+            "classes": ("tab-content",),
+        }),
+        (_('📡 Real-Time Intent'), {
+            'fields': (('current_search', 'collaboration_status'), 'right_now'),
+            "classes": ("tab-content", "bg-gray-50"),
+        }),
+        (_('📜 Professional Narrative'), {
+            'fields': (('current_title', 'field_of_interest'), 'bio_narrative', 'headline'),
+            "classes": ("tab-content",),
+        }),
+        (_('⭐ System & Scoring'), {
+            'fields': (('admin_rating', 'is_rating_locked'), 'last_signal_update', ('created_at', 'updated_at')),
+            "classes": ("collapse",),
+        }),
+    )
+
+    @display(description=_("User Identity"), ordering='user__last_name')
+    def user_identity(self, obj):
+        name = getattr(obj.user, 'full_name', str(obj.user))
+        return format_html(
+            '<div class="font-semibold text-gray-900">{}</div><div class="text-xs text-gray-500 font-mono">{}</div>',
+            name, obj.slug or 'No slug'
+        )
+
+    @display(description=_("Rating"), ordering='admin_rating')
+    def rating_display(self, obj):
+        lock_icon = " 🔒" if obj.is_rating_locked else ""
+        return format_html('{} <span class="text-xs">{}</span>', star_rating(obj.admin_rating), lock_icon)
+
+
+@admin.register(Certification)
+class CertificationAdmin(ModelAdmin):
+    list_display = ('profile_link', 'name', 'issuing_organization', 'issue_date')
+    list_filter = ('issue_date',)
+    search_fields = ('name', 'issuing_organization', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(Project)
+class VisionaryProjectAdmin(ModelAdmin):
+    list_display = ('profile_link', 'name', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('name', 'problem', 'solution', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(GrowthLog)
+class GrowthLogAdmin(ModelAdmin):
+    list_display = ('profile_link', 'date', 'category', 'title', 'is_verified')
+    list_filter = ('category', 'date', 'is_verified')
+    search_fields = ('title', 'narrative', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(LearningTarget)
+class LearningTargetAdmin(ModelAdmin):
+    list_display = ('profile_link', 'skill_name', 'status', 'progress_bar')
+    list_filter = ('status',)
+    search_fields = ('skill_name', 'learning_motivation', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(VisionBlock)
+class VisionBlockAdmin(ModelAdmin):
+    list_display = ('profile_link', 'title', 'order')
+    list_filter = ('order',)
+    search_fields = ('title', 'content', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+# ==============================================================================
+# 11. FOUNDER PROFILE CLUSTER ADMINS
+# ==============================================================================
+
+@admin.register(FounderProfile)
+class FounderProfileAdmin(ModelAdmin):
+    list_display = ('user_identity', 'company_name', 'sector', 'current_search', 'collaboration_status', 'rating_display', 'last_signal_update')
+    list_filter = ('collaboration_status', 'current_search', 'is_rating_locked', 'sector', ('admin_rating', RangeNumericFilter))
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'slug', 'company_name', 'mission_stmt')
+    readonly_fields = ('slug', 'last_signal_update', 'created_at', 'updated_at')
+    autocomplete_fields = ['user']
+
+    fieldsets = (
+        (_('👑 Core Identity'), {
+            'fields': (('user', 'slug'), ('company_name', 'sector')),
+            "classes": ("tab-content",),
+        }),
+        (_('📡 Real-Time Intent'), {
+            'fields': (('current_search', 'collaboration_status'), 'right_now'),
+            "classes": ("tab-content", "bg-gray-50"),
+        }),
+        (_('📜 Professional Narrative'), {
+            'fields': (('location', 'mission_stmt'),),
+            "classes": ("tab-content",),
+        }),
+        (_('⭐ System & Scoring'), {
+            'fields': (('admin_rating', 'is_rating_locked'), 'last_signal_update', ('created_at', 'updated_at')),
+            "classes": ("collapse",),
+        }),
+    )
+
+    @display(description=_("User Identity"), ordering='user__last_name')
+    def user_identity(self, obj):
+        name = getattr(obj.user, 'full_name', str(obj.user))
+        return format_html(
+            '<div class="font-semibold text-gray-900">{}</div><div class="text-xs text-gray-500 font-mono">{}</div>',
+            name, obj.slug or 'No slug'
+        )
+
+    @display(description=_("Rating"), ordering='admin_rating')
+    def rating_display(self, obj):
+        lock_icon = " 🔒" if obj.is_rating_locked else ""
+        return format_html('{} <span class="text-xs">{}</span>', star_rating(obj.admin_rating), lock_icon)
+
+
+# ==============================================================================
+# 12. REMAINING SUPPORTING MODELS
+# ==============================================================================
+
+@admin.register(ExpertHeadline)
+class ExpertHeadlineAdmin(ModelAdmin):
+    list_display = ('profile_link', 'title', 'is_primary', 'order')
+    list_filter = ('is_primary',)
+    search_fields = ('title', 'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
+    autocomplete_fields = ['profile']
+
+    @display(description=_("Profile"))
+    def profile_link(self, obj):
+        url = get_admin_url(obj.profile)
+        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
+
+
+@admin.register(ProjectGalleryImage)
+class ProjectGalleryImageAdmin(ModelAdmin):
+    list_display = ('project_link', 'caption')
+    search_fields = ('caption', 'project__title')
+    autocomplete_fields = ['project']
+
+    @display(description=_("Project"))
+    def project_link(self, obj):
+        url = get_admin_url(obj.project)
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.project.title)
+
+
+@admin.register(ProjectImage)
+class VisionaryProjectImageAdmin(ModelAdmin):
+    list_display = ('project_link', 'caption')
+    search_fields = ('caption', 'project__name')
+    autocomplete_fields = ['project']
+
+    @display(description=_("Project"))
+    def project_link(self, obj):
+        url = get_admin_url(obj.project)
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.project.name)
