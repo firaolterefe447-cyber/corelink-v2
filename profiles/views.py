@@ -1957,9 +1957,9 @@ def profile_og_image(request, identifier):
 
     headline_text = "CoreLink Professional"
     if portfolio:
-        headline = portfolio.headlines.first()
-        if headline:
-            headline_text = headline.title
+        headlines = portfolio.headlines.all()
+        if headlines:
+            headline_text = " | ".join([h.title for h in headlines])
         elif target_user.role:
             headline_text = target_user.get_role_display()
 
