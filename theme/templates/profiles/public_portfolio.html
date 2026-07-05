@@ -8,7 +8,7 @@
 <meta property="og:site_name" content="CoreLink">
 <meta property="og:title" content="{{ user.display_name }} | Corelink profile">
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
-<meta property="og:description" content="{% if headlines %}{{ headlines.first.title }}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
+<meta property="og:description" content="{% if headlines %}{% for headline in headlines %}{{ headline.title }}{% if not forloop.last %} | {% endif %}{% endfor %}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
 
 
 <!-- MAGIC OPENGRAPH IMAGE TAGS -->
@@ -19,7 +19,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ user.display_name }}">
-<meta name="twitter:description" content="{{ profile.bio_narrative|truncatechars:120 }}">
+<meta name="twitter:description" content="{% if headlines %}{% for headline in headlines %}{{ headline.title }}{% if not forloop.last %} | {% endif %}{% endfor %}{% else %}{{ role_title }}{% endif %} — {{ profile.bio_narrative|truncatechars:120 }}">
 <meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'profile_og_image' identifier=user.corelink_id|default:profile.slug %}?v={% now 'U' %}">
 {% endblock %}
 
