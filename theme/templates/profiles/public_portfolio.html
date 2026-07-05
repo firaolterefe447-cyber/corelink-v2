@@ -442,7 +442,9 @@
                        </div>
                    {% elif project.gallery.count == 1 %}
                        <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500">
+                           {% if project.gallery.first.image %}
                            <img src="{{ project.gallery.first.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
+                           {% endif %}
                            {% if project.gallery.first.caption %}
                            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
                                {{ project.gallery.first.caption }}
@@ -453,7 +455,9 @@
                        <div class="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 mb-2 -mx-5 px-5 md:mx-0 md:px-0 pb-4" style="scrollbar-width: none;">
                            {% for img in project.gallery.all %}
                            <div class="shrink-0 w-[85%] md:w-[75%] aspect-[4/3] md:aspect-[16/10] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden snap-center relative bg-slate-100 shadow-sm border border-slate-200/50 group/img">
+                               {% if img.image %}
                                <img src="{{ img.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1s] group-hover/img:scale-105">
+                               {% endif %}
                                {% if img.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
                                    {{ img.caption }}
@@ -625,7 +629,9 @@
                            <div class="mt-5 md:mt-6 grid gap-2 {% if post.gallery.count == 1 %}grid-cols-1 max-w-[24rem]{% elif post.gallery.count == 2 %}grid-cols-2 max-w-[32rem]{% else %}grid-cols-2 md:grid-cols-3 max-w-[40rem]{% endif %}">
                                {% for media in post.gallery.all %}
                                <div class="rounded-xl overflow-hidden bg-slate-100 border border-slate-200/50 shadow-sm transition-all duration-500 hover:shadow-md aspect-[4/3] group/media cursor-pointer">
+                                   {% if media.image %}
                                    <img src="{{ media.image.url }}" loading="lazy" class="w-full h-full object-cover img-hover-zoom">
+                                   {% endif %}
                                </div>
                                {% endfor %}
                            </div>
