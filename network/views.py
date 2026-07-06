@@ -349,6 +349,7 @@ def nexus_feed(request):
         'unread_msg_count': unread_count,
         'active_tab': 'people',
         'show_paywall': True,
+        'total_results_count': len(results),
     })
 
 
