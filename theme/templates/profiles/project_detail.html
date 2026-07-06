@@ -10,323 +10,412 @@
 {% endblock %}
 
 {% block navbar %}
-<!-- MINIMALIST UNIFIED NAVBAR (Matches Profile Glassmorphism) -->
-<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 h-16 print:hidden">
-    <div class="max-w-[1100px] mx-auto px-5 w-full h-full flex items-center justify-start">
-        <!-- EXACT PROFILE BACK BUTTON -->
-        <button type="button" onclick="smartBack()" aria-label="Go back" class="text-[11px] md:text-[12px] font-extrabold text-white bg-slate-900 px-5 md:px-6 py-2.5 rounded-full hover:bg-slate-800 shadow-md uppercase tracking-[0.2em] focus-visible:outline-none flex items-center gap-2 cursor-pointer border-none transition-transform active:scale-95">
-            <i data-lucide="arrow-left" class="w-4 h-4 pointer-events-none"></i>
-            <span class="pointer-events-none">Back</span>
-        </button>
-    </div>
+<!-- UNIFIED TOP NAVBAR (Glassmorphic) -->
+<nav class="fixed top-0 inset-x-0 z-[200] bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 transition-all duration-500 h-16 print:hidden">
+   <div class="max-w-[1200px] mx-auto px-5 w-full h-full flex justify-between items-center">
+       <!-- LEFT: Brand -->
+       <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="group flex items-center focus-visible:outline-none rounded-sm">
+           <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-slate-900 lowercase transition-opacity group-hover:opacity-80">core</span>
+           <span class="font-sans font-black text-[22px] tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-[#0856A8] lowercase transition-opacity group-hover:opacity-80">link</span>
+       </a>
+
+
+       <!-- RIGHT: Actions -->
+       <div class="flex items-center gap-3 md:gap-4">
+           <button onclick="smartBack()" aria-label="Back to Profile" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-[#0A66C2] rounded-full border border-slate-200 transition-colors transform active:scale-95 focus-visible:outline-none text-[11px] md:text-[12px] font-extrabold uppercase tracking-[0.1em] shadow-sm">
+               <i data-lucide="arrow-left" class="w-4 h-4"></i>
+               <span>Back</span>
+           </button>
+       </div>
+   </div>
 </nav>
 {% endblock navbar %}
 
 {% block content %}
+<div id="top-loading-bar"></div>
+
+
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 
+
 <style>
-    /* EXACT COPY OF PROFILE VARIABLES & THEME */
-    :root {
-        --font-main: 'Inter', sans-serif;
-        --font-serif: 'Playfair Display', serif;
-        --color-primary: #0A66C2;
-        --color-primary-dark: #0856A8;
-        --color-primary-light: #3B82F6;
-        --color-slate-50: #F8FAFC;
-        --color-slate-100: #F1F5F9;
-        --color-slate-200: #E2E8F0;
-        --color-slate-300: #CBD5E1;
-        --color-slate-400: #94A3B8;
-        --color-slate-600: #475569;
-        --color-slate-900: #0F172A;
-        --radius-sm: 0.5rem;
-        --radius-md: 0.75rem;
-        --radius-lg: 1rem;
-        --radius-xl: 1.25rem;
-        --radius-2xl: 1.5rem;
-        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
-        --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.06);
-        --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
-        --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
-    }
+   :root {
+       --font-main: 'Inter', sans-serif;
+       --font-serif: 'Playfair Display', serif;
+       --color-primary: #0A66C2;
+       --color-primary-dark: #0856A8;
+       --color-slate-50: #F8FAFC;
+       --color-slate-100: #F1F5F9;
+       --color-slate-200: #E2E8F0;
+       --color-slate-300: #CBD5E1;
+       --color-slate-400: #94A3B8;
+       --color-slate-600: #475569;
+       --color-slate-900: #0F172A;
+   }
+   [data-theme="dark"] {
+       --color-slate-50: #0F172A;
+       --color-slate-100: #1E293B;
+       --color-slate-200: #334155;
+       --color-slate-300: #475569;
+       --color-slate-400: #64748B;
+       --color-slate-600: #94A3B8;
+       --color-slate-900: #F1F5F9;
+   }
+   html { scroll-behavior: smooth; }
+   body {
+       font-family: var(--font-main);
+       -webkit-font-smoothing: antialiased;
+       background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 40%, #EDE4D8 100%);
+       color: var(--color-slate-900);
+       overflow-x: hidden;
+   }
+   [data-theme="dark"] body {
+       background: linear-gradient(135deg, #1A1A1A 0%, #252525 50%, #2D2D2D 100%);
+   }
 
-    html { scroll-behavior: smooth; }
 
-    body {
-        font-family: var(--font-main);
-        -webkit-font-smoothing: antialiased;
-        background: linear-gradient(135deg, #FAF7F2 0%, #F5F0E8 40%, #EDE4D8 100%);
-        color: var(--color-slate-900);
-        overflow-x: hidden;
-        line-height: 1.6;
-    }
+   /* Premium Background Pattern */
+   body::before {
+       content: '';
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background-image:
+           radial-gradient(circle at 15% 40%, rgba(10, 102, 194, 0.04) 0%, transparent 50%),
+           radial-gradient(circle at 85% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+       pointer-events: none;
+       z-index: 0;
+   }
 
-    /* Premium Background Pattern */
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image:
-            radial-gradient(circle at 15% 40%, rgba(10, 102, 194, 0.04) 0%, transparent 50%),
-            radial-gradient(circle at 85% 60%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-    }
 
-    .font-serif-title { font-family: var(--font-serif); }
+   .font-serif-title { font-family: var(--font-serif); }
 
-    /* Premium Card Style */
-    .bento-card {
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
-        border: 1px solid rgba(200, 190, 170, 0.2);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-card);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .bento-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(200, 190, 170, 0.35);
-    }
 
-    .bento-card-dark {
-        background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-card);
-        position: relative;
-        overflow: hidden;
-        color: white;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .bento-card-dark:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(255, 255, 255, 0.12);
-    }
+   /* CoreLink Top Loading Bar */
+   #top-loading-bar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb); z-index: 99999; width: 0%; pointer-events: none; box-shadow: 0 0 10px rgba(10, 102, 194, 0.5); opacity: 0; transition: width 0.4s ease-out, opacity 0.4s ease-in; }
 
-    /* Native Horizontal Scrolling Gallery */
-    .scrolling-gallery {
-        display: flex;
-        overflow-x: auto;
-        gap: 1.5rem;
-        padding: 1rem 5vw 3rem 5vw;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Firefox */
-        scroll-padding: 0 5vw;
-    }
-    .scrolling-gallery::-webkit-scrollbar {
-        display: none; /* Chrome/Safari */
-    }
 
-    .gallery-slide {
-        flex: 0 0 auto;
-        width: 85vw;
-        max-width: 900px;
-        scroll-snap-align: center;
-        aspect-ratio: 16/10;
-        border-radius: var(--radius-xl);
-        overflow: hidden;
-        background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
-        border: 1px solid rgba(200, 190, 170, 0.25);
-        box-shadow: var(--shadow-card);
-        position: relative;
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .gallery-slide:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: rgba(200, 190, 170, 0.4);
-    }
+   /* Clean Card Architecture */
+   .bento-card {
+       background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 50%, #F9F7F2 100%);
+       border: 1px solid rgba(200, 190, 170, 0.25);
+       border-radius: 1rem;
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
+       position: relative;
+       overflow: hidden;
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+   .bento-card:hover {
+       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
+       border-color: rgba(200, 190, 170, 0.4);
+   }
+   [data-theme="dark"] .bento-card {
+       background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 50%, #252525 100%);
+       border-color: rgba(255, 255, 255, 0.08);
+   }
+   @media (min-width: 768px) { .bento-card { border-radius: 1.25rem; } }
 
-    @media (min-width: 768px) {
-        .gallery-slide { width: 75vw; }
-    }
-    @media (min-width: 1024px) {
-        .gallery-slide { width: 65vw; }
-    }
 
-    .gallery-slide img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+   .bento-card-dark {
+       background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
+       border: 1px solid rgba(255, 255, 255, 0.08);
+       border-radius: 1rem;
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
+       position: relative;
+       overflow: hidden;
+       color: white;
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+   .bento-card-dark:hover {
+       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
+       border-color: rgba(255, 255, 255, 0.12);
+   }
+   @media (min-width: 768px) { .bento-card-dark { border-radius: 1.25rem; } }
+
+
+   /* Hover & Animations */
+   .img-hover-zoom { transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+   .group:hover .img-hover-zoom { transform: scale(1.05); }
+   .card-hover-premium { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+   .card-hover-premium:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(10, 102, 194, 0.08); border-color: rgba(10, 102, 194, 0.15); }
+
+
+   .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+   .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+   .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+   /* Text Rendering */
+   .text-break-words {
+       overflow-wrap: anywhere;
+   }
+   .text-break-words p {
+       overflow-wrap: anywhere;
+   }
+
+   /* Responsive Gallery */
+   .scrolling-gallery {
+       display: flex;
+       overflow-x: auto;
+       gap: 1.5rem;
+       padding: 1rem 5vw 3rem 5vw;
+       scroll-snap-type: x mandatory;
+       -webkit-overflow-scrolling: touch;
+       scrollbar-width: none;
+       scroll-padding: 0 5vw;
+   }
+   .scrolling-gallery::-webkit-scrollbar {
+       display: none;
+   }
+
+   .gallery-slide {
+       flex: 0 0 auto;
+       width: 85vw;
+       max-width: 900px;
+       scroll-snap-align: center;
+       aspect-ratio: 16/10;
+       border-radius: 1.5rem;
+       overflow: hidden;
+       background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
+       border: 1px solid rgba(200, 190, 170, 0.25);
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
+       position: relative;
+       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+   .gallery-slide:hover {
+       transform: translateY(-4px);
+       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
+       border-color: rgba(200, 190, 170, 0.4);
+   }
+
+   @media (min-width: 768px) {
+       .gallery-slide { width: 75vw; border-radius: 2rem; }
+   }
+   @media (min-width: 1024px) {
+       .gallery-slide { width: 65vw; }
+   }
+
+   .gallery-slide img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+   }
 </style>
 
-<div class="w-full bg-transparent pb-32 pt-28 relative z-10">
 
-    <!-- Hero Header (Matches Profile Hero Typography & Badges) -->
-    <header class="max-w-[800px] mx-auto px-5 text-center mb-12">
+<!-- =========================================================================
+    PROJECT DETAIL ARCHITECTURE (Mobile + PC)
+========================================================================== -->
+<div class="w-full bg-[#F8FAFC] pb-24 relative overflow-hidden animate-fade-in pt-16">
 
-        <!-- Profile-Style Pill Badges -->
-        <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
-            {% if project.role %}
-                <span class="px-2.5 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 text-[var(--color-primary)] text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">{{ project.role }}</span>
-            {% endif %}
 
-            {% if project.client_name %}
-                <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-500 text-[9px] font-bold uppercase tracking-[0.15em] rounded-full">
-                    {{ project.client_name }}
-                </span>
-            {% endif %}
-        </div>
+   <div class="max-w-[1000px] mx-auto px-5 md:px-10 pt-6 md:pt-8 mb-10">
+       <!-- 1. HERO HEADER -->
+       <div class="text-center mb-12 md:mb-16 reveal-on-scroll">
 
-        <!-- Title -->
-        <h1 class="text-[clamp(2.2rem,5vw,3.5rem)] font-serif-title font-bold text-slate-900 leading-tight mb-8 break-words">
-            {{ project.title }}
-        </h1>
 
-        <!-- View Project CTA (Matches Profile Resume Button) -->
-        {% if project.link %}
-        <div class="flex justify-center">
-            <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-[13px] font-semibold rounded-2xl hover:shadow-xl hover:shadow-[var(--color-primary)]/30 transition-all duration-300 active:scale-95 no-underline">
-                <i data-lucide="external-link" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                <span>View Live Project</span>
-            </a>
-        </div>
-        {% endif %}
-    </header>
+           <!-- Profile-Style Pill Badges -->
+           <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+               {% if project.role %}
+                   <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-[#0A66C2] text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ project.role }}</span>
+               {% endif %}
+               {% if project.client_name %}
+                   <span class="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-[10px] md:text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">
+                       {{ project.client_name }}
+                   </span>
+               {% endif %}
+           </div>
 
-    <!-- Full-Bleed Scrollable Gallery (Premium UX) -->
-    {% if project.gallery.count > 0 %}
-    <section class="w-full relative mb-12 lg:mb-16">
-        <!-- Scroll hint icon for mobile -->
-        <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[var(--color-primary)] md:hidden pointer-events-none animate-pulse">
-            <i data-lucide="arrow-right" class="w-5 h-5"></i>
-        </div>
 
-        <div class="scrolling-gallery">
-            {% for asset in project.gallery.all %}
-            <div class="gallery-slide group">
-                {% if asset.asset_type == 'IMAGE' and asset.image %}
-                    <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
-                    <!-- Overlay Gradient -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
-                    <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                        <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[var(--color-primary)] transition-all duration-500">
-                            <i data-lucide="file-text" class="w-8 h-8"></i>
-                        </div>
-                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
-                        <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[var(--color-primary)] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
-                    </div>
-                {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                    <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                        <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[var(--color-primary)] transition-all duration-500">
-                            <i data-lucide="link" class="w-8 h-8"></i>
-                        </div>
-                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">External Resource</span>
-                        <a href="{{ asset.external_url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[var(--color-primary)] shadow-sm transition-colors uppercase tracking-widest no-underline">Open Link</a>
-                    </div>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
+           <!-- Title -->
+           <h1 class="text-[clamp(2rem,5vw,3.5rem)] md:text-[42px] font-serif-title font-bold text-slate-900 tracking-tight leading-none mb-8 break-words">
+               {{ project.title }}
+           </h1>
 
-    <!-- Editorial Content Sections (Styled like Profile Blocks) -->
-    <div class="max-w-[850px] mx-auto px-5 space-y-8 md:space-y-12">
 
-        <!-- Overview / Description -->
-        {% if project.main_description %}
-        <section class="bento-card p-8 md:p-10">
-            <h2 class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Overview</h2>
-            <div class="text-[15px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left">
-                {{ project.main_description }}
-            </div>
-        </section>
-        {% endif %}
+           <!-- View Project CTA -->
+           {% if project.link %}
+           <div class="flex justify-center">
+               <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-center gap-3 px-8 py-3 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-bold rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50 no-underline">
+                   <i data-lucide="external-link" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                   <span>View Live Project</span>
+               </a>
+           </div>
+           {% endif %}
+       </div>
+   </div>
 
-        <!-- Problem Statement (Dark Card to match Profile's "Vision" section) -->
-        {% if project.problem_statement %}
-        <section class="bento-card-dark p-8 md:p-10 relative">
-            <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
-            <div class="relative z-10">
-                <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">The Challenge</span>
-                <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.8] whitespace-pre-line break-words max-w-[90%]">
-                    {{ project.problem_statement }}
-                </p>
-            </div>
-        </section>
-        {% endif %}
 
-        <!-- Solution Narrative -->
-        {% if project.solution_narrative %}
-        <section class="bento-card p-8 md:p-10">
-            <h2 class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-[var(--color-primary)]"></div> The Solution
-            </h2>
-            <div class="text-[15px] md:text-[16px] text-slate-600 leading-[1.8] whitespace-pre-line text-left">
-                {{ project.solution_narrative }}
-            </div>
-        </section>
-        {% endif %}
+   <!-- 2. GALLERY SECTION -->
+   {% with valid_assets=project.gallery.all %}
+   {% if valid_assets|length > 0 %}
+   <section class="w-full relative mb-12 md:mb-16 reveal-on-scroll">
+       <!-- Scroll hint icon for mobile -->
+       <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#0A66C2] md:hidden pointer-events-none animate-pulse">
+           <i data-lucide="arrow-right" class="w-5 h-5"></i>
+       </div>
 
-    </div>
 
-    <!-- FOOTER (Matches Profile Footer) -->
-    <footer class="pt-16 pb-8 mt-12 md:mt-16 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px]">
-        <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Project <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ project.title }}</span></p>
-    </footer>
+       <div class="scrolling-gallery">
+           {% for asset in valid_assets %}
+           <div class="gallery-slide group">
+               {% if asset.asset_type == 'IMAGE' and asset.image %}
+                   <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
+                   {% if asset.caption %}
+                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                       {{ asset.caption }}
+                   </div>
+                   {% endif %}
+               {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                   <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
+                       <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                           <i data-lucide="file-text" class="w-8 h-8"></i>
+                       </div>
+                       <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
+                       <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
+                       {% if asset.caption %}
+                       <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                           {{ asset.caption }}
+                       </div>
+                       {% endif %}
+                   </div>
+               {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                   <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
+                       <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                           <i data-lucide="link" class="w-8 h-8"></i>
+                       </div>
+                       <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">External Resource</span>
+                       <a href="{{ asset.external_url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">Open Link</a>
+                       {% if asset.caption %}
+                       <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                           {{ asset.caption }}
+                       </div>
+                       {% endif %}
+                   </div>
+               {% else %}
+                   <div class="w-full h-full bg-slate-100 flex items-center justify-center">
+                       <i data-lucide="image-off" class="w-12 h-12 text-slate-400"></i>
+                   </div>
+               {% endif %}
+           </div>
+           {% endfor %}
+       </div>
+   </section>
+   {% endif %}
+   {% endwith %}
 
+
+   <!-- 3. CONTENT SECTIONS -->
+   <div class="max-w-[1000px] mx-auto px-5 md:px-10 space-y-8 md:space-y-12">
+
+
+       <!-- Overview / Description -->
+       {% if project.main_description %}
+       <section class="bento-card p-8 md:p-10 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Overview</h2>
+           <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] whitespace-pre-line text-left font-medium md:max-w-[90%]">
+               {{ project.main_description }}
+           </div>
+       </section>
+       {% endif %}
+
+
+       <!-- Problem Statement (Dark Card) -->
+       {% if project.problem_statement %}
+       <section class="bento-card-dark p-8 md:p-10 relative reveal-on-scroll">
+           <div class="absolute top-0 right-0 p-6 opacity-10 text-[80px] md:text-[100px] font-serif-title leading-none text-white select-none pointer-events-none">"</div>
+           <div class="relative z-10">
+               <span class="inline-block px-3 py-1 bg-white/10 border border-white/20 text-blue-100 text-[11px] font-semibold uppercase tracking-[0.15em] rounded-md mb-5">The Challenge</span>
+               <p class="text-[15px] md:text-[16px] text-blue-100/90 leading-[1.8] whitespace-pre-line break-words max-w-[90%]">
+                   {{ project.problem_statement }}
+               </p>
+           </div>
+       </section>
+       {% endif %}
+
+
+       <!-- Solution Narrative -->
+       {% if project.solution_narrative %}
+       <section class="bento-card p-8 md:p-10 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight flex items-center gap-3">
+               <div class="w-3 h-3 rounded-full bg-[#0A66C2]"></div> The Solution
+           </h2>
+           <div class="text-[15px] md:text-[17px] text-slate-600 leading-[1.8] whitespace-pre-line text-left font-medium md:max-w-[90%]">
+               {{ project.solution_narrative }}
+           </div>
+       </section>
+       {% endif %}
+
+
+       <!-- FOOTER -->
+       <footer class="pt-16 pb-8 border-t border-slate-200/60 text-center text-slate-400 text-[11px] md:text-[12px] reveal-on-scroll">
+           <p class="font-extrabold tracking-[0.2em] uppercase">CoreLink Project <span class="hidden md:inline">/</span> <br class="md:hidden"><span class="text-slate-900 mt-2 md:mt-0 inline-block">{{ project.title }}</span></p>
+       </footer>
+
+
+   </div>
 </div>
+
+
+<!-- Copy Toast -->
+<div id="share-toast" aria-live="polite" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-[0_20px_40px_rgba(15,23,42,0.25)] transition-all duration-500 transform translate-y-32 opacity-0 z-[200] font-extrabold text-[11px] md:text-[12px] uppercase tracking-[0.2em] flex items-center gap-2.5 pointer-events-none">
+   <i data-lucide="check" class="w-4 h-4 text-blue-400"></i> Link Copied
+</div>
+
 
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize beautiful icons
-        try {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        } catch (e) {
-            console.error("Icons failed to load");
-        }
-    });
+   lucide.createIcons();
 
-    // THE BULLETPROOF BACK FUNCTION
-    function smartBack() {
-        console.log("smartBack called");
-        try {
-            // Check referrer to see where user came from
-            const referrer = document.referrer || "";
-            console.log("Referrer:", referrer);
 
-            // If came from portfolio page, skip it and go back further
-            if (referrer && referrer.indexOf('/profiles/') !== -1 && referrer.indexOf('project') === -1) {
-                console.log("Came from portfolio, skipping to go back further");
-                window.history.go(-2);
-            }
-            // If came from nexus or dashboard, redirect directly to referrer
-            else if (referrer && (referrer.indexOf('/nexus') !== -1 || referrer.indexOf('/dashboard') !== -1)) {
-                console.log("Came from nexus/dashboard, redirecting to referrer");
-                window.location.href = referrer;
-            } else if (window.history.length > 1) {
-                // Has history, go back
-                console.log("Has history, going back");
-                window.history.back();
-            } else {
-                // No history, go to home
-                console.log("No history, going to home");
-                window.location.href = '/';
-            }
+   function smartBack() {
+       if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+           window.location.href = document.referrer;
+       } else {
+           window.history.back();
+           setTimeout(() => {
+               window.location.href = '/';
+           }, 200);
+       }
+   }
 
-        } catch (error) {
-            console.error("CoreLink Routing Error:", error);
-            window.location.href = '/'; // Ultimate safety net
-        }
-    }
+
+   document.addEventListener('DOMContentLoaded', () => {
+
+
+       // CoreLink Loading Bar (UX for inner links)
+       const loadingBar = document.getElementById('top-loading-bar');
+       document.addEventListener('click', (e) => {
+           const target = e.target.closest('a');
+           if (target && target.href && !target.href.startsWith('javascript:') && !target.href.includes('#') && target.target !== '_blank') {
+               if (target.hostname === window.location.hostname && loadingBar) {
+                   loadingBar.style.transition = 'none';
+                   loadingBar.style.width = '0%';
+                   loadingBar.style.opacity = '1';
+                   setTimeout(() => {
+                       loadingBar.style.transition = 'width 2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+                       loadingBar.style.width = '60%';
+                   }, 10);
+               }
+           }
+       });
+
+
+       // Reveal Animations
+       const revealObserver = new IntersectionObserver((entries, observer) => {
+           entries.forEach(entry => {
+               if (entry.isIntersecting) {
+                   entry.target.classList.add('is-visible');
+                   observer.unobserve(entry.target);
+               }
+           });
+       }, { threshold: 0.1 });
+       document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+   });
 </script>
 {% endblock %}

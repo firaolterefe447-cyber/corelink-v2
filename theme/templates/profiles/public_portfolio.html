@@ -436,19 +436,19 @@
                    {% with valid_assets=project.gallery.all %}
                    {% if valid_assets|length == 0 %}
                        <!-- No assets: Show simple card with title -->
-                       <div class="w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30 no-underline">
                            <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
                                <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
                            </div>
                            <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
-                       </div>
+                       </a>
                    {% elif valid_assets|length == 1 %}
                        <!-- Single asset: Handle based on type -->
                        {% with asset=valid_assets.first %}
                        {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                            <!-- PDF Document -->
-                           <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 flex items-center justify-center">
-                               <a href="{{ asset.document_file.url }}" target="_blank" class="flex flex-col items-center gap-4 text-center p-8">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 flex items-center justify-center no-underline">
+                               <div class="flex flex-col items-center gap-4 text-center p-8">
                                    <div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
                                        <i data-lucide="file-text" class="w-10 h-10 text-red-500"></i>
                                    </div>
@@ -456,114 +456,134 @@
                                        <p class="text-[16px] md:text-[18px] font-bold text-slate-900 mb-1">View Document</p>
                                        <p class="text-[12px] md:text-[13px] text-slate-500">Click to open PDF</p>
                                    </div>
-                               </a>
+                               </div>
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
-                           </div>
+                           </a>
                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                            <!-- External Embed -->
-                           <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
                                <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide z-10">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
-                           </div>
+                           </a>
                        {% elif asset.asset_type == 'IMAGE' and asset.image %}
                            <!-- Image -->
-                           <div class="w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
-                           </div>
+                           </a>
                        {% else %}
                            <!-- Fallback for asset with no valid content -->
-                           <div class="w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30 no-underline">
                                <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
                                    <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
                                </div>
                                <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
-                           </div>
+                           </a>
                        {% endif %}
                        {% endwith %}
                    {% else %}
-                       <!-- Multiple assets: Responsive layout -->
-                       <!-- Mobile: Horizontal carousel, Desktop: Grid -->
-                       <div class="md:hidden w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 mb-2 -mx-5 px-5 pb-4" style="scrollbar-width: none;">
-                           {% for asset in valid_assets %}
-                           <div class="shrink-0 w-[85%] aspect-[4/3] rounded-[1.5rem] overflow-hidden snap-center relative bg-slate-100 shadow-sm border border-slate-200/50 group/img">
-                               {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
-                                   <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100">
-                                       <div class="flex flex-col items-center gap-2 text-center p-4">
-                                           <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
-                                               <i data-lucide="file-text" class="w-6 h-6 text-red-500"></i>
-                                           </div>
-                                           <p class="text-[12px] font-bold text-slate-700">View PDF</p>
-                                       </div>
-                                   </a>
-                               {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                   <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
-                               {% elif asset.asset_type == 'IMAGE' and asset.image %}
-                                   <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1s] group-hover/img:scale-105">
-                               {% else %}
-                                   <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
-                                       <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
-                                   </div>
-                               {% endif %}
-                               {% if asset.caption %}
-                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] p-6 pt-16 truncate font-medium tracking-wide">
-                                   {{ asset.caption }}
-                               </div>
-                               {% endif %}
-                           </div>
-                           {% endfor %}
-                       </div>
-                       <div class="md:hidden text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-center gap-1 opacity-70">
-                           Swipe to see more <i data-lucide="arrow-right" class="w-3 h-3 text-[#0A66C2]"></i>
-                       </div>
-
-                       <!-- Desktop: Grid layout -->
-                       <div class="hidden md:block mb-6">
-                           <div class="grid grid-cols-2 gap-6">
-                               {% for asset in valid_assets %}
-                               <div class="aspect-[16/10] rounded-[2rem] overflow-hidden relative bg-slate-100 shadow-sm border border-slate-200/50 group/img">
-                                   {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
-                                       <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100">
-                                           <div class="flex flex-col items-center gap-3 text-center p-6">
-                                               <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
+                       <!-- Multiple assets: Grid layout matching right_now_feed (first 3 images + plus icon) -->
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-6 relative group/gallery no-underline">
+                           {% with count=valid_assets|length %}
+                           <div class="media-grid overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 shadow-sm bg-white transition-all duration-300 hover:border-[#0A66C2]/30 hover:shadow-md">
+                               {% if count == 2 %}
+                                   <div class="grid grid-cols-2 gap-1 aspect-[4/3]">
+                                       {% for asset in valid_assets|slice:":2" %}
+                                       <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.5rem] md:rounded-l-[2rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem] md:rounded-r-[2rem]{% endif %}">
+                                           {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                           {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="file-text" class="w-8 h-8 text-red-500"></i>
                                                </div>
-                                               <div>
-                                                   <p class="text-[14px] font-bold text-slate-900">View Document</p>
-                                                   <p class="text-[12px] text-slate-500">Click to open PDF</p>
+                                           {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                           {% else %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
                                                </div>
-                                           </div>
-                                       </a>
-                                   {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                       <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
-                                   {% elif asset.asset_type == 'IMAGE' and asset.image %}
-                                       <img src="{{ asset.image.url }}" loading="lazy" alt="Gallery Image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1s] group-hover/img:scale-105">
-                                   {% else %}
-                                       <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
-                                           <i data-lucide="image-off" class="w-12 h-12 text-slate-400"></i>
+                                           {% endif %}
                                        </div>
-                                   {% endif %}
-                                   {% if asset.caption %}
-                                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[14px] p-8 pt-20 truncate font-medium tracking-wide">
-                                       {{ asset.caption }}
+                                       {% endfor %}
                                    </div>
-                                   {% endif %}
-                               </div>
-                               {% endfor %}
+                               {% elif count == 3 %}
+                                   <div class="grid grid-cols-2 gap-1">
+                                       <div class="col-span-2 aspect-[16/9] rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden">
+                                           {% with first=valid_assets.0 %}
+                                           {% if first.asset_type == 'IMAGE' and first.image %}
+                                               <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                           {% elif first.asset_type == 'DOCUMENT' and first.document_file %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="file-text" class="w-10 h-10 text-red-500"></i>
+                                               </div>
+                                           {% elif first.asset_type == 'EMBED' and first.external_url %}
+                                               <iframe src="{{ first.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                           {% else %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="image-off" class="w-10 h-10 text-slate-400"></i>
+                                               </div>
+                                           {% endif %}
+                                           {% endwith %}
+                                       </div>
+                                       {% for asset in valid_assets|slice:"1:" %}
+                                       <div class="aspect-square {% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden">
+                                           {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                           {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="file-text" class="w-8 h-8 text-red-500"></i>
+                                               </div>
+                                           {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                           {% else %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
+                                               </div>
+                                           {% endif %}
+                                       </div>
+                                       {% endfor %}
+                                   </div>
+                               {% elif count >= 4 %}
+                                   <div class="grid grid-cols-2 gap-1 aspect-square">
+                                       {% for asset in valid_assets|slice:":4" %}
+                                       <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.5rem] md:rounded-tl-[2rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.5rem] md:rounded-tr-[2rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %}">
+                                           {% if asset.asset_type == 'IMAGE' and asset.image %}
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                               {% if forloop.last and count > 4 %}
+                                                   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                                       <span class="text-white font-black text-[18px] md:text-[20px]">+{{ count|add:"-4" }}</span>
+                                                   </div>
+                                               {% endif %}
+                                           {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="file-text" class="w-8 h-8 text-red-500"></i>
+                                               </div>
+                                           {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                           {% else %}
+                                               <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
+                                                   <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
+                                               </div>
+                                           {% endif %}
+                                       </div>
+                                       {% endfor %}
+                                   </div>
+                               {% endif %}
                            </div>
-                       </div>
+                           {% endwith %}
+                       </a>
                    {% endif %}
                    {% endwith %}
 
@@ -578,18 +598,22 @@
                        </div>
 
 
-                       <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] space-y-3 mb-6 text-left md:max-w-[90%]">
-                           {% if project.main_description %}<p>{{ project.main_description }}</p>{% endif %}
-                           {% if project.problem_statement %}<p>{{ project.problem_statement }}</p>{% endif %}
-                           {% if project.solution_narrative %}<p>{{ project.solution_narrative }}</p>{% endif %}
+                       <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] mb-6 text-left md:max-w-[90%]">
+                           {% if project.main_description %}<p>{{ project.main_description|truncatewords:30 }}</p>{% endif %}
                        </div>
 
 
-                       {% if project.link %}
-                       <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-2 border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link focus-visible:outline-none">
-                           View Full Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
-                       </a>
-                       {% endif %}
+                       <div class="flex flex-wrap items-center gap-4">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-extrabold uppercase tracking-[0.15em] rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50 no-underline">
+                               <span>View Details</span>
+                           </a>
+
+                           {% if project.link %}
+                           <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-2 border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link focus-visible:outline-none">
+                               View Live Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
+                           </a>
+                           {% endif %}
+                       </div>
                    </div>
                </article>
                {% endfor %}
