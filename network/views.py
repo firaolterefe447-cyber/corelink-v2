@@ -171,30 +171,13 @@ def nexus_feed(request):
         'company_memberships__company'
     )
 
-    # ⏳ 2a. DB-AGNOSTIC TEMPORAL CALCULATION
-    base_users = base_users.annotate(
-        raw_inactive_duration=Now() - Coalesce(F('last_login'), F('date_joined'))
-    )
-
-    if connection.vendor == 'postgresql':
-        days_inactive_expr = ExtractDay('raw_inactive_duration')
-    else:
-        # SQLite Fallback: 1 Day = 86,400,000,000 microseconds
-        days_inactive_expr = ExpressionWrapper(
-            Cast(F('raw_inactive_duration'), FloatField()) / 86400000000.0,
-            output_field=FloatField()
-        )
-
-    # 💎 2b. THE "SMART FEED" GRAVITY (Using Raw AI Score & Freshness)
+    # 💎 2b. THE "SMART FEED" GRAVITY (Using Raw AI Score Only)
     scored_users = base_users.annotate(
-        days_inactive=days_inactive_expr,
-        freshness_boost=Greatest(Value(0.0), Value(15.0) - Cast(F('days_inactive'), FloatField()) / 2.0),
-
-        # NEW: Pull the direct 1-100 Oracle Score instead of manual avatar calculations
+        # Pull the direct 1-100 Oracle Score
         raw_ai_score=Cast(Coalesce('portfolio__oracle_score', Value(0)), FloatField())
     ).annotate(
-        # The ultimate ranking value: AI Assessment (1-100) + Recent Activity (0-15)
-        total_quality=F('raw_ai_score') + F('freshness_boost')
+        # The ultimate ranking value: AI Assessment (1-100) only
+        total_quality=F('raw_ai_score')
     )
 
     # ✨ NEW: SEPARATE SPOTLIGHT USERS (Top tier talent & pinned users)
