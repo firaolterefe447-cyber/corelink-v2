@@ -449,6 +449,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
+        'is_top_10',
         'is_pinned_in_right_now',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
@@ -459,6 +460,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_verified',
         'is_nexus_visible',
         'is_selected',
+        'is_top_10',
         'is_pinned_in_right_now',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
@@ -470,6 +472,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_hero_avatar_selected',
         'is_home_profile_selected',
         'is_selected',
+        'is_top_10',
         'is_pinned_in_right_now',
         'is_nexus_visible',
         'is_verified',
@@ -508,6 +511,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             "fields": (
                 'is_nexus_visible',
                 'is_selected',
+                'is_top_10',
                 'is_pinned_in_right_now',
                 'is_banned_from_right_now'
             ),

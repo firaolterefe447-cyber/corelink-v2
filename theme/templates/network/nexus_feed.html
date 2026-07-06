@@ -348,6 +348,44 @@
         </div>
         {% endif %}
 
+        <!-- ✨ TOP 10 TALENT SECTION -->
+        {% if top_10_users and not search_query %}
+        <div class="mb-12 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-3 mb-5 px-4 md:px-2">
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 text-purple-600 shadow-sm">
+                    <i data-lucide="award" class="w-4 h-4 fill-purple-500"></i>
+                </div>
+                <h2 class="text-[1.2rem] md:text-[1.4rem] font-black text-slate-900 font-heading tracking-tight">Top 10 Talent</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 px-4 md:px-2">
+                {% for top in top_10_users %}
+                <a href="{{ top.get_absolute_url|default:'#' }}" target="_blank" class="bg-white border border-purple-200/60 rounded-2xl p-4 shadow-[0_8px_24px_rgba(139,92,246,0.05)] hover:shadow-[0_12px_32px_rgba(139,92,246,0.12)] transition-all group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-transparent pointer-events-none"></div>
+
+                    <div class="flex flex-col items-center text-center relative z-10">
+                        {% if top.avatar %}
+                            <img src="{{ top.avatar.url }}" class="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-3 border-white shadow-md group-hover:scale-105 transition-transform duration-300 mb-3">
+                        {% else %}
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-purple-100 to-indigo-50 border-3 border-white shadow-md flex items-center justify-center text-purple-600 font-black text-2xl md:text-3xl group-hover:scale-105 transition-transform duration-300 mb-3 uppercase">
+                                {{ top.full_name|default:"U"|slice:":1" }}
+                            </div>
+                        {% endif %}
+                        <h3 class="font-black text-slate-900 truncate text-[13px] md:text-[14px] leading-tight mb-1 w-full">{{ top.full_name|default:"Unknown User" }}</h3>
+                        <p class="text-[10px] md:text-[11px] text-purple-600 font-bold truncate w-full">
+                            {% if top.portfolio.headlines.first %}
+                                {{ top.portfolio.headlines.first.title }}
+                            {% else %}
+                                {{ top.portfolio.field_of_interest|default:"Professional" }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- SECTION HEADER -->
         <div class="flex items-center justify-between mb-6 md:mb-10 px-5 md:px-2 border-b border-slate-200/80 pb-3 md:pb-4 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
             <h2 class="text-[1.35rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Network Results" %}</h2>

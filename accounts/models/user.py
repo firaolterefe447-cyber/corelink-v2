@@ -255,6 +255,12 @@ class CustomUser(AbstractUser, TimeStampedModel):
         db_index=True,
         help_text=_("Pin this user to the Talent Network card section on the landing page."),
     )
+    is_top_10 = models.BooleanField(
+        _("Top 10 Talent"),
+        default=False,
+        db_index=True,
+        help_text=_("Pin this user to the Top 10 section (displayed first in Nexus Feed, random order)."),
+    )
     is_contacted = models.BooleanField(
         _("Contacted Status"),
         default=False,

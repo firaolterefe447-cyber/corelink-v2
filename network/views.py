@@ -4,6 +4,7 @@
 import re
 import difflib
 import operator
+import random
 from functools import reduce, lru_cache
 from datetime import timedelta
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -171,13 +172,30 @@ def nexus_feed(request):
         'company_memberships__company'
     )
 
-    # 💎 2b. THE "SMART FEED" GRAVITY (Using Raw AI Score Only)
+    # ⏳ 2a. DB-AGNOSTIC TEMPORAL CALCULATION
+    base_users = base_users.annotate(
+        raw_inactive_duration=Now() - Coalesce(F('last_login'), F('date_joined'))
+    )
+
+    if connection.vendor == 'postgresql':
+        days_inactive_expr = ExtractDay('raw_inactive_duration')
+    else:
+        # SQLite Fallback: 1 Day = 86,400,000,000 microseconds
+        days_inactive_expr = ExpressionWrapper(
+            Cast(F('raw_inactive_duration'), FloatField()) / 86400000000.0,
+            output_field=FloatField()
+        )
+
+    # 💎 2b. THE "SMART FEED" GRAVITY (Using Raw AI Score & Freshness)
     scored_users = base_users.annotate(
-        # Pull the direct 1-100 Oracle Score
+        days_inactive=days_inactive_expr,
+        freshness_boost=Greatest(Value(0.0), Value(15.0) - Cast(F('days_inactive'), FloatField()) / 2.0),
+
+        # NEW: Pull the direct 1-100 Oracle Score instead of manual avatar calculations
         raw_ai_score=Cast(Coalesce('portfolio__oracle_score', Value(0)), FloatField())
     ).annotate(
-        # The ultimate ranking value: AI Assessment (1-100) only
-        total_quality=F('raw_ai_score')
+        # The ultimate ranking value: AI Assessment (1-100) + Recent Activity (0-15)
+        total_quality=F('raw_ai_score') + F('freshness_boost')
     )
 
     # ✨ NEW: SEPARATE SPOTLIGHT USERS (Top tier talent & pinned users)
@@ -185,6 +203,10 @@ def nexus_feed(request):
     spotlight_users = scored_users.filter(
         Q(is_selected=True) | Q(raw_ai_score__gte=85)
     ).order_by('-is_selected', '-total_quality')[:4]
+
+    # ✨ TOP 10 USERS (Admin-selected, displayed first in random order)
+    top_10_users = list(scored_users.filter(is_top_10=True)[:10])
+    random.shuffle(top_10_users)
 
     if raw_query:
         # 🧠 3. AWAKEN THE OMNI-INDUSTRY ORACLE
@@ -312,6 +334,7 @@ def nexus_feed(request):
     return render(request, 'network/nexus_feed.html', {
         'people': people_page,
         'spotlight_users': spotlight_users,  # <--- PASSED TO TEMPLATE FOR THE NEW CAROUSEL UI
+        'top_10_users': top_10_users,  # <--- PASSED TO TEMPLATE FOR TOP 10 SECTION
         'search_query': raw_query,
         'current_role': role_filter,
         'unread_msg_count': unread_count,
