@@ -429,77 +429,77 @@
        <!-- SELECTED WORKS -->
        {% if projects %}
        <section id="works" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
-           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Works</h2>
-           <div class="grid gap-12 md:gap-16">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-6 tracking-tight">Selected Works</h2>
+           <div class="grid gap-6 md:gap-8">
                {% for project in projects %}
                <article class="group/project">
                    {% with valid_assets=project.gallery.all %}
                    {% if valid_assets|length == 0 %}
                        <!-- No assets: Show simple card with title -->
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30 no-underline">
-                           <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
-                               <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.25rem] md:rounded-[1.5rem] p-4 md:p-5 mb-4 shadow-sm card-hover-premium flex items-center gap-4 hover:border-[#0A66C2]/30 no-underline">
+                           <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
+                               <i data-lucide="layout" class="w-4 h-4 md:w-5 md:h-5 text-[#0A66C2]"></i>
                            </div>
-                           <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
+                           <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
                        </a>
                    {% elif valid_assets|length == 1 %}
                        <!-- Single asset: Handle based on type -->
                        {% with asset=valid_assets.first %}
                        {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                            <!-- PDF Document -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 flex items-center justify-center no-underline">
-                               <div class="flex flex-col items-center gap-4 text-center p-8">
-                                   <div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
-                                       <i data-lucide="file-text" class="w-10 h-10 text-red-500"></i>
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-4 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 flex items-center justify-center no-underline">
+                               <div class="flex flex-col items-center gap-3 text-center p-6">
+                                   <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100">
+                                       <i data-lucide="file-text" class="w-8 h-8 text-red-500"></i>
                                    </div>
                                    <div>
-                                       <p class="text-[16px] md:text-[18px] font-bold text-slate-900 mb-1">View Document</p>
-                                       <p class="text-[12px] md:text-[13px] text-slate-500">Click to open PDF</p>
+                                       <p class="text-[15px] md:text-[17px] font-bold text-slate-900 mb-1">View Document</p>
+                                       <p class="text-[11px] md:text-[12px] text-slate-500">Click to open PDF</p>
                                    </div>
                                </div>
                                {% if asset.caption %}
-                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[11px] md:text-[13px] p-4 pt-12 md:pt-16 truncate font-medium tracking-wide">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
                            </a>
                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                            <!-- External Embed -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-4 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
                                <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
                                {% if asset.caption %}
-                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide z-10">
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[11px] md:text-[13px] p-4 pt-12 md:pt-16 truncate font-medium tracking-wide z-10">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
                            </a>
                        {% elif asset.asset_type == 'IMAGE' and asset.image %}
                            <!-- Image -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[4/3] md:aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden mb-6 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-4 relative bg-slate-100 shadow-sm border border-slate-200/50 group hover:shadow-md transition-shadow duration-500 no-underline">
                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                {% if asset.caption %}
-                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[11px] md:text-[13px] p-4 pt-12 md:pt-16 truncate font-medium tracking-wide">
                                    {{ asset.caption }}
                                </div>
                                {% endif %}
                            </a>
                        {% else %}
                            <!-- Fallback for asset with no valid content -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 mb-6 shadow-sm card-hover-premium flex items-center gap-5 hover:border-[#0A66C2]/30 no-underline">
-                               <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
-                                   <i data-lucide="layout" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2]"></i>
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full bg-white border border-slate-200 rounded-[1.25rem] md:rounded-[1.5rem] p-4 md:p-5 mb-4 shadow-sm card-hover-premium flex items-center gap-4 hover:border-[#0A66C2]/30 no-underline">
+                               <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 relative z-20 shrink-0">
+                                   <i data-lucide="layout" class="w-4 h-4 md:w-5 md:h-5 text-[#0A66C2]"></i>
                                </div>
-                               <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
+                               <h3 class="text-[18px] md:text-[22px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
                            </a>
                        {% endif %}
                        {% endwith %}
                    {% else %}
                        <!-- Multiple assets: Grid layout matching right_now_feed (first 3 images + plus icon) -->
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-6 relative group/gallery no-underline">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-4 relative group/gallery no-underline">
                            {% with count=valid_assets|length %}
-                           <div class="media-grid overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-slate-200 shadow-sm bg-white transition-all duration-300 hover:border-[#0A66C2]/30 hover:shadow-md">
+                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] border border-slate-200 shadow-sm bg-white transition-all duration-300 hover:border-[#0A66C2]/30 hover:shadow-md">
                                {% if count == 2 %}
-                                   <div class="grid grid-cols-2 gap-1 aspect-[4/3]">
+                                   <div class="grid grid-cols-2 gap-1 aspect-[3/2]">
                                        {% for asset in valid_assets|slice:":2" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.5rem] md:rounded-l-[2rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem] md:rounded-r-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
@@ -589,30 +589,24 @@
 
 
                    <div class="md:px-2">
-                       <h3 class="text-[22px] md:text-[26px] font-bold text-slate-900 mb-3 transition-colors group-hover/project:text-[#0A66C2]">{{ project.title }}</h3>
+                       <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 mb-2 transition-colors group-hover/project:text-[#0A66C2]">{{ project.title }}</h3>
 
 
-                       <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-5 text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em]">
+                       <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-3 text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em]">
                            {% if project.role %}<span class="px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-md">{{ project.role }}</span>{% endif %}
                            {% if project.client_name %}<span class="px-3 py-1.5 border border-slate-200 rounded-md bg-white shadow-sm">Client: {{ project.client_name }}</span>{% endif %}
                        </div>
 
 
-                       <div class="text-[14.5px] md:text-[16px] text-slate-600 leading-[1.8] mb-6 text-left md:max-w-[90%]">
+                       <div class="text-[14px] md:text-[15px] text-slate-600 leading-[1.7] mb-4 text-left md:max-w-[90%]">
                            {% if project.main_description %}<p>{{ project.main_description|truncatewords:30 }}</p>{% endif %}
                        </div>
 
 
                        <div class="flex flex-wrap items-center gap-4">
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0A66C2] to-[#0856A8] text-white text-[13px] font-extrabold uppercase tracking-[0.15em] rounded-xl hover:shadow-[0_6px_15px_rgba(10,102,194,0.25)] transition-all transform active:scale-95 border border-blue-600/50 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-700 text-[12px] font-semibold uppercase tracking-[0.15em] rounded-xl hover:bg-slate-200 transition-all transform active:scale-95 border border-slate-300 no-underline">
                                <span>View Details</span>
                            </a>
-
-                           {% if project.link %}
-                           <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] border-b-2 border-[#0A66C2]/30 hover:border-[#0A66C2] pb-1 transition-all group/link focus-visible:outline-none">
-                               View Live Project <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1"></i>
-                           </a>
-                           {% endif %}
                        </div>
                    </div>
                </article>
