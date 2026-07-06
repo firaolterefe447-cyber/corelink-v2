@@ -208,6 +208,11 @@ def nexus_feed(request):
     top_10_users = list(scored_users.filter(is_top_10=True)[:10])
     random.shuffle(top_10_users)
 
+    # Remove top 10 users from the main results to avoid duplicates
+    if top_10_users:
+        top_10_ids = [user.id for user in top_10_users]
+        scored_users = scored_users.exclude(id__in=top_10_ids)
+
     if raw_query:
         # 🧠 3. AWAKEN THE OMNI-INDUSTRY ORACLE
         (
@@ -312,7 +317,11 @@ def nexus_feed(request):
     # ==============================================================================
     # 🔒 EXTENDED PAYWALL LOCK: Hard limit increased to top 50 profiles
     # ==============================================================================
-    results = results[:50]  # <--- UPDATED FROM 20 TO 50
+    results = list(results[:50])  # <--- UPDATED FROM 20 TO 50
+
+    # Prepend top 10 users to the results (they appear first, randomly ordered)
+    if top_10_users:
+        results = top_10_users + results
 
     paginator = Paginator(results, 100)
     page_number = request.GET.get('page')
