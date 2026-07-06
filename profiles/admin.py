@@ -31,6 +31,13 @@ from .models import (
     CompanyMilestone, CompanyNews, NewsGalleryImage, CompanySocialLink, CompanyContactMethod
 )
 
+# Account Models for social links
+try:
+    from accounts.models import UniversalSocialLink, UniversalContactMethod
+except ImportError:
+    UniversalSocialLink = None
+    UniversalContactMethod = None
+
 # ==============================================================================
 # 0. UI HELPERS & DECORATORS
 # ==============================================================================
@@ -63,15 +70,16 @@ class SkillInline(TabularInline):
     model = Skill
     extra = 0
     tab = True
-    fields = ('name', 'status', 'proficiency_level', 'progress_bar', 'admin_status')
-    readonly_fields = ('admin_status',)
+    # Only show fields that appear in SkillForm
+    fields = ('name', 'context', 'proficiency_level')
 
 class WorkExperienceInline(StackedInline):
     model = WorkExperience
     extra = 0
     tab = True
+    # Only show fields that appear in WorkExperienceForm
     fieldsets = (
-        (None, {'fields': (('company_name', 'role_title'), ('start_date', 'end_date', 'date_display'), ('is_current', 'location_type'), 'description')}),
+        (None, {'fields': (('company_name', 'role_title'), ('start_date', 'end_date', 'date_display'), ('is_current', 'location_type', 'employment_type'), 'description')}),
     )
 
 class LiveOpportunityInline(TabularInline):
@@ -91,7 +99,8 @@ class UnifiedJobPreferenceInline(StackedInline):
     model = UnifiedJobPreference
     extra = 0
     tab = True
-    fields = (('role_title', 'is_active'), ('work_arrangement', 'commitment_type'), 'description')
+    # Only show fields that appear in JobPreferenceForm
+    fields = ('role_title', 'work_arrangement', 'commitment_type', 'description')
 
 class ProjectGalleryInline(TabularInline):
     model = ProjectGallery
@@ -105,6 +114,55 @@ class ProjectGalleryInline(TabularInline):
         if obj.image:
             return format_html('<img src="{}" class="h-12 w-auto rounded border border-gray-200 shadow-sm" />', obj.image.url)
         return "-"
+
+# ==============================================================================
+# NEW INLINES FOR MISSING TABLES
+# ==============================================================================
+
+class PortfolioProjectInline(StackedInline):
+    model = PortfolioProject
+    extra = 0
+    tab = True
+    # Only show fields that appear in PortfolioProjectForm
+    fields = ('category', 'title', 'role', 'link', 'main_description')
+
+
+class CredentialInline(StackedInline):
+    model = Credential
+    extra = 0
+    tab = True
+    # Only show fields that appear in CredentialForm
+    fields = ('title', 'issuer', 'issue_date', 'reflection', 'url_link', 'file_upload')
+
+
+class ContentPostInline(StackedInline):
+    model = ContentPost
+    extra = 0
+    tab = True
+    # Only show fields that appear in ContentPostForm
+    fields = ('post_type', 'category', 'title', 'content', 'media_proof', 'visibility')
+
+
+class LanguageInline(TabularInline):
+    model = Language
+    extra = 0
+    tab = True
+    fields = ('language_code', 'custom_language_name', 'proficiency', 'is_primary')
+
+
+class UniversalSocialLinkInline(TabularInline):
+    model = UniversalSocialLink
+    extra = 0
+    tab = True
+    # Only show fields that appear in UniversalSocialLinkForm
+    fields = ('platform_name', 'url')
+
+
+class UniversalContactMethodInline(TabularInline):
+    model = UniversalContactMethod
+    extra = 0
+    tab = True
+    fields = ('contact_type', 'value', 'is_primary')
 
 # ==============================================================================
 # 2. RIGHT NOW ECOSYSTEM INLINES
@@ -200,9 +258,19 @@ class UserProfileAdmin(ModelAdmin):
         ProfileHeadlineInline,
         SkillInline,
         WorkExperienceInline,
+        PortfolioProjectInline,
+        CredentialInline,
+        ContentPostInline,
+        LanguageInline,
         UnifiedJobPreferenceInline,
-        LiveOpportunityInline
+        LiveOpportunityInline,
     ]
+
+    # Add social link inline if the model is available
+    if UniversalSocialLink:
+        inlines.append(UniversalSocialLinkInline)
+    if UniversalContactMethod:
+        inlines.append(UniversalContactMethodInline)
 
     fieldsets = (
         (_('👑 Core Identity'), {
