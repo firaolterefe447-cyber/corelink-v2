@@ -9,6 +9,10 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.http import HttpResponse
+from django.contrib import messages
+import csv
+import io
 # Unfold Framework
 from unfold.admin import ModelAdmin, TabularInline, StackedInline
 from unfold.decorators import display
@@ -61,26 +65,36 @@ def star_rating(value):
 
 class ProfileHeadlineInline(TabularInline):
     model = ProfileHeadline
-    extra = 0
+    extra = 1  # Allow quick addition
     tab = True
     fields = ('title', 'is_primary', 'order')
     ordering = ('-is_primary', 'order')
+    verbose_name = "Professional Headline"
+    verbose_name_plural = "Headlines (Quick Add)"
 
 class SkillInline(TabularInline):
     model = Skill
-    extra = 0
+    extra = 2  # Allow quick addition of multiple skills
     tab = True
     # Only show fields that appear in SkillForm
     fields = ('name', 'context', 'proficiency_level')
+    verbose_name = "Skill"
+    verbose_name_plural = "Skills (Quick Add)"
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('profile')
 
 class WorkExperienceInline(StackedInline):
     model = WorkExperience
-    extra = 0
+    extra = 1  # Allow quick addition
     tab = True
     # Only show fields that appear in WorkExperienceForm
     fieldsets = (
         (None, {'fields': (('company_name', 'role_title'), ('start_date', 'end_date', 'date_display'), ('is_current', 'location_type', 'employment_type'), 'description')}),
     )
+    verbose_name = "Work Experience"
+    verbose_name_plural = "Work Experience (Quick Add)"
 
 class LiveOpportunityInline(TabularInline):
     model = LiveOpportunity
@@ -121,18 +135,32 @@ class ProjectGalleryInline(TabularInline):
 
 class PortfolioProjectInline(StackedInline):
     model = PortfolioProject
-    extra = 0
+    extra = 1  # Allow quick addition
     tab = True
     # Only show fields that appear in PortfolioProjectForm
     fields = ('category', 'title', 'role', 'link', 'main_description')
+    verbose_name = "Portfolio Project"
+    verbose_name_plural = "Projects (Quick Add)"
+    
+    # Include gallery inline for easy file uploads
+    inlines = [ProjectGalleryInline]
 
 
 class CredentialInline(StackedInline):
     model = Credential
-    extra = 0
+    extra = 1  # Allow quick addition
     tab = True
     # Only show fields that appear in CredentialForm
     fields = ('title', 'issuer', 'issue_date', 'reflection', 'url_link', 'file_upload')
+    verbose_name = "Credential"
+    verbose_name_plural = "Credentials (Quick Add)"
+    
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        # Add help text for file upload
+        if fieldsets:
+            fieldsets[0][1]['description'] = "Upload certificate PDF or image as proof. Supports drag & drop."
+        return fieldsets
 
 
 class ContentPostInline(StackedInline):
@@ -150,19 +178,8 @@ class LanguageInline(TabularInline):
     fields = ('language_code', 'custom_language_name', 'proficiency', 'is_primary')
 
 
-class UniversalSocialLinkInline(TabularInline):
-    model = UniversalSocialLink
-    extra = 0
-    tab = True
-    # Only show fields that appear in UniversalSocialLinkForm
-    fields = ('platform_name', 'url')
-
-
-class UniversalContactMethodInline(TabularInline):
-    model = UniversalContactMethod
-    extra = 0
-    tab = True
-    fields = ('contact_type', 'value', 'is_primary')
+# UniversalSocialLink and UniversalContactMethod belong to CustomUser, not UserProfile
+# They should be managed in accounts/admin.py, not here
 
 # ==============================================================================
 # 2. RIGHT NOW ECOSYSTEM INLINES
@@ -243,7 +260,7 @@ class NewsGalleryImageInline(TabularInline):
 @admin.register(UserProfile)
 class UserProfileAdmin(ModelAdmin):
     list_display = (
-        'user_identity', 'collaboration_badge', 'search_intent_badge',
+        'user_identity', 'completion_percentage', 'collaboration_badge', 'search_intent_badge',
         'rating_display', 'last_signal_update'
     )
     list_filter = (
@@ -251,8 +268,9 @@ class UserProfileAdmin(ModelAdmin):
         ('admin_rating', RangeNumericFilter)
     )
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'slug', 'location', 'institution')
-    readonly_fields = ('slug', 'last_signal_update', 'created_at', 'updated_at')
+    readonly_fields = ('slug', 'last_signal_update', 'created_at', 'updated_at', 'completion_summary')
     autocomplete_fields = ['user']
+    actions = ['export_profiles_csv', 'mark_profiles_complete', 'boost_rating', 'open_curation_interface', 'clone_profile_template']
 
     inlines = [
         ProfileHeadlineInline,
@@ -266,13 +284,15 @@ class UserProfileAdmin(ModelAdmin):
         LiveOpportunityInline,
     ]
 
-    # Add social link inline if the model is available
-    if UniversalSocialLink:
-        inlines.append(UniversalSocialLinkInline)
-    if UniversalContactMethod:
-        inlines.append(UniversalContactMethodInline)
+    # Note: UniversalSocialLink and UniversalContactMethod are managed in accounts/admin.py
+    # since they belong to CustomUser, not UserProfile
 
     fieldsets = (
+        (_('📊 Profile Status'), {
+            'fields': ('completion_summary',),
+            "classes": ("tab-content", "bg-blue-50"),
+            "description": "Track profile completion progress at a glance."
+        }),
         (_('👑 Core Identity'), {
             'fields': (('user', 'slug'), 'cv_file'),
             "classes": ("tab-content",),
@@ -295,13 +315,126 @@ class UserProfileAdmin(ModelAdmin):
         }),
     )
 
-    actions = ['lock_ratings', 'unlock_ratings', 'boost_rating', 'open_curation_interface']
 
-    @admin.action(description="Open Feed Curation Interface")
-    def open_curation_interface(self, request, queryset):
-        from django.http import HttpResponseRedirect
-        from django.urls import reverse
-        return HttpResponseRedirect(reverse('admin_curation'))
+    @display(description="Completion")
+    def completion_percentage(self, obj):
+        """Calculate profile completion percentage"""
+        completed = 0
+        total = 8  # Total sections to check
+        
+        if obj.bio_narrative:
+            completed += 1
+        if obj.location:
+            completed += 1
+        if obj.institution:
+            completed += 1
+        if obj.field_of_interest:
+            completed += 1
+        if obj.headlines.exists():
+            completed += 1
+        if obj.skills.exists():
+            completed += 1
+        if obj.experiences.exists():
+            completed += 1
+        if obj.projects.exists():
+            completed += 1
+        
+        percentage = int((completed / total) * 100)
+        
+        # Color coding
+        if percentage >= 80:
+            color = 'bg-emerald-500'
+        elif percentage >= 50:
+            color = 'bg-amber-500'
+        else:
+            color = 'bg-red-500'
+        
+        return format_html(
+            '<div class="flex items-center gap-2">'
+            '<div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">'
+            '<div class="h-full {}" style="width: {}%"></div>'
+            '</div>'
+            '<span class="text-xs font-semibold">{}%</span>'
+            '</div>',
+            color, percentage, percentage
+        )
+    
+    @display(description="Profile Summary")
+    def completion_summary(self, obj):
+        """Show detailed completion summary in readonly field"""
+        items = []
+        items.append(f"Bio: {'✓' if obj.bio_narrative else '✗'}")
+        items.append(f"Location: {'✓' if obj.location else '✗'}")
+        items.append(f"Institution: {'✓' if obj.institution else '✗'}")
+        items.append(f"Field: {'✓' if obj.field_of_interest else '✗'}")
+        items.append(f"Headlines: {obj.headlines.count()}")
+        items.append(f"Skills: {obj.skills.count()}")
+        items.append(f"Work Exp: {obj.experiences.count()}")
+        items.append(f"Projects: {obj.projects.count()}")
+        
+        return format_html(
+            '<div class="text-sm text-gray-600">{}</div>',
+            ' | '.join(items)
+        )
+    
+    @admin.action(description="Export selected profiles to CSV")
+    def export_profiles_csv(self, request, queryset):
+        """Export profile data for bulk editing"""
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="profiles_export.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'User Email', 'Full Name', 'Location', 'Institution', 'Field of Interest',
+            'Bio', 'Headlines Count', 'Skills Count', 'Work Experience Count', 'Projects Count',
+            'Collaboration Status', 'Current Search', 'Admin Rating'
+        ])
+        
+        for profile in queryset:
+            writer.writerow([
+                profile.user.email if profile.user else '',
+                profile.user.full_name if profile.user else '',
+                profile.location or '',
+                profile.institution or '',
+                profile.field_of_interest or '',
+                profile.bio_narrative or '',
+                profile.headlines.count(),
+                profile.skills.count(),
+                profile.work_experiences.count(),
+                profile.projects.count(),
+                profile.collaboration_status,
+                profile.current_search,
+                profile.admin_rating,
+            ])
+        
+        return response
+    
+    @admin.action(description="Mark selected as high-priority for completion")
+    def mark_profiles_complete(self, request, queryset):
+        """Mark profiles as needing completion attention"""
+        count = 0
+        for profile in queryset:
+            if profile.admin_rating < 3:
+                profile.admin_rating = 3
+                profile.save(update_fields=['admin_rating'])
+                count += 1
+        self.message_user(request, f"Boosted {count} profiles to rating 3 for completion attention.", messages.SUCCESS)
+    
+    @admin.action(description="Clone selected profile as template for new users")
+    def clone_profile_template(self, request, queryset):
+        """Clone a profile structure (without user data) for reuse"""
+        if queryset.count() != 1:
+            self.message_user(request, "Select exactly one profile to clone as template.", messages.ERROR)
+            return
+        
+        source_profile = queryset.first()
+        # Store template in session for use in create view
+        request.session['profile_template_id'] = str(source_profile.id)
+        self.message_user(
+            request, 
+            f"Profile template set! When creating a new profile, it will use {source_profile.user.full_name if source_profile.user else source_profile.slug} as template.",
+            messages.SUCCESS
+        )
 
     @display(description=_("User Identity"), ordering='user__last_name')
     def user_identity(self, obj):
@@ -350,6 +483,20 @@ class UserProfileAdmin(ModelAdmin):
         for profile in queryset.filter(is_rating_locked=False, admin_rating__lt=5):
             profile.admin_rating += 1
             profile.save(update_fields=['admin_rating'])
+    
+    @admin.action(description="Open Feed Curation Interface")
+    def open_curation_interface(self, request, queryset):
+        from django.http import HttpResponseRedirect
+        from django.urls import reverse
+        return HttpResponseRedirect(reverse('admin_curation'))
+    
+    def save_model(self, request, obj, form, change):
+        """Add duplicate detection and validation on save"""
+        if not change:  # Only on creation
+            # Check for duplicate profiles
+            if obj.user and UserProfile.objects.filter(user=obj.user).exists():
+                self.message_user(request, "Warning: This user already has a profile. You may be creating a duplicate.", messages.WARNING)
+        super().save_model(request, obj, form, change)
 
 
 # ==============================================================================
