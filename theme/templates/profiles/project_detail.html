@@ -255,38 +255,68 @@
    {% with valid_assets=project.gallery.all %}
    {% if valid_assets|length > 0 %}
    <section class="w-full relative mb-12 md:mb-16 reveal-on-scroll">
-       <!-- Scroll hint icon for mobile -->
-       <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#0A66C2] md:hidden pointer-events-none animate-pulse">
-           <i data-lucide="arrow-right" class="w-5 h-5"></i>
-       </div>
-
-
-       <div class="scrolling-gallery">
-           {% for asset in valid_assets %}
-           <div class="gallery-slide group">
-               {% if asset.asset_type == 'IMAGE' and asset.image %}
-                   <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
-                   {% if asset.caption %}
-                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
-                       {{ asset.caption }}
+       {% if all_pdfs and valid_assets|length > 0 %}
+           <!-- Project has only PDFs - Show styled PDF cover -->
+           {% with first_pdf=valid_assets.first %}
+           <div class="max-w-[900px] mx-auto">
+               <div class="w-full aspect-[16/10] rounded-[2rem] overflow-hidden relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-xl border-2 border-red-200 flex items-center justify-center">
+                   <div class="flex flex-col items-center gap-6 text-center p-12">
+                       <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center border-2 border-red-200 shadow-lg">
+                           <i data-lucide="file-text" class="w-12 h-12 text-red-500"></i>
+                       </div>
+                       <div>
+                           <p class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-2">{{ project.title }}</p>
+                           <p class="text-[14px] md:text-[15px] text-slate-600 font-medium mb-6">{{ valid_assets|length }} PDF{{ valid_assets|length|pluralize }} Available</p>
+                           <div class="flex flex-wrap items-center justify-center gap-4">
+                               {% for asset in valid_assets %}
+                               <a href="{{ asset.document_file.url }}" target="_blank" class="px-8 py-4 bg-white border-2 border-red-200 rounded-full text-[13px] font-extrabold text-slate-700 hover:text-red-600 hover:border-red-300 shadow-md transition-all uppercase tracking-widest no-underline">
+                                   {% if asset.caption %}{{ asset.caption }}{% else %}PDF {{ forloop.counter }}{% endif %}
+                               </a>
+                               {% endfor %}
+                           </div>
+                       </div>
+                   </div>
+                   {% if first_pdf.caption %}
+                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[14px] md:text-[16px] p-8 pt-20 md:pt-24 truncate font-semibold tracking-wide">
+                       {{ first_pdf.caption }}
                    </div>
                    {% endif %}
-               {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
-                   <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                       <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
-                           <i data-lucide="file-text" class="w-8 h-8"></i>
-                       </div>
-                       <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
-                       <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
+               </div>
+           </div>
+           {% endwith %}
+       {% else %}
+           <!-- Scroll hint icon for mobile -->
+           <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#0A66C2] md:hidden pointer-events-none animate-pulse">
+               <i data-lucide="arrow-right" class="w-5 h-5"></i>
+           </div>
+
+
+           <div class="scrolling-gallery">
+               {% for asset in valid_assets %}
+               <div class="gallery-slide group">
+                   {% if asset.asset_type == 'IMAGE' and asset.image %}
+                       <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
                        {% if asset.caption %}
                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
                            {{ asset.caption }}
                        </div>
                        {% endif %}
-                   </div>
-               {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                   <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                       <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                   {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                       <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
+                           <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                               <i data-lucide="file-text" class="w-8 h-8"></i>
+                           </div>
+                           <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
+                           <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
+                           {% if asset.caption %}
+                           <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                               {{ asset.caption }}
+                           </div>
+                           {% endif %}
+                       </div>
+                   {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                       <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
+                           <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
                            <i data-lucide="link" class="w-8 h-8"></i>
                        </div>
                        <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">External Resource</span>
@@ -302,9 +332,10 @@
                        <i data-lucide="image-off" class="w-12 h-12 text-slate-400"></i>
                    </div>
                {% endif %}
+               </div>
+               {% endfor %}
            </div>
-           {% endfor %}
-       </div>
+       {% endif %}
    </section>
    {% endif %}
    {% endwith %}

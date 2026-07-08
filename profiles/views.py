@@ -225,6 +225,14 @@ def public_profile_view(request, identifier):
         contact_methods = UniversalContactMethod.objects.filter(user=target_user).order_by('-created_at')
         social_links = UniversalSocialLink.objects.filter(user=target_user).order_by('order')
 
+        # Get projects and annotate with PDF-only status
+        projects = profile.projects.all().prefetch_related('gallery')
+        for project in projects:
+            valid_assets = project.gallery.all()
+            project.all_pdfs = False
+            if valid_assets.exists():
+                project.all_pdfs = all(asset.asset_type == 'DOCUMENT' for asset in valid_assets)
+
         # 5. Build Context with Modular Blocks
         context = {
             'profile': profile,
@@ -243,7 +251,7 @@ def public_profile_view(request, identifier):
             'experiences': profile.experiences.all().order_by('-is_current', '-start_date'),
 
             # Assets & Content
-            'projects': profile.projects.all().prefetch_related('gallery'),
+            'projects': projects,
             'content_posts': profile.content_posts.filter(visibility='PUBLIC'),
             'essays': profile.content_posts.filter(visibility='PUBLIC', post_type='ESSAY').order_by('-created_at'),
             'vision_blocks': profile.content_posts.filter(visibility='PUBLIC', post_type='VISION_BLOCK').order_by('-created_at'),
@@ -286,10 +294,17 @@ def project_detail_view(request, identifier, pk):
     # Get the specific project
     project = get_object_or_404(PortfolioProject, pk=pk, profile=target_user.portfolio)
     
+    # Check if project has only PDF assets
+    valid_assets = project.gallery.all()
+    all_pdfs = False
+    if valid_assets.exists():
+        all_pdfs = all(asset.asset_type == 'DOCUMENT' for asset in valid_assets)
+    
     context = {
         'profile': target_user.portfolio,
         'user': target_user,
         'project': project,
+        'all_pdfs': all_pdfs,
     }
     
     return render(request, 'profiles/project_detail.html', context)
