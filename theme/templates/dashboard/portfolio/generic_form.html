@@ -1262,12 +1262,13 @@
                 queuedFiles.forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        const isImage = file.type.startsWith('image/');
+                        const isImage = file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.pdf');
+                        const isPDF = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
                         const innerPreview = isImage
                             ? `<img src="${e.target.result}" class="w-full h-full object-cover">`
                             : `<div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                 <span class="text-[10px] font-bold uppercase truncate px-2 max-w-full">${file.name}</span>
+                                 <span class="text-[10px] font-bold uppercase truncate px-2 max-w-full">${isPDF ? 'PDF Document' : file.name}</span>
                                </div>`;
 
                         const div = document.createElement('div');

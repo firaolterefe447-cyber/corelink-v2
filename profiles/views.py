@@ -231,6 +231,7 @@ def public_profile_view(request, identifier):
             valid_assets = project.gallery.all()
             project.all_pdfs = False
             if valid_assets.exists():
+                # Check if all assets are PDF documents
                 project.all_pdfs = all(asset.asset_type == 'DOCUMENT' for asset in valid_assets)
 
         # 5. Build Context with Modular Blocks
