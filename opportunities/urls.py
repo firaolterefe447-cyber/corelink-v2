@@ -12,6 +12,7 @@ path('post-job/', views.PublicOpportunityCreateView.as_view(), name='public_post
     # 🚀 FIX: Map UUID first for old unmigrated jobs, then Slug for new jobs
     path('job/<uuid:pk>/', views.OpportunityDetailView.as_view(), name='detail_pk'),
     path('job/<slug:slug>/', views.OpportunityDetailView.as_view(), name='detail'),
+    path('job/<slug:slug>/og-image/', views.opportunity_og_image, name='og_image'),
 
     # ==========================================
     # 2. ACTIONS (Apply / Scout)

@@ -2,11 +2,22 @@
 {% load static i18n %}
 
 {% block meta_tags %}
-<!-- SOCIAL PREVIEW -->
-<meta property="og:title" content="{{ job.title }} | CoreLink">
-<meta property="og:description" content="{{ job.description|striptags|truncatechars:100 }}">
-<meta property="og:url" content="https://corelink.et{{ request.path }}">
+<!-- WORLD-CLASS SOCIAL PREVIEW -->
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="CoreLink">
+<meta property="og:title" content="{{ job.title }} | {{ job.get_company_name }}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:description" content="{{ job.description|striptags|truncatechars:150 }}">
+
+<!-- MAGIC OPENGRAPH IMAGE TAGS -->
+<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'opportunities:og_image' slug=job.slug %}?v={% now 'U' %}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ job.title }}">
+<meta name="twitter:description" content="{{ job.description|striptags|truncatechars:150 }}">
+<meta name="twitter:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'opportunities:og_image' slug=job.slug %}?v={% now 'U' %}">
 {% endblock %}
 
 {% block navbar %}

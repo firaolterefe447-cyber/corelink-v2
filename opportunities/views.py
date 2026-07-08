@@ -16,6 +16,12 @@ import re
 import operator
 from functools import reduce
 from datetime import timedelta
+import io
+import os
+from PIL import Image, ImageDraw, ImageFont
+from django.contrib.staticfiles import finders
+from django.conf import settings
+from django.http import HttpResponse
 
 from django.utils import timezone
 from django.db.models import Q, Case, When, IntegerField, F, Value, Count
@@ -733,3 +739,221 @@ class UserApplicantBoardView(LoginRequiredMixin, DetailView):
         context['rejected_count'] = applications.filter(status=JobApplication.Status.REJECTED).count()
 
         return context
+
+
+# ==============================================================================
+# 6. TELEGRAM/SOCIAL PREVIEW IMAGE GENERATOR
+# ==============================================================================
+
+def opportunity_og_image(request, slug):
+    """
+    Generates a world-class futuristic OpenGraph image for job opportunities.
+    Features minimal design, company logo, optimized colors, and clean typography.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    job = get_object_or_404(JobPost, slug=slug, status=JobPost.Status.ACTIVE)
+    
+    # 1. Create a blank canvas with optimized futuristic gradient
+    base_img = Image.new("RGB", (1200, 630), "#0F172A")
+    draw = ImageDraw.Draw(base_img)
+    
+    # 2. Draw futuristic gradient background
+    # Top section: Deep gradient
+    for y in range(0, 350):
+        alpha = int(255 * (1 - y / 350))
+        color = (
+            int(15 + (10 - 15) * (y / 350)),  # R
+            int(23 + (102 - 23) * (y / 350)),  # G  
+            int(42 + (194 - 42) * (y / 350))   # B
+        )
+        draw.rectangle([(0, y), (1200, y + 1)], fill=color)
+    
+    # Bottom section: Clean white
+    draw.rectangle([(0, 350), (1200, 630)], fill="#FFFFFF")
+    draw.line([(0, 350), (1200, 350)], fill="#0A66C2", width=6)
+    
+    # 3. Load fonts with fallback (must be done before drawing text)
+    font_large = None
+    font_medium = None
+    font_small = None
+    
+    try:
+        font_path = finders.find('fonts/Inter_18pt-Bold.ttf')
+        if not font_path and hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
+            backup_path = os.path.join(settings.STATIC_ROOT, 'fonts', 'Inter_18pt-Bold.ttf')
+            if os.path.exists(backup_path):
+                font_path = backup_path
+        
+        if font_path:
+            font_large = ImageFont.truetype(font_path, 56)
+            font_medium = ImageFont.truetype(font_path, 32)
+            font_small = ImageFont.truetype(font_path, 24)
+        else:
+            raise Exception("Font not found")
+    except Exception as e:
+        logger.warning(f"Font loading failed: {e}")
+        font_large = ImageFont.load_default()
+        font_medium = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+    
+    # 4. Draw Company Logo (if available)
+    logo_y = 80
+    logo_drawn = False
+    
+    if job.get_company_logo():
+        try:
+            from django.core.files.storage import default_storage
+            logo_url = job.get_company_logo()
+            
+            # Handle both URL and file paths
+            if logo_url.startswith('http'):
+                # It's a URL, try to download it
+                import requests
+                response = requests.get(logo_url, timeout=5)
+                if response.status_code == 200:
+                    logo = Image.open(io.BytesIO(response.content))
+                    logo = logo.resize((100, 100), Image.Resampling.LANCZOS)
+                    # Create rounded rectangle mask
+                    mask = Image.new('L', (100, 100), 0)
+                    mask_draw = ImageDraw.Draw(mask)
+                    mask_draw.rounded_rectangle([(0, 0), (100, 100)], radius=20, fill=255)
+                    # Paste with white border
+                    border = Image.new("RGBA", (110, 110), (0, 0, 0, 0))
+                    border_draw = ImageDraw.Draw(border)
+                    border_draw.rounded_rectangle([(0, 0), (110, 110)], radius=25, fill="#FFFFFF")
+                    base_img.paste(border, (50, logo_y - 5), border)
+                    base_img.paste(logo, (55, logo_y), mask)
+                    logo_drawn = True
+            else:
+                # It's a relative path, try to open from storage
+                # Use the company's logo field directly if it's a FileField
+                if job.company and job.company.logo:
+                    try:
+                        with job.company.logo.open('rb') as logo_file:
+                            logo = Image.open(logo_file)
+                            logo = logo.resize((100, 100), Image.Resampling.LANCZOS)
+                            # Create rounded rectangle mask
+                            mask = Image.new('L', (100, 100), 0)
+                            mask_draw = ImageDraw.Draw(mask)
+                            mask_draw.rounded_rectangle([(0, 0), (100, 100)], radius=20, fill=255)
+                            # Paste with white border
+                            border = Image.new("RGBA", (110, 110), (0, 0, 0, 0))
+                            border_draw = ImageDraw.Draw(border)
+                            border_draw.rounded_rectangle([(0, 0), (110, 110)], radius=25, fill="#FFFFFF")
+                            base_img.paste(border, (50, logo_y - 5), border)
+                            base_img.paste(logo, (55, logo_y), mask)
+                            logo_drawn = True
+                    except Exception as e:
+                        logger.warning(f"Failed to load company logo from field: {e}")
+                elif job.external_company_logo:
+                    try:
+                        with job.external_company_logo.open('rb') as logo_file:
+                            logo = Image.open(logo_file)
+                            logo = logo.resize((100, 100), Image.Resampling.LANCZOS)
+                            # Create rounded rectangle mask
+                            mask = Image.new('L', (100, 100), 0)
+                            mask_draw = ImageDraw.Draw(mask)
+                            mask_draw.rounded_rectangle([(0, 0), (100, 100)], radius=20, fill=255)
+                            # Paste with white border
+                            border = Image.new("RGBA", (110, 110), (0, 0, 0, 0))
+                            border_draw = ImageDraw.Draw(border)
+                            border_draw.rounded_rectangle([(0, 0), (110, 110)], radius=25, fill="#FFFFFF")
+                            base_img.paste(border, (50, logo_y - 5), border)
+                            base_img.paste(logo, (55, logo_y), mask)
+                            logo_drawn = True
+                    except Exception as e:
+                        logger.warning(f"Failed to load external company logo: {e}")
+        except Exception as e:
+            logger.warning(f"Failed to load company logo: {e}")
+    
+    # Fallback: Draw company initial if logo not drawn
+    if not logo_drawn:
+        company_name = job.get_company_name()
+        if company_name:
+            initial = company_name[0].upper() if company_name else "C"
+            # Draw circle with initial
+            circle = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+            circle_draw = ImageDraw.Draw(circle)
+            circle_draw.ellipse((0, 0, 100, 100), fill="#0A66C2")
+            base_img.paste(circle, (55, logo_y), circle)
+            # Draw initial
+            initial_font = font_large if font_large else font_medium
+            if initial_font:
+                # Calculate text position to center it
+                bbox = draw.textbbox((0, 0), initial, font=initial_font)
+                text_width = bbox[2] - bbox[0]
+                text_height = bbox[3] - bbox[1]
+                x = 55 + (100 - text_width) // 2
+                y = logo_y + (100 - text_height) // 2
+                draw.text((x, y), initial, fill="#FFFFFF", font=initial_font)
+    
+    # 5. Draw Job Title
+    title = job.title
+    if len(title) > 45:
+        title = title[:42] + "..."
+    draw.text((180, 90), title, fill="#FFFFFF", font=font_large)
+    
+    # 6. Draw Company Name
+    company = job.get_company_name()
+    if len(company) > 35:
+        company = company[:32] + "..."
+    draw.text((180, 160), company, fill="#94A3B8", font=font_small)
+    
+    # 7. Draw Job Type Badge
+    job_type = job.get_job_type_display()
+    if len(job_type) > 20:
+        job_type = job_type[:17] + "..."
+    badge_x = 180
+    badge_y = 200
+    badge_width = font_small.getlength(job_type) + 40
+    draw.rounded_rectangle([(badge_x, badge_y), (badge_x + badge_width, badge_y + 36)], radius=18, fill="#0A66C2")
+    draw.text((badge_x + 20, badge_y + 6), job_type, fill="#FFFFFF", font=font_small)
+    
+    # 8. Draw Location (if available)
+    if job.location:
+        location_text = job.location
+        if len(location_text) > 30:
+            location_text = location_text[:27] + "..."
+        draw.text((badge_x + badge_width + 20, badge_y + 6), f"📍 {location_text}", fill="#94A3B8", font=font_small)
+    
+    # 9. Draw Bottom Section - Job Details
+    # Draw CoreLink branding
+    draw.text((40, 400), "CoreLink", fill="#0A66C2", font=font_medium)
+    draw.text((40, 450), "Opportunities", fill="#64748B", font=font_small)
+    
+    # Draw job type icon and text
+    type_icons = {
+        'FULL_TIME': '💼',
+        'PART_TIME': '⏰',
+        'CONTRACT': '📝',
+        'GIG': '⚡',
+        'CHALLENGE': '🏆',
+        'INTERNSHIP': '🎓',
+        'ADVISORY': '🤝',
+        'VOLUNTEER': '❤️',
+        'COFOUNDER': '🚀'
+    }
+    icon = type_icons.get(job.job_type, '💼')
+    draw.text((400, 400), f"{icon} {job.get_job_type_display()}", fill="#0F172A", font=font_small)
+    
+    # Draw level if available
+    if job.level and job.level != 'ANY':
+        draw.text((400, 440), f"📊 {job.get_level_display()}", fill="#64748B", font=font_small)
+    
+    # Draw salary if available
+    if job.salary_range_display and job.salary_range_display != "Competitive":
+        salary_text = job.salary_range_display
+        if len(salary_text) > 25:
+            salary_text = salary_text[:22] + "..."
+        draw.text((400, 480), f"💰 {salary_text}", fill="#059669", font=font_small)
+    
+    # 10. Draw decorative accent
+    draw.rectangle([(1100, 400), (1150, 580)], fill="#0A66C2")
+    draw.rectangle([(1105, 405), (1145, 575)], fill="#FFFFFF")
+    
+    # 11. Export image
+    buffer = io.BytesIO()
+    base_img.save(buffer, format="JPEG", quality=95)
+    return HttpResponse(buffer.getvalue(), content_type="image/jpeg")
