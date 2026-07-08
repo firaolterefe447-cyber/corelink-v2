@@ -52,18 +52,18 @@ def generate_unique_slug(klass, field_name, source_text):
 
 
 def _trigger_oracle(user_id):
-    """Fires the Oracle asynchronously after the DB transaction is committed."""
+    """Fires the Oracle IMMEDIATELY for super-fast automatic calculation."""
     if user_id:
-        logger.info(f"[ORACLE SIGNAL] Triggering Oracle update for user_id: {user_id}")
-        transaction.on_commit(lambda: _execute_oracle_update(user_id))
+        logger.info(f"[ORACLE SIGNAL] Triggering IMMEDIATE Oracle update for user_id: {user_id}")
+        _execute_oracle_update(user_id)
 
 
 def _execute_oracle_update(user_id):
     """Executes the Oracle update with error handling and logging."""
     try:
-        logger.info(f"[ORACLE EXECUTION] Starting Oracle update for user_id: {user_id}")
+        logger.info(f"[ORACLE EXECUTION] Starting IMMEDIATE Oracle update for user_id: {user_id}")
         CoreLinkOracle.update_user_rating(user_id)
-        logger.info(f"[ORACLE SUCCESS] Completed Oracle update for user_id: {user_id}")
+        logger.info(f"[ORACLE SUCCESS] Completed IMMEDIATE Oracle update for user_id: {user_id}")
     except Exception as e:
         logger.error(f"[ORACLE ERROR] Failed to update user {user_id}: {str(e)}", exc_info=True)
 
