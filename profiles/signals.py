@@ -52,10 +52,14 @@ def generate_unique_slug(klass, field_name, source_text):
 
 
 def _trigger_oracle(user_id):
-    """Fires the Oracle IMMEDIATELY for super-fast automatic calculation."""
+    """
+    Fires the Oracle SAFELY. 
+    Using transaction.on_commit ensures the Oracle only runs AFTER 
+    all gallery images, skills, and related M2M data are firmly in the DB.
+    """
     if user_id:
-        logger.info(f"[ORACLE SIGNAL] Triggering IMMEDIATE Oracle update for user_id: {user_id}")
-        _execute_oracle_update(user_id)
+        logger.info(f"[ORACLE SIGNAL] Queued Oracle update for user_id: {user_id}")
+        transaction.on_commit(lambda: _execute_oracle_update(user_id))
 
 
 def _execute_oracle_update(user_id):

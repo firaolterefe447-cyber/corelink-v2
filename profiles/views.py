@@ -93,31 +93,31 @@ class PortfolioCreateMixin:
         form.instance.profile = portfolio
         messages.success(self.request, "Added successfully.")
         response = super().form_valid(form)
-        # 3. ROBUST FALLBACK: Force Oracle update immediately after save
+        # 3. TRANSACTION-SAFE: Queue Oracle update after transaction commits
         from profiles.automatic_rating import CoreLinkOracle
         try:
-            CoreLinkOracle.update_user_rating(self.request.user.id)
-            logger.info(f"[ORACLE DIRECT] Direct Oracle update triggered for user {self.request.user.id} after creating {form.instance.__class__.__name__}")
+            transaction.on_commit(lambda: CoreLinkOracle.update_user_rating(self.request.user.id))
+            logger.info(f"[ORACLE QUEUED] Oracle update queued for user {self.request.user.id} after creating {form.instance.__class__.__name__}")
         except Exception as e:
-            logger.error(f"[ORACLE DIRECT] Failed to update user {self.request.user.id}: {str(e)}", exc_info=True)
+            logger.error(f"[ORACLE QUEUED] Failed to queue update for user {self.request.user.id}: {str(e)}", exc_info=True)
         return response
 
 
 class OracleUpdateMixin:
     """
-    ROBUST FALLBACK: Forces Oracle update after any profile modification.
-    This ensures scores update even if Django signals fail to fire.
+    TRANSACTION-SAFE FALLBACK: Queues Oracle update after any profile modification.
+    This ensures scores update even if Django signals fail to fire, while respecting DB locks.
     """
     def form_valid(self, form):
         response = super().form_valid(form)
-        # Force Oracle update immediately after save
+        # Queue Oracle update after transaction commits (prevents race conditions)
         from profiles.automatic_rating import CoreLinkOracle
         try:
             user_id = self.request.user.id
-            CoreLinkOracle.update_user_rating(user_id)
-            logger.info(f"[ORACLE DIRECT] Direct Oracle update triggered for user {user_id} after updating {form.instance.__class__.__name__}")
+            transaction.on_commit(lambda: CoreLinkOracle.update_user_rating(user_id))
+            logger.info(f"[ORACLE QUEUED] Oracle update queued for user {user_id} after updating {form.instance.__class__.__name__}")
         except Exception as e:
-            logger.error(f"[ORACLE DIRECT] Failed to update user {self.request.user.id}: {str(e)}", exc_info=True)
+            logger.error(f"[ORACLE QUEUED] Failed to queue update for user {self.request.user.id}: {str(e)}", exc_info=True)
         return response
 
 class CompanyContextMixin(LoginRequiredMixin):
