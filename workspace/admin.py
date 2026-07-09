@@ -242,8 +242,8 @@ class CompanyMessageAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'receiver', 'short_body', 'read_status_badge', 'timestamp')
-    list_filter = ('is_read', 'timestamp')
+    list_display = ('sender', 'receiver', 'short_body', 'read_status_badge', 'delete_status_badge', 'timestamp')
+    list_filter = ('is_read', 'is_deleted', 'timestamp')
     search_fields = ('sender__username', 'sender__email', 'receiver__username', 'receiver__email', 'body')
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
@@ -260,10 +260,31 @@ class ChatMessageAdmin(admin.ModelAdmin):
             'fields': ('body',)
         }),
         ('⚙️ Metadata', {
-            'fields': ('is_read',),
+            'fields': ('is_read', 'is_deleted'),
             'classes': ('collapse',)
         }),
     )
+
+    def get_queryset(self, request):
+        """Show all messages including soft-deleted ones for admin visibility."""
+        qs = super().get_queryset(request)
+        return qs
+
+    def delete_model(self, request, obj):
+        """Override to use soft delete instead of hard delete."""
+        obj.is_deleted = True
+        obj.save()
+
+    def delete_queryset(self, request, queryset):
+        """Override to use soft delete for bulk actions."""
+        queryset.update(is_deleted=True)
+
+    def delete_status_badge(self, obj):
+        """Shows if message is soft-deleted."""
+        if obj.is_deleted:
+            return format_html('<span style="color: #ef4444; font-weight: bold;">🗑 Deleted</span>')
+        return format_html('<span style="color: #10b981; font-weight: bold;">✓ Active</span>')
+    delete_status_badge.short_description = "Status"
 
     def short_body(self, obj):
         """Truncates long messages for a cleaner table view."""
