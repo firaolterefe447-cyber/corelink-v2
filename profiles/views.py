@@ -1989,10 +1989,55 @@ def profile_og_image(request, identifier):
         headline_text = headline_text[:62] + "..."
 
     # ==========================================
-    # 7. PAINT THE HUGE TEXT
+    # 7. CHECK VERIFIED STATUS
+    # ==========================================
+    is_verified = getattr(target_user, 'profile_verified', False)
+    if portfolio and not is_verified:
+        is_verified = getattr(portfolio, 'profile_verified', False)
+
+    # ==========================================
+    # 8. PAINT THE HUGE TEXT
     # ==========================================
     draw.text((360, 420), display_name, fill="#0F172A", font=font_name_obj)
     draw.text((360, 520), headline_text, fill="#0A66C2", font=font_title_obj)
+
+    # ==========================================
+    # 9. DRAW VERIFIED BADGE IF VERIFIED
+    # ==========================================
+    if is_verified:
+        # Calculate name width to position badge next to it
+        try:
+            name_bbox = draw.textbbox((0, 0), display_name, font=font_name_obj)
+            name_width = name_bbox[2] - name_bbox[0]
+        except:
+            name_width = 400
+
+        # Draw green badge background next to name
+        badge_x = 360 + name_width + 20
+        badge_y = 420
+        badge_width, badge_height = 100, 28
+        draw.rounded_rectangle(
+            [(badge_x, badge_y), (badge_x + badge_width, badge_y + badge_height)],
+            radius=14,
+            fill="#DCFCE7",
+            outline="#16A34A",
+            width=2
+        )
+
+        # Draw checkmark
+        checkmark_points = [
+            (badge_x + 12, badge_y + 14),
+            (badge_x + 20, badge_y + 22),
+            (badge_x + 32, badge_y + 10)
+        ]
+        draw.line(checkmark_points, fill="#16A34A", width=3)
+
+        # Draw "VERIFIED" text
+        try:
+            font_verified = ImageFont.truetype(font_path, 12)
+        except:
+            font_verified = ImageFont.load_default()
+        draw.text((badge_x + 42, badge_y + 7), "VERIFIED", fill="#16A34A", font=font_verified)
 
     # ==========================================
     # 8. EXPORT IMAGE
