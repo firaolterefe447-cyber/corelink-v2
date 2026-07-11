@@ -361,8 +361,8 @@
                            </div>
                            {% endif %}
                            {% if experiences %}
-                           <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-lg shadow-sm">
-                               <i data-lucide="briefcase" class="w-3.5 h-3.5 text-amber-600"></i>
+                           <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg shadow-sm">
+                               <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-600"></i>
                                <span class="text-[12px] sm:text-[13px] font-bold text-slate-800">{{ experiences|length }}</span>
                                <span class="text-[11px] sm:text-[12px] font-semibold text-slate-600 uppercase tracking-wide">Experience{{ experiences|length|pluralize }}</span>
                            </div>
@@ -437,9 +437,9 @@
                    {% if project.all_pdfs and valid_assets|length > 0 %}
                        <!-- Project has only PDFs - Show styled PDF cover -->
                        {% with first_pdf=valid_assets.first %}
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md border-2 border-red-200 group hover:shadow-xl hover:border-red-300 transition-all duration-300 flex items-center justify-center no-underline">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
                            <div class="flex flex-col items-center gap-4 text-center p-8">
-                               <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border-2 border-red-200 shadow-sm">
+                               <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                </div>
                                <div>
@@ -457,7 +457,7 @@
                    {% elif valid_assets|length == 0 %}
                        <!-- No assets: Show simple card with title -->
                        <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="flex items-center gap-5 no-underline">
-                           <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center border-2 border-blue-200 relative z-20 shrink-0 shadow-sm">
+                           <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center relative z-20 shrink-0 shadow-sm">
                                <i data-lucide="layout" class="w-6 h-6 md:w-7 md:h-7 text-[#0A66C2]"></i>
                            </div>
                            <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
@@ -467,9 +467,9 @@
                        {% with asset=valid_assets.first %}
                        {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                            <!-- PDF Document -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md border-2 border-red-200 group hover:shadow-xl hover:border-red-300 transition-all duration-300 flex items-center justify-center no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
                                <div class="flex flex-col items-center gap-4 text-center p-8">
-                                   <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center border-2 border-red-200 shadow-sm">
+                                   <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                    </div>
                                    <div>
@@ -485,7 +485,7 @@
                            </a>
                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                            <!-- External Embed -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md border-2 border-slate-300 group hover:shadow-xl hover:border-slate-400 transition-all duration-300 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
                                <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide z-10">
@@ -495,7 +495,7 @@
                            </a>
                        {% elif asset.asset_type == 'IMAGE' and asset.image %}
                            <!-- Image -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md border-2 border-slate-300 group hover:shadow-xl hover:border-slate-400 transition-all duration-300 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
@@ -506,7 +506,7 @@
                        {% else %}
                            <!-- Fallback for asset with no valid content -->
                            <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="flex items-center gap-5 no-underline">
-                               <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center border-2 border-blue-200 relative z-20 shrink-0 shadow-sm">
+                               <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center relative z-20 shrink-0 shadow-sm">
                                    <i data-lucide="layout" class="w-6 h-6 md:w-7 md:h-7 text-[#0A66C2]"></i>
                                </div>
                                <h3 class="text-[20px] md:text-[24px] font-bold text-slate-900 relative z-20">{{ project.title }}</h3>
@@ -517,7 +517,7 @@
                        <!-- Multiple assets: Grid layout matching right_now_feed (first 3 images + plus icon) -->
                        <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-6 relative group/gallery no-underline">
                            {% with count=valid_assets|length %}
-                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] border-2 border-slate-300 shadow-md bg-white transition-all duration-300 hover:border-[#0A66C2]/40 hover:shadow-xl">
+                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-md bg-white transition-all duration-300 hover:shadow-xl">
                                {% if count == 2 %}
                                    <div class="grid grid-cols-2 gap-1 aspect-[3/2]">
                                        {% for asset in valid_assets|slice:":2" %}
