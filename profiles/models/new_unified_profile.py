@@ -126,6 +126,12 @@ class UserProfile(TimeStampedModel):
     is_rating_locked = models.BooleanField(default=False)
     last_signal_update = models.DateTimeField(default=timezone.now, db_index=True)
 
+    # --- Profile Verification ---
+    profile_verified = models.BooleanField(
+        _("Profile Verified"), default=False,
+        help_text="Indicates if the user has completed a complete profile and is verified by the platform"
+    )
+
     # --- Assets ---
     cv_file = models.FileField(
         _("Resume / CV PDF"), upload_to=profile_cv_path, null=True, blank=True,

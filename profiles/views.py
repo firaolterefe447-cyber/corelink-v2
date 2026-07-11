@@ -239,6 +239,7 @@ def public_profile_view(request, identifier):
             'profile': profile,
             'user': target_user,
             'role_title': target_user.get_role_display(),
+            'profile_verified': profile.profile_verified,
 
             # Infrastructure
             'contact_methods': contact_methods,

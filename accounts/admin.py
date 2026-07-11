@@ -66,6 +66,12 @@ class CustomUserChangeForm(forms.ModelForm):
         help_text=_("Check this to stop the AI Oracle from auto-updating this rating.")
     )
 
+    profile_verified = forms.BooleanField(
+        required=False,
+        label=_("Profile Verified"),
+        help_text=_("Check this to mark the user's profile as verified on the public portfolio page.")
+    )
+
     class Meta:
         model = CustomUser
         fields = '__all__'
@@ -86,12 +92,15 @@ class CustomUserChangeForm(forms.ModelForm):
             if profile:
                 self.fields['admin_rating'].initial = profile.admin_rating
                 self.fields['is_rating_locked'].initial = getattr(profile, 'is_rating_locked', False)
+                self.fields['profile_verified'].initial = getattr(profile, 'profile_verified', False)
             else:
                 self.fields['admin_rating'].disabled = True
                 self.fields['is_rating_locked'].disabled = True
+                self.fields['profile_verified'].disabled = True
                 self.fields['admin_rating'].help_text = _(
                     "User does not have an active Unified Portfolio yet. Cannot set rating.")
                 self.fields['is_rating_locked'].help_text = _("Portfolio required to lock rating.")
+                self.fields['profile_verified'].help_text = _("Portfolio required to verify profile.")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -488,7 +497,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             "fields": (
                 'full_name', 'telegram_handle', 'role', 'corelink_id',
                 'current_location', 'avatar', 'cover_image', 'is_verified',
-                ('admin_rating', 'is_rating_locked')
+                ('admin_rating', 'is_rating_locked', 'profile_verified')
             ),
             "classes": ["tab"]
         }),
@@ -549,6 +558,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         if profile:
             rating = form.cleaned_data.get('admin_rating')
             is_locked = form.cleaned_data.get('is_rating_locked')
+            is_verified = form.cleaned_data.get('profile_verified')
             update_fields = []
 
             if rating is not None and getattr(profile, 'admin_rating', None) != rating:
@@ -558,6 +568,10 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             if is_locked is not None and getattr(profile, 'is_rating_locked', None) != is_locked:
                 profile.is_rating_locked = is_locked
                 update_fields.append('is_rating_locked')
+
+            if is_verified is not None and getattr(profile, 'profile_verified', None) != is_verified:
+                profile.profile_verified = is_verified
+                update_fields.append('profile_verified')
 
             if update_fields:
                 profile.save(update_fields=update_fields)
