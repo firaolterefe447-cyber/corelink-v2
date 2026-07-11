@@ -66,12 +66,6 @@ class CustomUserChangeForm(forms.ModelForm):
         help_text=_("Check this to stop the AI Oracle from auto-updating this rating.")
     )
 
-    profile_verified = forms.BooleanField(
-        required=False,
-        label=_("Profile Verified"),
-        help_text=_("Check this to mark the user's profile as verified on the public portfolio page.")
-    )
-
     class Meta:
         model = CustomUser
         fields = '__all__'
@@ -92,15 +86,12 @@ class CustomUserChangeForm(forms.ModelForm):
             if profile:
                 self.fields['admin_rating'].initial = profile.admin_rating
                 self.fields['is_rating_locked'].initial = getattr(profile, 'is_rating_locked', False)
-                self.fields['profile_verified'].initial = getattr(profile, 'profile_verified', False)
             else:
                 self.fields['admin_rating'].disabled = True
                 self.fields['is_rating_locked'].disabled = True
-                self.fields['profile_verified'].disabled = True
                 self.fields['admin_rating'].help_text = _(
                     "User does not have an active Unified Portfolio yet. Cannot set rating.")
                 self.fields['is_rating_locked'].help_text = _("Portfolio required to lock rating.")
-                self.fields['profile_verified'].help_text = _("Portfolio required to verify profile.")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -468,6 +459,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 
     list_editable = [
         'is_verified',
+        'profile_verified',
         'is_nexus_visible',
         'is_selected',
         'is_top_10',
@@ -498,7 +490,8 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             "fields": (
                 'full_name', 'telegram_handle', 'role', 'corelink_id',
                 'current_location', 'avatar', 'cover_image', 'is_verified',
-                ('admin_rating', 'is_rating_locked', 'profile_verified')
+                'profile_verified',
+                ('admin_rating', 'is_rating_locked')
             ),
             "classes": ["tab"]
         }),
@@ -559,7 +552,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         if profile:
             rating = form.cleaned_data.get('admin_rating')
             is_locked = form.cleaned_data.get('is_rating_locked')
-            is_verified = form.cleaned_data.get('profile_verified')
+            is_verified = getattr(obj, 'profile_verified', False)
             update_fields = []
 
             if rating is not None and getattr(profile, 'admin_rating', None) != rating:
@@ -570,7 +563,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
                 profile.is_rating_locked = is_locked
                 update_fields.append('is_rating_locked')
 
-            if is_verified is not None and getattr(profile, 'profile_verified', None) != is_verified:
+            if getattr(profile, 'profile_verified', None) != is_verified:
                 profile.profile_verified = is_verified
                 update_fields.append('profile_verified')
 
@@ -668,13 +661,6 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             cv_html = '<div style="color: #9ca3af; font-size: 10px; margin-top: 4px;">No CV</div>'
 
         return format_html('<div style="min-width: 90px;">{}{}</div>', mark_safe(rating_html), mark_safe(cv_html))
-
-    @display(description=_("Profile Verified"), boolean=True)
-    def profile_verified(self, obj):
-        profile = get_user_profile(obj)
-        if profile:
-            return getattr(profile, 'profile_verified', False)
-        return False
 
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:

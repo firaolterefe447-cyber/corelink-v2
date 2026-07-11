@@ -195,6 +195,11 @@ class CustomUser(AbstractUser, TimeStampedModel):
         default=False,  # Reverted to False
         help_text=_("Identity verification completion status"),
     )
+    profile_verified = models.BooleanField(
+        _("Profile Verified"),
+        default=False,
+        help_text=_("Check this to mark the user's profile as verified on the public portfolio page"),
+    )
     google_sub = models.CharField(
         _("Google Subject ID"),
         max_length=255,
