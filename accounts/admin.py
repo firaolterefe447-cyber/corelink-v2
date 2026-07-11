@@ -456,6 +456,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'contact_details',
         'role_and_rating',
         'is_verified',
+        'profile_verified_status',
         'is_nexus_visible',
         'is_selected',
         'is_top_10',
@@ -558,7 +559,8 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         if profile:
             rating = form.cleaned_data.get('admin_rating')
             is_locked = form.cleaned_data.get('is_rating_locked')
-            is_verified = form.cleaned_data.get('profile_verified')
+            # Check both field names (form field and list_editable method name)
+            is_verified = form.cleaned_data.get('profile_verified') or form.cleaned_data.get('profile_verified_status')
             update_fields = []
 
             if rating is not None and getattr(profile, 'admin_rating', None) != rating:
@@ -667,6 +669,13 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             cv_html = '<div style="color: #9ca3af; font-size: 10px; margin-top: 4px;">No CV</div>'
 
         return format_html('<div style="min-width: 90px;">{}{}</div>', mark_safe(rating_html), mark_safe(cv_html))
+
+    @display(description=_("Profile Verified"), boolean=True)
+    def profile_verified_status(self, obj):
+        profile = get_user_profile(obj)
+        if profile:
+            return profile.profile_verified
+        return False
 
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
