@@ -333,10 +333,10 @@
                        <!-- Current Focus (Right Now Top Snippet) -->
                        {% with latest_focus=right_now_posts.first %}
                        {% if latest_focus and latest_focus.body_narrative or profile.current_mission %}
-                       <div class="mt-5 md:mt-6 relative">
-                           <p class="text-[14px] md:text-[16px] font-serif-title text-slate-600 italic leading-relaxed md:border-l-[3px] md:border-[#0A66C2] md:pl-4">
-                               "{% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}"
-                           </p>
+                       <div class="mt-5 md:mt-6">
+                           <div class="p-6 md:p-8 bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[1.75rem] shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300">
+                               <p class="text-[15px] md:text-[16px] text-slate-600 leading-[1.8]">{% if latest_focus and latest_focus.body_narrative %}{{ latest_focus.body_narrative }}{% else %}{{ profile.current_mission }}{% endif %}</p>
+                           </div>
                        </div>
                        {% endif %}
                        {% endwith %}
@@ -673,17 +673,18 @@
            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Core Skills</h2>
            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
                {% for skill in skills %}
-               <article class="p-6 md:p-8 bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[1.75rem] shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300 cursor-default">
-                   <div class="flex flex-col gap-1.5 md:gap-2 mb-3 md:mb-4">
-                       <span class="text-[17px] md:text-[19px] font-bold text-slate-900">{{ skill.name }}</span>
-                       <!-- Displaying ONLY what the user actually entered in the form -->
-                       {% if skill.proficiency_level %}
-                       <span class="inline-block w-max text-[10px] md:text-[11px] text-[#0A66C2] bg-blue-50 px-3 py-1 rounded-lg border-2 border-blue-200 font-extrabold uppercase tracking-[0.2em]">{{ skill.get_proficiency_level_display }}</span>
+               <article class="p-7 md:p-9 bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[1.75rem] shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300 flex flex-col cursor-default">
+                   <div class="relative z-20 flex flex-col h-full">
+                       <div class="flex flex-wrap items-center gap-3 mb-5">
+                           {% if skill.proficiency_level %}
+                           <span class="px-4 py-1.5 bg-blue-50 border-2 border-blue-200 text-[#0A66C2] text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">{{ skill.get_proficiency_level_display }}</span>
+                           {% endif %}
+                       </div>
+                       <h4 class="text-[19px] md:text-[23px] font-bold text-slate-900 mb-4 leading-snug">{{ skill.name }}</h4>
+                       {% if skill.context %}
+                       <p class="text-[15px] md:text-[16px] text-slate-600 mb-6 leading-[1.8]">{{ skill.context }}</p>
                        {% endif %}
                    </div>
-                   {% if skill.context %}
-                   <p class="text-[14px] md:text-[15.5px] text-slate-600 font-serif-title italic tracking-wide leading-relaxed">"{{ skill.context }}"</p>
-                   {% endif %}
                </article>
                {% endfor %}
            </div>
@@ -717,7 +718,7 @@
                            {% if cred.key_takeaways %}
                            <div class="bg-blue-50/60 p-5 rounded-xl mb-6 border-2 border-blue-200">
                                <span class="block text-[10px] font-extrabold text-[#0A66C2] uppercase tracking-[0.2em] mb-2">Key Takeaway</span>
-                               <p class="text-[14px] md:text-[15px] text-slate-700 italic font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
+                               <p class="text-[14px] md:text-[15px] text-slate-700 font-serif-title leading-relaxed">"{{ cred.key_takeaways }}"</p>
                            </div>
                            {% endif %}
 
