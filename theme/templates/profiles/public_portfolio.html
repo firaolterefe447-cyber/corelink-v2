@@ -260,6 +260,18 @@
        max-height: 600px !important;
        max-width: 100% !important;
        aspect-ratio: auto !important;
+       height: auto !important;
+   }
+   /* Force all images in project section to have max-height */
+   #works img, #works iframe {
+       max-height: 600px !important;
+       max-width: 100% !important;
+      height: auto !important;
+   }
+   /* Force all media-grid images to respect constraints */
+   .media-grid img, .media-grid iframe {
+       max-height: 600px !important;
+      height: auto !important;
    }
    /* Target all project grid containers */
    .grid.grid-cols-2 {
@@ -587,13 +599,13 @@
                                        {% for asset in valid_assets|slice:":2" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.5rem] md:rounded-l-[2rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem] md:rounded-r-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
                                            {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                                <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
@@ -607,7 +619,7 @@
                                        <div class="col-span-2 rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden" style="height: 250px;">
                                            {% with first=valid_assets.0 %}
                                            {% if first.asset_type == 'IMAGE' and first.image %}
-                                               <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                               <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
                                            {% elif first.asset_type == 'DOCUMENT' and first.document_file %}
                                                <a href="{{ first.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -624,13 +636,13 @@
                                        {% for asset in valid_assets|slice:"1:" %}
                                        <div class="{% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden" style="height: 150px;">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
                                            {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                                <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
@@ -644,7 +656,7 @@
                                        {% for asset in valid_assets|slice:":4" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.5rem] md:rounded-tl-[2rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.5rem] md:rounded-tr-[2rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
                                                {% if forloop.last and count > 4 %}
                                                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                                        <span class="text-white font-black text-[18px] md:text-[20px]">+{{ count|add:"-4" }}</span>
@@ -655,7 +667,7 @@
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>

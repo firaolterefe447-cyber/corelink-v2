@@ -677,11 +677,11 @@
                     {% if projects %}
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {% for project in projects|slice:":4" %}
-                            <a href="{% url 'manage_projects' %}" class="aspect-[4/3] rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/img cursor-pointer">
+                            <a href="{% url 'manage_projects' %}" class="rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/img cursor-pointer" style="height: 200px;">
                                 {% if project.gallery.first %}
                                     {% with asset=project.gallery.first %}
                                         {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                            <img src="{{ asset.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}">
+                                            <img src="{{ asset.image.url }}" class="w-full h-full object-cover pointer-events-none" alt="{{ project.title }}" style="max-height: 200px; max-width: 100%;">
                                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-end p-4 pointer-events-none" aria-hidden="true">
                                                 <span class="text-[13px] text-white font-bold line-clamp-2 leading-snug">{{ project.title }}</span>
                                             </div>
