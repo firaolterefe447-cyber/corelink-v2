@@ -309,10 +309,16 @@
    /* article .relative {
        max-height: 600px !important;
    } */
-   /* Force all images in project section to respect max-height */
-   #works img {
-       max-height: 600px !important;
-       max-width: 100% !important;
+   /* Force all images in project section to respect max-height - PC only */
+   @media (min-width: 768px) {
+       #works img {
+           max-height: 600px !important;
+           max-width: 100% !important;
+       }
+       #works iframe {
+           max-height: 600px !important;
+           max-width: 100% !important;
+       }
    }
 </style>
 
@@ -530,7 +536,7 @@
                    {% if project.all_pdfs and valid_assets|length > 0 %}
                        <!-- Project has only PDFs - Show styled PDF cover -->
                        {% with first_pdf=valid_assets.first %}
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline" style="height: 400px;">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
                            <div class="flex flex-col items-center gap-4 text-center p-8">
                                <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -560,7 +566,7 @@
                        {% with asset=valid_assets.first %}
                        {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                            <!-- PDF Document -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline" style="height: 400px;">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
                                <div class="flex flex-col items-center gap-4 text-center p-8">
                                    <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -578,7 +584,7 @@
                            </a>
                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                            <!-- External Embed -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline" style="height: 400px;">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
                                <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide z-10">
@@ -588,7 +594,7 @@
                            </a>
                        {% elif asset.asset_type == 'IMAGE' and asset.image %}
                            <!-- Image -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline" style="height: 400px; max-height: 600px;">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
@@ -610,19 +616,19 @@
                        <!-- Multiple assets: Grid layout matching right_now_feed (first 3 images + plus icon) -->
                        <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-6 relative group/gallery no-underline">
                            {% with count=valid_assets|length %}
-                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-md bg-white transition-all duration-300 hover:shadow-xl" style="height: 400px; max-height: 600px;">
+                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-md bg-white transition-all duration-300 hover:shadow-xl">
                                {% if count == 2 %}
-                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
+                                   <div class="grid grid-cols-2 gap-1 aspect-[3/2]">
                                        {% for asset in valid_assets|slice:":2" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.5rem] md:rounded-l-[2rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem] md:rounded-r-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" >
                                            {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                                <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen ></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
@@ -632,11 +638,11 @@
                                        {% endfor %}
                                    </div>
                                {% elif count == 3 %}
-                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
-                                       <div class="col-span-2 rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden" style="height: 250px;">
+                                   <div class="grid grid-cols-2 gap-1">
+                                       <div class="col-span-2 aspect-[16/9] rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden">
                                            {% with first=valid_assets.0 %}
                                            {% if first.asset_type == 'IMAGE' and first.image %}
-                                               <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
+                                               <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" >
                                            {% elif first.asset_type == 'DOCUMENT' and first.document_file %}
                                                <a href="{{ first.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -651,15 +657,15 @@
                                            {% endwith %}
                                        </div>
                                        {% for asset in valid_assets|slice:"1:" %}
-                                       <div class="{% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden" style="height: 150px;">
+                                       <div class="aspect-square {% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" >
                                            {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                                <a href="{{ asset.document_file.url }}" target="_blank" class="absolute inset-0 flex items-center justify-center bg-slate-100 hover:bg-red-50 transition-colors">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen ></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
@@ -669,11 +675,11 @@
                                        {% endfor %}
                                    </div>
                                {% elif count >= 4 %}
-                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
+                                   <div class="grid grid-cols-2 gap-1 aspect-square">
                                        {% for asset in valid_assets|slice:":4" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.5rem] md:rounded-tl-[2rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.5rem] md:rounded-tr-[2rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
-                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" style="max-height: 600px; max-width: 100%;">
+                                               <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105" >
                                                {% if forloop.last and count > 4 %}
                                                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                                                        <span class="text-white font-black text-[18px] md:text-[20px]">+{{ count|add:"-4" }}</span>
@@ -684,7 +690,7 @@
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                                                </a>
                                            {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen style="max-height: 600px; max-width: 100%;"></iframe>
+                                               <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen ></iframe>
                                            {% else %}
                                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100">
                                                    <i data-lucide="image-off" class="w-8 h-8 text-slate-400"></i>
@@ -1120,79 +1126,25 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
-       console.log('=== DEBUG: Project Image Constraints Started ===');
-       
-       // Force image height constraints on desktop view
+       // Force image height constraints on desktop view only
        function constrainProjectImages() {
-           console.log('=== DEBUG: constrainProjectImages() called ===');
-           
-           // Check if project section exists
-           const worksSection = document.getElementById('works');
-           console.log('DEBUG: #works section found:', !!worksSection);
-           if (worksSection) {
-               console.log('DEBUG: #works section display:', window.getComputedStyle(worksSection).display);
-               console.log('DEBUG: #works section visibility:', window.getComputedStyle(worksSection).visibility);
-               console.log('DEBUG: #works section height:', worksSection.offsetHeight);
-               
-               // Check all children of works section
-               const children = worksSection.children;
-               console.log('DEBUG: #works section children count:', children.length);
-               for (let i = 0; i < children.length; i++) {
-                   const child = children[i];
-                   console.log(`DEBUG: Child ${i} - tag: ${child.tagName}, height: ${child.offsetHeight}, display: ${window.getComputedStyle(child).display}`);
-               }
+           // Only apply on desktop view
+           if (window.innerWidth >= 768) {
+               const images = document.querySelectorAll('#works img, #works iframe');
+               images.forEach(img => {
+                   img.style.maxHeight = '600px';
+                   img.style.maxWidth = '100%';
+                   img.style.height = 'auto';
+               });
            }
-           
-           // Target all project images and iframes
-           const images = document.querySelectorAll('#works img, #works iframe');
-           console.log('DEBUG: Found images/iframes in #works:', images.length);
-           images.forEach((img, index) => {
-               const parent = img.parentElement;
-               console.log(`DEBUG: Image ${index} - height: ${img.offsetHeight}, parent: ${parent.tagName}, parentHeight: ${parent.offsetHeight}, parentDisplay: ${window.getComputedStyle(parent).display}`);
-               if (img.offsetHeight === 0) {
-                   console.log(`DEBUG: Image ${index} has 0 height - checking parent chain`);
-                   let current = parent;
-                   let depth = 0;
-                   while (current && depth < 10) {
-                       console.log(`DEBUG:   Parent ${depth}: ${current.tagName}, height: ${current.offsetHeight}, display: ${window.getComputedStyle(current).display}`);
-                       current = current.parentElement;
-                       depth++;
-                   }
-               }
-               img.style.maxHeight = '600px';
-               img.style.maxWidth = '100%';
-               img.style.height = 'auto';
-           });
-
-           // Target media-grid containers
-           const mediaGrids = document.querySelectorAll('.media-grid');
-           console.log('DEBUG: Found .media-grid containers:', mediaGrids.length);
-           mediaGrids.forEach((grid, index) => {
-               console.log(`DEBUG: MediaGrid ${index} - height: ${grid.offsetHeight}`);
-               grid.style.maxHeight = '600px';
-               grid.style.overflow = 'hidden';
-           });
-
-           // Target aspect ratio containers
-           const aspectContainers = document.querySelectorAll('[class*="aspect-"]');
-           console.log('DEBUG: Found aspect ratio containers:', aspectContainers.length);
-           aspectContainers.forEach((container, index) => {
-               console.log(`DEBUG: Aspect container ${index} - height: ${container.offsetHeight}`);
-               container.style.maxHeight = '600px';
-               container.style.aspectRatio = 'auto';
-           });
-           
-           console.log('=== DEBUG: constrainProjectImages() completed ===');
        }
 
        // Run on load
-       console.log('DEBUG: Running constrainProjectImages on load');
        constrainProjectImages();
 
-       // Run on window resize (for desktop view changes)
+       // Run on window resize
        let resizeTimer;
        window.addEventListener('resize', function() {
-           console.log('DEBUG: Window resized, scheduling constrainProjectImages');
            clearTimeout(resizeTimer);
            resizeTimer = setTimeout(constrainProjectImages, 250);
        });
