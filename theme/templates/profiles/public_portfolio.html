@@ -273,6 +273,23 @@
        max-height: 600px !important;
       height: auto !important;
    }
+   /* Desktop-specific overrides */
+   @media (min-width: 768px) {
+       #works img, #works iframe {
+           max-height: 600px !important;
+           max-width: 100% !important;
+           height: auto !important;
+       }
+       .media-grid img, .media-grid iframe {
+           max-height: 600px !important;
+           height: auto !important;
+       }
+       [class*="aspect-"] {
+           max-height: 600px !important;
+           aspect-ratio: auto !important;
+           height: auto !important;
+       }
+   }
    /* Target all project grid containers */
    .grid.grid-cols-2 {
        max-height: 600px !important;
@@ -1103,6 +1120,40 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
+       // Force image height constraints on desktop view
+       function constrainProjectImages() {
+           // Target all project images and iframes
+           const images = document.querySelectorAll('#works img, #works iframe');
+           images.forEach(img => {
+               img.style.maxHeight = '600px';
+               img.style.maxWidth = '100%';
+               img.style.height = 'auto';
+           });
+
+           // Target media-grid containers
+           const mediaGrids = document.querySelectorAll('.media-grid');
+           mediaGrids.forEach(grid => {
+               grid.style.maxHeight = '600px';
+               grid.style.overflow = 'hidden';
+           });
+
+           // Target aspect ratio containers
+           const aspectContainers = document.querySelectorAll('[class*="aspect-"]');
+           aspectContainers.forEach(container => {
+               container.style.maxHeight = '600px';
+               container.style.aspectRatio = 'auto';
+           });
+       }
+
+       // Run on load
+       constrainProjectImages();
+
+       // Run on window resize (for desktop view changes)
+       let resizeTimer;
+       window.addEventListener('resize', function() {
+           clearTimeout(resizeTimer);
+           resizeTimer = setTimeout(constrainProjectImages, 250);
+       });
 
 
        // CoreLink Loading Bar (UX for inner links)
