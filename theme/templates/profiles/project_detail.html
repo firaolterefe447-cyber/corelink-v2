@@ -158,53 +158,47 @@
        overflow-wrap: anywhere;
    }
 
-   /* Responsive Gallery */
-   .scrolling-gallery {
-       display: flex;
-       overflow-x: auto;
+   /* Grid Gallery Layout */
+   .gallery-grid {
+       display: grid;
+       grid-template-columns: 1fr;
        gap: 1.5rem;
-       padding: 1rem 5vw 3rem 5vw;
-       scroll-snap-type: x mandatory;
-       -webkit-overflow-scrolling: touch;
-       scrollbar-width: none;
-       scroll-padding: 0 5vw;
    }
-   .scrolling-gallery::-webkit-scrollbar {
-       display: none;
+   @media (min-width: 768px) {
+       .gallery-grid {
+           grid-template-columns: repeat(2, 1fr);
+           gap: 2rem;
+       }
    }
 
-   .gallery-slide {
-       flex: 0 0 auto;
-       width: 85vw;
-       max-width: 900px;
-       scroll-snap-align: center;
-       height: 400px;
-       max-height: 600px;
-       border-radius: 1.5rem;
+   .gallery-item {
+       border-radius: 1.25rem;
        overflow: hidden;
-       background: linear-gradient(135deg, #FFFFFF 0%, #FFFEFA 100%);
+       background: white;
        border: 1px solid rgba(200, 190, 170, 0.25);
        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.04);
        position: relative;
-       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+       aspect-ratio: 16/10;
    }
-   .gallery-slide:hover {
+   @media (min-width: 768px) {
+       .gallery-item { border-radius: 1.5rem; }
+   }
+   .gallery-item:hover {
        transform: translateY(-4px);
        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 32px rgba(0, 0, 0, 0.08);
        border-color: rgba(200, 190, 170, 0.4);
    }
 
-   @media (min-width: 768px) {
-       .gallery-slide { width: 75vw; border-radius: 2rem; }
-   }
-   @media (min-width: 1024px) {
-       .gallery-slide { width: 65vw; }
-   }
-
-   .gallery-slide img {
+   .gallery-item img {
        width: 100%;
        height: 100%;
        object-fit: cover;
+   }
+
+   .gallery-item.full-width {
+       grid-column: 1 / -1;
+       aspect-ratio: 21/9;
    }
 </style>
 
@@ -215,7 +209,7 @@
 <div class="w-full bg-[#F8FAFC] pb-24 relative overflow-hidden animate-fade-in pt-16">
 
 
-   <div class="max-w-[1000px] mx-auto px-5 md:px-10 pt-6 md:pt-8 mb-10">
+   <div class="max-w-[1100px] mx-auto px-0 sm:px-4 md:px-6 lg:px-8 pt-6 md:pt-8 mb-10">
        <!-- 1. HERO HEADER -->
        <div class="text-center mb-12 md:mb-16 reveal-on-scroll">
 
@@ -259,18 +253,18 @@
        {% if all_pdfs and valid_assets|length > 0 %}
            <!-- Project has only PDFs - Show styled PDF cover -->
            {% with first_pdf=valid_assets.first %}
-           <div class="max-w-[900px] mx-auto">
-               <div class="w-full rounded-[2rem] overflow-hidden relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-xl border-2 border-red-200 flex items-center justify-center" style="height: 400px;">
-                   <div class="flex flex-col items-center gap-6 text-center p-12">
-                       <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center border-2 border-red-200 shadow-lg">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+           <div class="max-w-[1100px] mx-auto px-0 sm:px-4 md:px-6 lg:px-8">
+               <div class="w-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-xl border-2 border-red-200 flex items-center justify-center" style="min-height: 400px;">
+                   <div class="flex flex-col items-center gap-6 text-center p-8 md:p-12">
+                       <div class="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl md:rounded-3xl flex items-center justify-center border-2 border-red-200 shadow-lg">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 md:w-12 md:h-12 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                        </div>
                        <div>
-                           <p class="text-[22px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-2">{{ project.title }}</p>
-                           <p class="text-[14px] md:text-[15px] text-slate-600 font-medium mb-6">{{ valid_assets|length }} PDF{{ valid_assets|length|pluralize }} Available</p>
-                           <div class="flex flex-wrap items-center justify-center gap-4">
+                           <p class="text-[20px] md:text-[26px] font-serif-title font-bold text-slate-900 mb-2">{{ project.title }}</p>
+                           <p class="text-[13px] md:text-[15px] text-slate-600 font-medium mb-6">{{ valid_assets|length }} PDF{{ valid_assets|length|pluralize }} Available</p>
+                           <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
                                {% for asset in valid_assets %}
-                               <a href="{{ asset.document_file.url }}" target="_blank" class="px-8 py-4 bg-white border-2 border-red-200 rounded-full text-[13px] font-extrabold text-slate-700 hover:text-red-600 hover:border-red-300 shadow-md transition-all uppercase tracking-widest no-underline">
+                               <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 md:px-8 md:py-4 bg-white border-2 border-red-200 rounded-full text-[11px] md:text-[13px] font-extrabold text-slate-700 hover:text-red-600 hover:border-red-300 shadow-md transition-all uppercase tracking-widest no-underline">
                                    {% if asset.caption %}{{ asset.caption }}{% else %}PDF {{ forloop.counter }}{% endif %}
                                </a>
                                {% endfor %}
@@ -278,7 +272,7 @@
                        </div>
                    </div>
                    {% if first_pdf.caption %}
-                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[14px] md:text-[16px] p-8 pt-20 md:pt-24 truncate font-semibold tracking-wide">
+                   <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
                        {{ first_pdf.caption }}
                    </div>
                    {% endif %}
@@ -286,55 +280,51 @@
            </div>
            {% endwith %}
        {% else %}
-           <!-- Scroll hint icon for mobile -->
-           <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-[#0A66C2] md:hidden pointer-events-none animate-pulse">
-               <i data-lucide="arrow-right" class="w-5 h-5"></i>
-           </div>
-
-
-           <div class="scrolling-gallery">
-               {% for asset in valid_assets %}
-               <div class="gallery-slide group">
-                   {% if asset.asset_type == 'IMAGE' and asset.image %}
-                       <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105" style="max-height: 600px; max-width: 100%;">
-                       {% if asset.caption %}
-                       <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
-                           {{ asset.caption }}
-                       </div>
-                       {% endif %}
-                   {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
-                       <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                           <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
-                               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                           </div>
-                           <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Document Asset</span>
-                           <a href="{{ asset.document_file.url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
+           <!-- Grid Gallery Layout -->
+           <div class="max-w-[1100px] mx-auto px-0 sm:px-4 md:px-6 lg:px-8">
+               <div class="gallery-grid">
+                   {% for asset in valid_assets %}
+                   <div class="gallery-item group">
+                       {% if asset.asset_type == 'IMAGE' and asset.image %}
+                           <img src="{{ asset.image.url }}" loading="lazy" alt="Project presentation image" class="transition-transform duration-700 ease-out group-hover:scale-105">
                            {% if asset.caption %}
-                           <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
+                           <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
+                               {{ asset.caption }}
+                           </div>
+                           {% endif %}
+                       {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
+                           <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-6 md:p-8">
+                               <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-4 md:mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                               </div>
+                               <span class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 md:mb-4">Document Asset</span>
+                               <a href="{{ asset.document_file.url }}" target="_blank" class="px-5 py-2.5 md:px-6 md:py-3 bg-white border border-slate-200 rounded-full text-[11px] md:text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">View PDF</a>
+                               {% if asset.caption %}
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
+                                   {{ asset.caption }}
+                               </div>
+                               {% endif %n                           </div>
+                       {% elif asset.asset_type == 'EMBED' and asset.external_url %}
+                           <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-6 md:p-8">
+                               <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-4 md:mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
+                               <i data-lucide="link" class="w-8 h-8"></i>
+                           </div>
+                           <span class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 md:mb-4">External Resource</span>
+                           <a href="{{ asset.external_url }}" target="_blank" class="px-5 py-2.5 md:px-6 md:py-3 bg-white border border-slate-200 rounded-full text-[11px] md:text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">Open Link</a>
+                           {% if asset.caption %}
+                               <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
                                {{ asset.caption }}
                            </div>
                            {% endif %}
                        </div>
-                   {% elif asset.asset_type == 'EMBED' and asset.external_url %}
-                       <div class="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
-                           <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-300 mb-6 group-hover:scale-110 group-hover:text-[#0A66C2] transition-all duration-500">
-                           <i data-lucide="link" class="w-8 h-8"></i>
+                   {% else %}
+                       <div class="w-full h-full bg-slate-100 flex items-center justify-center">
+                           <i data-lucide="image-off" class="w-10 h-10 md:w-12 md:h-12 text-slate-400"></i>
                        </div>
-                       <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">External Resource</span>
-                       <a href="{{ asset.external_url }}" target="_blank" class="px-6 py-3 bg-white border border-slate-200 rounded-full text-[12px] font-extrabold text-slate-700 hover:text-[#0A66C2] shadow-sm transition-colors uppercase tracking-widest no-underline">Open Link</a>
-                       {% if asset.caption %}
-                       <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-6 pt-16 md:pt-20 truncate font-medium tracking-wide">
-                           {{ asset.caption }}
-                       </div>
-                       {% endif %}
+                   {% endif %}
                    </div>
-               {% else %}
-                   <div class="w-full h-full bg-slate-100 flex items-center justify-center">
-                       <i data-lucide="image-off" class="w-12 h-12 text-slate-400"></i>
-                   </div>
-               {% endif %}
+                   {% endfor %}
                </div>
-               {% endfor %}
            </div>
        {% endif %}
    </section>
@@ -343,7 +333,7 @@
 
 
    <!-- 3. CONTENT SECTIONS -->
-   <div class="max-w-[1000px] mx-auto px-5 md:px-10 space-y-8 md:space-y-12">
+   <div class="max-w-[1100px] mx-auto px-0 sm:px-4 md:px-6 lg:px-8 space-y-16 md:space-y-24">
 
 
        <!-- Overview / Description -->
