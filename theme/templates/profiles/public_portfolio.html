@@ -316,7 +316,7 @@
    }
    /* Constrain individual project articles */
    #works article {
-       max-height: 800px !important;
+       max-height: 600px !important;
        overflow: hidden !important;
    }
 </style>
@@ -1145,6 +1145,12 @@
                for (let i = 0; i < children.length; i++) {
                    const child = children[i];
                    console.log(`DEBUG: Child ${i} - tag: ${child.tagName}, height: ${child.offsetHeight}, display: ${window.getComputedStyle(child).display}`);
+                   // Constrain the flex container
+                   if (child.tagName === 'DIV' && (child.classList.contains('flex') || child.classList.contains('grid'))) {
+                       console.log('DEBUG: Found flex/grid container, constraining height');
+                       child.style.maxHeight = '3000px';
+                       child.style.overflowY = 'auto';
+                   }
                }
            }
            
