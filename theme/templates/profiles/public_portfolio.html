@@ -314,11 +314,6 @@
        max-height: 600px !important;
        max-width: 100% !important;
    }
-   /* Constrain individual project articles */
-   #works article {
-       max-height: 600px !important;
-       overflow: hidden !important;
-   }
 </style>
 
 
@@ -528,7 +523,7 @@
        {% if projects %}
        <section id="works" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Works</h2>
-           <div class="flex flex-col gap-8 md:gap-10">
+           <div class="grid gap-8 md:gap-10">
                {% for project in projects %}
                <article class="group/project bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300">
                    {% with valid_assets=project.gallery.all %}
@@ -1145,12 +1140,6 @@
                for (let i = 0; i < children.length; i++) {
                    const child = children[i];
                    console.log(`DEBUG: Child ${i} - tag: ${child.tagName}, height: ${child.offsetHeight}, display: ${window.getComputedStyle(child).display}`);
-                   // Constrain the flex container
-                   if (child.tagName === 'DIV' && (child.classList.contains('flex') || child.classList.contains('grid'))) {
-                       console.log('DEBUG: Found flex/grid container, constraining height');
-                       child.style.maxHeight = '3000px';
-                       child.style.overflowY = 'auto';
-                   }
                }
            }
            
