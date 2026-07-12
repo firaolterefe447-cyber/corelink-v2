@@ -188,3 +188,12 @@ def optimize_right_now_media(sender: Any, instance: Any, created: bool, **kwargs
         transaction.on_commit(
             lambda: _perform_optimization(instance.pk, sender, "image")
         )
+
+
+@receiver(post_save, sender=ProjectGallery)
+def optimize_project_gallery_media(sender: Any, instance: Any, created: bool, **kwargs: Any) -> None:
+    """Optimize ProjectGallery image uploads to prevent layout issues."""
+    if getattr(instance, "image", None):
+        transaction.on_commit(
+            lambda: _perform_optimization(instance.pk, sender, "image")
+        )

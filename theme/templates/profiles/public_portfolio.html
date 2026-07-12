@@ -232,31 +232,58 @@
 
    /* Project Gallery Image Constraints */
    .media-grid {
-       max-height: 600px;
+       max-height: 600px !important;
        min-height: 200px;
+       overflow: hidden !important;
    }
    .media-grid img {
-       max-width: 100%;
-       max-height: 600px;
-       object-fit: cover;
+       max-width: 100% !important;
+       max-height: 600px !important;
+       object-fit: cover !important;
    }
    .media-grid iframe {
-       max-width: 100%;
-       max-height: 600px;
+       max-width: 100% !important;
+       max-height: 600px !important;
    }
    /* Single image and iframe constraints */
    article img.absolute {
-       max-width: 100%;
-       max-height: 600px;
-       object-fit: cover;
+       max-width: 100% !important;
+       max-height: 600px !important;
+       object-fit: cover !important;
    }
    article iframe.absolute {
-       max-width: 100%;
-       max-height: 600px;
+       max-width: 100% !important;
+       max-height: 600px !important;
    }
-   /* Ensure aspect ratio containers don't overflow */
+   /* OVERRIDE ASPECT RATIOS - Force max-height instead */
    [class*="aspect-"] {
-       max-height: 600px;
+       max-height: 600px !important;
+       max-width: 100% !important;
+       aspect-ratio: auto !important;
+   }
+   /* Target all project grid containers */
+   .grid.grid-cols-2 {
+       max-height: 600px !important;
+   }
+   .grid.grid-cols-2 > div {
+       max-height: 600px !important;
+   }
+   .grid.grid-cols-2 img {
+       max-height: 600px !important;
+   }
+   /* Constrain the project article itself */
+   article.group\\/project {
+       max-height: 800px !important;
+       overflow: hidden !important;
+   }
+   /* Constrain all relative overflow containers in projects */
+   article .relative {
+       max-height: 600px !important;
+   }
+   /* Force all images in project section to respect max-height */
+   #works img {
+       max-height: 600px !important;
+       max-width: 100% !important;
    }
 </style>
 
@@ -474,7 +501,7 @@
                    {% if project.all_pdfs and valid_assets|length > 0 %}
                        <!-- Project has only PDFs - Show styled PDF cover -->
                        {% with first_pdf=valid_assets.first %}
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline" style="height: 400px;">
                            <div class="flex flex-col items-center gap-4 text-center p-8">
                                <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -504,7 +531,7 @@
                        {% with asset=valid_assets.first %}
                        {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                            <!-- PDF Document -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline" style="height: 400px;">
                                <div class="flex flex-col items-center gap-4 text-center p-8">
                                    <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -522,7 +549,7 @@
                            </a>
                        {% elif asset.asset_type == 'EMBED' and asset.external_url %}
                            <!-- External Embed -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline" style="height: 400px;">
                                <iframe src="{{ asset.external_url }}" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide z-10">
@@ -532,7 +559,7 @@
                            </a>
                        {% elif asset.asset_type == 'IMAGE' and asset.image %}
                            <!-- Image -->
-                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full aspect-[3/2] md:aspect-[16/10] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
+                           <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline" style="height: 400px; max-height: 600px;">
                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="absolute inset-0 w-full h-full object-cover img-hover-zoom">
                                {% if asset.caption %}
                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent text-white text-[12px] md:text-[14px] p-5 pt-14 md:pt-18 truncate font-semibold tracking-wide">
@@ -554,9 +581,9 @@
                        <!-- Multiple assets: Grid layout matching right_now_feed (first 3 images + plus icon) -->
                        <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block mb-6 relative group/gallery no-underline">
                            {% with count=valid_assets|length %}
-                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-md bg-white transition-all duration-300 hover:shadow-xl">
+                           <div class="media-grid overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-md bg-white transition-all duration-300 hover:shadow-xl" style="height: 400px; max-height: 600px;">
                                {% if count == 2 %}
-                                   <div class="grid grid-cols-2 gap-1 aspect-[3/2]">
+                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
                                        {% for asset in valid_assets|slice:":2" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-l-[1.5rem] md:rounded-l-[2rem]{% endif %} {% if forloop.last %}rounded-r-[1.5rem] md:rounded-r-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
@@ -576,8 +603,8 @@
                                        {% endfor %}
                                    </div>
                                {% elif count == 3 %}
-                                   <div class="grid grid-cols-2 gap-1">
-                                       <div class="col-span-2 aspect-[16/9] rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden">
+                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
+                                       <div class="col-span-2 rounded-t-[1.5rem] md:rounded-t-[2rem] overflow-hidden" style="height: 250px;">
                                            {% with first=valid_assets.0 %}
                                            {% if first.asset_type == 'IMAGE' and first.image %}
                                                <img src="{{ first.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
@@ -595,7 +622,7 @@
                                            {% endwith %}
                                        </div>
                                        {% for asset in valid_assets|slice:"1:" %}
-                                       <div class="aspect-square {% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden">
+                                       <div class="{% if forloop.first %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %} overflow-hidden" style="height: 150px;">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
                                                <img src="{{ asset.image.url }}" loading="lazy" alt="{{ project.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/gallery:scale-105">
                                            {% elif asset.asset_type == 'DOCUMENT' and asset.document_file %}
@@ -613,7 +640,7 @@
                                        {% endfor %}
                                    </div>
                                {% elif count >= 4 %}
-                                   <div class="grid grid-cols-2 gap-1 aspect-square">
+                                   <div class="grid grid-cols-2 gap-1" style="height: 400px;">
                                        {% for asset in valid_assets|slice:":4" %}
                                        <div class="relative overflow-hidden w-full h-full {% if forloop.first %}rounded-tl-[1.5rem] md:rounded-tl-[2rem]{% endif %} {% if forloop.counter == 2 %}rounded-tr-[1.5rem] md:rounded-tr-[2rem]{% endif %} {% if forloop.counter == 3 %}rounded-bl-[1.5rem] md:rounded-bl-[2rem]{% endif %} {% if forloop.last %}rounded-br-[1.5rem] md:rounded-br-[2rem]{% endif %}">
                                            {% if asset.asset_type == 'IMAGE' and asset.image %}
@@ -1105,4 +1132,5 @@
    });
 </script>
 {% endblock %}
+
 
