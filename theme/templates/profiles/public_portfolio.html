@@ -442,7 +442,8 @@
                    {% if project.all_pdfs and valid_assets|length > 0 %}
                        <!-- Project has only PDFs -->
                        {% with first_pdf=valid_assets.first %}
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full h-[300px] md:h-[400px] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline">
+                       <!-- NOTE: Using inline style clamp() so Tailwind compilers missing arbitrary values don't collapse height to 0 -->
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-gradient-to-br from-red-50 to-red-100/50 shadow-md group hover:shadow-xl transition-all duration-300 flex items-center justify-center no-underline" style="height: clamp(300px, 40vw, 400px);">
                            <div class="flex flex-col items-center gap-4 text-center p-8">
                                <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -470,7 +471,7 @@
                    {% elif valid_assets|length == 1 %}
                        <!-- Single asset -->
                        {% with asset=valid_assets.first %}
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full h-[300px] md:h-[400px] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative bg-slate-100 shadow-md group hover:shadow-xl transition-all duration-300 no-underline" style="height: clamp(300px, 40vw, 400px);">
                            {% if asset.asset_type == 'DOCUMENT' and asset.document_file %}
                                <div class="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100/50 flex flex-col items-center justify-center text-center p-8">
                                    <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4">
@@ -498,7 +499,7 @@
                        {% endwith %}
                    {% else %}
                        <!-- Multiple assets: Exact Grid Mapping -->
-                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full h-[300px] md:h-[400px] rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative group/gallery no-underline shadow-md hover:shadow-xl transition-all duration-300 bg-white">
+                       <a href="{% url 'public_project_detail' identifier=user.corelink_id|default:profile.slug pk=project.pk %}" class="block w-full rounded-[1.25rem] md:rounded-[1.5rem] overflow-hidden mb-6 relative group/gallery no-underline shadow-md hover:shadow-xl transition-all duration-300 bg-white" style="height: clamp(300px, 40vw, 400px);">
                            {% with count=valid_assets|length %}
 
                            {% if count == 2 %}
@@ -994,6 +995,27 @@
 
 
 <script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- DEBUG SCRIPT FOR PROJECT SECTION DATA -->
+<script>
+    console.group("CoreLink Debug: Project Gallery");
+    {% for project in projects %}
+        {% with valid_assets=project.gallery.all %}
+        console.log("-----------------------------------------");
+        console.log("Project Title:", "{{ project.title|escapejs }}");
+        console.log("Total Database Assets Found:", {{ valid_assets|length }});
+        console.log("Is All PDFs:", "{{ project.all_pdfs }}");
+
+        {% for a in valid_assets %}
+            console.log("   --> Asset #{{ forloop.counter }}: Type [{{ a.asset_type }}]",
+                "{% if a.image %}Image Found{% elif a.document_file %}Doc Found{% elif a.external_url %}URL Found{% else %}! WARNING: NO FILE ATTACHED !{% endif %}"
+            );
+        {% endfor %}
+        {% endwith %}
+    {% endfor %}
+    console.groupEnd();
+</script>
+
 <script>
    lucide.createIcons();
 
