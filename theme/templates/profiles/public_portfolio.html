@@ -1120,37 +1120,63 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
+       console.log('=== DEBUG: Project Image Constraints Started ===');
+       
        // Force image height constraints on desktop view
        function constrainProjectImages() {
+           console.log('=== DEBUG: constrainProjectImages() called ===');
+           
+           // Check if project section exists
+           const worksSection = document.getElementById('works');
+           console.log('DEBUG: #works section found:', !!worksSection);
+           if (worksSection) {
+               console.log('DEBUG: #works section display:', window.getComputedStyle(worksSection).display);
+               console.log('DEBUG: #works section visibility:', window.getComputedStyle(worksSection).visibility);
+               console.log('DEBUG: #works section height:', worksSection.offsetHeight);
+           }
+           
            // Target all project images and iframes
            const images = document.querySelectorAll('#works img, #works iframe');
-           images.forEach(img => {
+           console.log('DEBUG: Found images/iframes in #works:', images.length);
+           images.forEach((img, index) => {
+               console.log(`DEBUG: Image ${index} before - height: ${img.offsetHeight}, maxHeight: ${img.style.maxHeight}`);
                img.style.maxHeight = '600px';
                img.style.maxWidth = '100%';
                img.style.height = 'auto';
+               console.log(`DEBUG: Image ${index} after - height: ${img.offsetHeight}, maxHeight: ${img.style.maxHeight}`);
            });
 
            // Target media-grid containers
            const mediaGrids = document.querySelectorAll('.media-grid');
-           mediaGrids.forEach(grid => {
+           console.log('DEBUG: Found .media-grid containers:', mediaGrids.length);
+           mediaGrids.forEach((grid, index) => {
+               console.log(`DEBUG: MediaGrid ${index} before - height: ${grid.offsetHeight}, maxHeight: ${grid.style.maxHeight}`);
                grid.style.maxHeight = '600px';
                grid.style.overflow = 'hidden';
+               console.log(`DEBUG: MediaGrid ${index} after - height: ${grid.offsetHeight}, maxHeight: ${grid.style.maxHeight}`);
            });
 
            // Target aspect ratio containers
            const aspectContainers = document.querySelectorAll('[class*="aspect-"]');
-           aspectContainers.forEach(container => {
+           console.log('DEBUG: Found aspect ratio containers:', aspectContainers.length);
+           aspectContainers.forEach((container, index) => {
+               console.log(`DEBUG: Aspect container ${index} before - aspectRatio: ${container.style.aspectRatio}, maxHeight: ${container.style.maxHeight}`);
                container.style.maxHeight = '600px';
                container.style.aspectRatio = 'auto';
+               console.log(`DEBUG: Aspect container ${index} after - aspectRatio: ${container.style.aspectRatio}, maxHeight: ${container.style.maxHeight}`);
            });
+           
+           console.log('=== DEBUG: constrainProjectImages() completed ===');
        }
 
        // Run on load
+       console.log('DEBUG: Running constrainProjectImages on load');
        constrainProjectImages();
 
        // Run on window resize (for desktop view changes)
        let resizeTimer;
        window.addEventListener('resize', function() {
+           console.log('DEBUG: Window resized, scheduling constrainProjectImages');
            clearTimeout(resizeTimer);
            resizeTimer = setTimeout(constrainProjectImages, 250);
        });
