@@ -1125,23 +1125,79 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
+       console.log('=== DEBUG: Project Image Constraints Started ===');
+       
        // Force image height constraints on desktop view
        function constrainProjectImages() {
+           console.log('=== DEBUG: constrainProjectImages() called ===');
+           
+           // Check if project section exists
+           const worksSection = document.getElementById('works');
+           console.log('DEBUG: #works section found:', !!worksSection);
+           if (worksSection) {
+               console.log('DEBUG: #works section display:', window.getComputedStyle(worksSection).display);
+               console.log('DEBUG: #works section visibility:', window.getComputedStyle(worksSection).visibility);
+               console.log('DEBUG: #works section height:', worksSection.offsetHeight);
+               
+               // Check all children of works section
+               const children = worksSection.children;
+               console.log('DEBUG: #works section children count:', children.length);
+               for (let i = 0; i < children.length; i++) {
+                   const child = children[i];
+                   console.log(`DEBUG: Child ${i} - tag: ${child.tagName}, height: ${child.offsetHeight}, display: ${window.getComputedStyle(child).display}`);
+               }
+           }
+           
            // Target all project images and iframes
            const images = document.querySelectorAll('#works img, #works iframe');
-           images.forEach(img => {
+           console.log('DEBUG: Found images/iframes in #works:', images.length);
+           images.forEach((img, index) => {
+               const parent = img.parentElement;
+               console.log(`DEBUG: Image ${index} - height: ${img.offsetHeight}, parent: ${parent.tagName}, parentHeight: ${parent.offsetHeight}, parentDisplay: ${window.getComputedStyle(parent).display}`);
+               if (img.offsetHeight === 0) {
+                   console.log(`DEBUG: Image ${index} has 0 height - checking parent chain`);
+                   let current = parent;
+                   let depth = 0;
+                   while (current && depth < 10) {
+                       console.log(`DEBUG:   Parent ${depth}: ${current.tagName}, height: ${current.offsetHeight}, display: ${window.getComputedStyle(current).display}`);
+                       current = current.parentElement;
+                       depth++;
+                   }
+               }
                img.style.maxHeight = '600px';
                img.style.maxWidth = '100%';
                img.style.height = 'auto';
            });
+
+           // Target media-grid containers
+           const mediaGrids = document.querySelectorAll('.media-grid');
+           console.log('DEBUG: Found .media-grid containers:', mediaGrids.length);
+           mediaGrids.forEach((grid, index) => {
+               console.log(`DEBUG: MediaGrid ${index} - height: ${grid.offsetHeight}`);
+               grid.style.maxHeight = '600px';
+               grid.style.overflow = 'hidden';
+           });
+
+           // Target aspect ratio containers
+           const aspectContainers = document.querySelectorAll('[class*="aspect-"]');
+           console.log('DEBUG: Found aspect ratio containers:', aspectContainers.length);
+           aspectContainers.forEach((container, index) => {
+               console.log(`DEBUG: Aspect container ${index} - height: ${container.offsetHeight}`);
+               container.style.maxHeight = '600px';
+               container.style.aspectRatio = 'auto';
+           });
+           
+           console.log('=== DEBUG: constrainProjectImages() completed ===');
        }
 
        // Run on load
+       console.log('DEBUG: Running constrainProjectImages on load');
        constrainProjectImages();
 
        // Run on window resize (for desktop view changes)
        let resizeTimer;
        window.addEventListener('resize', function() {
+           console.log('DEBUG: Window resized, scheduling constrainProjectImages');
            clearTimeout(resizeTimer);
            resizeTimer = setTimeout(constrainProjectImages, 250);
        });
