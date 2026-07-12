@@ -314,10 +314,6 @@
        max-height: 600px !important;
        max-width: 100% !important;
    }
-   /* Constrain the grid container that holds project articles */
-   #works > div {
-       max-height: none !important;
-   }
    /* Constrain individual project articles */
    #works article {
        max-height: 800px !important;
@@ -532,7 +528,7 @@
        {% if projects %}
        <section id="works" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
            <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Selected Works</h2>
-           <div class="grid gap-8 md:gap-10">
+           <div class="flex flex-col gap-8 md:gap-10">
                {% for project in projects %}
                <article class="group/project bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300">
                    {% with valid_assets=project.gallery.all %}
@@ -1129,79 +1125,23 @@
 
 
    document.addEventListener('DOMContentLoaded', () => {
-       console.log('=== DEBUG: Project Image Constraints Started ===');
-       
        // Force image height constraints on desktop view
        function constrainProjectImages() {
-           console.log('=== DEBUG: constrainProjectImages() called ===');
-           
-           // Check if project section exists
-           const worksSection = document.getElementById('works');
-           console.log('DEBUG: #works section found:', !!worksSection);
-           if (worksSection) {
-               console.log('DEBUG: #works section display:', window.getComputedStyle(worksSection).display);
-               console.log('DEBUG: #works section visibility:', window.getComputedStyle(worksSection).visibility);
-               console.log('DEBUG: #works section height:', worksSection.offsetHeight);
-               
-               // Check all children of works section
-               const children = worksSection.children;
-               console.log('DEBUG: #works section children count:', children.length);
-               for (let i = 0; i < children.length; i++) {
-                   const child = children[i];
-                   console.log(`DEBUG: Child ${i} - tag: ${child.tagName}, height: ${child.offsetHeight}, display: ${window.getComputedStyle(child).display}`);
-               }
-           }
-           
            // Target all project images and iframes
            const images = document.querySelectorAll('#works img, #works iframe');
-           console.log('DEBUG: Found images/iframes in #works:', images.length);
-           images.forEach((img, index) => {
-               const parent = img.parentElement;
-               console.log(`DEBUG: Image ${index} - height: ${img.offsetHeight}, parent: ${parent.tagName}, parentHeight: ${parent.offsetHeight}, parentDisplay: ${window.getComputedStyle(parent).display}`);
-               if (img.offsetHeight === 0) {
-                   console.log(`DEBUG: Image ${index} has 0 height - checking parent chain`);
-                   let current = parent;
-                   let depth = 0;
-                   while (current && depth < 10) {
-                       console.log(`DEBUG:   Parent ${depth}: ${current.tagName}, height: ${current.offsetHeight}, display: ${window.getComputedStyle(current).display}`);
-                       current = current.parentElement;
-                       depth++;
-                   }
-               }
+           images.forEach(img => {
                img.style.maxHeight = '600px';
                img.style.maxWidth = '100%';
                img.style.height = 'auto';
            });
-
-           // Target media-grid containers
-           const mediaGrids = document.querySelectorAll('.media-grid');
-           console.log('DEBUG: Found .media-grid containers:', mediaGrids.length);
-           mediaGrids.forEach((grid, index) => {
-               console.log(`DEBUG: MediaGrid ${index} - height: ${grid.offsetHeight}`);
-               grid.style.maxHeight = '600px';
-               grid.style.overflow = 'hidden';
-           });
-
-           // Target aspect ratio containers
-           const aspectContainers = document.querySelectorAll('[class*="aspect-"]');
-           console.log('DEBUG: Found aspect ratio containers:', aspectContainers.length);
-           aspectContainers.forEach((container, index) => {
-               console.log(`DEBUG: Aspect container ${index} - height: ${container.offsetHeight}`);
-               container.style.maxHeight = '600px';
-               container.style.aspectRatio = 'auto';
-           });
-           
-           console.log('=== DEBUG: constrainProjectImages() completed ===');
        }
 
        // Run on load
-       console.log('DEBUG: Running constrainProjectImages on load');
        constrainProjectImages();
 
        // Run on window resize (for desktop view changes)
        let resizeTimer;
        window.addEventListener('resize', function() {
-           console.log('DEBUG: Window resized, scheduling constrainProjectImages');
            clearTimeout(resizeTimer);
            resizeTimer = setTimeout(constrainProjectImages, 250);
        });
