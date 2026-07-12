@@ -294,6 +294,8 @@ def project_detail_view(request, identifier, pk):
         target_user = get_object_or_404(CustomUser, corelink_id=identifier)
     
     # Get the specific project
+    if not hasattr(target_user, 'portfolio') or not target_user.portfolio:
+        raise Http404("User profile not found")
     project = get_object_or_404(PortfolioProject, pk=pk, profile=target_user.portfolio)
     
     # Check if project has only PDF assets
