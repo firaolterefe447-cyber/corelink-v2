@@ -482,7 +482,7 @@ def admin_curation_view(request):
     ).annotate(
         gallery_count=Count('gallery'),
         char_length=Length('body_narrative')
-    ).order_by('-is_admin_selected', '-gallery_count', '-char_length')
+    ).order_by('-created_at', '-is_admin_selected', '-gallery_count', '-char_length')
 
     # Stats
     total_posts = posts.count()
