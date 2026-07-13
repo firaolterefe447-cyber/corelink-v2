@@ -551,25 +551,7 @@
         pointer-events: auto;
     }
 
-    /* Desktop Modal overrides for language drawer */
-    @media (min-width: 768px) {
-        #mobile-lang-drawer {
-            top: 50% !important;
-            left: 50% !important;
-            bottom: auto !important;
-            right: auto !important;
-            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-        #mobile-lang-drawer.drawer-closed {
-            opacity: 0;
-            pointer-events: none;
-            transform: translate(-50%, -45%) scale(0.96) !important;
-        }
-        #mobile-lang-drawer.drawer-open {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1) !important;
-        }
+    
     }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -778,34 +760,11 @@
             {% trans "My Updates" %}
         </a>
         <div class="h-px bg-slate-100 my-2 mx-2"></div>
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
-            <span class="flex-1 flex justify-between items-center">{% trans "Language" %} <small class="text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{% if 'en' in request.LANGUAGE_CODE %}EN{% elif request.LANGUAGE_CODE == 'am' %}AM{% else %}{{ request.LANGUAGE_CODE }}{% endif %}</small></span>
-        </button>
         <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3.5 transition-colors mt-1">
             <div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
             {% trans "Logout" %}
         </a>
     </div>
-</div>
-
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<!-- Modal styling applied for desktop, default bottom sheet for mobile -->
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="fixed bottom-0 left-0 right-0 md:w-[360px] bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] md:rounded-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] md:pb-6 prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
-    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if 'en' in request.LANGUAGE_CODE %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[15px] {% if 'en' in request.LANGUAGE_CODE %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
-            {% if 'en' in request.LANGUAGE_CODE %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
-        </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
-            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
-        </button>
-    </form>
 </div>
 
 <script>
@@ -814,14 +773,8 @@
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const navBd = document.getElementById('mobile-nav-backdrop');
-        const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
-
         if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
         if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
 
         document.body.classList.remove('body-lock');
     }
@@ -836,18 +789,7 @@
             dw.classList.replace('drawer-closed', 'drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
-    }
-
-    function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+    } else { closeAllDrawers(); }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -1302,3 +1244,4 @@
     });
 </script>
 {% endblock %}
+
