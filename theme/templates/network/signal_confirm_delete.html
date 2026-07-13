@@ -84,10 +84,6 @@
 -->
 <div class="fixed top-4 left-0 right-0 z-50 flex justify-between items-center px-4 md:hidden pointer-events-none pt-safe gap-2">
 
-    <button onclick="toggleMobileLangDrawer()" class="pointer-events-auto px-4 py-2.5 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#334155] hover:bg-[#F8FAFC] rounded-full text-[13px] font-semibold flex items-center gap-2 transition-colors">
-        {{ request.LANGUAGE_CODE|upper }}
-    </button>
-
     <div class="flex items-center gap-2 pointer-events-auto">
         {% if is_inspector %}
         <a href="{% url 'ops_pool_browser' profile.user.role|lower %}" class="w-10 h-10 bg-white/95 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-[#475569] hover:text-[#0A66C2] rounded-full flex items-center justify-center transition-colors">
@@ -224,54 +220,7 @@
 </nav>
 {% endif %}
 
-<!-- MOBILE LANGUAGE DRAWER -->
-<div id="mobile-lang-backdrop" onclick="toggleMobileLangDrawer()" class="md:hidden fixed inset-0 bg-black/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 ease-out backdrop-blur-sm"></div>
-
-<div id="mobile-lang-drawer" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[120] transform translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex flex-col max-h-[85vh] w-full">
-    <div class="w-full pt-4 pb-2 flex justify-center shrink-0 cursor-pointer" onclick="toggleMobileLangDrawer()">
-        <div class="w-12 h-1.5 bg-[#E2E8F0] rounded-full"></div>
-    </div>
-    <div class="px-6 pb-4 shrink-0 flex items-center justify-between border-b border-[#E2E8F0] w-full">
-        <h3 class="font-bold text-[18px] text-[#0F172A] flex items-center gap-2">
-            <i data-lucide="globe" class="w-5 h-5 text-[#0A66C2]"></i> {% trans "Select Language" %}
-        </h3>
-        <button onclick="toggleMobileLangDrawer()" class="w-8 h-8 flex items-center justify-center bg-[#F8FAFC] text-[#64748B] rounded-full active:scale-95 transition-transform border border-[#E2E8F0]">
-            <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-    </div>
-    <form action="{% url 'set_language' %}" method="post" class="px-4 py-4 overflow-y-auto custom-scroll space-y-2 w-full">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'en' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'en' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "English" %}</span>
-        </button>
-        <button type="submit" name="language" value="am" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'am' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'am' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "አማርኛ" %}</span>
-        </button>
-        <button type="submit" name="language" value="om" class="w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors {% if request.LANGUAGE_CODE == 'om' %}text-[#0A66C2] bg-[#F0F6FF] border border-[#BFDBFE]{% else %}hover:bg-[#F8FAFC] border border-transparent{% endif %}">
-            <span class="{% if request.LANGUAGE_CODE == 'om' %}font-bold{% else %}font-semibold text-[#0F172A]{% endif %} text-[15px]">{% trans "Afaan Oromoo" %}</span>
-        </button>
-    </form>
-    <div class="h-6"></div>
-</div>
-
 <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
-
-    function toggleMobileLangDrawer() {
-        const bd = document.getElementById('mobile-lang-backdrop');
-        const dw = document.getElementById('mobile-lang-drawer');
-        if (dw.classList.contains('translate-y-full')) {
-            bd.classList.remove('opacity-0', 'pointer-events-none');
-            bd.classList.add('opacity-100', 'pointer-events-auto');
-            dw.classList.remove('translate-y-full');
-            document.body.style.overflow = 'hidden';
-        } else {
-            bd.classList.add('opacity-0', 'pointer-events-none');
-            bd.classList.remove('opacity-100', 'pointer-events-auto');
-            dw.classList.add('translate-y-full');
-            document.body.style.overflow = '';
-        }
-    }
 </script>
 {% endblock %}

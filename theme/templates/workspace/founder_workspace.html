@@ -49,31 +49,6 @@
 
         <div class="w-px h-5 bg-slate-200 mx-1"></div>
 
-        <!-- Language Switcher (Dropdown) -->
-        <div class="relative group pointer-events-auto">
-            <button class="p-2.5 px-3 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-1.5" title="{% trans 'Change Language' %}">
-                <span class="text-[12px] font-bold uppercase tracking-wider hidden lg:block">
-                    {% if LANGUAGE_CODE == 'am' %}Amharic{% elif LANGUAGE_CODE == 'om' %}Afaan Oromoo{% else %}English{% endif %}
-                </span>
-            </button>
-            <div class="absolute top-full right-0 pt-4 w-56 opacity-0 pointer-events-none transform translate-y-2 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 z-[100]">
-                <form action="{% url 'set_language' %}" method="post" class="bg-white border border-slate-200/80 shadow-[0_12px_40px_rgba(0,0,0,0.08)] rounded-2xl p-2 flex flex-col gap-1 relative">
-                    {% csrf_token %}
-                    <button type="submit" name="language" value="en" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'en' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-                        {% trans "English" %} {% if LANGUAGE_CODE == 'en' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">EN</span>{% endif %}
-                    </button>
-                    <button type="submit" name="language" value="am" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'am' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-                        {% trans "Amharic" %} {% if LANGUAGE_CODE == 'am' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">AM</span>{% endif %}
-                    </button>
-                    <button type="submit" name="language" value="om" class="relative z-10 flex items-center justify-between px-3 py-2.5 rounded-xl text-[13px] transition-colors w-full text-left {% if LANGUAGE_CODE == 'om' %}font-bold text-[#0A66C2] bg-blue-50/80{% else %}font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
-                        {% trans "Afaan Oromoo" %} {% if LANGUAGE_CODE == 'om' %}<span class="text-[10px] font-bold text-blue-500 bg-blue-100 px-1.5 py-0.5 rounded">OM</span>{% endif %}
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <div class="w-px h-5 bg-slate-200 mx-1"></div>
-
         <!-- Desktop Logout Action -->
         <a href="{% url 'logout' %}" class="px-6 py-2.5 rounded-full text-[13px] font-bold text-slate-600 hover:text-red-600 hover:bg-red-50/80 transition-all flex items-center">
             {% trans "Logout" %}

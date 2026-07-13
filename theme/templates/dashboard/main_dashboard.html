@@ -42,10 +42,6 @@
             </nav>
         </div>
         <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
-                <i data-lucide="globe" class="w-4 h-4"></i>
-                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
-            </button>
             <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
                 <i data-lucide="settings" class="w-4 h-4"></i>
                 <span>{% trans "Settings" %}</span>
@@ -1401,14 +1397,6 @@
             {% endif %}
         {% endwith %}
 
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3 transition-colors">
-            <i data-lucide="globe" class="w-5 h-5 text-slate-600"></i>
-            <span class="flex-1 flex justify-between items-center">
-                {% trans "Language" %}
-                <small class="text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{{ request.LANGUAGE_CODE }}</small>
-            </span>
-        </button>
-
         <a href="{% url 'profile_settings' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3 transition-colors">
             <i data-lucide="settings" class="w-5 h-5 text-slate-600"></i>
             {% trans "Profile Settings" %}
@@ -1455,25 +1443,6 @@
             </a>
         </div>
     </div>
-</div>
-
-<!-- LANGUAGE DRAWER -->
-<div id="mobile-lang-backdrop" onclick="closeAllDrawers()" class="fixed inset-0 bg-slate-900/40 z-[130] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
-<div id="mobile-lang-drawer" role="dialog" aria-modal="true" class="will-change-transform fixed bottom-0 left-0 right-0 md:left-auto md:right-8 md:w-[320px] bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] md:rounded-t-2xl md:border md:border-slate-200 z-[140] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-6">
-    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6 md:hidden"></div>
-    <h3 class="font-black text-[18px] text-slate-900 tracking-tight text-center mb-5 font-heading">{% trans "Select Language" %}</h3>
-    <form action="{% url 'set_language' %}" method="post" class="space-y-3 w-full">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" name="language" value="en" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'en' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'en' %}font-black{% else %}font-bold{% endif %}">{% trans "English" %}</span>
-            {% if request.LANGUAGE_CODE == 'en' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
-        </button>
-        <button type="submit" name="language" value="am" class="w-full min-h-[52px] p-4 rounded-xl flex items-center justify-between transition-colors {% if request.LANGUAGE_CODE == 'am' %}bg-blue-50 border-[2px] border-[#0A66C2] text-[#0A66C2]{% else %}bg-slate-50 border border-slate-200 text-slate-700 hover:bg-white{% endif %}">
-            <span class="text-[15px] {% if request.LANGUAGE_CODE == 'am' %}font-black{% else %}font-bold{% endif %}">{% trans "አማርኛ" %}</span>
-            {% if request.LANGUAGE_CODE == 'am' %}<i data-lucide="check-circle-2" class="w-5 h-5"></i>{% endif %}
-        </button>
-    </form>
 </div>
 
 <!-- TOAST -->
@@ -1587,11 +1556,11 @@
     }
 
     function closeAllDrawers() {
-        ['mobile-nav-drawer', 'mobile-lang-drawer'].forEach(id => {
+        ['mobile-nav-drawer'].forEach(id => {
             const d = document.getElementById(id);
             if (d) { d.classList.add('drawer-closed'); d.classList.remove('drawer-open'); }
         });
-        ['mobile-nav-backdrop', 'mobile-lang-backdrop'].forEach(id => {
+        ['mobile-nav-backdrop'].forEach(id => {
             const b = document.getElementById(id);
             if (b) { b.classList.add('opacity-0', 'pointer-events-none'); b.classList.remove('opacity-100'); }
         });
@@ -1601,18 +1570,6 @@
     function toggleMobileNavDrawer() {
         const dw = document.getElementById('mobile-nav-drawer');
         const bd = document.getElementById('mobile-nav-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.replace('drawer-closed', 'drawer-open');
-            document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
-    }
-
-    function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
         if (dw.classList.contains('drawer-closed')) {
             closeAllDrawers();
             bd.classList.replace('opacity-0', 'opacity-100');
