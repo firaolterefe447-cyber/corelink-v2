@@ -5,10 +5,6 @@
 {% block navbar %}{% endblock %}
 
 {% block content %}
-{% get_current_language as LANGUAGE_CODE %}
-{% get_available_languages as AVAILABLE_LANGUAGES %}
-{% get_language_info_list for AVAILABLE_LANGUAGES as languages %}
-{% get_language_info for LANGUAGE_CODE as current_lang %}
 
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,12 +104,6 @@
   .nav-right { display: flex; align-items: center; gap: 4px; }
   .nav-divider { width: 1px; height: 16px; background: #e2e8f0; margin: 0 6px; }
 
-  .lang-btn { display: flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: all 0.2s ease; }
-  .lang-btn:hover { background: #f1f5f9; color: #0f172a; }
-  .lang-dropdown { position: absolute; top: calc(100% + 12px); right: 0; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 140px; z-index: 9100; }
-  .lang-option { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 13px; font-weight: 600; color: #64748b; background: none; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-  .lang-option:hover { background: #f1f5f9; color: #0f172a; }
-  .lang-option.active { background: #eff6ff; color: var(--blue); }
 
   .btn-nav-login { font-size: 13.5px; font-weight: 600; color: #475569; background: transparent; border: none; padding: 6px 14px; border-radius: 999px; text-decoration: none; transition: all 0.2s ease; }
   .btn-nav-login:hover { background: #f1f5f9; color: #0f172a; }
@@ -168,22 +158,6 @@
   .m-nav-link .m-chevron { color: var(--ink-faint); transition: transform 0.3s, color 0.3s; }
   .m-nav-link:hover .m-chevron { color: var(--blue); transform: translateX(4px); }
 
-  .m-lang-section { padding: 0 28px 24px 28px; }
-  .m-lang-label {
-    font-size: 11px; font-weight: 800; color: var(--ink-faint);
-    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; display: block;
-  }
-  .m-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .m-lang-btn {
-    padding: 12px 10px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    border: 1px solid var(--border); background: var(--white); color: var(--ink-muted);
-    transition: all 0.2s ease; cursor: pointer;
-  }
-  .m-lang-btn.active {
-    border-color: var(--blue); background: #eff6ff; color: var(--blue);
-    box-shadow: 0 2px 8px rgba(10,102,194,0.1);
-  }
-  .m-lang-btn:hover:not(.active) { border-color: #cbd5e1; color: var(--ink); }
 
   .m-auth-section {
     padding: 24px 28px; border-bottom: 1px solid rgba(226, 232, 240, 0.6);
@@ -667,24 +641,6 @@
     </div>
 
     <div class="nav-right">
-      <div x-data="{ open: false }" style="position:relative;">
-        <button @click="open = !open" @click.outside="open = false" class="lang-btn" aria-label="Change Language">
-          <span>{{ current_lang.name_local|title|default:"EN" }}</span>
-          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="open ? 'rotate-180' : ''"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div x-show="open" style="display:none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="lang-dropdown">
-          <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-            {% for language in languages %}
-              {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-              <button type="submit" name="language" value="{{ language.code }}" class="lang-option {% if language.code == LANGUAGE_CODE %}active{% endif %}">{{ language.name_local|title }}</button>
-              {% endif %}
-            {% endfor %}
-          </form>
-        </div>
-      </div>
-
       <div class="nav-divider"></div>
 
       <a href="{% url 'login' %}" class="btn-nav-login">{% trans "Log In" %}</a>
@@ -753,18 +709,6 @@
       </a>
     </div>
 
-    <div class="m-lang-section">
-      <span class="m-lang-label">{% trans "Language" %}</span>
-      <form action="{% url 'set_language' %}" method="post" class="m-lang-grid">
-        {% csrf_token %}
-        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-        {% for language in languages %}
-          {% if language.code != 'om' and language.code != 'om-et' and language.code != 'orm' %}
-          <button type="submit" name="language" value="{{ language.code }}" class="m-lang-btn {% if language.code == LANGUAGE_CODE %}active{% endif %}">{{ language.name_local|title }}</button>
-          {% endif %}
-        {% endfor %}
-      </form>
-    </div>
 
   </div>
 
