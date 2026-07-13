@@ -51,10 +51,6 @@
             </nav>
         </div>
         <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <button aria-label="{% trans 'Change Language' %}" onclick="toggleMobileLangDrawer()" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors w-full text-left">
-                <i data-lucide="globe" class="w-4 h-4"></i>
-                <span>{% if request.LANGUAGE_CODE == 'am' %}አማርኛ{% else %}English{% endif %}</span>
-            </button>
             <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>{% trans "Logout" %}</span>
@@ -784,10 +780,6 @@
             {% trans "My Company" %}
         </a>
         <div class="h-px bg-slate-100 my-2 mx-2"></div>
-        <button onclick="toggleMobileLangDrawer()" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3.5 transition-colors">
-            <div class="w-8 h-8 rounded-full bg-white border border-slate-200/80 flex items-center justify-center shadow-sm"><i data-lucide="globe" class="w-4 h-4 text-slate-600"></i></div>
-            <span class="flex-1 flex justify-between items-center">{% trans "Language" %} <small class="text-[10px] font-black uppercase bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{% if 'en' in request.LANGUAGE_CODE %}EN{% elif request.LANGUAGE_CODE == 'am' %}AM{% else %}{{ request.LANGUAGE_CODE }}{% endif %}</small></span>
-        </button>
         <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3.5 transition-colors mt-1">
             <div class="w-8 h-8 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-sm"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div>
             {% trans "Logout" %}
@@ -820,14 +812,8 @@
     function closeAllDrawers() {
         const navDw = document.getElementById('mobile-nav-drawer');
         const navBd = document.getElementById('mobile-nav-backdrop');
-        const langDw = document.getElementById('mobile-lang-drawer');
-        const langBd = document.getElementById('mobile-lang-backdrop');
-
         if(navDw) { navDw.classList.replace('drawer-open', 'drawer-closed'); }
         if(navBd) { navBd.classList.add('opacity-0', 'pointer-events-none'); navBd.classList.remove('opacity-100'); }
-
-        if(langDw) { langDw.classList.replace('drawer-open', 'drawer-closed'); }
-        if(langBd) { langBd.classList.add('opacity-0', 'pointer-events-none'); langBd.classList.remove('opacity-100'); }
 
         document.body.classList.remove('body-lock');
     }
@@ -843,19 +829,7 @@
             dw.classList.add('drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
-    }
-
-    function toggleMobileLangDrawer() {
-        const dw = document.getElementById('mobile-lang-drawer');
-        const bd = document.getElementById('mobile-lang-backdrop');
-        if (dw.classList.contains('drawer-closed')) {
-            closeAllDrawers();
-            bd.classList.replace('opacity-0', 'opacity-100');
-            bd.classList.remove('pointer-events-none');
-            dw.classList.remove('drawer-closed');
-            dw.classList.add('drawer-open');
-            document.body.classList.add('body-lock');
-        } else { closeAllDrawers(); }
+    } else { closeAllDrawers(); }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
