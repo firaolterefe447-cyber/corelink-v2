@@ -122,6 +122,66 @@
   .link-arrow svg { width: 16px; height: 16px; color: var(--blue); transition: transform 0.2s ease; }
   .link-arrow:hover svg { transform: translateX(4px); }
 
+  /* ==================== SPOTLIGHT — real pinned profiles (is_home_profile_selected) ==================== */
+  .spotlight-section { padding: 90px 0 100px; }
+  .spotlight-head { max-width: 1360px; margin: 0 auto 36px; padding: 0 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .spotlight-head h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+  .spotlight-head p { color: var(--muted); font-size: 15px; max-width: 460px; }
+
+  .spotlight-scroll {
+    display: flex; gap: 24px; overflow-x: auto; padding: 4px 40px 20px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .spotlight-scroll::-webkit-scrollbar { display: none; }
+  .spotlight-scroll::after { content: ''; flex: 0 0 1px; } /* trailing breathing room */
+
+  .spotlight-card {
+    scroll-snap-align: start; flex: 0 0 auto; width: min(360px, 84vw);
+    background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 2px 10px rgba(11,18,32,0.04);
+    transition: transform 0.4s var(--ease), box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+  .spotlight-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(11,18,32,0.12); border-color: rgba(10,102,194,0.25); }
+
+  .spotlight-cover {
+    position: relative; width: 100%; aspect-ratio: 16 / 8; background: var(--ink-2);
+    background-image: linear-gradient(135deg, #12263F 0%, #0B1220 100%);
+  }
+  .spotlight-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .spotlight-cover::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(11,18,32,0.55) 0%, transparent 55%);
+  }
+  .spotlight-badge {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.95); color: var(--blue);
+    font-size: 11px; font-weight: 800; letter-spacing: 0.02em;
+    padding: 6px 10px; border-radius: 999px;
+  }
+  .spotlight-badge svg { width: 12px; height: 12px; }
+
+  .spotlight-avatar {
+    position: relative; z-index: 2; width: 76px; height: 76px; border-radius: 50%;
+    border: 4px solid #fff; background: var(--blue-soft); overflow: hidden;
+    margin: -42px 0 0 22px; box-shadow: 0 6px 16px rgba(11,18,32,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800; color: var(--blue);
+  }
+  .spotlight-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .spotlight-body { padding: 14px 22px 24px; }
+  .spotlight-name { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
+  .spotlight-title { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
+  .spotlight-bio {
+    font-size: 14px; color: var(--muted); line-height: 1.65;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .spotlight-cta { max-width: 1360px; margin: 32px auto 0; padding: 0 40px; }
+
   /* ==================== MEMBER MOSAIC — real users, no stock photos ==================== */
   .members-section { max-width: 1360px; margin: 0 auto; padding: 90px 40px 100px; }
   .members-head { text-align: center; margin-bottom: 44px; }
@@ -203,6 +263,10 @@
     .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 28px; }
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
+    .spotlight-section { padding: 60px 0 70px; }
+    .spotlight-head { padding: 0 20px; }
+    .spotlight-scroll { padding: 4px 20px 20px; }
+    .spotlight-cta { padding: 0 20px; }
     .members-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .member-card { padding: 16px 8px 14px; }
     .member-avatar { width: 52px; height: 52px; }
@@ -286,8 +350,57 @@
   </div>
 </section>
 
-<!-- REAL MEMBERS — actual verified users, not stock photography -->
-{% if hero_avatars %}
+<!-- FEATURED TALENT — real pinned profiles (User.is_home_profile_selected), with graceful fallback -->
+{% if featured_profiles %}
+<section class="spotlight-section reveal visible">
+  <div class="spotlight-head">
+    <div>
+      <h3>{% trans "Featured on CoreLink" %}</h3>
+      <p>{% trans "A few standout, verified members of our growing Ethiopian talent network." %}</p>
+    </div>
+    <a href="{% url 'nexus_feed' %}" class="link-arrow">
+      <span>{% trans "See the full network" %}</span>
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="spotlight-scroll">
+    {% for profile in featured_profiles %}
+      <a href="{{ profile.get_absolute_url|default:'#' }}" class="spotlight-card">
+        <div class="spotlight-cover">
+          {% if profile.cover_image %}
+            <img src="{{ profile.cover_image.url }}" alt="" loading="lazy">
+          {% endif %}
+          <span class="spotlight-badge">
+            <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            {% trans "Verified" %}
+          </span>
+        </div>
+        <div class="spotlight-avatar">
+          {% if profile.avatar %}
+            <img src="{{ profile.get_avatar_url }}" alt="{{ profile.full_name }}">
+          {% else %}{{ profile.full_name|default:"U"|slice:":1" }}{% endif %}
+        </div>
+        <div class="spotlight-body">
+          <div class="spotlight-name">{{ profile.full_name|default:"Member" }}</div>
+          <div class="spotlight-title">
+            {% if profile.portfolio.headlines.first %}
+              {{ profile.portfolio.headlines.first.title }}
+            {% else %}
+              {{ profile.portfolio.field_of_interest|default:"Professional" }}
+            {% endif %}
+          </div>
+          {% if profile.portfolio.bio_narrative %}
+            <p class="spotlight-bio">{{ profile.portfolio.bio_narrative|truncatewords:24 }}</p>
+          {% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% elif hero_avatars %}
+<!-- Fallback: generic avatar mosaic, shown only if no profiles are pinned yet -->
 <section class="members-section reveal visible">
   <div class="members-head">
     <h3>{% trans "Real people, already building on CoreLink" %}</h3>
