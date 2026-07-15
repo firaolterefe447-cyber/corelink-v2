@@ -92,7 +92,7 @@ def index_view(request):
 
     return render(request, 'index.html', {
         'hero_avatars': hero_avatars,
-        'network_profiles': network_profiles
+        'featured_profiles': network_profiles
     })
 # ==========================================
 # 6. TELEGRAM BOT HELPER FUNCTIONS
