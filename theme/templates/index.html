@@ -439,7 +439,38 @@
   </div>
 </section>
 
-<!-- FEATURED TALENT — real pinned profiles (User.is_home_profile_selected), with graceful fallback -->
+<!-- HERO AVATARS — admin-selected avatars (User.is_hero_avatar_selected) -->
+{% if hero_avatars %}
+<section class="members-section reveal visible">
+  <div class="members-head">
+    <h3>{% trans "Real people, already building on CoreLink" %}</h3>
+    <p>{% trans "A few of the verified professionals and students in our growing community." %}</p>
+  </div>
+  <div class="members-grid">
+    {% for person in hero_avatars|slice:":12" %}
+      <div class="member-card">
+        <div class="member-avatar">
+          {% if person.avatar %}
+            <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy">
+          {% else %}{{ person.full_name|default:"U"|slice:":1" }}{% endif %}
+        </div>
+        <div class="member-name">{{ person.full_name|default:"Member" }}</div>
+        {% if person.portfolio.field_of_interest %}
+          <div class="member-role">{{ person.portfolio.field_of_interest }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="members-cta">
+    <a href="{% url 'nexus_feed' %}" class="link-arrow">
+      <span>{% trans "See the full network" %}</span>
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+{% endif %}
+
+<!-- FEATURED TALENT — real pinned profiles (User.is_home_profile_selected) -->
 {% if featured_profiles %}
 <section class="spotlight-section reveal visible">
   <div class="spotlight-head">
@@ -485,36 +516,6 @@
         </div>
       </a>
     {% endfor %}
-  </div>
-</section>
-
-{% elif hero_avatars %}
-<!-- Fallback: generic avatar mosaic, shown only if no profiles are pinned yet -->
-<section class="members-section reveal visible">
-  <div class="members-head">
-    <h3>{% trans "Real people, already building on CoreLink" %}</h3>
-    <p>{% trans "A few of the verified professionals and students in our growing community." %}</p>
-  </div>
-  <div class="members-grid">
-    {% for person in hero_avatars|slice:":12" %}
-      <div class="member-card">
-        <div class="member-avatar">
-          {% if person.avatar %}
-            <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy">
-          {% else %}{{ person.full_name|default:"U"|slice:":1" }}{% endif %}
-        </div>
-        <div class="member-name">{{ person.full_name|default:"Member" }}</div>
-        {% if person.portfolio.field_of_interest %}
-          <div class="member-role">{{ person.portfolio.field_of_interest }}</div>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-  <div class="members-cta">
-    <a href="{% url 'nexus_feed' %}" class="link-arrow">
-      <span>{% trans "See the full network" %}</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
   </div>
 </section>
 {% endif %}
