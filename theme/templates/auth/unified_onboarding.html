@@ -535,18 +535,18 @@
                             {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
                         </div>
                         <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Email address" %}</label>
+                            <label class="form-label">{% trans "Your email address" %}</label>
                             {{ form.email }}
                             <div class="info-banner" style="margin-top: 0.5rem;">
-                                <span>{% trans "We will send a verification link here. Please use your active, current email address." %}</span>
+                                <span>{% trans "We will send a verification link to this email. Use your personal, active email address." %}</span>
                             </div>
                             {% if form.email.errors %}<span class="field-error">{{ form.email.errors }}</span>{% endif %}
                         </div>
                         <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Phone number" %}</label>
+                            <label class="form-label">{% trans "Your phone number" %}</label>
                             {{ form.phone_number }}
                             <span class="field-hint" style="display: block; margin-top: 6px; color: var(--text-secondary); font-size: 13px;">
-                                {% trans "Note: Please provide your personal phone number for account security and verification." %}
+                                {% trans "Your personal mobile number for account security and verification." %}
                             </span>
                             {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors }}</span>{% endif %}
                         </div>
@@ -574,10 +574,17 @@
                         {% if form.city_name.errors %}<span class="field-error">{{ form.city_name.errors }}</span>{% endif %}
                     </div>
 
+                    <!-- Company Information Header -->
+                    <div id="company-info-header" style="margin-bottom: 1rem;">
+                        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Company Information" %}</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin: 0.25rem 0 0;">{% trans "Tell us about your business or organization." %}</p>
+                    </div>
+
                     <!-- 3. Company Field -->
                     <div id="company-field" class="field-group">
                         <label class="form-label">{% trans "Company name" %}</label>
                         {{ form.company_name }}
+                        <span class="field-hint">{% trans "The official registered name of your business." %}</span>
                         {% if form.company_name.errors %}<span class="field-error">{{ form.company_name.errors }}</span>{% endif %}
                     </div>
 
@@ -585,7 +592,7 @@
                     <div id="sector-field" class="field-group">
                         <label class="form-label">{% trans "Industry sector" %}</label>
                         {{ form.sector }}
-                        <span class="field-hint">{% trans "Your company or business sector." %}</span>
+                        <span class="field-hint">{% trans "Select the primary industry your company operates in." %}</span>
                         {% if form.sector.errors %}<span class="field-error">{{ form.sector.errors }}</span>{% endif %}
                     </div>
 
@@ -593,6 +600,7 @@
                     <div class="field-group col-span-2" id="founder-role-field">
                         <label class="form-label">{% trans "Your role in the company" %}</label>
                         {{ form.founder_role }}
+                        <span class="field-hint">{% trans "Your official position or title within this company." %}</span>
                         {% if form.founder_role.errors %}<span class="field-error">{{ form.founder_role.errors }}</span>{% endif %}
                     </div>
 
@@ -637,8 +645,9 @@
                     </div>
 
                     <!-- 9. Founder Name Header (Toggled) -->
-                    <div id="founder-names-header" style="margin-bottom: 0.5rem;">
-                        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Registering person details" %}</h3>
+                    <div id="founder-names-header" style="margin-bottom: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Your Personal Information" %}</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin: 0.25rem 0 0;">{% trans "Your details as the person registering this company." %}</p>
                     </div>
 
                     <!-- 10. Circular Profile Image Upload -->
@@ -840,11 +849,13 @@
         const fndRole = document.getElementById('founder-role-field');
         const founderHeader = document.getElementById('founder-names-header');
         const avatarField = document.getElementById('avatar-field');
+        const companyHeader = document.getElementById('company-info-header');
 
         const hintInd = document.getElementById('hint-location-individual');
         const hintComp = document.getElementById('hint-location-company');
 
         if (isFounder) {
+            s2.appendChild(companyHeader);
             s2.appendChild(compField);
             s2.appendChild(locField);
             s2.appendChild(sectorField);
@@ -872,6 +883,7 @@
             document.getElementById('founder-divider').style.display = 'none';
 
             storage.appendChild(founderHeader);
+            storage.appendChild(companyHeader);
             storage.appendChild(compField);
             storage.appendChild(sectorField);
             storage.appendChild(compBio);
