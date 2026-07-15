@@ -122,23 +122,6 @@
   .link-arrow svg { width: 16px; height: 16px; color: var(--blue); transition: transform 0.2s ease; }
   .link-arrow:hover svg { transform: translateX(4px); }
 
-  /* Social proof pill — replaces the old avatar wall & float card */
-  .hero-proof {
-    display: inline-flex; align-items: center; gap: 14px;
-    padding: 10px 20px 10px 10px; border: 1px solid var(--line); border-radius: 999px;
-    margin-bottom: 44px;
-  }
-  .proof-avatars { display: flex; }
-  .proof-avatar {
-    width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff;
-    margin-left: -10px; overflow: hidden; background: var(--blue-soft);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: var(--blue);
-  }
-  .proof-avatar:first-child { margin-left: 0; }
-  .proof-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .hero-proof span { font-size: 13.5px; font-weight: 700; color: var(--ink); }
-
   /* ==================== MEMBER MOSAIC — real users, no stock photos ==================== */
   .members-section { max-width: 1360px; margin: 0 auto; padding: 90px 40px 100px; }
   .members-head { text-align: center; margin-bottom: 44px; }
@@ -218,7 +201,6 @@
     .nav-right .btn-login { display: none; }
     .hero { padding: 110px 20px 56px; }
     .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 28px; }
-    .hero-proof { margin-bottom: 32px; }
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
     .members-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -302,21 +284,6 @@
       <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
     </a>
   </div>
-
-  {% if hero_avatars %}
-  <div class="hero-proof">
-    <div class="proof-avatars">
-      {% for person in hero_avatars|slice:":4" %}
-        <div class="proof-avatar">
-          {% if person.avatar %}
-            <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
-          {% else %}{{ person.full_name|slice:":1" }}{% endif %}
-        </div>
-      {% endfor %}
-    </div>
-    <span>{% trans "Join verified Ethiopian professionals" %}</span>
-  </div>
-  {% endif %}
 </section>
 
 <!-- REAL MEMBERS — actual verified users, not stock photography -->
