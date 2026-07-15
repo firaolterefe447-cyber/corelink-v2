@@ -454,6 +454,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_pinned_in_right_now',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
+        'home_page_top',
         'is_active',
     ]
 
@@ -466,6 +467,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'is_pinned_in_right_now',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
+        'home_page_top',
         'is_active'
     ]
 
@@ -473,6 +475,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
         'role',
         'is_hero_avatar_selected',
         'is_home_profile_selected',
+        'home_page_top',
         'is_selected',
         'is_top_10',
         'is_pinned_in_right_now',
@@ -506,6 +509,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
             "fields": (
                 'is_hero_avatar_selected',
                 'is_home_profile_selected',
+                'home_page_top',
             ),
             "description": "Control exactly who appears on the public landing page.",
             "classes": ["collapse"]

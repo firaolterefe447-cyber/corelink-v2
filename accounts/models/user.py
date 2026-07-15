@@ -266,6 +266,12 @@ class CustomUser(AbstractUser, TimeStampedModel):
         db_index=True,
         help_text=_("Pin this user to the Top 10 section (displayed first in Nexus Feed, random order)."),
     )
+    home_page_top = models.BooleanField(
+        _("Home Page Top"),
+        default=False,
+        db_index=True,
+        help_text=_("Pin this user to the top section of the home page."),
+    )
     is_contacted = models.BooleanField(
         _("Contacted Status"),
         default=False,
