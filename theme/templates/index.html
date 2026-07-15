@@ -136,6 +136,50 @@
   .link-arrow svg { width: 16px; height: 16px; color: var(--blue); transition: transform 0.2s ease; }
   .link-arrow:hover svg { transform: translateX(4px); }
 
+  /* Avatar Stack Styles */
+  .hero-avatars {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+    background: rgba(10,13,20,0.6); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-xl);
+    padding: 16px 20px; margin-top: 32px; width: fit-content; max-width: 100%;
+    transition: border-color 0.3s;
+  }
+  .hero-avatars:hover { border-color: rgba(255,255,255,0.18); }
+
+  .avatar-stack {
+    display: flex; flex-wrap: wrap;
+    gap: 12px 0;
+    padding-left: 10px;
+  }
+
+  .avatar-item {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid #0f172a;
+    margin-left: -10px;
+    overflow: hidden; background: #1e293b;
+    transition: transform 0.35s var(--ease-out), z-index 0s;
+  }
+  .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
+  .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--white); }
+
+  .avatar-plus {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid #0f172a;
+    margin-left: -10px; background: var(--surface); border-color: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--blue); text-decoration: none; transition: transform 0.35s var(--ease-out);
+  }
+  .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
+
+  .hero-av-info { display: flex; align-items: center; gap: 8px; }
+  .hero-stars { color: #f59e0b; font-size: 14px; }
+  .hero-av-label { font-size: 13px; font-weight: 600; color: #cbd5e1; }
+
+  @media (min-width: 769px) {
+    .hide-on-desktop { display: none !important; }
+  }
+
   /* ==================== SPOTLIGHT — real pinned profiles (is_home_profile_selected) ==================== */
   .spotlight-section { padding: 90px 0 100px; }
   .spotlight-head { max-width: 1360px; margin: 0 auto 36px; padding: 0 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
@@ -278,25 +322,6 @@
     border-top: 2px dashed var(--line);
   }
 
-  /* ==================== FAQ ==================== */
-  .faq-section { max-width: 840px; margin: 0 auto; padding: 100px 40px; }
-  .faq-head { text-align: center; margin-bottom: 52px; }
-  .faq-head h2 { font-size: clamp(2rem, 3.2vw, 2.6rem); font-weight: 800; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.03em; }
-  .faq-head p { color: var(--muted); font-size: 15px; }
-
-  .faq-item { border-bottom: 1px solid var(--line); }
-  .faq-item summary {
-    list-style: none; cursor: pointer; padding: 24px 4px;
-    display: flex; align-items: center; justify-content: space-between; gap: 20px;
-    font-family: var(--font-heading); font-weight: 800; font-size: 16.5px; color: var(--ink);
-  }
-  .faq-item summary::-webkit-details-marker { display: none; }
-  .faq-icon { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--blue-soft);
-    display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease, background 0.3s ease; }
-  .faq-icon svg { width: 13px; height: 13px; color: var(--blue); transition: transform 0.3s ease; }
-  .faq-item[open] .faq-icon { background: var(--blue); }
-  .faq-item[open] .faq-icon svg { color: #fff; transform: rotate(45deg); }
-  .faq-item p { padding: 0 34px 24px 4px; color: var(--muted); font-size: 15px; line-height: 1.75; }
 
   /* ==================== CTA BAND ==================== */
   .cta-band { background: var(--ink); padding: 100px 40px; text-align: center; }
@@ -338,6 +363,10 @@
     .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 32px; }
     .btn-primary { width: 100%; justify-content: center; padding: 16px 24px; }
     .link-arrow { width: 100%; justify-content: center; }
+    .hero-avatars { padding: 16px; width: 100%; box-sizing: border-box; }
+    .avatar-stack { padding-left: 8px; gap: 10px 0; }
+    .avatar-item, .avatar-plus { width: 36px; height: 36px; margin-left: -8px; }
+    .avatar-initials { font-size: 11px; }
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
     .spotlight-section { padding: 60px 0 70px; }
@@ -352,7 +381,6 @@
     .how-section { padding: 70px 20px 20px; }
     .how-grid { grid-template-columns: 1fr; gap: 40px; }
     .how-step:not(:last-child)::after { display: none; }
-    .faq-section { padding: 70px 20px; }
     .cta-band { padding: 70px 20px; }
     .footer-inner { padding: 0 20px 32px; }
     .footer-main { grid-template-columns: 1fr; gap: 36px; padding-top: 56px; }
@@ -429,38 +457,31 @@
       <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
     </a>
   </div>
-</section>
 
-<!-- HERO AVATARS — admin-selected avatars (User.is_hero_avatar_selected) -->
-{% if hero_avatars %}
-<section class="members-section reveal visible">
-  <div class="members-head">
-    <h3>{% trans "Real people, already building on CoreLink" %}</h3>
-    <p>{% trans "A few of the verified professionals and students in our growing community." %}</p>
-  </div>
-  <div class="members-grid">
-    {% for person in hero_avatars|slice:":12" %}
-      <div class="member-card">
-        <div class="member-avatar">
-          {% if person.avatar %}
-            <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}" loading="lazy">
-          {% else %}{{ person.full_name|default:"U"|slice:":1" }}{% endif %}
-        </div>
-        <div class="member-name">{{ person.full_name|default:"Member" }}</div>
-        {% if person.portfolio.field_of_interest %}
-          <div class="member-role">{{ person.portfolio.field_of_interest }}</div>
+  {% if hero_avatars %}
+  <div class="hero-avatars">
+    <div class="avatar-stack">
+      {% for person in hero_avatars|slice:":30" %}
+      <div class="avatar-item {% if forloop.counter > 25 %}hide-on-desktop{% endif %}">
+        {% if person.avatar %}
+          <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
+        {% else %}
+          <div class="avatar-initials" style="background:{% cycle 'linear-gradient(135deg,#0A66C2,#06B6D4)' 'linear-gradient(135deg,#7C3AED,#D946EF)' 'linear-gradient(135deg,#059669,#06B6D4)' 'linear-gradient(135deg,#D97706,#f59e0b)' 'linear-gradient(135deg,#dc2626,#f43f5e)' %};">{{ person.full_name|slice:":1" }}</div>
         {% endif %}
       </div>
-    {% endfor %}
+      {% endfor %}
+      <a href="{% url 'nexus_feed' %}" class="avatar-plus" aria-label="View more professionals">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 5v14M5 12h14"/></svg>
+      </a>
+    </div>
+    <div class="hero-av-info">
+      <div class="hero-stars">★★★★★</div>
+      <div class="hero-av-label">{% trans "Join verified Ethiopian professionals." %}</div>
+    </div>
   </div>
-  <div class="members-cta">
-    <a href="{% url 'nexus_feed' %}" class="link-arrow">
-      <span>{% trans "See the full network" %}</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
-  </div>
+  {% endif %}
 </section>
-{% endif %}
+
 
 <!-- FEATURED TALENT — real pinned profiles (User.is_home_profile_selected) -->
 {% if featured_profiles %}
@@ -556,53 +577,6 @@
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="faq-section reveal visible">
-  <div class="faq-head">
-    <h2>{% trans "Frequently asked questions" %}</h2>
-    <p>{% trans "Everything you need to know before you join." %}</p>
-  </div>
-
-  <details class="faq-item" open>
-    <summary>
-      {% trans "Is CoreLink free to join?" %}
-      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-    </summary>
-    <p>{% trans "Yes — creating your profile and exploring the network is free. Some advanced discovery features may require a verified account." %}</p>
-  </details>
-
-  <details class="faq-item">
-    <summary>
-      {% trans "How does verification work?" %}
-      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-    </summary>
-    <p>{% trans "We review profiles to confirm they reflect real, accurate information — replacing unverified self-claims with a structured process, so the people you connect with are who they say they are." %}</p>
-  </details>
-
-  <details class="faq-item">
-    <summary>
-      {% trans "Who is CoreLink for?" %}
-      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-    </summary>
-    <p>{% trans "Students, professionals, founders, and organizations across Ethiopia who want to discover talent, find opportunities, and build genuine professional connections." %}</p>
-  </details>
-
-  <details class="faq-item">
-    <summary>
-      {% trans "What can I do with my profile?" %}
-      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-    </summary>
-    <p>{% trans "Showcase your skills, experience, and proof of work, then discover and message other verified members directly through the platform." %}</p>
-  </details>
-
-  <details class="faq-item">
-    <summary>
-      {% trans "Is my information private?" %}
-      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-    </summary>
-    <p>{% trans "You control what appears on your public profile, and only other members can message you directly." %}</p>
-  </details>
-</section>
 
 <!-- CTA BAND -->
 <div class="cta-band reveal visible">
