@@ -848,7 +848,8 @@
         const locField = document.getElementById('city-location-field');
         const compField = document.getElementById('company-field');
         const sectorField = document.getElementById('sector-field');
-        const compBio = document.getElementById('path-company-bio');
+        const companySpecificFields = document.getElementById('company-specific-fields');
+        const individualSpecificFields = document.getElementById('individual-specific-fields');
         const indBio = document.getElementById('path-individual-bio');
         const cvField = document.getElementById('cv-upload-field');
         const indPath = document.getElementById('path-individual');
@@ -865,7 +866,7 @@
             s2.appendChild(compField);
             s2.appendChild(locField);
             s2.appendChild(sectorField);
-            s3.appendChild(compBio);
+            s3.appendChild(companySpecificFields);
             s4.appendChild(founderHeader);
             s4.appendChild(regFields);
             regFields.appendChild(fndRole);
@@ -874,7 +875,7 @@
             document.getElementById('founder-divider').style.display = 'block';
 
             storage.appendChild(indPath);
-            storage.appendChild(indBio);
+            storage.appendChild(individualSpecificFields);
 
             if (hintInd) hintInd.style.display = 'none';
             if (hintComp) hintComp.style.display = 'block';
@@ -892,7 +893,7 @@
             storage.appendChild(companyHeader);
             storage.appendChild(compField);
             storage.appendChild(sectorField);
-            storage.appendChild(compBio);
+            storage.appendChild(companySpecificFields);
             storage.appendChild(fndRole);
 
             if (hintInd) hintInd.style.display = 'block';
@@ -994,13 +995,14 @@
             for (let el of visibleInputs) {
                 if (!el.checkValidity()) { valid = false; el.reportValidity(); break; }
             }
-            if (valid) {
-                startBar();
-                loader.classList.add('visible');
-                document.body.style.overflow = 'hidden';
-            } else {
+            if (!valid) {
                 e.preventDefault();
+                return;
             }
+            // Form is valid, let it submit naturally
+            startBar();
+            loader.classList.add('visible');
+            document.body.style.overflow = 'hidden';
         });
     });
 
