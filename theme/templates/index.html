@@ -226,6 +226,47 @@
   .mission-item h4 { font-size: 19px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
   .mission-item p { color: var(--muted); font-size: 15px; line-height: 1.75; max-width: 620px; }
 
+  /* ==================== HOW IT WORKS ==================== */
+  .how-section { max-width: 1360px; margin: 0 auto; padding: 100px 40px 40px; }
+  .how-head { text-align: center; max-width: 620px; margin: 0 auto 64px; }
+  .how-head .eyebrow-line { font-size: 12.5px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
+  .how-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); font-weight: 800; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.03em; }
+  .how-head p { color: var(--muted); font-size: 15.5px; line-height: 1.7; }
+
+  .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; position: relative; }
+  .how-step { position: relative; }
+  .how-num {
+    width: 54px; height: 54px; border-radius: 50%; background: var(--blue); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading); font-weight: 800; font-size: 19px; margin-bottom: 24px;
+  }
+  .how-step h4 { font-size: 19.5px; font-weight: 800; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+  .how-step p { color: var(--muted); font-size: 15px; line-height: 1.75; max-width: 320px; }
+  .how-step:not(:last-child)::after {
+    content: ''; position: absolute; top: 26px; left: calc(100% - 8px); width: calc(44px + 16px);
+    border-top: 2px dashed var(--line);
+  }
+
+  /* ==================== FAQ ==================== */
+  .faq-section { max-width: 840px; margin: 0 auto; padding: 100px 40px; }
+  .faq-head { text-align: center; margin-bottom: 52px; }
+  .faq-head h2 { font-size: clamp(2rem, 3.2vw, 2.6rem); font-weight: 800; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.03em; }
+  .faq-head p { color: var(--muted); font-size: 15px; }
+
+  .faq-item { border-bottom: 1px solid var(--line); }
+  .faq-item summary {
+    list-style: none; cursor: pointer; padding: 24px 4px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    font-family: var(--font-heading); font-weight: 800; font-size: 16.5px; color: var(--ink);
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-icon { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--blue-soft);
+    display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease, background 0.3s ease; }
+  .faq-icon svg { width: 13px; height: 13px; color: var(--blue); transition: transform 0.3s ease; }
+  .faq-item[open] .faq-icon { background: var(--blue); }
+  .faq-item[open] .faq-icon svg { color: #fff; transform: rotate(45deg); }
+  .faq-item p { padding: 0 34px 24px 4px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+
   /* ==================== CTA BAND ==================== */
   .cta-band { background: var(--ink); padding: 100px 40px; text-align: center; }
   .cta-band h2 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 800; margin-bottom: 16px; letter-spacing: -0.03em; }
@@ -260,7 +301,6 @@
     .nav { padding: 0 20px; }
     .nav-right .btn-login { display: none; }
     .hero { padding: 110px 20px 56px; }
-    .hero-h1 { letter-spacing: -0.02em; line-height: 1.12; }
     .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 28px; }
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
@@ -273,6 +313,10 @@
     .member-avatar { width: 52px; height: 52px; }
     .mission { padding: 70px 20px; }
     .mission-item { grid-template-columns: 1fr; gap: 10px; }
+    .how-section { padding: 70px 20px 20px; }
+    .how-grid { grid-template-columns: 1fr; gap: 40px; }
+    .how-step:not(:last-child)::after { display: none; }
+    .faq-section { padding: 70px 20px; }
     .cta-band { padding: 70px 20px; }
     .footer-inner { padding: 0 20px 32px; }
     .footer-main { grid-template-columns: 1fr; gap: 36px; padding-top: 56px; }
@@ -348,6 +392,32 @@
       <span>{% trans "Discover Talent" %}</span>
       <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
     </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section reveal visible">
+  <div class="how-head">
+    <div class="eyebrow-line">{% trans "How It Works" %}</div>
+    <h2>{% trans "From profile to opportunity, in three steps." %}</h2>
+    <p>{% trans "CoreLink is built to be simple — create your profile, get discovered, and start real conversations." %}</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <h4>{% trans "Create your verified profile" %}</h4>
+      <p>{% trans "Showcase your skills, experience, and proof of work — the things that actually show what you can do." %}</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <h4>{% trans "Discover talent & opportunities" %}</h4>
+      <p>{% trans "Search the network by skill, industry, or interest to find the people and openings that fit what you're looking for." %}</p>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <h4>{% trans "Connect directly" %}</h4>
+      <p>{% trans "Message professionals, collaborate on real work, and grow a network built on proof — not self-claims." %}</p>
+    </div>
   </div>
 </section>
 
@@ -473,6 +543,54 @@
       </div>
     </div>
   </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section reveal visible">
+  <div class="faq-head">
+    <h2>{% trans "Frequently asked questions" %}</h2>
+    <p>{% trans "Everything you need to know before you join." %}</p>
+  </div>
+
+  <details class="faq-item" open>
+    <summary>
+      {% trans "Is CoreLink free to join?" %}
+      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    </summary>
+    <p>{% trans "Yes — creating your profile and exploring the network is free. Some advanced discovery features may require a verified account." %}</p>
+  </details>
+
+  <details class="faq-item">
+    <summary>
+      {% trans "How does verification work?" %}
+      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    </summary>
+    <p>{% trans "We review profiles to confirm they reflect real, accurate information — replacing unverified self-claims with a structured process, so the people you connect with are who they say they are." %}</p>
+  </details>
+
+  <details class="faq-item">
+    <summary>
+      {% trans "Who is CoreLink for?" %}
+      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    </summary>
+    <p>{% trans "Students, professionals, founders, and organizations across Ethiopia who want to discover talent, find opportunities, and build genuine professional connections." %}</p>
+  </details>
+
+  <details class="faq-item">
+    <summary>
+      {% trans "What can I do with my profile?" %}
+      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    </summary>
+    <p>{% trans "Showcase your skills, experience, and proof of work, then discover and message other verified members directly through the platform." %}</p>
+  </details>
+
+  <details class="faq-item">
+    <summary>
+      {% trans "Is my information private?" %}
+      <span class="faq-icon"><svg fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    </summary>
+    <p>{% trans "You control what appears on your public profile, and only other members can message you directly." %}</p>
+  </details>
 </section>
 
 <!-- CTA BAND -->
