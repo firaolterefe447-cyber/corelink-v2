@@ -94,27 +94,41 @@
 
   /* ==================== HERO — centered, typographic, no image ==================== */
   .hero {
-    padding: 180px 40px 100px; max-width: 900px; margin: 0 auto; text-align: center;
+    padding: 140px 40px 100px; max-width: 1400px; margin: 0 auto; text-align: center;
     position: relative;
+    background: linear-gradient(135deg, rgba(10, 102, 194, 0.03) 0%, rgba(11, 18, 32, 0.02) 100%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.05) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .hero-h1 {
-    font-size: clamp(2.4rem, 5.2vw, 4.6rem);
-    font-weight: 900; letter-spacing: -0.04em; line-height: 1.06; color: var(--ink); margin-bottom: 22px;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900; letter-spacing: -0.05em; line-height: 1.05; color: var(--ink); margin-bottom: 24px;
     text-wrap: balance;
+    position: relative;
+    z-index: 1;
   }
   .hero-h1 u { text-decoration: none; color: var(--blue); }
 
-  .hero-desc { font-size: 17px; font-weight: 500; color: var(--muted); line-height: 1.65; max-width: 540px; margin: 0 auto 36px; text-wrap: balance; }
+  .hero-desc { font-size: 18px; font-weight: 500; color: var(--muted); line-height: 1.65; max-width: 620px; margin: 0 auto 40px; text-wrap: balance; position: relative; z-index: 1; }
 
-  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 26px; margin-bottom: 40px; flex-wrap: wrap; }
+  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 26px; margin-bottom: 40px; flex-wrap: wrap; position: relative; z-index: 1; }
   .btn-primary {
     display: inline-flex; align-items: center; gap: 10px;
-    background: var(--blue); color: #fff; font-weight: 700; font-size: 15px;
-    padding: 16px 30px; border-radius: 8px; text-decoration: none;
-    transition: background 0.2s ease, transform 0.2s ease;
+    background: var(--blue); color: #fff; font-weight: 700; font-size: 16px;
+    padding: 18px 36px; border-radius: 8px; text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(10, 102, 194, 0.3);
   }
-  .btn-primary:hover { background: var(--blue-deep); transform: translateY(-2px); }
+  .btn-primary:hover { background: var(--blue-deep); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 102, 194, 0.4); }
   .btn-primary svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
   .btn-primary:hover svg { transform: translateX(3px); }
 
@@ -318,8 +332,12 @@
     .nav { padding: 0 20px; }
     .nav-right .btn-login { display: none; }
     .nav-right .btn-join { display: none; }
-    .hero { padding: 110px 20px 56px; }
-    .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 28px; }
+    .hero { padding: 120px 20px 80px; max-width: 100%; }
+    .hero-h1 { font-size: clamp(2.2rem, 8vw, 3.5rem); letter-spacing: -0.04em; }
+    .hero-desc { font-size: 16px; max-width: 100%; }
+    .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .btn-primary { width: 100%; justify-content: center; padding: 16px 24px; }
+    .link-arrow { width: 100%; justify-content: center; }
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
     .spotlight-section { padding: 60px 0 70px; }
@@ -410,32 +428,6 @@
       <span>{% trans "Discover Talent" %}</span>
       <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
     </a>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how-section reveal visible">
-  <div class="how-head">
-    <div class="eyebrow-line">{% trans "How It Works" %}</div>
-    <h2>{% trans "From profile to opportunity, in three steps." %}</h2>
-    <p>{% trans "CoreLink is built to be simple — create your profile, get discovered, and start real conversations." %}</p>
-  </div>
-  <div class="how-grid">
-    <div class="how-step">
-      <div class="how-num">1</div>
-      <h4>{% trans "Create your verified profile" %}</h4>
-      <p>{% trans "Showcase your skills, experience, and proof of work — the things that actually show what you can do." %}</p>
-    </div>
-    <div class="how-step">
-      <div class="how-num">2</div>
-      <h4>{% trans "Discover talent & opportunities" %}</h4>
-      <p>{% trans "Search the network by skill, industry, or interest to find the people and openings that fit what you're looking for." %}</p>
-    </div>
-    <div class="how-step">
-      <div class="how-num">3</div>
-      <h4>{% trans "Connect directly" %}</h4>
-      <p>{% trans "Message professionals, collaborate on real work, and grow a network built on proof — not self-claims." %}</p>
-    </div>
   </div>
 </section>
 
