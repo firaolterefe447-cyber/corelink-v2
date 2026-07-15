@@ -77,7 +77,10 @@ def index_view(request):
         # Fallback: If nothing selected, show the 8 newest professionals
         hero_avatars = base_users.only('avatar', 'full_name', 'id').order_by('-created_at')[:8]
 
-    # 2. Talent Network Profile Cards
+    # 2. Home Page Top User (Single featured user)
+    top_hero_user = base_users.filter(home_page_top=True).select_related('portfolio').prefetch_related('portfolio__headlines').first()
+
+    # 3. Talent Network Profile Cards
     network_profiles = base_users.select_related(
         'portfolio'
     ).prefetch_related(
@@ -92,6 +95,7 @@ def index_view(request):
 
     return render(request, 'index.html', {
         'hero_avatars': hero_avatars,
+        'top_hero_user': top_hero_user,
         'featured_profiles': network_profiles
     })
 # ==========================================
