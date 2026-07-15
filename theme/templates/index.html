@@ -15,10 +15,6 @@
 <style>
   /*
     DESIGN DIRECTION "Confident Editorial"
-    No glassmorphism, no blurred glow orbs, no gradient-clip text.
-    Two colors only: deep ink navy + the platform's own blue (#0A66C2).
-    Signature moves: offset blue photo-frame, scrolling marquee band,
-    numbered list instead of shadow-cards.
   */
   :root {
     --blue:       #0A66C2;
@@ -92,36 +88,39 @@
   .m-btn-primary { background: var(--blue); color: #fff; text-align: center; padding: 14px; border-radius: 8px; font-weight: 700; text-decoration: none; }
   .m-btn-ghost { text-align: center; padding: 14px; border-radius: 8px; font-weight: 700; text-decoration: none; color: var(--ink); border: 1px solid var(--line); }
 
-  /* ==================== HERO — left-aligned, typographic, no image ==================== */
+  /* ==================== HERO ==================== */
   .hero {
-    padding: 140px 40px 100px; width: 100%; margin: 0; text-align: left;
-    position: relative;
+    padding: 150px 40px 110px; position: relative;
     background: linear-gradient(135deg, rgba(10, 102, 194, 0.03) 0%, rgba(11, 18, 32, 0.02) 100%);
   }
 
   .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background-image: radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.05) 0%, transparent 50%),
                       radial-gradient(circle at 80% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
+  /* Desktop 2-Column Structure */
+  .hero-grid {
+    max-width: 1360px; margin: 0 auto; position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 64px; align-items: center;
+  }
+
+  /* Typography (V2 Boldness) */
   .hero-h1 {
-    font-size: clamp(3rem, 6vw, 5.5rem);
-    font-weight: 900; letter-spacing: -0.05em; line-height: 1.05; color: var(--ink); margin-bottom: 24px;
+    font-size: clamp(2.8rem, 4.5vw, 4.5rem);
+    font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; color: var(--ink); margin-bottom: 24px;
     text-wrap: balance;
-    position: relative;
-    z-index: 1;
-    max-width: 1400px;
   }
   .hero-h1 u { text-decoration: none; color: var(--blue); }
 
-  .hero-desc { font-size: 18px; font-weight: 500; color: var(--muted); line-height: 1.65; max-width: 900px; margin: 0 0 40px; text-wrap: balance; position: relative; z-index: 1; }
+  .hero-desc {
+    font-size: 18px; font-weight: 500; color: var(--muted); line-height: 1.65;
+    max-width: 580px; margin: 0 0 40px; text-wrap: balance;
+  }
 
-  .hero-actions { display: flex; align-items: center; justify-content: flex-start; gap: 26px; margin-bottom: 40px; flex-wrap: wrap; position: relative; z-index: 1; }
+  .hero-actions { display: flex; align-items: center; justify-content: flex-start; gap: 26px; margin-bottom: 32px; flex-wrap: wrap; }
   .btn-primary {
     display: inline-flex; align-items: center; gap: 10px;
     background: var(--blue); color: #fff; font-weight: 700; font-size: 16px;
@@ -137,61 +136,49 @@
   .link-arrow svg { width: 16px; height: 16px; color: var(--blue); transition: transform 0.2s ease; }
   .link-arrow:hover svg { transform: translateX(4px); }
 
-  /* Avatar Stack Styles */
-  .hero-avatars {
-    display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
-    background: var(--ink);
-    border: 1px solid var(--ink);
-    border-radius: 20px;
-    padding: 16px 22px;
-    margin-top: 32px; width: fit-content; max-width: 100%;
-    transition: transform 0.3s var(--ease), box-shadow 0.3s ease;
-    box-shadow: 0 10px 30px rgba(11,18,32,0.18);
+  /* ---------------- DESKTOP ONLY ELEMENTS ---------------- */
+  /* V1 Inline Pill */
+  .hero-proof {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 8px 20px 8px 8px; border: 1px solid var(--line); border-radius: 999px;
+    background: #fff; width: fit-content;
   }
-  .hero-avatars:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 40px rgba(11,18,32,0.24);
-  }
-
-  .hero-av-info { display: flex; align-items: center; gap: 8px; }
-  .hero-stars { color: #f5b400; font-size: 14px; }
-  .hero-av-label { font-size: 13px; font-weight: 700; color: #fff; }
-
-  .avatar-stack {
-    display: flex; flex-wrap: wrap;
-    gap: 12px 0;
-    padding-left: 10px;
-  }
-
-  .avatar-item {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 2px solid var(--ink);
-    margin-left: -10px;
-    overflow: hidden; background: #1e293b;
-    transition: transform 0.35s var(--ease), z-index 0s;
-  }
-  .avatar-item:hover { transform: translateY(-6px) scale(1.12); z-index: 10; border-color: var(--blue); }
-  .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
-  .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--white); }
-
-  .avatar-plus {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 2px solid var(--ink);
-    margin-left: -10px; background: var(--blue-deep);
+  .proof-avatars { display: flex; }
+  .proof-avatar {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff;
+    margin-left: -10px; overflow: hidden; background: var(--blue-soft);
     display: flex; align-items: center; justify-content: center;
-    color: #fff; text-decoration: none; transition: transform 0.35s var(--ease);
+    font-size: 11px; font-weight: 800; color: var(--blue);
   }
-  .avatar-plus:hover { transform: translateY(-6px) scale(1.12); z-index: 10; background: var(--blue); }
+  .proof-avatar:first-child { margin-left: 0; }
+  .proof-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-proof span { font-size: 13.5px; font-weight: 700; color: var(--ink); }
 
-  .hero-av-info { display: flex; align-items: center; gap: 8px; }
-  .hero-stars { color: #f5b400; font-size: 14px; }
-  .hero-av-label { font-size: 13px; font-weight: 700; color: #fff; }
-
-  @media (min-width: 769px) {
-    .hide-on-desktop { display: none !important; }
+  /* V1 4-Card Right Grid */
+  .hero-proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .proof-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 18px; box-shadow: 0 2px 10px rgba(11,18,32,0.04);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s ease, border-color 0.3s ease;
   }
+  .proof-card:nth-child(even) { margin-top: 28px; }
+  .proof-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(11,18,32,0.09); border-color: rgba(10,102,194,0.25); }
+  .proof-card-avatar {
+    width: 44px; height: 44px; border-radius: 50%; overflow: hidden; background: var(--blue-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: var(--blue); margin-bottom: 14px;
+  }
+  .proof-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .proof-card-name { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+  .proof-card-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--blue); }
+  .proof-card-badge svg { width: 12px; height: 12px; }
 
-  /* ==================== SPOTLIGHT — real pinned profiles (is_home_profile_selected) ==================== */
+  /* ---------------- MOBILE ONLY ELEMENTS ---------------- */
+  /* V2 Big 30-Avatar Stack (Hidden on Desktop) */
+  .hero-avatars { display: none; }
+
+
+  /* ==================== SPOTLIGHT ==================== */
   .spotlight-section { padding: 90px 0 100px; }
   .spotlight-head { max-width: 1360px; margin: 0 auto 36px; padding: 0 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
   .spotlight-head h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); font-weight: 800; color: var(--ink); margin-bottom: 8px; }
@@ -203,7 +190,7 @@
     scrollbar-width: none;
   }
   .spotlight-scroll::-webkit-scrollbar { display: none; }
-  .spotlight-scroll::after { content: ''; flex: 0 0 1px; } /* trailing breathing room */
+  .spotlight-scroll::after { content: ''; flex: 0 0 1px; }
 
   .spotlight-card {
     scroll-snap-align: start; flex: 0 0 auto; width: min(360px, 84vw);
@@ -251,30 +238,23 @@
 
   .spotlight-cta { max-width: 1360px; margin: 32px auto 0; padding: 0 40px; }
 
-  /* ==================== MEMBER MOSAIC — real users, no stock photos ==================== */
+  /* ==================== MEMBER MOSAIC ==================== */
   .members-section { max-width: 1360px; margin: 0 auto; padding: 90px 40px 100px; }
   .members-head { text-align: center; margin-bottom: 44px; }
   .members-head h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 800; color: var(--ink); margin-bottom: 10px; }
   .members-head p { color: var(--muted); font-size: 15px; max-width: 460px; margin: 0 auto; }
 
-  .members-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px;
-  }
+  .members-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
   .member-card {
     background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
     padding: 22px 14px 18px; display: flex; flex-direction: column; align-items: center; text-align: center;
     transition: transform 0.3s var(--ease), border-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .member-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--blue);
-    box-shadow: 0 12px 28px rgba(11,18,32,0.10);
-  }
+  .member-card:hover { transform: translateY(-4px); border-color: var(--blue); box-shadow: 0 12px 28px rgba(11,18,32,0.10); }
   .member-avatar {
     width: 62px; height: 62px; border-radius: 50%; overflow: hidden; background: var(--ink);
     border: 2px solid var(--paper); box-shadow: 0 4px 10px rgba(11,18,32,0.12); margin-bottom: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 800; color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--blue);
   }
   .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .member-name { font-size: 13.5px; font-weight: 800; color: var(--ink); line-height: 1.3; }
@@ -287,7 +267,7 @@
   .discover-copy h3 { font-size: clamp(1.6rem, 2.6vw, 2.1rem); font-weight: 800; color: var(--ink); margin-bottom: 8px; }
   .discover-copy p { color: var(--muted); font-size: 15px; max-width: 480px; }
 
-  /* ==================== MISSION — EDITORIAL SPLIT ==================== */
+  /* ==================== MISSION ==================== */
   .mission { max-width: 1360px; margin: 0 auto; padding: 110px 40px; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 80px; }
   .mission-left { position: sticky; top: 120px; align-self: start; }
   .mission-left h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); font-weight: 800; line-height: 1.15; color: var(--ink); margin-bottom: 20px; }
@@ -298,23 +278,6 @@
   .mission-num { font-family: var(--font-heading); font-size: 15px; font-weight: 800; color: var(--blue); }
   .mission-item h4 { font-size: 19px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
   .mission-item p { color: var(--muted); font-size: 15px; line-height: 1.75; max-width: 620px; }
-
-  /* Social proof pill — small stacked avatars + trust line */
-  .hero-proof {
-    display: inline-flex; align-items: center; gap: 14px;
-    padding: 8px 22px 8px 10px; border: 1px solid var(--line); border-radius: 999px;
-    margin-top: 8px;
-  }
-  .proof-avatars { display: flex; }
-  .proof-avatar {
-    width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff;
-    margin-left: -10px; overflow: hidden; background: var(--blue-soft);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: var(--blue);
-  }
-  .proof-avatar:first-child { margin-left: 0; }
-  .proof-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .hero-proof span { font-size: 13.5px; font-weight: 700; color: var(--ink); }
 
   /* ==================== HOW IT WORKS ==================== */
   .how-section { max-width: 1360px; margin: 0 auto; padding: 100px 40px 40px; }
@@ -336,7 +299,6 @@
     content: ''; position: absolute; top: 26px; left: calc(100% - 8px); width: calc(44px + 16px);
     border-top: 2px dashed var(--line);
   }
-
 
   /* ==================== CTA BAND ==================== */
   .cta-band { background: var(--ink); padding: 100px 40px; text-align: center; }
@@ -368,20 +330,47 @@
     .mission-left { position: static; }
     .footer-main { grid-template-columns: 1fr 1fr; }
   }
+
   @media (max-width: 768px) {
     .nav { padding: 0 20px; }
-    .nav-right .btn-login { display: none; }
-    .nav-right .btn-join { display: none; }
-    .hero { padding: 120px 20px 80px; max-width: 100%; }
-    .hero-h1 { font-size: clamp(2.2rem, 8vw, 3.5rem); letter-spacing: -0.04em; }
+    .nav-right .btn-login, .nav-right .btn-join { display: none; }
+
+    /* V2 Mobile Hero Override */
+    .hero { padding: 120px 20px 80px; max-width: 100%; text-align: left; }
+    .hero-grid { display: block; }
+    .hero-h1 { font-size: clamp(2.2rem, 8vw, 3.5rem); letter-spacing: -0.04em; max-width: 1400px; }
     .hero-desc { font-size: 16px; max-width: 100%; }
     .hero-actions { flex-direction: column; gap: 16px; margin-bottom: 32px; align-items: flex-start; }
-    .btn-primary { width: 100%; justify-content: center; padding: 16px 24px; }
-    .link-arrow { width: 100%; justify-content: center; }
-    .hero-avatars { padding: 16px; width: 100%; box-sizing: border-box; }
-    .avatar-stack { padding-left: 8px; gap: 10px 0; }
-    .avatar-item, .avatar-plus { width: 36px; height: 36px; margin-left: -8px; }
-    .avatar-initials { font-size: 11px; }
+    .btn-primary, .link-arrow { width: 100%; justify-content: center; }
+
+    /* Hide V1 Desktop Elements */
+    .hero-proof { display: none !important; }
+    .hero-proof-grid { display: none !important; }
+
+    /* Show & Style V2 Mobile Avatar Stack */
+    .hero-avatars {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+      background: var(--ink); border: 1px solid var(--ink); border-radius: 20px;
+      padding: 16px; width: 100%; box-sizing: border-box; margin-top: 32px;
+      box-shadow: 0 10px 30px rgba(11,18,32,0.18);
+    }
+    .avatar-stack { display: flex; flex-wrap: wrap; padding-left: 8px; gap: 10px 0; }
+    .avatar-item {
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--ink);
+      margin-left: -8px; overflow: hidden; background: #1e293b;
+    }
+    .avatar-item img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-initials { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
+    .avatar-plus {
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--ink);
+      margin-left: -8px; background: var(--blue-deep);
+      display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none;
+    }
+    .hero-av-info { display: flex; align-items: center; gap: 8px; }
+    .hero-stars { color: #f5b400; font-size: 14px; }
+    .hero-av-label { font-size: 13px; font-weight: 700; color: #fff; }
+
+    /* Other Sections Mobile */
     .discover-strip { padding: 48px 20px; flex-direction: column; align-items: flex-start; }
     .members-section { padding: 60px 20px 70px; }
     .spotlight-section { padding: 60px 0 70px; }
@@ -456,47 +445,96 @@
 
 <!-- HERO -->
 <section class="hero reveal visible">
-  <h1 class="hero-h1">
-    {% trans "The home for the nation's most ambitious talent and" %} <u>{% trans "verified" %}</u> {% trans "professionals" %}
-  </h1>
-  <p class="hero-desc">
-    {% trans "An Ethiopian Professional Community facilitating discovery, innovation, and collaboration, and connecting opportunity across the nation." %}
-  </p>
-  <div class="hero-actions">
-    <a href="{% url 'unified_onboarding' %}" class="btn-primary">
-      <span>{% trans "Start Your Journey" %}</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
-    <a href="{% url 'nexus_feed' %}" class="link-arrow">
-      <span>{% trans "Discover Talent" %}</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-    </a>
-  </div>
+  <div class="hero-grid">
 
-  {% if hero_avatars %}
-  <div class="hero-avatars">
-    <div class="avatar-stack">
-      {% for person in hero_avatars|slice:":30" %}
-      <div class="avatar-item {% if forloop.counter > 25 %}hide-on-desktop{% endif %}">
-        {% if person.avatar %}
-          <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
-        {% else %}
-          <div class="avatar-initials" style="background:{% cycle 'linear-gradient(135deg,#0A66C2,#073E78)' 'linear-gradient(135deg,#0A66C2,#0A66C2)' 'linear-gradient(135deg,#073E78,#0A66C2)' 'linear-gradient(135deg,#0A66C2,#0A66C2)' 'linear-gradient(135deg,#073E78,#073E78)' %};">{{ person.full_name|slice:":1" }}</div>
-        {% endif %}
+    <div class="hero-content">
+
+      <h1 class="hero-h1">
+        {% trans "The home for the nation's most ambitious talent and" %} <u>{% trans "verified" %}</u> {% trans "professionals" %}
+      </h1>
+
+      <p class="hero-desc">
+        {% trans "An Ethiopian Professional Community facilitating discovery, innovation, and collaboration, and connecting opportunity across the nation." %}
+      </p>
+
+      <div class="hero-actions">
+        <a href="{% url 'unified_onboarding' %}" class="btn-primary">
+          <span>{% trans "Start Your Journey" %}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </a>
+        <a href="{% url 'nexus_feed' %}" class="link-arrow">
+          <span>{% trans "Discover Talent" %}</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- DESKTOP V1 PILL (Hidden on Mobile) -->
+      {% if hero_avatars %}
+      <div class="hero-proof">
+        <div class="proof-avatars">
+          {% for person in hero_avatars|slice:":5" %}
+          <div class="proof-avatar">
+            {% if person.avatar %}
+              <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
+            {% else %}
+              {{ person.full_name|slice:":1" }}
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        <span>{% trans "Join verified Ethiopian professionals." %}</span>
+      </div>
+      {% endif %}
+
+      <!-- MOBILE V2 STACK (Hidden on Desktop) -->
+      {% if hero_avatars %}
+      <div class="hero-avatars">
+        <div class="avatar-stack">
+          {% for person in hero_avatars|slice:":30" %}
+          <div class="avatar-item">
+            {% if person.avatar %}
+              <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
+            {% else %}
+              <div class="avatar-initials" style="background:{% cycle 'linear-gradient(135deg,#0A66C2,#073E78)' 'linear-gradient(135deg,#0A66C2,#0A66C2)' 'linear-gradient(135deg,#073E78,#0A66C2)' 'linear-gradient(135deg,#0A66C2,#0A66C2)' 'linear-gradient(135deg,#073E78,#073E78)' %};">{{ person.full_name|slice:":1" }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <a href="{% url 'nexus_feed' %}" class="avatar-plus" aria-label="View more professionals">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 5v14M5 12h14"/></svg>
+          </a>
+        </div>
+        <div class="hero-av-info">
+          <div class="hero-stars">★★★★★</div>
+          <div class="hero-av-label">{% trans "Join verified Ethiopian professionals." %}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- DESKTOP V1 4-CARD GRID (Hidden on Mobile) -->
+    {% if hero_avatars %}
+    <div class="hero-proof-grid">
+      {% for person in hero_avatars|slice:":4" %}
+      <div class="proof-card">
+        <div class="proof-card-avatar">
+          {% if person.avatar %}
+            <img src="{{ person.get_avatar_url }}" alt="{{ person.full_name }}">
+          {% else %}
+            {{ person.full_name|slice:":1" }}
+          {% endif %}
+        </div>
+        <div class="proof-card-name">{{ person.full_name }}</div>
+        <div class="proof-card-badge">
+          <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          {% trans "Verified" %}
+        </div>
       </div>
       {% endfor %}
-      <a href="{% url 'nexus_feed' %}" class="avatar-plus" aria-label="View more professionals">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 5v14M5 12h14"/></svg>
-      </a>
     </div>
-    <div class="hero-av-info">
-      <div class="hero-stars">★★★★★</div>
-      <div class="hero-av-label">{% trans "Join verified Ethiopian professionals." %}</div>
-    </div>
-  </div>
-  {% endif %}
-</section>
+    {% endif %}
 
+  </div>
+</section>
 
 <!-- FEATURED TALENT — real pinned profiles (User.is_home_profile_selected) -->
 {% if featured_profiles %}
@@ -598,7 +636,6 @@
     </div>
   </div>
 </section>
-
 
 <!-- CTA BAND -->
 <div class="cta-band reveal visible">
