@@ -363,7 +363,7 @@
                 {% endif %}
 
                 <!-- ==============================================
-                     STEP 1: IDENTITY (ROLE & NAME) - LOW FRICTION
+                     STEP 1: IDENTITY (ROLE ONLY) - LOW FRICTION
                      ============================================== -->
                 <div class="form-step active" id="step-1">
                     <h2 class="step-title">{% trans "Choose your path" %}</h2>
@@ -376,7 +376,7 @@
                             </div>
                             <div>
                                 <p class="role-name">{% trans "Individual" %}</p>
-                                <p class="role-desc">{% trans "Professional, creator, or student." %}</p>
+                                <p class="role-desc">{% trans "Professional, creator, or student looking to learn, build, or get hired." %}</p>
                             </div>
                         </div>
 
@@ -385,14 +385,25 @@
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             </div>
                             <div>
-                                <p class="role-name">{% trans "Company" %}</p>
-                                <p class="role-desc">{% trans "Business or organization looking to scale." %}</p>
+                                <p class="role-name">{% trans "Business / Company" %}</p>
+                                <p class="role-desc">{% trans "Business, company, or organization looking to scale, get discovered, and access a verified pool of Ethiopian professionals." %}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="section-header">{% trans "Your Name" %} <span class="text-sm font-medium text-slate-500 block mt-1">{% trans "Enter your real identity to establish trust." %}</span></div>
-                    <div class="fields-grid">
+                    <div class="btn-row">
+                        <button type="button" class="btn-primary dark" onclick="nextStep(2)">{% trans "Continue" %} &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     STEP 2: DETAILS & SECURITY - MEDIUM COMMITMENT
+                     ============================================== -->
+                <div class="form-step" id="step-2">
+                    <h2 class="step-title">{% trans "Personal & Contact Info" %}</h2>
+                    <p class="step-subtitle">{% trans "Let's start with your core details and secure your account." %}</p>
+
+                    <div class="fields-grid" style="margin-bottom: 1.25rem;">
                         <div class="field-group">
                             <label class="form-label">{% trans "First name" %}</label>
                             {{ form.first_name }}
@@ -404,18 +415,6 @@
                             {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
                         </div>
                     </div>
-
-                    <div class="btn-row">
-                        <button type="button" class="btn-primary dark" onclick="nextStep(2)">{% trans "Continue" %} &rarr;</button>
-                    </div>
-                </div>
-
-                <!-- ==============================================
-                     STEP 2: CONTACT & SECURITY - HIGH COMMITMENT
-                     ============================================== -->
-                <div class="form-step" id="step-2">
-                    <h2 class="step-title">{% trans "Contact & Security" %}</h2>
-                    <p class="step-subtitle">{% trans "Secure your account and stay connected." %}</p>
 
                     <div class="fields-grid">
                         <div class="field-group col-span-2">
