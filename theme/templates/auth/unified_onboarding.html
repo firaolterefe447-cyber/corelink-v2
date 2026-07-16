@@ -902,7 +902,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const userType = urlParams.get('type');
 
-        let initialRole = 'EXPERT'; // default
+        let initialRole = null; // no default - let user choose freely
         let shouldAutoAdvance = false;
 
         // Check if there are form errors first (user submitted form and it failed validation)
@@ -918,8 +918,10 @@
             shouldAutoAdvance = true;
         }
 
-        // Pre-configure the form DOM based on the role
-        selectRoleUI(initialRole);
+        // Pre-configure the form DOM based on the role (only if a role was selected)
+        if (initialRole) {
+            selectRoleUI(initialRole);
+        }
 
         // Jump to error step or auto-advance
         if (firstErr) {
