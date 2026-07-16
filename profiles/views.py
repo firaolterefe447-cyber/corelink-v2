@@ -1759,7 +1759,7 @@ class ServiceCreateView(CompanyContextMixin, CreateView):
     model = CompanyService
     form_class = CompanyServiceForm
     template_name = 'dashboard/company/generic_form.html'
-    success_url = reverse_lazy('manage_services')
+    success_url = reverse_lazy('manage_company_services')
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -1775,7 +1775,7 @@ class ServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyService
     form_class = CompanyServiceForm
     template_name = 'dashboard/company/generic_form.html'
-    success_url = reverse_lazy('manage_services')
+    success_url = reverse_lazy('manage_company_services')
 
     def get_queryset(self):
         return CompanyService.objects.filter(company=self.get_company())
@@ -1795,7 +1795,7 @@ class ServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
 class ServiceDeleteView(CompanyContextMixin, DeleteView):
     model = CompanyService
     template_name = 'dashboard/shared/confirm_delete.html'
-    success_url = reverse_lazy('manage_services')
+    success_url = reverse_lazy('manage_company_services')
 
     def get_queryset(self):
         return CompanyService.objects.filter(company=self.get_company())
