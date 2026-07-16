@@ -87,6 +87,16 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/languages/<uuid:pk>/edit/', views.LanguageUpdateView.as_view(), name='language_edit'),
     path('dashboard/languages/<uuid:pk>/delete/', views.LanguageDeleteView.as_view(), name='language_delete'),
 
+    # I. User Services (distinct from Company Services)
+    path('dashboard/services/', views.ServiceListView.as_view(), name='manage_services'),
+    path('dashboard/services/new/', views.ServiceCreateView.as_view(), name='service_create'),
+    path('dashboard/services/<uuid:pk>/edit/', views.ServiceUpdateView.as_view(), name='service_edit'),
+    path('dashboard/services/<uuid:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
+    path('dashboard/services/<uuid:service_id>/gallery/', views.ServiceGalleryListView.as_view(), name='manage_service_gallery'),
+    path('dashboard/services/<uuid:service_id>/gallery/new/', views.ServiceGalleryCreateView.as_view(), name='service_gallery_create'),
+    path('dashboard/services/gallery/<uuid:pk>/edit/', views.ServiceGalleryUpdateView.as_view(), name='service_gallery_edit'),
+    path('dashboard/services/gallery/<uuid:pk>/delete/', views.ServiceGalleryDeleteView.as_view(), name='service_gallery_delete'),
+
     path('dashboard/logs/', GrowthLogListView.as_view(), name='manage_growth_logs'),
     path('dashboard/essays/', EssayListView.as_view(), name='manage_essays'),
     path('dashboard/visions/', VisionBlockListView.as_view(), name='manage_vision_blocks'),

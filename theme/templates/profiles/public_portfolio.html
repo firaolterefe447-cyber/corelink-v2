@@ -642,6 +642,43 @@
        {% endif %}
 
 
+       <!-- SERVICES -->
+       {% if services %}
+       <section id="services" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
+           <h2 class="text-[28px] md:text-[36px] font-serif-title font-bold text-slate-900 mb-8 tracking-tight">Services</h2>
+           <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+               {% for service in services %}
+               <article class="p-7 md:p-9 bg-white border-2 border-slate-200 rounded-[1.5rem] md:rounded-[1.75rem] shadow-md hover:shadow-xl hover:border-[#0A66C2]/40 transition-all duration-300 flex flex-col cursor-default">
+                   <div class="relative z-20 flex flex-col h-full">
+                       <div class="flex flex-wrap items-center gap-3 mb-5">
+                           {% if service.is_active %}
+                           <span class="px-4 py-1.5 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">Available</span>
+                           {% else %}
+                           <span class="px-4 py-1.5 bg-slate-50 border-2 border-slate-200 text-slate-500 text-[11px] font-extrabold uppercase tracking-[0.2em] rounded-lg">Inactive</span>
+                           {% endif %}
+                           {% if service.gallery.count > 0 %}
+                           <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">{{ service.gallery.count }} image{{ service.gallery.count|pluralize }}</span>
+                           {% endif %}
+                       </div>
+                       <h4 class="text-[19px] md:text-[23px] font-bold text-slate-900 mb-4 leading-snug">{{ service.title }}</h4>
+                       {% if service.description %}
+                       <p class="text-[15px] md:text-[16px] text-slate-600 mb-6 leading-[1.8]">{{ service.description|truncatewords:25 }}</p>
+                       {% endif %}
+                       {% if service.gallery.first %}
+                       <div class="mt-auto">
+                           <div class="rounded-xl overflow-hidden border border-slate-200">
+                               <img src="{{ service.gallery.first.image.url }}" loading="lazy" alt="{{ service.title }}" class="w-full h-48 object-cover">
+                           </div>
+                       </div>
+                       {% endif %}
+                   </div>
+               </article>
+               {% endfor %}
+           </div>
+       </section>
+       {% endif %}
+
+
        <!-- EXPERIENCE -->
        {% if experiences %}
        <section id="exp" class="pt-8 md:pt-10 border-t border-slate-200/60 reveal-on-scroll">
