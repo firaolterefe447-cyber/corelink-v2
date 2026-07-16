@@ -450,6 +450,7 @@
                             <div class="field-group">
                                 <label class="form-label">{% trans "Confirm PIN" %}</label>
                                 {{ form.confirm_password }}
+                                <span id="password-match-feedback" class="field-hint" style="display: none;"></span>
                                 {% if form.confirm_password.errors %}<span class="field-error">{{ form.confirm_password.errors }}</span>{% endif %}
                             </div>
                         </div>
@@ -859,6 +860,40 @@
 
         enforceQuietValidation('path-individual-bio', false);
         enforceQuietValidation('path-company-bio', true);
+
+        // --- REAL-TIME PASSWORD MATCHING FEEDBACK ---
+        const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+        const confirmPasswordField = document.getElementById('{{ form.confirm_password.id_for_label }}');
+        const matchFeedback = document.getElementById('password-match-feedback');
+
+        function checkPasswordMatch() {
+            if (!passwordField || !confirmPasswordField || !matchFeedback) return;
+            
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+            
+            if (confirmPassword.length === 0) {
+                matchFeedback.style.display = 'none';
+                return;
+            }
+            
+            matchFeedback.style.display = 'block';
+            
+            if (password === confirmPassword) {
+                matchFeedback.textContent = '✓ PINs match';
+                matchFeedback.style.color = '#059669';
+                matchFeedback.style.fontWeight = '700';
+            } else {
+                matchFeedback.textContent = '✗ PINs do not match';
+                matchFeedback.style.color = '#dc2626';
+                matchFeedback.style.fontWeight = '700';
+            }
+        }
+
+        if (passwordField && confirmPasswordField) {
+            passwordField.addEventListener('input', checkPasswordMatch);
+            confirmPasswordField.addEventListener('input', checkPasswordMatch);
+        }
 
         // Routing logic
         const firstErr = document.querySelector('.field-error');
