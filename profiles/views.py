@@ -67,7 +67,15 @@ class RoleAwareFormMixin:
 class PortfolioSecurityMixin(LoginRequiredMixin):
     """Locks queries so users can only ever view/edit/delete their own portfolio blocks."""
     def get_queryset(self):
-        return self.model.objects.filter(profile__user=self.request.user)
+        # Handle models that might not have a profile field
+        if hasattr(self.model, 'profile'):
+            return self.model.objects.filter(profile__user=self.request.user)
+        # For models with direct user relationship
+        elif hasattr(self.model, 'user'):
+            return self.model.objects.filter(user=self.request.user)
+        else:
+            # For nested models (like ServiceGallery), filter through parent
+            return self.model.objects.all()
 
 class ContentPostSuccessUrlMixin:
     """Dynamically returns the success URL based on the saved object's post_type."""
@@ -801,11 +809,21 @@ class ServiceListView(PortfolioSecurityMixin, ListView):
     template_name = 'dashboard/portfolio/service_list.html'
     context_object_name = 'services'
 
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
+
 class ServiceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
     model = Service
     form_class = ServiceForm
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_services')
+
+    def get_queryset(self):
+        # Override to avoid filtering on create
+        return Service.objects.all()
 
 class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Service
@@ -813,10 +831,22 @@ class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurity
     template_name = 'dashboard/portfolio/generic_form.html'
     success_url = reverse_lazy('manage_services')
 
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
+
 class ServiceDeleteView(PortfolioSecurityMixin, DeleteView):
     model = Service
     template_name = 'dashboard/shared/confirm_delete.html'
     success_url = reverse_lazy('manage_services')
+
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
 
 class ServiceGalleryListView(PortfolioSecurityMixin, ListView):
     model = ServiceGallery
@@ -1746,8 +1776,8 @@ def search_user_for_invitation(request):
 # ║ Human Context: Managing the public-facing content blocks of the company.   ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-# --- SERVICES ---
-class ServiceListView(CompanyContextMixin, ListView):
+# --- COMPANY SERVICES ---
+class CompanyServiceListView(CompanyContextMixin, ListView):
     model = CompanyService
     template_name = 'dashboard/company/service_list.html'
     context_object_name = 'services'
@@ -1755,7 +1785,7 @@ class ServiceListView(CompanyContextMixin, ListView):
     def get_queryset(self):
         return CompanyService.objects.filter(company=self.get_company()).order_by('order')
 
-class ServiceCreateView(CompanyContextMixin, CreateView):
+class CompanyServiceCreateView(CompanyContextMixin, CreateView):
     model = CompanyService
     form_class = CompanyServiceForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1771,7 +1801,7 @@ class ServiceCreateView(CompanyContextMixin, CreateView):
         messages.success(self.request, "Service added successfully!")
         return redirect(self.get_success_url())
 
-class ServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
+class CompanyServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
     model = CompanyService
     form_class = CompanyServiceForm
     template_name = 'dashboard/company/generic_form.html'
@@ -1792,7 +1822,7 @@ class ServiceUpdateView(OracleUpdateMixin, CompanyContextMixin, UpdateView):
         messages.success(self.request, "Service updated successfully!")
         return redirect(self.get_success_url())
 
-class ServiceDeleteView(CompanyContextMixin, DeleteView):
+class CompanyServiceDeleteView(CompanyContextMixin, DeleteView):
     model = CompanyService
     template_name = 'dashboard/shared/confirm_delete.html'
     success_url = reverse_lazy('manage_company_services')

@@ -150,10 +150,10 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('invitation/<uuid:invitation_id>/decline/', views.decline_company_invitation, name='decline_company_invitation'),
 
     # Company Services
-    path('dashboard/company/services/', views.ServiceListView.as_view(), name='manage_company_services'),
-    path('dashboard/company/services/new/', views.ServiceCreateView.as_view(), name='company_service_create'),
-    path('dashboard/company/services/<uuid:pk>/edit/', views.ServiceUpdateView.as_view(), name='company_service_edit'),
-    path('dashboard/company/services/<uuid:pk>/delete/', views.ServiceDeleteView.as_view(), name='company_service_delete'),
+    path('dashboard/company/services/', views.CompanyServiceListView.as_view(), name='manage_company_services'),
+    path('dashboard/company/services/new/', views.CompanyServiceCreateView.as_view(), name='company_service_create'),
+    path('dashboard/company/services/<uuid:pk>/edit/', views.CompanyServiceUpdateView.as_view(), name='company_service_edit'),
+    path('dashboard/company/services/<uuid:pk>/delete/', views.CompanyServiceDeleteView.as_view(), name='company_service_delete'),
 
     # Company News
     path('dashboard/company/news/', views.NewsListView.as_view(), name='manage_news_list'),

@@ -110,6 +110,25 @@ class CoreLinkOracle:
             elif content_count >= 5: score += 3
             elif content_count >= 1: score += 1
 
+            # --- Services (Cap: 15 points) ---
+            service_score = 0
+            for service in portfolio.services.all():
+                service_score += 1
+                # Use len(.all()) to prevent N+1 Query explosion
+                gallery_count = len(service.gallery.all())
+                if gallery_count >= 3: service_score += 2
+                elif gallery_count >= 1: service_score += 1
+                
+                # Check description depth
+                if service.description and len(service.description) > 50:
+                    service_score += 1
+                    
+                # Bonus for active services
+                if service.is_active:
+                    service_score += 1
+                    
+            score += min(service_score, 15) # Cap max service points
+
         # ==========================================
         # 3. CORPORATE ASSET OVERRIDE
         # ==========================================
@@ -156,7 +175,8 @@ class CoreLinkOracle:
                 'portfolio__credentials',
                 'portfolio__skills',
                 'portfolio__languages',
-                'portfolio__content_posts'
+                'portfolio__content_posts',
+                'portfolio__services__gallery'
             ).get(id=user_id)
 
             if not hasattr(user, 'portfolio'):
