@@ -327,6 +327,34 @@ def project_detail_view(request, identifier, pk):
     return render(request, 'profiles/project_detail.html', context)
 
 
+def service_detail_view(request, identifier, pk):
+    """
+    Public Service Detail View.
+    Shows full service information including gallery and description.
+    """
+    # Get the user profile from identifier (slug or CoreLink ID)
+    target_user = None
+    portfolio = UserProfile.objects.filter(slug=identifier).first()
+    
+    if portfolio:
+        target_user = portfolio.user
+    else:
+        target_user = get_object_or_404(CustomUser, corelink_id=identifier)
+    
+    # Get the specific service
+    if not hasattr(target_user, 'portfolio') or not target_user.portfolio:
+        raise Http404("User profile not found")
+    service = get_object_or_404(Service, pk=pk, profile=target_user.portfolio)
+    
+    context = {
+        'profile': target_user.portfolio,
+        'user': target_user,
+        'service': service,
+    }
+    
+    return render(request, 'profiles/service_detail.html', context)
+
+
 from django.shortcuts import render, get_object_or_404
 from .models import Company
 
