@@ -25,7 +25,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
     :root {
@@ -40,8 +40,8 @@
         --text-muted: #94a3b8;
         --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
         --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-        --font-display: 'Sora', sans-serif;
-        --font-body: 'DM Sans', sans-serif;
+        --font-display: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
         --radius-sm: 0.75rem;
         --radius: 1.125rem;
         --radius-lg: 1.5rem;
@@ -95,7 +95,7 @@
     /* ── LAYOUT ── */
     .page-wrapper {
         min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
-        padding: 3rem 1rem 6rem; width: 100%; max-width: 46rem; margin: 0 auto;
+        padding: 3rem 1rem 6rem; width: 100%; max-width: 48rem; margin: 0 auto;
     }
 
     /* ── BACK BUTTON ── */
@@ -158,21 +158,20 @@
     .step-subtitle { font-size: 15px; color: var(--text-secondary); font-weight: 500; margin: 0 0 2rem; }
 
     /* ── BOLD ROLE CARDS ── */
-    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 480px) { .role-grid { grid-template-columns: 1fr; } }
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    @media (max-width: 640px) { .role-grid { grid-template-columns: 1fr; } }
 
     .role-card {
         all: unset; cursor: pointer; display: flex; flex-direction: column; padding: 1.5rem;
         border-radius: var(--radius-lg); border: 2px solid #e2e8f0; background: #ffffff;
-        transition: all 0.25s var(--ease-out-expo); gap: 1rem; text-align: left;
+        transition: all 0.25s var(--ease-out-expo); gap: 1rem; text-align: left; position: relative;
     }
-    .role-card:hover {
-        border-color: var(--blue); background: #f8fafc;
-        box-shadow: 0 10px 25px var(--blue-glow); transform: translateY(-3px);
+    .role-card.selected {
+        border-color: var(--blue); background: #f0f9ff; box-shadow: 0 4px 14px var(--blue-glow);
     }
-    .role-icon {
-        width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
+    .role-card:hover:not(.selected) { border-color: #cbd5e1; background: #f8fafc; transform: translateY(-2px); }
+
+    .role-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .role-icon.blue  { background: #eff6ff; color: var(--blue); }
     .role-icon.green { background: #f0fdf4; color: #059669; }
     .role-icon svg   { width: 22px; height: 22px; }
@@ -182,13 +181,11 @@
     /* ── FORM FIELDS ── */
     .field-group { display: flex; flex-direction: column; gap: 0.5rem; }
     .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1rem; }
-    @media (max-width: 480px) { .fields-grid { grid-template-columns: 1fr; } }
-    .col-span-2 { grid-column: span 2; }
-    @media (max-width: 480px) { .col-span-2 { grid-column: span 1; } }
+    @media (max-width: 640px) { .fields-grid { grid-template-columns: 1fr; } .col-span-2 { grid-column: span 1; } }
+    @media (min-width: 641px) { .col-span-2 { grid-column: span 2; } }
 
     .space-y { display: flex; flex-direction: column; gap: 1.25rem; }
 
-    /* Soft, non-uppercase label styling */
     .form-label { font-size: 14px; font-weight: 700; color: var(--text-primary); display: block; }
 
     .django-form input, .django-form select, .django-form textarea {
@@ -213,17 +210,17 @@
     .info-banner {
         border-radius: 12px; border: 1.5px solid #bfdbfe; background: #eff6ff;
         padding: 1rem; font-size: 13.5px; font-weight: 600; color: #1e3a8a; line-height: 1.5;
-        text-align: center;
     }
 
     /* ── SECURITY BLOCK ── */
-    .security-block { border: 2px solid #e2e8f0; border-radius: var(--radius-lg); background: #f8fafc; padding: 1.5rem; }
+    .security-block { border: 2px solid #e2e8f0; border-radius: var(--radius-lg); background: #f8fafc; padding: 1.5rem; margin-top: 1.5rem; }
     .security-block-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
     .security-block-header svg { width: 18px; height: 18px; color: var(--text-primary); }
-    .security-block-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .security-block-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
 
     /* ── DIVIDER ── */
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0, transparent); margin: 0.5rem 0; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0, transparent); margin: 1.5rem 0; }
+    .section-header { font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 1.5rem 0 1rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
 
     /* ── BOLD BUTTONS ── */
     .btn-row { display: flex; gap: 1rem; margin-top: 2.5rem; }
@@ -240,6 +237,7 @@
     .btn-primary {
         flex: 1; padding: 1rem 1.5rem; border-radius: 100px; border: none; font-family: var(--font-body);
         font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: -0.01em; transition: all 0.25s var(--ease-out-expo);
+        display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn-primary.dark { background: var(--text-primary); color: white; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); }
     .btn-primary.dark:hover { background: #1e293b; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25); transform: translateY(-2px); }
@@ -252,7 +250,7 @@
     .page-footer { margin-top: 2rem; text-align: center; font-size: 14px; color: var(--text-secondary); font-weight: 500; }
     .page-footer a { color: var(--blue); font-weight: 700; text-decoration: none; margin-left: 4px; }
     .page-footer a:hover { text-decoration: underline; }
-    .terms-note { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 1rem; line-height: 1.5; }
+    .terms-note { text-align: center; font-size: 12.5px; font-weight: 500; color: var(--text-muted); margin-top: 1.5rem; line-height: 1.5; }
 
     /* ── ENTER ANIMATION ── */
     @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
@@ -261,10 +259,8 @@
     /* ── CROPPER STYLES ── */
     .cropper-bg { background-image: none !important; background-color: #000 !important; }
     .cropper-view-box {
-        outline: none !important;
-        border: 2px solid rgba(255, 255, 255, 0.95) !important;
-        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85) !important;
-        border-radius: 50% !important; /* Force circular crop area */
+        outline: none !important; border: 2px solid rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85) !important; border-radius: 50% !important;
     }
     .cropper-line, .cropper-point, .cropper-dashed, .cropper-center { display: none !important; }
     .cropper-drag-box { background-color: transparent !important; }
@@ -274,91 +270,44 @@
         background: #ffffff; cursor: pointer; margin-top: -10px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.5); border: 2px solid #e2e8f0;
     }
-    input[type=range]::-webkit-slider-runnable-track {
-        width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px;
-    }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.3); border-radius: 2px; }
     input[type=range]:focus { outline: none; }
 
     /* ── CIRCULAR AVATAR UPLOAD PREVIEW ── */
-    .avatar-upload-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
+    .avatar-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; }
     .avatar-upload-preview {
-        width: 140px;
-        height: 140px;
-        border: 2px dashed #cbd5e1;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: #f8fafc;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        width: 150px; height: 150px; border: 2.5px dashed #cbd5e1; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: #f8fafc;
+        position: relative; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
     .avatar-upload-preview:hover {
-        border-color: var(--blue);
-        background: #f0f9ff;
-        box-shadow: 0 10px 20px -5px rgba(10, 102, 194, 0.2);
-        transform: translateY(-2px);
+        border-color: var(--blue); background: #f0f9ff;
+        box-shadow: 0 10px 20px -5px rgba(10, 102, 194, 0.2); transform: translateY(-2px);
     }
-    .avatar-upload-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .avatar-upload-placeholder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.3rem;
-        color: var(--text-secondary);
-        transition: color 0.3s ease;
-    }
-    .avatar-upload-preview:hover .avatar-upload-placeholder {
-        color: var(--blue);
-    }
-    .avatar-upload-preview.has-image .avatar-upload-placeholder {
-        display: none;
-    }
+    .avatar-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; color: var(--text-secondary); transition: color 0.3s ease; }
+    .avatar-upload-preview:hover .avatar-upload-placeholder { color: var(--blue); }
+    .avatar-upload-preview.has-image .avatar-upload-placeholder { display: none; }
     .avatar-edit-overlay {
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        background: rgba(10, 102, 194, 0.85);
-        color: white;
-        font-size: 11.5px;
-        font-weight: 700;
-        text-align: center;
-        padding: 5px 0 8px;
-        opacity: 0;
-        transition: opacity 0.25s ease;
+        position: absolute; bottom: 0; left: 0; right: 0; background: rgba(10, 102, 194, 0.85);
+        color: white; font-size: 11.5px; font-weight: 700; text-align: center; padding: 5px 0 8px;
+        opacity: 0; transition: opacity 0.25s ease;
     }
-    .avatar-upload-preview.has-image:hover .avatar-edit-overlay {
-        opacity: 1;
-    }
+    .avatar-upload-preview.has-image:hover .avatar-edit-overlay { opacity: 1; }
 
     /* ── CV UPLOAD BUTTON STYLING ── */
     #cv-upload-field input[type="file"] {
-        padding: 1.25rem 1.5rem !important;
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        background: #f0f9ff !important;
-        border: 2px dashed var(--blue) !important;
-        border-radius: 12px !important;
-        cursor: pointer !important;
-        min-height: 60px !important;
+        padding: 1.25rem 1.5rem !important; font-size: 15px !important; font-weight: 700 !important;
+        background: #f0f9ff !important; border: 2px dashed var(--blue) !important;
+        border-radius: 12px !important; cursor: pointer !important; min-height: 60px !important;
         transition: all 0.25s var(--ease-out-expo) !important;
     }
-    #cv-upload-field input[type="file"]:hover {
-        background: #e0f2fe !important;
-        border-color: #2563eb !important;
-        box-shadow: 0 4px 12px rgba(10, 102, 194, 0.15) !important;
-    }
+    #cv-upload-field input[type="file"]:hover { background: #e0f2fe !important; border-color: #2563eb !important; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.15) !important; }
+
+    /* Display Utility Classes for JS Toggling */
+    .group-ind { display: block; }
+    .group-comp { display: none; }
 </style>
 
 <!-- TOP LOADING BAR -->
@@ -413,87 +362,91 @@
                 </div>
                 {% endif %}
 
-                <!-- ── STEP 1: CHOOSE PATH ── -->
+                <!-- ==============================================
+                     STEP 1: IDENTITY (ROLE & NAME) - LOW FRICTION
+                     ============================================== -->
                 <div class="form-step active" id="step-1">
                     <h2 class="step-title">{% trans "Choose your path" %}</h2>
                     <p class="step-subtitle">{% trans "How do you want to join the network?" %}</p>
 
                     <div class="role-grid">
-                        <button type="button" onclick="setRole('EXPERT')" class="role-card">
+                        <div id="role-expert" onclick="selectRoleUI('EXPERT')" class="role-card selected">
                             <div class="role-icon blue">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             </div>
                             <div>
                                 <p class="role-name">{% trans "Individual" %}</p>
-                                <p class="role-desc">{% trans "Professional, creator, or student looking to learn, build, or get hired." %}</p>
+                                <p class="role-desc">{% trans "Professional, creator, or student." %}</p>
                             </div>
-                        </button>
+                        </div>
 
-                        <button type="button" onclick="setRole('FOUNDER')" class="role-card">
+                        <div id="role-founder" onclick="selectRoleUI('FOUNDER')" class="role-card">
                             <div class="role-icon green">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             </div>
                             <div>
-                                <p class="role-name">{% trans "Business / Company" %}</p>
-                                <p class="role-desc">{% trans "Business, company, or organization looking to scale, get discovered, and access a verified pool of Ethiopian professionals." %}</p>
+                                <p class="role-name">{% trans "Company" %}</p>
+                                <p class="role-desc">{% trans "Business or organization looking to scale." %}</p>
                             </div>
-                        </button>
+                        </div>
+                    </div>
+
+                    <div class="section-header">{% trans "Your Name" %} <span class="text-sm font-medium text-slate-500 block mt-1">{% trans "Enter your real identity to establish trust." %}</span></div>
+                    <div class="fields-grid">
+                        <div class="field-group">
+                            <label class="form-label">{% trans "First name" %}</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors }}</span>{% endif %}
+                        </div>
+                        <div class="field-group">
+                            <label class="form-label">{% trans "Last name" %}</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button type="button" class="btn-primary dark" onclick="nextStep(2)">{% trans "Continue" %} &rarr;</button>
                     </div>
                 </div>
 
-                <!-- ── STEP 2: BASICS ── -->
+                <!-- ==============================================
+                     STEP 2: CONTACT & SECURITY - HIGH COMMITMENT
+                     ============================================== -->
                 <div class="form-step" id="step-2">
-                    <h2 class="step-title">{% trans "The basics" %}</h2>
-                    <p class="step-subtitle">{% trans "Let's start with your core details." %}</p>
+                    <h2 class="step-title">{% trans "Contact & Security" %}</h2>
+                    <p class="step-subtitle">{% trans "Secure your account and stay connected." %}</p>
 
-                    <div class="space-y" id="step2-grid">
-                        <!-- Content dynamically inserted here via JS -->
+                    <div class="fields-grid">
+                        <div class="field-group col-span-2">
+                            <label class="form-label">{% trans "Email address" %}</label>
+                            {{ form.email }}
+                            <div class="info-banner" style="margin-top: 0.5rem; text-align: left; display: flex; align-items: flex-start; gap: 8px;">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>{% trans "We'll send important account notifications here." %}</span>
+                            </div>
+                            {% if form.email.errors %}<span class="field-error">{{ form.email.errors }}</span>{% endif %}
+                        </div>
+                        <div class="field-group col-span-2">
+                            <label class="form-label">{% trans "Phone number" %}</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors }}</span>{% endif %}
+                        </div>
+                        <div class="field-group col-span-2">
+                            <label class="form-label">{% trans "Telegram username" %} <span style="color:var(--text-muted); font-weight:500;">({% trans "Optional" %})</span></label>
+                            {{ form.telegram_handle }}
+                            {% if form.telegram_handle.errors %}<span class="field-error">{{ form.telegram_handle.errors }}</span>{% endif %}
+                        </div>
                     </div>
-
-                    <div class="btn-row">
-                        <button type="button" class="btn-back" onclick="prevStep(1)" aria-label="Back">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 16 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
-                        </button>
-                        <button type="button" class="btn-primary dark" onclick="nextStep(3)">{% trans "Continue" %}</button>
-                    </div>
-                </div>
-
-                <!-- ── STEP 3: BACKGROUND ── -->
-                <div class="form-step" id="step-3">
-                    <h2 class="step-title">{% trans "Background info" %}</h2>
-                    <p class="step-subtitle">{% trans "Tell us about your current status and location." %}</p>
-
-                    <div class="space-y" id="step3-space-y">
-                        <!-- Content dynamically inserted here via JS -->
-                    </div>
-
-                    <div class="btn-row">
-                        <button type="button" class="btn-back" onclick="prevStep(2)" aria-label="Back">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 16 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
-                        </button>
-                        <button type="button" class="btn-primary dark" onclick="nextStep(4)">{% trans "Continue" %}</button>
-                    </div>
-                </div>
-
-                <!-- ── STEP 4: FINAL DETAILS ── -->
-                <div class="form-step" id="step-4">
-                    <h2 class="step-title">{% trans "Final details" %}</h2>
-                    <p class="step-subtitle">{% trans "Tell us about yourself and secure your account." %}</p>
-
-                    <div class="space-y" id="step4-dynamic-area">
-                        <!-- Content dynamically inserted here via JS -->
-                    </div>
-
-                    <div class="divider" id="founder-divider" style="display:none; margin: 1.5rem 0;"></div>
 
                     <div class="security-block">
                         <div class="security-block-header">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                            <span class="security-block-title">{% trans "Account security" %}</span>
+                            <span class="security-block-title">{% trans "Create 4-Digit Security PIN" %}</span>
                         </div>
                         <div class="fields-grid">
                             <div class="field-group">
-                                <label class="form-label">{% trans "Create 4-digit PIN" %}</label>
+                                <label class="form-label">{% trans "PIN" %}</label>
                                 {{ form.password }}
                                 {% if form.password.errors %}<span class="field-error">{{ form.password.errors }}</span>{% endif %}
                             </div>
@@ -506,183 +459,148 @@
                     </div>
 
                     <div class="btn-row">
-                        <button type="button" class="btn-back" onclick="prevStep(3)" aria-label="Back">
+                        <button type="button" class="btn-back" onclick="prevStep(1)" aria-label="Back">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 16 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
                         </button>
-                        <button type="submit" id="submit-btn" class="btn-primary blue">{% trans "Complete Registration →" %}</button>
+                        <button type="button" class="btn-primary dark" onclick="nextStep(3)">{% trans "Continue" %} &rarr;</button>
                     </div>
-
-                    <p class="terms-note">{% trans "By registering, you agree to our Terms & Privacy Policy." %}</p>
                 </div>
 
+                <!-- ==============================================
+                     STEP 3: PROFESSIONAL IDENTITY - MEDIUM FRICTION
+                     ============================================== -->
+                <div class="form-step" id="step-3">
+                    <h2 class="step-title">{% trans "Professional Details" %}</h2>
+                    <p class="step-subtitle">{% trans "Tell us about your professional focus." %}</p>
 
-                <!-- ========================================== -->
-                <!-- ALL DYNAMIC FORM FIELDS HELD IN STORAGE    -->
-                <!-- JavaScript distributes them based on path  -->
-                <!-- ========================================== -->
-                <div id="unused-fields" style="display: none;">
+                    <div class="space-y">
+                        <!-- Location (Shared, but label changes) -->
+                        <div class="field-group">
+                            <label class="form-label" id="loc-label-ind">{% trans "Your current city/location" %}</label>
+                            <label class="form-label group-comp" style="display:none;" id="loc-label-comp">{% trans "Company head office location" %}</label>
+                            {{ form.city_name }}
+                            {% if form.city_name.errors %}<span class="field-error">{{ form.city_name.errors }}</span>{% endif %}
+                        </div>
 
-                    <!-- 1. Registering Person (Grid Block) -->
-                    <div id="registering-person-fields" class="fields-grid">
-                        <div class="field-group">
-                            <label class="form-label">{% trans "First name" %}</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group">
-                            <label class="form-label">{% trans "Last name" %}</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Your email address" %}</label>
-                            {{ form.email }}
-                            <div class="info-banner" style="margin-top: 0.5rem;">
-                                <span>{% trans "We will send a verification link to this email. Use your personal, active email address." %}</span>
+                        <!-- INDIVIDUAL FIELDS -->
+                        <div class="group-ind space-y">
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Your current role/profession" %}</label>
+                                {{ form.current_role }}
+                                {% if form.current_role.help_text %}<span class="field-hint">{{ form.current_role.help_text }}</span>{% endif %}
+                                {% if form.current_role.errors %}<span class="field-error">{{ form.current_role.errors }}</span>{% endif %}
                             </div>
-                            {% if form.email.errors %}<span class="field-error">{{ form.email.errors }}</span>{% endif %}
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Institution or company" %}</label>
+                                {{ form.institution_name }}
+                                <span class="field-hint">{% trans "Where do you currently work or study?" %}</span>
+                                {% if form.institution_name.errors %}<span class="field-error">{{ form.institution_name.errors }}</span>{% endif %}
+                            </div>
                         </div>
-                        <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Your phone number" %}</label>
-                            {{ form.phone_number }}
-                            <span class="field-hint" style="display: block; margin-top: 6px; color: var(--text-secondary); font-size: 13px;">
-                                {% trans "Your personal mobile number for account security and verification." %}
-                            </span>
-                            {% if form.phone_number.errors %}<span class="field-error">{{ form.phone_number.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group col-span-2">
-                            <label class="form-label">{% trans "Telegram username" %}</label>
-                            {{ form.telegram_handle }}
-                            <span class="field-hint" style="display: block; margin-top: 6px; color: var(--text-secondary); font-size: 13px;">
-                                {% trans "Optional: Your Telegram username for community communication." %}
-                            </span>
-                            {% if form.telegram_handle.errors %}<span class="field-error">{{ form.telegram_handle.errors }}</span>{% endif %}
-                        </div>
-                    </div>
 
-                    <!-- 2. Location Field -->
-                    <div class="field-group" id="city-location-field">
-                        <label class="form-label">{% trans "Location" %}</label>
-                        {{ form.city_name }}
-                        <!-- Dynamic Hints -->
-                        <span class="field-hint" id="hint-location-individual">
-                            {% trans "Your current location." %}
-                        </span>
-                        <span class="field-hint" id="hint-location-company" style="display: none;">
-                            {% trans "Your head office (if remote, say remote)." %}
-                        </span>
-                        {% if form.city_name.errors %}<span class="field-error">{{ form.city_name.errors }}</span>{% endif %}
-                    </div>
-
-                    <!-- Company Information Header -->
-                    <div id="company-info-header" style="margin-bottom: 1rem;">
-                        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Company Information" %}</h3>
-                        <p style="font-size: 13px; color: var(--text-secondary); margin: 0.25rem 0 0;">{% trans "Tell us about your business or organization." %}</p>
-                    </div>
-
-                    <!-- 3. Company Field -->
-                    <div id="company-field" class="field-group">
-                        <label class="form-label">{% trans "Company name" %}</label>
-                        {{ form.company_name }}
-                        <span class="field-hint">{% trans "The official registered name of your business." %}</span>
-                        {% if form.company_name.errors %}<span class="field-error">{{ form.company_name.errors }}</span>{% endif %}
-                    </div>
-
-                    <!-- 4. Sector Field -->
-                    <div id="sector-field" class="field-group">
-                        <label class="form-label">{% trans "Industry sector" %}</label>
-                        {{ form.sector }}
-                        <span class="field-hint">{% trans "Select the primary industry your company operates in." %}</span>
-                        {% if form.sector.errors %}<span class="field-error">{{ form.sector.errors }}</span>{% endif %}
-                    </div>
-
-                    <!-- 5. Founder Role Field (Appends inside registering-person-fields) -->
-                    <div class="field-group col-span-2" id="founder-role-field">
-                        <label class="form-label">{% trans "Your role in the company" %}</label>
-                        {{ form.founder_role }}
-                        <span class="field-hint">{% trans "Your official position or title within this company." %}</span>
-                        {% if form.founder_role.errors %}<span class="field-error">{{ form.founder_role.errors }}</span>{% endif %}
-                    </div>
-
-                    <!-- COMPANY-SPECIFIC FIELDS -->
-                    <div id="company-specific-fields">
-                        <!-- 6. Company Mission -->
-                        <div id="path-company-bio" class="field-group">
-                            <label class="form-label">{% trans "Company mission" %}</label>
-                            {{ form.company_mission }}
-                            {% if form.company_mission.help_text %}<span class="field-hint">{{ form.company_mission.help_text }}</span>{% endif %}
-                            {% if form.company_mission.errors %}<span class="field-error">{{ form.company_mission.errors }}</span>{% endif %}
+                        <!-- COMPANY FIELDS -->
+                        <div class="group-comp space-y">
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Company name" %}</label>
+                                {{ form.company_name }}
+                                <span class="field-hint">{% trans "The official registered name of your business." %}</span>
+                                {% if form.company_name.errors %}<span class="field-error">{{ form.company_name.errors }}</span>{% endif %}
+                            </div>
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Industry sector" %}</label>
+                                {{ form.sector }}
+                                <span class="field-hint">{% trans "Select the primary industry your company operates in." %}</span>
+                                {% if form.sector.errors %}<span class="field-error">{{ form.sector.errors }}</span>{% endif %}
+                            </div>
+                            <div class="field-group">
+                                <label class="form-label">{% trans "Your role in the company" %}</label>
+                                {{ form.founder_role }}
+                                <span class="field-hint">{% trans "Your official position or title within this company." %}</span>
+                                {% if form.founder_role.errors %}<span class="field-error">{{ form.founder_role.errors }}</span>{% endif %}
+                            </div>
                         </div>
                     </div>
 
-                    <!-- INDIVIDUAL-SPECIFIC FIELDS -->
-                    <div id="individual-specific-fields">
-                        <!-- 7. Individual Bio -->
-                        <div id="path-individual-bio" class="field-group">
-                            <label class="form-label">{% trans "About me" %}</label>
-                            {{ form.bio_narrative }}
-                            {% if form.bio_narrative.help_text %}<span class="field-hint">{{ form.bio_narrative.help_text }}</span>{% endif %}
-                            {% if form.bio_narrative.errors %}<span class="field-error">{{ form.bio_narrative.errors }}</span>{% endif %}
-                        </div>
-
-                        <!-- 7.5. CV Upload (Optional) -->
-                        <div id="cv-upload-field" class="field-group">
-                            <label class="form-label">{% trans "Upload CV (Optional)" %}</label>
-                            {{ form.cv_file }}
-                            {% if form.cv_file.help_text %}<span class="field-hint">{{ form.cv_file.help_text }}</span>{% endif %}
-                            {% if form.cv_file.errors %}<span class="field-error">{{ form.cv_file.errors }}</span>{% endif %}
-                        </div>
+                    <div class="btn-row">
+                        <button type="button" class="btn-back" onclick="prevStep(2)" aria-label="Back">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 16 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+                        </button>
+                        <button type="button" class="btn-primary dark" onclick="nextStep(4)">{% trans "Almost Done" %} &rarr;</button>
                     </div>
+                </div>
 
-                    <!-- 8. Individual Path Fields (Role & Institution) -->
-                    <div id="path-individual" class="space-y">
-                        <div class="field-group">
-                            <label class="form-label">{% trans "Professional identity" %}</label>
-                            {{ form.current_role }}
-                            {% if form.current_role.help_text %}<span class="field-hint">{{ form.current_role.help_text }}</span>{% endif %}
-                            {% if form.current_role.errors %}<span class="field-error">{{ form.current_role.errors }}</span>{% endif %}
-                        </div>
-                        <div class="field-group">
-                            <label class="form-label">{% trans "Institution or company" %}</label>
-                            {{ form.institution_name }}
-                            <span class="field-hint">{% trans "Write your current institution where you work or learn." %}</span>
-                            {% if form.institution_name.errors %}<span class="field-error">{{ form.institution_name.errors }}</span>{% endif %}
-                        </div>
-                    </div>
+                <!-- ==============================================
+                     STEP 4: SHOWCASE (HEAVY LIFTING) - DEFERRED
+                     ============================================== -->
+                <div class="form-step" id="step-4">
+                    <h2 class="step-title">{% trans "Final Step: Showcase" %}</h2>
+                    <p class="step-subtitle">{% trans "Stand out from the crowd. You're almost finished!" %}</p>
 
-                    <!-- 9. Founder Name Header (Toggled) -->
-                    <div id="founder-names-header" style="margin-bottom: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                        <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">{% trans "Your Personal Information" %}</h3>
-                        <p style="font-size: 13px; color: var(--text-secondary); margin: 0.25rem 0 0;">{% trans "Your details as the person registering this company." %}</p>
-                    </div>
-
-                    <!-- 10. Circular Profile Image Upload -->
-                    <div class="field-group col-span-2" id="avatar-field">
+                    <!-- Avatar -->
+                    <div class="field-group mb-6 flex flex-col items-center">
                         <div class="avatar-upload-container">
                             <input type="file" id="id_avatar_trigger" accept="image/*" class="hidden" onchange="openCropper(this)">
-
-                            <!-- The actual form input that Django reads (hidden) -->
                             <input type="file" name="avatar" id="id_avatar_real" class="hidden">
-
                             <div class="avatar-upload-preview" id="avatar-preview" onclick="document.getElementById('id_avatar_trigger').click()">
                                 <div class="avatar-upload-placeholder">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="width: 32px; height: 32px; margin-bottom: 4px;">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="width: 36px; height: 36px; margin-bottom: 6px;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                     </svg>
-                                    <span style="font-size: 13px; font-weight: 700;">{% trans "Upload Photo" %}</span>
+                                    <span style="font-size: 14px; font-weight: 800;">{% trans "Upload Photo" %}</span>
                                 </div>
                                 <img id="avatar-preview-img" style="display: none;">
                                 <div class="avatar-edit-overlay">{% trans "Change Photo" %}</div>
                             </div>
-                            <span class="field-hint" style="margin-top: 0.75rem; display: block;">{% trans "Optional: Upload a professional profile picture." %}</span>
-                            {% if form.avatar.errors %}<span class="field-error" style="margin-top: 0.5rem;">{{ form.avatar.errors }}</span>{% endif %}
+                            <span class="field-hint text-center mt-3 block">
+                                <span class="group-ind">{% trans "Upload a professional headshot." %}</span>
+                                <span class="group-comp">{% trans "Upload your company logo." %}</span>
+                            </span>
+                            {% if form.avatar.errors %}<span class="field-error mt-2">{{ form.avatar.errors }}</span>{% endif %}
                         </div>
                     </div>
 
-                </div>
-                <!-- ========================================== -->
+                    <div class="space-y">
+                        <!-- INDIVIDUAL BIO & CV -->
+                        <div class="group-ind space-y">
+                            <div id="path-individual-bio" class="field-group">
+                                <label class="form-label">{% trans "About me" %}</label>
+                                {{ form.bio_narrative }}
+                                {% if form.bio_narrative.help_text %}<span class="field-hint">{{ form.bio_narrative.help_text }}</span>{% endif %}
+                                {% if form.bio_narrative.errors %}<span class="field-error">{{ form.bio_narrative.errors }}</span>{% endif %}
+                            </div>
 
+                            <div id="cv-upload-field" class="field-group">
+                                <label class="form-label">{% trans "Upload CV (Optional)" %}</label>
+                                {{ form.cv_file }}
+                                {% if form.cv_file.help_text %}<span class="field-hint">{{ form.cv_file.help_text }}</span>{% endif %}
+                                {% if form.cv_file.errors %}<span class="field-error">{{ form.cv_file.errors }}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <!-- COMPANY MISSION -->
+                        <div class="group-comp space-y">
+                            <div id="path-company-bio" class="field-group">
+                                <label class="form-label">{% trans "Company mission" %}</label>
+                                {{ form.company_mission }}
+                                {% if form.company_mission.help_text %}<span class="field-hint">{{ form.company_mission.help_text }}</span>{% endif %}
+                                {% if form.company_mission.errors %}<span class="field-error">{{ form.company_mission.errors }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button type="button" class="btn-back" onclick="prevStep(3)" aria-label="Back">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 16 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+                        </button>
+                        <button type="submit" id="submit-btn" class="btn-primary blue">
+                            {% trans "Complete Registration" %}
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
+                        </button>
+                    </div>
+
+                    <p class="terms-note">{% trans "By registering, you agree to our Terms & Privacy Policy." %}</p>
+                </div>
             </form>
         </div>
     </div>
@@ -767,6 +685,19 @@
 
 <script>
 (function () {
+    /* ── MOBILE KEYBOARD OPTIMIZATIONS ── */
+    const phoneInput = document.querySelector('input[name="phone_number"]');
+    if (phoneInput) { phoneInput.setAttribute('type', 'tel'); }
+
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) { emailInput.setAttribute('type', 'email'); }
+
+    const pinInput = document.querySelector('input[name="password"]');
+    if (pinInput) { pinInput.setAttribute('inputmode', 'numeric'); }
+
+    const confirmPinInput = document.querySelector('input[name="confirm_password"]');
+    if (confirmPinInput) { confirmPinInput.setAttribute('inputmode', 'numeric'); }
+
     /* ── TOP LOADING BAR ── */
     const bar = document.getElementById('page-load-bar');
     let barWidth = 0;
@@ -814,6 +745,12 @@
         document.getElementById('step-' + n).classList.add('active');
         updateIndicators(n);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Auto-focus first input on desktop to save clicks
+        if (window.innerWidth > 768) {
+            const firstInput = document.querySelector(`#step-${n} input:not([type="hidden"]):not(:disabled)`);
+            if (firstInput) firstInput.focus();
+        }
     };
 
     window.nextStep = function (n) {
@@ -826,7 +763,8 @@
 
     window.validateStep = function (n) {
         const step = document.getElementById('step-' + n);
-        const inputs = Array.from(step.querySelectorAll('input, select, textarea'))
+        // Only validate fields that are currently visible/enabled
+        const inputs = Array.from(step.querySelectorAll('input:not(:disabled), select:not(:disabled), textarea:not(:disabled)'))
             .filter(el => el.offsetParent !== null);
         for (let el of inputs) {
             if (!el.checkValidity()) { el.reportValidity(); return false; }
@@ -834,162 +772,118 @@
         return true;
     };
 
-    /* ── DYNAMIC LAYOUT MANAGEMENT (ROLE SWITCHING) ── */
-    function applyRoleLayout(selectedRole) {
-        if (!selectedRole) return;
-        const isFounder = selectedRole === 'FOUNDER';
+    /* ── UI ROLE SELECTION & HIDE/DISABLE LOGIC ── */
+    window.selectRoleUI = function(role) {
+        // UI Selection Highlight
+        document.getElementById('role-expert').classList.remove('selected');
+        document.getElementById('role-founder').classList.remove('selected');
 
-        const s2 = document.getElementById('step2-grid');
-        const s3 = document.getElementById('step3-space-y');
-        const s4 = document.getElementById('step4-dynamic-area');
-        const storage = document.getElementById('unused-fields');
-
-        const regFields = document.getElementById('registering-person-fields');
-        const locField = document.getElementById('city-location-field');
-        const compField = document.getElementById('company-field');
-        const sectorField = document.getElementById('sector-field');
-        const companySpecificFields = document.getElementById('company-specific-fields');
-        const individualSpecificFields = document.getElementById('individual-specific-fields');
-        const indBio = document.getElementById('path-individual-bio');
-        const cvField = document.getElementById('cv-upload-field');
-        const indPath = document.getElementById('path-individual');
-        const fndRole = document.getElementById('founder-role-field');
-        const founderHeader = document.getElementById('founder-names-header');
-        const avatarField = document.getElementById('avatar-field');
-        const companyHeader = document.getElementById('company-info-header');
-
-        const hintInd = document.getElementById('hint-location-individual');
-        const hintComp = document.getElementById('hint-location-company');
-
-        if (isFounder) {
-            s2.appendChild(companyHeader);
-            s2.appendChild(compField);
-            s2.appendChild(locField);
-            s2.appendChild(sectorField);
-            s3.appendChild(companySpecificFields);
-            s4.appendChild(founderHeader);
-            s4.appendChild(regFields);
-            regFields.appendChild(fndRole);
-            s4.appendChild(avatarField);
-
-            document.getElementById('founder-divider').style.display = 'block';
-
-            storage.appendChild(indPath);
-            storage.appendChild(individualSpecificFields);
-
-            if (hintInd) hintInd.style.display = 'none';
-            if (hintComp) hintComp.style.display = 'block';
+        if (role === 'EXPERT') {
+            document.getElementById('role-expert').classList.add('selected');
         } else {
-            s2.appendChild(regFields);
-            s3.appendChild(locField);
-            s3.appendChild(cvField);
-            s3.appendChild(indPath);
-            s4.appendChild(indBio);
-            s4.appendChild(avatarField);
-
-            document.getElementById('founder-divider').style.display = 'none';
-
-            storage.appendChild(founderHeader);
-            storage.appendChild(companyHeader);
-            storage.appendChild(compField);
-            storage.appendChild(sectorField);
-            storage.appendChild(companySpecificFields);
-            storage.appendChild(fndRole);
-
-            if (hintInd) hintInd.style.display = 'block';
-            if (hintComp) hintComp.style.display = 'none';
+            document.getElementById('role-founder').classList.add('selected');
         }
 
-        // === SURGICAL FIX: DISABLE HIDDEN FIELDS TO ALLOW SUBMISSION ===
-        // 1. Enable all form inputs first to reset their state
-        document.querySelectorAll('#onboarding-form input, #onboarding-form select, #onboarding-form textarea').forEach(el => {
-            el.disabled = false;
+        // Set hidden form value
+        const roleInput = document.getElementById('{{ form.selected_role.id_for_label }}');
+        if (roleInput) roleInput.value = role;
+
+        // Apply Logic
+        applyRoleLogic(role);
+    };
+
+    function applyRoleLogic(role) {
+        const isComp = (role === 'FOUNDER');
+
+        // 1. Toggle Display Classes
+        const indElements = document.querySelectorAll('.group-ind');
+        const compElements = document.querySelectorAll('.group-comp');
+
+        indElements.forEach(el => el.style.display = isComp ? 'none' : 'block');
+        compElements.forEach(el => el.style.display = isComp ? 'block' : 'none');
+
+        // Label Switch for Location
+        document.getElementById('loc-label-ind').style.display = isComp ? 'none' : 'block';
+        document.getElementById('loc-label-comp').style.display = isComp ? 'block' : 'none';
+
+        // 2. Disable inputs inside hidden blocks so they don't break validation
+        indElements.forEach(container => {
+            container.querySelectorAll('input, select, textarea').forEach(input => {
+                input.disabled = isComp;
+            });
         });
 
-        // 2. Disable ONLY the inputs that are currently hidden inside 'unused-fields'
-        if (storage) {
-            storage.querySelectorAll('input, select, textarea').forEach(el => {
-                el.disabled = true;
+        compElements.forEach(container => {
+            container.querySelectorAll('input, select, textarea').forEach(input => {
+                input.disabled = !isComp;
             });
-        }
+        });
     }
-
-    window.setRole = function (role) {
-        document.getElementById('{{ form.selected_role.id_for_label }}').value = role;
-        applyRoleLayout(role);
-        nextStep(2);
-    };
 
     /* ── DOM READY : ERROR RECOVERY & URL AUTO-ROUTING ── */
     document.addEventListener('DOMContentLoaded', function () {
 
-        // --- NEW CODE: QUIETLY ENFORCE LENGTH WITH CUSTOM MESSAGES ---
+        // --- QUIET VALIDATION ENFORCEMENT ---
         function enforceQuietValidation(containerId, isCompany) {
             const container = document.getElementById(containerId);
             if (!container) return;
             const textarea = container.querySelector('textarea');
             if (!textarea) return;
 
-            // Enforce required and minlength behind the scenes
             textarea.setAttribute('required', 'required');
             textarea.setAttribute('minlength', '150');
 
-            // Clear the custom error when they start typing so they aren't blocked
             textarea.addEventListener('input', function() {
                 this.setCustomValidity('');
             });
 
-            // Intercept the browser's default error message and replace it with ours
             textarea.addEventListener('invalid', function(e) {
                 const len = this.value.trim().length;
-
                 if (len === 0) {
-                    this.setCustomValidity(
-                        isCompany
-                        ? "Please write something about your company."
-                        : "Please write a little bit about yourself."
-                    );
+                    this.setCustomValidity(isCompany ? "Please write your company mission." : "Please write a little bit about yourself.");
                 } else if (len < 150) {
-                    this.setCustomValidity(
-                        isCompany
-                        ? "Please explain your company a bit more. A detailed mission helps you stand out!"
-                        : "Please explain a bit more about yourself. A good profile helps you connect better!"
-                    );
+                    this.setCustomValidity(isCompany
+                        ? `Please write a bit more (${150 - len} chars left). A detailed mission builds trust!`
+                        : `Please write a bit more (${150 - len} chars left). Good profiles get more messages!`);
                 }
             });
         }
 
-        // Apply it to Individual Bio and Company Bio
         enforceQuietValidation('path-individual-bio', false);
         enforceQuietValidation('path-company-bio', true);
-        // -------------------------------------------------------------
 
+        // Routing logic
         const firstErr = document.querySelector('.field-error');
         const roleInput = document.getElementById('{{ form.selected_role.id_for_label }}');
-        const currentRole = roleInput ? roleInput.value : '';
 
+        // Setup initial state
+        const urlParams = new URLSearchParams(window.location.search);
+        const userType = urlParams.get('type');
+
+        let initialRole = 'EXPERT'; // default
+        if (roleInput && roleInput.value) {
+            initialRole = roleInput.value;
+        } else if (userType === 'company' || userType === 'business') {
+            initialRole = 'FOUNDER';
+        }
+
+        selectRoleUI(initialRole);
+
+        // Jump to error step
         if (firstErr) {
-            applyRoleLayout(currentRole);
             const errStep = firstErr.closest('.form-step');
-            if (errStep) showStep(parseInt(errStep.id.split('-')[1]));
-        } else {
-            const urlParams = new URLSearchParams(window.location.search);
-            const userType = urlParams.get('type');
-
-            if (userType === 'talent' || userType === 'individual') {
-                setRole('EXPERT');
-            } else if (userType === 'company' || userType === 'business') {
-                setRole('FOUNDER');
-            } else {
-                applyRoleLayout('EXPERT');
+            if (errStep) {
+                const stepNum = parseInt(errStep.id.split('-')[1]);
+                showStep(stepNum);
             }
         }
 
+        // Final form submission loader
         const form   = document.getElementById('onboarding-form');
         const loader = document.getElementById('full-page-loader');
 
         form.addEventListener('submit', function (e) {
-            const visibleInputs = Array.from(form.querySelectorAll('input, select, textarea'))
+            const visibleInputs = Array.from(form.querySelectorAll('input:not(:disabled), select:not(:disabled), textarea:not(:disabled)'))
                 .filter(el => el.offsetParent !== null);
             let valid = true;
             for (let el of visibleInputs) {
@@ -999,14 +893,13 @@
                 e.preventDefault();
                 return;
             }
-            // Form is valid, let it submit naturally
             startBar();
             loader.classList.add('visible');
             document.body.style.overflow = 'hidden';
         });
     });
 
-    /* ── SIMPLIFIED AVATAR CROPPER LOGIC ── */
+    /* ── CROPPER LOGIC ── */
     let cropper = null;
     let currentInput = null;
     const zoomSlider = document.getElementById('zoom-slider');
@@ -1040,7 +933,7 @@
 
             setTimeout(() => {
                 cropper = new Cropper(cropperImg, {
-                    aspectRatio: 1, // Always 1:1 for Avatar
+                    aspectRatio: 1, // Always 1:1
                     viewMode: 1,
                     dragMode: 'move',
                     autoCropArea: 0.95,
@@ -1130,7 +1023,7 @@
         // Convert the final canvas directly into a Base64 string
         const base64String = finalCanvas.toDataURL('image/jpeg', 0.95);
 
-        // Save the string into a hidden input so standard form POST carries it securely
+        // Save the string into a hidden input
         let hiddenInput = document.getElementById('id_avatar_base64');
         if (!hiddenInput) {
             hiddenInput = document.createElement('input');
@@ -1141,7 +1034,7 @@
         }
         hiddenInput.value = base64String;
 
-        // Update the visual UI preview
+        // Update UI
         const previewImg = document.getElementById('avatar-preview-img');
         const previewContainer = document.getElementById('avatar-preview');
         previewImg.src = base64String;
