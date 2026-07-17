@@ -70,7 +70,7 @@ class TailwindFormMixin:
         # --- ICON ASSETS (Encoded SVGs for CSS) ---
         ICONS = {
             "user": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' /%3E%3C/svg%3E",
-            "mail": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
+            "mail": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' /%3E%3C/svg%3E",
             "lock": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' /%3E%3C/svg%3E",
             "calendar": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E",
             "link": "%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' /%3E%3C/svg%3E",
@@ -278,30 +278,40 @@ class AvatarUpdateForm(TailwindFormMixin, forms.ModelForm):
 # 3. ONBOARDING APPLICATION FORMS (The Airlock)
 # ==============================================================================
 
-
 import base64
 import uuid
 from django.core.files.base import ContentFile
 
 
 class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
+    # 🟢 WORLD-CLASS UPGRADE: Autocomplete attributes added to help password managers (Card 8)
     first_name = forms.CharField(label=_("First Name"), max_length=150,
-                                 widget=forms.TextInput(attrs={"placeholder": "First Name"}))
+                                 widget=forms.TextInput(
+                                     attrs={"placeholder": "First Name", "autocomplete": "given-name"}))
     last_name = forms.CharField(label=_("Last Name"), max_length=150,
-                                widget=forms.TextInput(attrs={"placeholder": "Last Name"}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "4 digit PIN "}), label=_("Password"))
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "••••••••"}),
-                                       label=_("Confirm Password"))
+                                widget=forms.TextInput(
+                                    attrs={"placeholder": "Last Name", "autocomplete": "family-name"}))
+
+    # 🟢 WORLD-CLASS UPGRADE: Upgraded "4 digit PIN" to proper secure password fields (Card 3)
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "••••••••", "autocomplete": "new-password"}),
+        label=_("Password (Min. 8 chars)"))
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "••••••••", "autocomplete": "new-password"}),
+        label=_("Confirm Password"))
+
     phone_number = forms.CharField(label=_("Phone Number"),
-                                   widget=forms.TextInput(attrs={"placeholder": "09... or +86..."}))
+                                   widget=forms.TextInput(
+                                       attrs={"placeholder": "09... or +86...", "autocomplete": "tel"}))
     email = forms.EmailField(label=_("Email Address"),
-                             widget=forms.EmailInput(attrs={"placeholder": "example@domain.com"}), required=True)
+                             widget=forms.EmailInput(
+                                 attrs={"placeholder": "example@domain.com", "autocomplete": "email"}), required=True)
     telegram_handle = forms.CharField(label=_("Telegram Username"), max_length=100, required=False,
                                       widget=forms.TextInput(attrs={"placeholder": "@username"}))
 
     avatar = forms.ImageField(label=_("Profile Picture"), required=False, widget=forms.FileInput())
 
-    # ✅ NEW: Hidden text field to carry the cropped image data safely
+    # ✅ Hidden text field to carry the cropped image data safely
     avatar_base64 = forms.CharField(required=False, widget=forms.HiddenInput())
 
     class Meta:
@@ -318,8 +328,16 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data.get("password") != cleaned_data.get("confirm_password"):
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        # 🟢 WORLD-CLASS UPGRADE: Enforcing secure password parity server-side (Card 3)
+        if password and len(password) < 8:
+            self.add_error("password", _("Password must be at least 8 characters long for security."))
+
+        if password != confirm_password:
             self.add_error("confirm_password", _("Passwords do not match."))
+
         return cleaned_data
 
     def clean_email(self):
@@ -361,6 +379,7 @@ class BaseRegistrationForm(TailwindFormMixin, forms.ModelForm):
         user.save()
         return user
 
+
 class UnifiedOnboardingForm(BaseRegistrationForm):
     ROLE_CHOICES = [
         ('EXPERT', 'Professional / Learner'),
@@ -377,10 +396,12 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
     # ---------------------------------------------------------
     # SHARED FIELDS
     # ---------------------------------------------------------
+    # 🟢 WORLD-CLASS UPGRADE: Autocomplete for Location (Card 8)
     city_name = forms.CharField(
         label=_("City"),
         required=True,
-        widget=forms.TextInput(attrs={"placeholder": _("e.g. Addis Ababa or Hawassa")}),
+        widget=forms.TextInput(
+            attrs={"placeholder": _("e.g. Addis Ababa or Hawassa"), "autocomplete": "address-level2"}),
         help_text=_("Please type the exact spelling of your city."),
     )
 
@@ -445,7 +466,6 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
         widget=forms.TextInput(attrs={"placeholder": _("e.g. Fintech, EdTech, Agriculture")}),
     )
 
-    # 🟢 NEW: DEDICATED COMPANY MISSION FIELD
     company_mission = forms.CharField(
         label=_("Company Mission / Overview"),
         required=False,
@@ -468,7 +488,8 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
         cleaned_data = super().clean()
         role = cleaned_data.get("selected_role") or "EXPERT"
 
-        # --- CONDITIONAL VALIDATION BASED ON ROLE PATH ---
+        # 🟢 WORLD-CLASS UPGRADE: Client/Server Validation Parity (Card 15)
+        # Bypassing JS in the browser will no longer allow users to submit empty/short required fields.
         if role in ["EXPERT", "VISIONARY"]:
             if not cleaned_data.get("current_role"):
                 self.add_error("current_role", _("Please specify your professional/academic identity."))
@@ -477,12 +498,16 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
             if not inst_name:
                 self.add_error("institution_name", _("Please specify your institution or enter 'Self-Learning'."))
             else:
-                # ✅ FIX: Changed '_' to 'created' to prevent overwriting the translation function
                 institution, created = Institution.objects.get_or_create(
                     name__iexact=inst_name,
                     defaults={"name": inst_name, "is_verified": False},
                 )
                 cleaned_data["institution"] = institution
+
+            # Explicit Server-Side Length Enforcement
+            bio_text = cleaned_data.get("bio_narrative", "").strip()
+            if len(bio_text) < 150:
+                self.add_error("bio_narrative", _("Please write at least 150 characters to build a strong profile."))
 
         elif role == "FOUNDER":
             if not cleaned_data.get("company_name"):
@@ -492,7 +517,13 @@ class UnifiedOnboardingForm(BaseRegistrationForm):
             if not cleaned_data.get("sector"):
                 self.add_error("sector", _("Please specify your industry sector."))
 
+            # Explicit Server-Side Length Enforcement
+            mission_text = cleaned_data.get("company_mission", "").strip()
+            if len(mission_text) < 150:
+                self.add_error("company_mission", _("Please write at least 150 characters explaining your mission."))
+
         return cleaned_data
+
     def save(self, commit=True):
         with transaction.atomic():
             role = self.cleaned_data.get("selected_role") or "EXPERT"
