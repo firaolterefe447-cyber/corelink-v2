@@ -35,6 +35,16 @@ urlpatterns = [
         name="password_reset_request_email",
     ),
     path(
+        "password/reset/email/entry/",
+        views.password_reset_email_entry,
+        name="password_reset_email_entry",
+    ),
+    path(
+        "password/reset/email/verify/",
+        views.password_reset_email_verify,
+        name="password_reset_email_verify",
+    ),
+    path(
         "password/reset/confirm/<uidb64>/<token>/",
         views.password_reset_confirm,
         name="password_reset_confirm",

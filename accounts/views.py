@@ -1115,14 +1115,15 @@ def password_reset_request_email(request):
                 # User doesn't have email entered - early launch user
                 request.session["pending_password_reset_user_id"] = str(user.id)
                 request.session["pending_password_reset_early_user"] = True
-                return render(request, "auth/password_reset_no_email.html")
+                return redirect("password_reset_email_entry")
             
             # Check if user has verified email
             if not user.is_email_verified:
                 # User has email but not verified - ask them to verify first
                 request.session["pending_password_reset_user_id"] = str(user.id)
                 request.session["pending_password_reset_needs_verification"] = True
-                return render(request, "auth/password_reset_needs_verification.html")
+                request.session["pending_password_reset_email"] = user.email
+                return redirect("password_reset_email_verify")
             
             # User has verified email - send reset link
             if _send_password_reset_email(user, request):
@@ -1136,6 +1137,133 @@ def password_reset_request_email(request):
         form = PasswordResetRequestForm()
     
     return render(request, "auth/password_reset_request.html", {"form": form})
+
+
+def password_reset_email_entry(request):
+    """
+    Allow users to add their email for password reset (for early users without email).
+    This works without requiring login.
+    """
+    user_id = request.session.get("pending_password_reset_user_id")
+    if not user_id:
+        return redirect("password_reset_request_email")
+    
+    user = CustomUser.objects.filter(id=user_id).first()
+    if not user:
+        return redirect("password_reset_request_email")
+    
+    if request.method == "POST":
+        email = request.POST.get("email", "").lower().strip()
+        if email:
+            # Check if email is already taken by another user
+            existing_user = CustomUser.objects.filter(email__iexact=email).exclude(id=user_id).first()
+            if existing_user:
+                messages.error(request, "This email is already associated with another account.")
+            else:
+                # Update user's email
+                user.email = email
+                user.save()
+                # Send verification OTP
+                if _send_verification_otp(user, request):
+                    request.session["verification_email_sent"] = True
+                    request.session["pending_email"] = email
+                    request.session["verification_last_sent_at"] = int(time.time())
+                    request.session["otp_verify_attempts"] = 0
+                    request.session["pending_password_reset_needs_verification"] = True
+                    request.session["pending_password_reset_email"] = email
+                    return redirect("password_reset_email_verify")
+                else:
+                    messages.error(request, "Failed to send verification code. Please try again later.")
+    
+    return render(request, "auth/password_reset_email_entry.html")
+
+
+def password_reset_email_verify(request):
+    """
+    Allow users to verify their email for password reset.
+    This works without requiring login.
+    """
+    user_id = request.session.get("pending_password_reset_user_id")
+    if not user_id:
+        return redirect("password_reset_request_email")
+    
+    user = CustomUser.objects.filter(id=user_id).first()
+    if not user:
+        return redirect("password_reset_request_email")
+    
+    email_sent = request.session.get("verification_email_sent", False)
+    pending_email = request.session.get("pending_password_reset_email") or request.session.get("pending_email")
+    
+    if request.method == "POST":
+        if "send_otp" in request.POST or "resend" in request.POST:
+            last_sent_at = request.session.get("verification_last_sent_at")
+            if last_sent_at:
+                elapsed = int(time.time()) - last_sent_at
+                if elapsed < OTP_COOLDOWN_SECONDS:
+                    messages.error(
+                        request,
+                        f"Please wait {OTP_COOLDOWN_SECONDS - elapsed} seconds before requesting another code.",
+                    )
+                    return redirect("password_reset_email_verify")
+            
+            # Send verification OTP
+            if _send_verification_otp(user, request):
+                request.session["verification_email_sent"] = True
+                request.session["pending_email"] = user.email
+                request.session["verification_last_sent_at"] = int(time.time())
+                request.session["otp_verify_attempts"] = 0
+                messages.success(request, f"A 6-digit verification code has been sent to {user.email}.")
+            else:
+                messages.error(request, "Failed to send verification code. Please try again later.")
+        
+        elif "verify_otp" in request.POST:
+            attempts = request.session.get("otp_verify_attempts", 0)
+            if attempts >= OTP_MAX_VERIFY_ATTEMPTS:
+                messages.error(
+                    request,
+                    "Too many invalid attempts. Please request a new verification code.",
+                )
+                return redirect("password_reset_email_verify")
+            
+            otp = request.POST.get("otp", "").strip()
+            if not otp:
+                messages.error(request, "Please enter the verification code.")
+            else:
+                now = timezone.now()
+                if (user.email_otp_code 
+                    and user.email_otp_expires_at 
+                    and user.email_otp_expires_at >= now
+                    and constant_time_compare(otp, user.email_otp_code)):
+                    # OTP is valid - verify email
+                    user.is_email_verified = True
+                    user.email_otp_code = None
+                    user.email_otp_expires_at = None
+                    user.save()
+                    
+                    # Clear session
+                    if "pending_password_reset_user_id" in request.session:
+                        del request.session["pending_password_reset_user_id"]
+                    if "pending_password_reset_early_user" in request.session:
+                        del request.session["pending_password_reset_early_user"]
+                    if "pending_password_reset_needs_verification" in request.session:
+                        del request.session["pending_password_reset_needs_verification"]
+                    if "pending_password_reset_email" in request.session:
+                        del request.session["pending_password_reset_email"]
+                    if "verification_email_sent" in request.session:
+                        del request.session["verification_email_sent"]
+                    if "pending_email" in request.session:
+                        del request.session["pending_email"]
+                    if "verification_last_sent_at" in request.session:
+                        del request.session["verification_last_sent_at"]
+                    if "otp_verify_attempts" in request.session:
+                        del request.session["otp_verify_attempts"]
+                    
+                    return render(request, "auth/email_verified_password_reset.html")
+                else:
+                    request.session["otp_verify_attempts"] = attempts + 1
+                    messages.error(request, "Invalid or expired verification code.")
+    
+    return render(request, "auth/password_reset_email_verify.html", {"email": pending_email, "email_sent": email_sent})
 
 
 def password_reset_confirm(request, uidb64, token):
