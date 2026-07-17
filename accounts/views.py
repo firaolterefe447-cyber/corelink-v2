@@ -486,7 +486,7 @@ def register_email_view(request):
                             if "pending_password_reset_needs_verification" in request.session:
                                 del request.session["pending_password_reset_needs_verification"]
                             
-                            return render(request, "auth/email_verified_password_reset.html", {"email": user.email})
+                            return render(request, "auth/email_verified_password_reset.html")
 
                         # Handle Founders: they might still be unverified by admin
                         if user.role == "FOUNDER" and not user.is_verified:
@@ -583,7 +583,7 @@ def verify_email_token_view(request, token):
                     if "pending_password_reset_needs_verification" in request.session:
                         del request.session["pending_password_reset_needs_verification"]
                     
-                    return render(request, "auth/email_verified_password_reset.html", {"email": token_user.email})
+                    return render(request, "auth/email_verified_password_reset.html")
                 
                 return redirect("dashboard")
             else:
@@ -1091,52 +1091,42 @@ def password_reset_method_selection(request):
 
 def password_reset_request_email(request):
     """
-    Handle password reset request via email.
-    Checks if user has verified email, handles early users without email.
+    Handle password reset request via phone number.
+    Checks user by phone number, then handles email verification status.
     """
     if request.method == "POST":
         form = PasswordResetRequestForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"].lower().strip()
+            phone_number = form.cleaned_data["phone_number"].strip()
             
-            # Find user by email
-            user = CustomUser.objects.filter(email__iexact=email).first()
+            # Find user by phone number
+            user = CustomUser.objects.filter(phone_number=phone_number).first()
             
             if not user:
-                # Don't reveal if email exists or not for security
+                # Don't reveal if phone number exists or not for security
                 messages.info(
                     request,
-                    "If an account with this email exists, a password reset link has been sent to your inbox. Please check your email."
+                    "If an account with this phone number exists, a password reset link has been sent to your email."
                 )
-                return render(request, "auth/password_reset_email_sent.html", {"email": email})
+                return render(request, "auth/password_reset_email_sent.html")
             
             # Check if user has email at all
             if not user.email:
                 # User doesn't have email entered - early launch user
-                messages.warning(
-                    request,
-                    "Your account doesn't have an email address registered. Since you registered during our early launch, you'll need to add your email first to enable password recovery."
-                )
-                # Store user ID in session for email verification flow
                 request.session["pending_password_reset_user_id"] = str(user.id)
                 request.session["pending_password_reset_early_user"] = True
-                return render(request, "auth/password_reset_no_email.html", {"user": user})
+                return render(request, "auth/password_reset_no_email.html")
             
             # Check if user has verified email
             if not user.is_email_verified:
                 # User has email but not verified - ask them to verify first
-                messages.warning(
-                    request,
-                    f"Your email ({user.email}) is not verified yet. Please verify your email first to enable password recovery."
-                )
-                # Store user ID in session for email verification flow
                 request.session["pending_password_reset_user_id"] = str(user.id)
                 request.session["pending_password_reset_needs_verification"] = True
-                return render(request, "auth/password_reset_needs_verification.html", {"email": user.email})
+                return render(request, "auth/password_reset_needs_verification.html")
             
             # User has verified email - send reset link
             if _send_password_reset_email(user, request):
-                return render(request, "auth/password_reset_email_sent.html", {"email": email})
+                return render(request, "auth/password_reset_email_sent.html")
             else:
                 messages.error(
                     request,

@@ -701,12 +701,13 @@ class CoreLinkPasswordChangeForm(PasswordChangeForm):
 
 
 class PasswordResetRequestForm(TailwindFormMixin, forms.Form):
-    """Form for requesting password reset via email."""
-    email = forms.EmailField(
-        label=_("Email Address"),
-        widget=forms.EmailInput(
+    """Form for requesting password reset via phone number."""
+    phone_number = forms.CharField(
+        label=_("Phone Number"),
+        max_length=20,
+        widget=forms.TextInput(
             attrs={
-                "placeholder": "Enter your verified email address",
+                "placeholder": "0911234567",
                 "required": "true",
                 "autofocus": "true",
             }
