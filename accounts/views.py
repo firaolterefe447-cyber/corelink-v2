@@ -1127,6 +1127,8 @@ def password_reset_request_email(request):
             
             # User has verified email - send reset link
             if _send_password_reset_email(user, request):
+                # Ensure email is passed to template
+                logger.info(f"Password reset email sent to user {user.pk}, email: {user.email}")
                 return render(request, "auth/password_reset_email_sent.html", {"email": user.email})
             else:
                 messages.error(
