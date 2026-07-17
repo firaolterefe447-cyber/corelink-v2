@@ -9,7 +9,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import SetPasswordForm
-from .email_service import BrevoEmailService
 from django.db import transaction, IntegrityError
 from django.db.models.functions import Lower
 from django.views.decorators.http import require_http_methods
@@ -126,11 +125,38 @@ def _generate_google_placeholder_phone() -> str:
 
 
 def _send_post_verification_welcome_email(user):
-    email_service = BrevoEmailService()
-    success, error_msg = email_service.send_welcome_email(user)
-    if not success:
+    try:
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils.html import strip_tags
+        
+        display_name = user.full_name or "there"
+        html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <h2 style="color: #0A66C2;">Welcome to CoreLink, {display_name}!</h2>
+                    <p>Your email has been successfully verified.</p>
+                    <p>You can now explore opportunities, build your profile, and connect with the community.</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                    <p style="font-size: 12px; color: #999;">Thanks for joining CoreLink.</p>
+                </div>
+            </body>
+            </html>
+        """
+        
+        text_content = strip_tags(html_content)
+        email_message = EmailMultiAlternatives(
+            subject="Welcome to CoreLink",
+            body=text_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[user.email],
+        )
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send(fail_silently=False)
+    except Exception as exc:
         logger.warning(
-            f"Welcome email delivery failed for user_id={user.pk}: {error_msg}"
+            f"Welcome email delivery failed for user_id={user.pk}: {exc}"
         )
 
 
@@ -374,10 +400,8 @@ def register_email_view(request):
             if form.is_valid():
                 # DO NOT save the email to the user model yet
                 pending_email = form.cleaned_data.get("email")
-                email_service = BrevoEmailService()
-                success, error_msg = email_service.send_verification_email(
-                    request.user, request, email=pending_email
-                )
+                # Use the existing Django SMTP email verification function
+                success = _send_verification_otp(request.user, request=request)
                 if success:
                     request.session["verification_email_sent"] = True
                     request.session["pending_email"] = pending_email
@@ -391,8 +415,7 @@ def register_email_view(request):
                 else:
                     messages.error(
                         request,
-                        error_msg
-                        or "Failed to send verification code. Please try again later.",
+                        "Failed to send verification code. Please try again later.",
                     )
 
         elif "verify_otp" in request.POST:
@@ -410,8 +433,12 @@ def register_email_view(request):
                 if not otp:
                     messages.error(request, "Please enter the verification code.")
                 else:
-                    email_service = BrevoEmailService()
-                    if email_service.verify_otp(request.user, otp):
+                    # Use the existing Django SMTP OTP verification logic
+                    now = timezone.now()
+                    if (request.user.email_otp_code 
+                        and request.user.email_otp_expires_at 
+                        and request.user.email_otp_expires_at >= now
+                        and constant_time_compare(otp, request.user.email_otp_code)):
                         user = request.user
                         # pending_email is already retrieved above
 
@@ -420,8 +447,8 @@ def register_email_view(request):
                                 user.email = pending_email
 
                             user.is_email_verified = True
-                            user.email_otp = None
-                            user.email_otp_created_at = None
+                            user.email_otp_code = None
+                            user.email_otp_expires_at = None
                             user.save()
                         except IntegrityError:
                             messages.error(
@@ -429,7 +456,8 @@ def register_email_view(request):
                                 "This email is already in use by another account.",
                             )
                             return redirect("register_email")
-
+                        
+                        # Cleanup session on successful verification
                         if "verification_email_sent" in request.session:
                             del request.session["verification_email_sent"]
                         if "pending_email" in request.session:
@@ -476,77 +504,71 @@ def register_email_view(request):
 
 
 def verify_email_token_view(request, token):
-    email_service = BrevoEmailService()
-    payload = email_service.verify_token(token)
-    if payload:
+    try:
+        payload = signing.loads(token, salt="accounts.email-verification", max_age=600)  # 10 minutes
         token_email = payload.get("email")
-        token_uid = str(payload.get("uid"))
+        token_code = payload.get("otp")
+        token_uid = payload.get("uid")
 
-        # If user is logged in, we can directly update them
-        if request.user.is_authenticated:
-            if str(request.user.pk) != token_uid:
-                messages.error(
-                    request, "This verification link does not belong to your account."
-                )
-                return redirect("register_email")
-
-            user = request.user
-            try:
-                user.email = token_email
-                user.is_email_verified = True
-                user.email_otp = None
-                user.email_otp_created_at = None
-                user.save()
-            except IntegrityError:
-                messages.error(
-                    request, "This email is already in use by another account."
-                )
-                return redirect("register_email")
-
-            # Cleanup session if this matches the pending email
-            if request.session.get("pending_email") == token_email:
-                if "verification_email_sent" in request.session:
-                    del request.session["verification_email_sent"]
-                if "pending_email" in request.session:
-                    del request.session["pending_email"]
-                if "verification_last_sent_at" in request.session:
-                    del request.session["verification_last_sent_at"]
-                if "otp_verify_attempts" in request.session:
-                    del request.session["otp_verify_attempts"]
-
-            _send_post_verification_welcome_email(user)
-
-            messages.success(request, "Your email has been successfully verified!")
-
-            # Handle Founders
-            if user.role == "FOUNDER" and not user.is_verified:
-                return redirect("application_success")
-
-            return _route_user_to_dashboard(user)
-
-        # If user is not logged in, we try to find the user by email
-        try:
-            user = CustomUser.objects.get(pk=token_uid)
-            user.email = token_email
-            user.is_email_verified = True
-            user.email_otp = None
-            user.email_otp_created_at = None
-            user.save()
-            _send_post_verification_welcome_email(user)
-            messages.success(request, "Your email has been successfully verified!")
-            messages.info(request, "You can now login with your email.")
-            return redirect("login")
-        except CustomUser.DoesNotExist:
-            # Maybe the email was not yet saved to the user model
-            # but we can't safely identify which user this token belongs to
-            # without them being logged in or having more info in the token.
-            pass
-        except IntegrityError:
-            messages.error(request, "This email is already in use by another account.")
+        # Find the user
+        token_user = CustomUser.objects.filter(pk=token_uid).first()
+        if not token_user:
+            messages.error(request, "Invalid verification link.")
             return redirect("login")
 
-    messages.error(request, "The verification link is invalid or has expired.")
-    return redirect("register_email" if request.user.is_authenticated else "login")
+        # Verify the token matches
+        if (
+            token_user
+            and token_user.email
+            and token_email == token_user.email.lower()
+            and token_user.email_otp_code
+            and token_user.email_otp_expires_at
+            and token_user.email_otp_expires_at >= timezone.now()
+            and constant_time_compare(token_code, token_user.email_otp_code)
+        ):
+            token_user.email_verified = True
+            token_user.email_otp_code = None
+            token_user.email_otp_expires_at = None
+            token_user.save(
+                update_fields=[
+                    "email_verified",
+                    "email_otp_code",
+                    "email_otp_expires_at",
+                    "updated_at",
+                ]
+            )
+
+            # If user is logged in, redirect to dashboard
+            if request.user.is_authenticated:
+                if str(request.user.pk) != token_uid:
+                    messages.error(
+                        request, "This verification link does not belong to your account."
+                    )
+                    return redirect("register_email")
+                
+                # Cleanup session if this matches the pending email
+                if request.session.get("pending_email") == token_email:
+                    if "verification_email_sent" in request.session:
+                        del request.session["verification_email_sent"]
+                    if "pending_email" in request.session:
+                        del request.session["pending_email"]
+                    if "verification_last_sent_at" in request.session:
+                        del request.session["verification_last_sent_at"]
+                    if "otp_verify_attempts" in request.session:
+                        del request.session["otp_verify_attempts"]
+
+                messages.success(request, "Email verified successfully!")
+                return redirect("dashboard")
+            else:
+                # User not logged in, redirect to login
+                messages.success(request, "Email verified successfully! Please login.")
+                return redirect("login")
+        else:
+            messages.error(request, "Invalid or expired verification link.")
+            return redirect("login")
+    except (SignatureExpired, BadSignature):
+        messages.error(request, "Invalid or expired verification link.")
+        return redirect("login")
 
 
 @require_http_methods(["GET", "POST"])
