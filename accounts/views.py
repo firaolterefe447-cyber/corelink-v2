@@ -1127,7 +1127,7 @@ def password_reset_request_email(request):
             
             # User has verified email - send reset link
             if _send_password_reset_email(user, request):
-                return render(request, "auth/password_reset_email_sent.html", {"email": user.email})
+                return render(request, "auth/password_reset_email_sent.html", {"email": user.email if user.email else ""})
             else:
                 messages.error(
                     request,
