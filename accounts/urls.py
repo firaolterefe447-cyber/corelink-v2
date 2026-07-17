@@ -22,6 +22,24 @@ urlpatterns = [
     ),
     path("create-password/", views.create_password_view, name="create_password"),
     # ==========================================
+    # PASSWORD RESET (EMAIL RECOVERY)
+    # ==========================================
+    path(
+        "password/reset/",
+        views.password_reset_method_selection,
+        name="password_reset_method_selection",
+    ),
+    path(
+        "password/reset/email/",
+        views.password_reset_request_email,
+        name="password_reset_request_email",
+    ),
+    path(
+        "password/reset/confirm/<uidb64>/<token>/",
+        views.password_reset_confirm,
+        name="password_reset_confirm",
+    ),
+    # ==========================================
     # ACCOUNT MANAGEMENT
     # ==========================================
     path("privacy/toggle/", views.toggle_privacy, name="toggle_privacy"),

@@ -698,3 +698,53 @@ class CoreLinkPasswordChangeForm(PasswordChangeForm):
             field.widget.attrs.update(
                 {"class": "premium-input", "placeholder": "••••••••"}
             )
+
+
+class PasswordResetRequestForm(TailwindFormMixin, forms.Form):
+    """Form for requesting password reset via email."""
+    email = forms.EmailField(
+        label=_("Email Address"),
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Enter your verified email address",
+                "required": "true",
+                "autofocus": "true",
+            }
+        ),
+    )
+
+
+class PasswordResetConfirmForm(TailwindFormMixin, forms.Form):
+    """Form for confirming password reset with new password."""
+    new_password = forms.CharField(
+        label=_("New Password"),
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "••••••••",
+                "autocomplete": "new-password",
+            }
+        ),
+        min_length=8,
+    )
+    confirm_password = forms.CharField(
+        label=_("Confirm Password"),
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "••••••••",
+                "autocomplete": "new-password",
+            }
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if new_password and len(new_password) < 8:
+            self.add_error("new_password", _("Password must be at least 8 characters long."))
+
+        if new_password and new_password != confirm_password:
+            self.add_error("confirm_password", _("Passwords do not match."))
+
+        return cleaned_data

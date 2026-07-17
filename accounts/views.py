@@ -13,16 +13,18 @@ from django.db import transaction, IntegrityError
 from django.db.models.functions import Lower
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode, urlsafe_base64_decode
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.core import signing
+from django.core.signing import SignatureExpired, BadSignature
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
 from django.utils.html import strip_tags
+from django.utils.encoding import force_bytes
 
 from django.http import JsonResponse
 from .models import City, CustomUser
@@ -33,6 +35,8 @@ from .forms import (
     EmailRegistrationForm,
     VerifyOTPForm,
     GoogleRoleSelectionForm,
+    PasswordResetRequestForm,
+    PasswordResetConfirmForm,
 )
 
 # Setup Logger for Production Debugging
@@ -473,6 +477,14 @@ def register_email_view(request):
                             request, "Your email has been successfully verified!"
                         )
 
+                        # Check if user was coming from password reset flow
+                        if request.session.get("pending_password_reset_user_id"):
+                            del request.session["pending_password_reset_user_id"]
+                            messages.info(
+                                request, "You can now use email for password recovery."
+                            )
+                            return redirect("password_reset_request_email")
+
                         # Handle Founders: they might still be unverified by admin
                         if user.role == "FOUNDER" and not user.is_verified:
                             return redirect("application_success")
@@ -558,6 +570,15 @@ def verify_email_token_view(request, token):
                         del request.session["otp_verify_attempts"]
 
                 messages.success(request, "Email verified successfully!")
+                
+                # Check if user was coming from password reset flow
+                if request.session.get("pending_password_reset_user_id"):
+                    del request.session["pending_password_reset_user_id"]
+                    messages.info(
+                        request, "You can now use email for password recovery."
+                    )
+                    return redirect("password_reset_request_email")
+                
                 return redirect("dashboard")
             else:
                 # User not logged in, redirect to login
@@ -989,6 +1010,7 @@ def deactivate_account(request):
 
 
 from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse_lazy
 from .forms import (
     CoreLinkPasswordChangeForm,
@@ -1007,4 +1029,151 @@ class CoreLinkPasswordChangeView(PasswordChangeView):
         messages.success(
             self.request, "Success! Your password has been securely updated."
         )
-        return super().form_valid(form)
+
+
+# ==============================================================================
+# PASSWORD RESET VIEWS (EMAIL RECOVERY)
+# ==============================================================================
+
+
+def _send_password_reset_email(user, request) -> bool:
+    """Send password reset email with secure token."""
+    if not user.email:
+        return False
+
+    # Generate secure token using Django's default token generator
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    
+    # Build reset link
+    reset_link = request.build_absolute_uri(
+        f"/password/reset/confirm/{uid}/{token}/"
+    )
+
+    context = {
+        "full_name": user.full_name or "there",
+        "reset_link": reset_link,
+        "expiry_hours": 24,  # Token validity period
+        "support_email": settings.DEFAULT_FROM_EMAIL,
+    }
+    
+    html_content = render_to_string("emails/password_reset.html", context)
+    text_content = strip_tags(html_content)
+
+    email_message = EmailMultiAlternatives(
+        subject="CoreLink Password Reset Request",
+        body=text_content,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[user.email],
+    )
+    email_message.attach_alternative(html_content, "text/html")
+    
+    try:
+        email_message.send(fail_silently=False)
+        return True
+    except Exception as exc:
+        logger.error(f"Password reset email failed for user {user.pk}: {exc}")
+        return False
+
+
+def password_reset_method_selection(request):
+    """
+    Landing page for password recovery - user chooses Email or Telegram.
+    """
+    return render(request, "auth/password_reset_method_selection.html")
+
+
+def password_reset_request_email(request):
+    """
+    Handle password reset request via email.
+    Checks if user has verified email, handles early users without email.
+    """
+    if request.method == "POST":
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"].lower().strip()
+            
+            # Find user by email
+            user = CustomUser.objects.filter(email__iexact=email).first()
+            
+            if not user:
+                # Don't reveal if email exists or not for security
+                messages.success(
+                    request,
+                    "If an account with this email exists, a password reset link has been sent."
+                )
+                return redirect("login")
+            
+            # Check if user has verified email
+            if not user.email or not user.is_email_verified:
+                # User doesn't have verified email - ask them to add/verify first
+                messages.warning(
+                    request,
+                    "Your email is not verified yet. Please verify your email first to enable password recovery."
+                )
+                # Store user ID in session for email verification flow
+                request.session["pending_password_reset_user_id"] = str(user.id)
+                return redirect("register_email")
+            
+            # User has verified email - send reset link
+            if _send_password_reset_email(user, request):
+                messages.success(
+                    request,
+                    "A password reset link has been sent to your email. Please check your inbox."
+                )
+                return redirect("login")
+            else:
+                messages.error(
+                    request,
+                    "Failed to send password reset email. Please try again later."
+                )
+    else:
+        form = PasswordResetRequestForm()
+    
+    return render(request, "auth/password_reset_request.html", {"form": form})
+
+
+def password_reset_confirm(request, uidb64, token):
+    """
+    Handle password reset confirmation with token validation.
+    """
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = CustomUser.objects.get(pk=uid)
+    except (TypeError, ValueError, UnicodeDecodeError, CustomUser.DoesNotExist):
+        user = None
+    
+    if user and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            form = PasswordResetConfirmForm(request.POST)
+            if form.is_valid():
+                new_password = form.cleaned_data["new_password"]
+                user.set_password(new_password)
+                user.save()
+                
+                # Log the user in with new password
+                login(
+                    request,
+                    user,
+                    backend="django.contrib.auth.backends.ModelBackend",
+                )
+                
+                messages.success(
+                    request,
+                    "Your password has been successfully reset. You are now logged in."
+                )
+                return _route_user_to_dashboard(user)
+        else:
+            form = PasswordResetConfirmForm()
+        
+        return render(
+            request,
+            "auth/password_reset_confirm.html",
+            {"form": form, "valid_link": True},
+        )
+    else:
+        messages.error(
+            request,
+            "Invalid or expired password reset link. Please request a new one."
+        )
+        return redirect("password_reset_request_email")
