@@ -327,7 +327,7 @@ def login_view(request):
 
                 return _route_user_to_dashboard(user)
             else:
-                messages.error(request, "Invalid phone number/email or PIN.")
+                messages.error(request, "Invalid phone number/email or password.")
         else:
             messages.error(request, "Please correct the errors below.")
     else:
