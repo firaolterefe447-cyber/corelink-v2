@@ -187,7 +187,6 @@
   .link-arrow svg { width: 17px; height: 17px; color: var(--blue); transition: transform 0.3s var(--ease); }
   .link-arrow:hover svg { transform: translateX(4px); }
 
-
   /* ---------------- NEW COMPACT PREMIUM AVATAR STACK CARD ---------------- */
   @keyframes float {
     0% { transform: translateY(0px); }
@@ -259,112 +258,182 @@
   .n-avatar-plus:hover { background: #fff; color: var(--blue); transform: translateY(-8px) scale(1.15); z-index: 30; border-color: #fff; box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3); }
 
 
-  /* ==================== SPOTLIGHT ==================== */
-  .spotlight-section { padding: 110px 0 100px; }
-  .spotlight-head { max-width: 1360px; margin: 0 auto 40px; padding: 0 40px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-  .spotlight-head h3 { font-size: clamp(1.8rem, 2.8vw, 2.4rem); font-weight: 800; color: var(--ink); margin-bottom: 8px; }
-  .spotlight-head p { color: var(--muted); font-size: 16px; max-width: 480px; line-height: 1.6; }
-
-  .spotlight-scroll {
-    display: flex; gap: 28px; overflow-x: auto; padding: 10px 40px 40px;
-    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  .spotlight-scroll::-webkit-scrollbar { display: none; }
-  .spotlight-scroll::after { content: ''; flex: 0 0 1px; }
-
-  .spotlight-card {
-    scroll-snap-align: start; flex: 0 0 auto; width: min(380px, 85vw);
-    background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(226,232,240,0.8);
-    border-radius: 24px; overflow: hidden; display: flex; flex-direction: column;
-    box-shadow: 0 4px 16px rgba(11,18,32,0.04);
-    transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), border-color 0.4s ease;
-  }
-  .spotlight-card:hover { transform: translateY(-8px); box-shadow: 0 24px 48px rgba(10,102,194,0.12); border-color: rgba(10,102,194,0.3); background: #fff; }
-
-  .spotlight-cover {
-    position: relative; width: 100%; aspect-ratio: 16 / 8.5; background: var(--ink-2);
-    background-image: linear-gradient(135deg, #12263F 0%, #0B1220 100%);
-  }
-  .spotlight-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-out); }
-  .spotlight-card:hover .spotlight-cover img { transform: scale(1.05); }
-  .spotlight-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(11,18,32,0.6) 0%, transparent 60%); }
-
-  .spotlight-badge {
-    position: absolute; top: 16px; right: 16px; z-index: 2;
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(11,18,32,0.65); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); color: #fff;
-    font-size: 11px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
-    padding: 6px 12px; border-radius: 999px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-  .spotlight-badge svg { width: 12px; height: 12px; color: #60a5fa; }
-
-  .spotlight-avatar {
-    position: relative; z-index: 2; width: 84px; height: 84px; border-radius: 50%;
-    border: 4px solid #fff; background: var(--blue-soft); overflow: hidden;
-    margin: -42px 0 0 28px; box-shadow: 0 8px 20px rgba(11,18,32,0.12);
-    display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: var(--blue);
-  }
-  .spotlight-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-  .spotlight-body { padding: 16px 28px 28px; }
-  .spotlight-name { font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.01em; }
-  .spotlight-title { font-size: 13.5px; font-weight: 700; color: var(--blue); margin-bottom: 14px; }
-  .spotlight-bio { font-size: 14.5px; color: var(--muted); line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
+  /* ==================== WORLD CLASS REDESIGN - LOWER SECTION ==================== */
 
   /* ==================== DISCOVER STRIP ==================== */
-  .discover-strip { max-width: 1360px; margin: 0 auto; padding: 80px 40px; display: flex; align-items: center; justify-content: space-between; gap: 32px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-  .discover-copy h3 { font-size: clamp(1.8rem, 2.6vw, 2.2rem); font-weight: 800; color: var(--ink); margin-bottom: 10px; }
-  .discover-copy p { color: var(--muted); font-size: 16px; max-width: 500px; line-height: 1.6; }
+  .discover-section {
+    padding: 0 40px;
+    margin-top: -30px; /* Slight overlap into hero space */
+    position: relative;
+    z-index: 10;
+  }
+  .discover-strip {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 56px 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248, 250, 252, 0.8));
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 32px;
+    box-shadow: 0 24px 48px rgba(11, 18, 32, 0.04), inset 0 1px 1px #fff;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .discover-strip:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 64px rgba(11, 18, 32, 0.06), inset 0 1px 1px #fff;
+  }
+  .discover-copy h3 { font-size: clamp(1.8rem, 2.5vw, 2.2rem); font-weight: 800; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
+  .discover-copy p { color: var(--muted); font-size: 17px; max-width: 580px; line-height: 1.6; }
+
 
   /* ==================== MISSION ==================== */
-  .mission { max-width: 1360px; margin: 0 auto; padding: 120px 40px; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 100px; }
+  .mission {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 160px 40px 140px;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 120px;
+  }
   .mission-left { position: sticky; top: 140px; align-self: start; }
-  .mission-left h2 { font-size: clamp(2.2rem, 3.2vw, 3rem); font-weight: 800; line-height: 1.15; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.02em; }
-  .mission-left p { color: var(--muted); font-size: 16.5px; line-height: 1.8; max-width: 420px; }
+  .mission-left h2 { font-size: clamp(2.4rem, 3.5vw, 3.6rem); font-weight: 800; line-height: 1.15; color: var(--ink); margin-bottom: 28px; letter-spacing: -0.03em; }
+  .mission-left p { color: var(--muted); font-size: 18px; line-height: 1.8; max-width: 460px; font-weight: 400; }
 
-  .mission-item { display: grid; grid-template-columns: 70px 1fr; gap: 24px; padding: 40px 0; border-top: 1px solid var(--line); transition: border-color 0.3s; }
-  .mission-item:hover { border-top-color: rgba(10,102,194,0.3); }
+  .mission-list { display: flex; flex-direction: column; }
+  .mission-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 32px;
+    padding: 56px 0;
+    border-top: 1px solid var(--line);
+    transition: all 0.4s var(--ease);
+    group: hover;
+  }
+  .mission-item:hover {
+    border-top-color: var(--blue);
+    transform: translateX(8px);
+  }
   .mission-item:last-child { border-bottom: 1px solid var(--line); }
-  .mission-num { font-family: var(--font-heading); font-size: 15px; font-weight: 900; color: var(--blue); opacity: 0.8; }
-  .mission-item h4 { font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.01em; }
-  .mission-item p { color: var(--muted); font-size: 15.5px; line-height: 1.8; max-width: 620px; }
+
+  .mission-num-wrapper { display: flex; align-items: flex-start; justify-content: flex-start; }
+  .mission-num {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: var(--blue-soft);
+    color: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading); font-size: 18px; font-weight: 800;
+    transition: all 0.4s var(--ease);
+  }
+  .mission-item:hover .mission-num {
+    background: var(--blue); color: #fff;
+    transform: scale(1.05) rotate(-3deg);
+    box-shadow: 0 12px 24px rgba(10, 102, 194, 0.2);
+  }
+
+  .mission-item h4 { font-size: 24px; font-weight: 800; color: var(--ink); margin-bottom: 16px; letter-spacing: -0.01em; transition: color 0.3s; }
+  .mission-item:hover h4 { color: var(--blue); }
+  .mission-item p { color: var(--muted); font-size: 16.5px; line-height: 1.8; max-width: 620px; }
+
 
   /* ==================== CTA BAND ==================== */
-  .cta-band {
-    background: var(--ink);
-    background-image: radial-gradient(circle at 100% 0%, #1e3a8a 0%, transparent 50%), radial-gradient(circle at 0% 100%, #312e81 0%, transparent 50%);
-    padding: 120px 40px; text-align: center; position: relative; overflow: hidden;
+  .cta-wrapper {
+    padding: 0 40px 120px;
+    max-width: 1360px;
+    margin: 0 auto;
   }
-  .cta-band::after { content: ''; position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png') opacity(0.05); pointer-events: none; }
-  .cta-band h2 { color: #fff; font-size: clamp(2.2rem, 3.8vw, 3.5rem); font-weight: 900; margin-bottom: 20px; letter-spacing: -0.03em; position: relative; z-index: 2; }
-  .cta-band p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 520px; margin: 0 auto 40px; line-height: 1.6; position: relative; z-index: 2; }
-  .cta-band .btn-primary { z-index: 2; border: 1px solid rgba(255,255,255,0.1); }
+  .cta-band {
+    background: #060B14;
+    border-radius: 40px;
+    padding: 100px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(11, 18, 32, 0.15);
+  }
+  /* Soft embedded glows inside the dark card */
+  .cta-band::before {
+    content: ''; position: absolute; top: -50%; left: -10%;
+    width: 60%; height: 100%;
+    background: radial-gradient(circle, rgba(10, 102, 194, 0.15) 0%, transparent 60%);
+    filter: blur(60px); pointer-events: none;
+  }
+  .cta-band::after {
+    content: ''; position: absolute; bottom: -50%; right: -10%;
+    width: 60%; height: 100%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+    filter: blur(60px); pointer-events: none;
+  }
+
+  .cta-content { position: relative; z-index: 5; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+  .cta-band h2 { color: #ffffff; font-size: clamp(2.4rem, 4vw, 3.8rem); font-weight: 900; margin-bottom: 24px; letter-spacing: -0.03em; line-height: 1.1; }
+  .cta-band p { color: rgba(255,255,255,0.65); font-size: 19px; max-width: 540px; margin: 0 auto 48px; line-height: 1.6; }
+
+  .cta-band .btn-primary {
+    background: #fff; color: #060B14;
+    padding: 20px 44px; font-size: 17px;
+    box-shadow: 0 12px 32px rgba(255,255,255,0.15);
+  }
+  .cta-band .btn-primary::after { background: linear-gradient(to right, transparent, rgba(0,0,0,0.05), transparent); }
+  .cta-band .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(255,255,255,0.25); color: var(--blue); }
+
 
   /* ==================== FOOTER ==================== */
-  .footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.05); }
-  .footer-inner { max-width: 1360px; margin: 0 auto; padding: 0 40px 40px; }
-  .footer-main { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 60px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .footer-logo { font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: #fff; text-decoration: none; display: inline-block; margin-bottom: 20px; text-transform: lowercase; letter-spacing: -0.04em; }
-  .footer-logo span { color: #60a5fa; }
-  .footer-brand p { color: rgba(255,255,255,0.55); font-size: 14.5px; line-height: 1.8; max-width: 320px; }
-  .footer-col h4 { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
-  .footer-link { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.75); text-decoration: none; margin-bottom: 16px; transition: color 0.2s ease; }
-  .footer-link:hover { color: #fff; }
-  .footer-link svg { flex-shrink: 0; margin-top: 2px; opacity: 0.6; }
-  .footer-bottom { padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-  .footer-bottom p { font-size: 13.5px; color: rgba(255,255,255,0.4); }
-  .footer-bottom-links { display: flex; gap: 24px; }
-  .footer-bottom-links a { font-size: 13.5px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+  .footer {
+    background: #030712; /* Deepest world-class dark */
+    position: relative;
+    border-top: none;
+  }
+  /* Elegant gradient top border line */
+  .footer::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), rgba(10,102,194,0.4), transparent);
+  }
+
+  .footer-inner { max-width: 1360px; margin: 0 auto; padding: 100px 40px 40px; }
+  .footer-main {
+    display: grid; grid-template-columns: 2.5fr 1fr 1.5fr; gap: 80px;
+    padding-bottom: 64px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .footer-logo { font-family: var(--font-heading); font-size: 28px; font-weight: 800; color: #fff; text-decoration: none; display: inline-block; margin-bottom: 24px; text-transform: lowercase; letter-spacing: -0.04em; }
+  .footer-logo span { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .footer-brand p { color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.8; max-width: 380px; }
+
+  .footer-col h4 { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.9); margin-bottom: 32px; }
+
+  .footer-link {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 15.5px; font-weight: 500; color: rgba(255,255,255,0.55);
+    text-decoration: none; margin-bottom: 20px;
+    transition: all 0.3s var(--ease);
+  }
+  .footer-link:hover { color: #fff; transform: translateX(4px); }
+  .footer-link svg { flex-shrink: 0; opacity: 0.7; transition: opacity 0.3s; }
+  .footer-link:hover svg { opacity: 1; color: #60a5fa; }
+
+  .footer-bottom { padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .footer-bottom p { font-size: 14px; color: rgba(255,255,255,0.4); }
+  .footer-bottom-links { display: flex; gap: 32px; }
+  .footer-bottom-links a { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.3s; }
   .footer-bottom-links a:hover { color: #fff; }
 
   /* ==================== RESPONSIVE ==================== */
   @media (max-width: 1024px) {
     .nav-center { display: none; }
     .mobile-menu-btn { display: block; }
-    .mission { grid-template-columns: 1fr; gap: 60px; padding: 100px 40px; }
-    .mission-left { position: static; }
-    .footer-main { grid-template-columns: 1fr 1fr; }
+
+    .mission { grid-template-columns: 1fr; gap: 80px; padding: 120px 40px; }
+    .mission-left { position: static; max-width: 100%; }
+
+    .footer-main { grid-template-columns: 1fr 1fr; gap: 60px; }
   }
 
   @media (max-width: 768px) {
@@ -383,17 +452,25 @@
     .network-title { font-size: 22px; }
     .n-avatar, .n-avatar-plus { width: 44px; height: 44px; margin-left: -12px; }
 
-    .discover-strip { padding: 56px 24px; flex-direction: column; align-items: flex-start; gap: 24px; }
-    .spotlight-section { padding: 80px 0; }
-    .spotlight-head { padding: 0 24px; margin-bottom: 32px; }
-    .spotlight-scroll { padding: 10px 24px 30px; gap: 20px; }
-    .mission { padding: 80px 24px; gap: 40px; }
-    .mission-item { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; }
-    .cta-band { padding: 80px 24px; }
-    .footer-inner { padding: 0 24px 32px; }
-    .footer-main { grid-template-columns: 1fr; gap: 40px; padding-top: 40px; }
-    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
+    /* New Responsive styles */
+    .discover-section { padding: 0 24px; margin-top: 0; }
+    .discover-strip { padding: 48px 32px; flex-direction: column; align-items: flex-start; gap: 32px; border-radius: 24px; }
+    .discover-strip .btn-primary { width: 100%; justify-content: center; }
+
+    .mission { padding: 80px 24px; gap: 50px; }
+    .mission-item { grid-template-columns: 1fr; gap: 20px; padding: 40px 0; }
+    .mission-item:hover { transform: translateY(-4px); border-top-color: var(--blue); }
+
+    .cta-wrapper { padding: 0 24px 80px; }
+    .cta-band { padding: 80px 24px; border-radius: 32px; }
+    .cta-band .btn-primary { width: 100%; justify-content: center; }
+
+    .footer-inner { padding: 80px 24px 32px; }
+    .footer-main { grid-template-columns: 1fr; gap: 48px; padding-bottom: 40px; }
+    .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+    .footer-bottom-links { flex-wrap: wrap; justify-content: center; gap: 20px; }
   }
+
   a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
 </style>
 
@@ -505,69 +582,21 @@
   </div>
 </section>
 
-<!-- FEATURED TALENT -->
-{% if featured_profiles %}
-<section class="spotlight-section">
-  <div class="spotlight-head reveal">
-    <div>
-      <h3>{% trans "Featured on CoreLink" %}</h3>
-      <p>{% trans "A few standout, verified members of our growing Ethiopian talent network." %}</p>
+<!-- DISCOVER STRIP (Elevated Design) -->
+<section class="discover-section">
+  <div class="discover-strip reveal">
+    <div class="discover-copy">
+      <h3>{% trans "Looking for top professionals?" %}</h3>
+      <p>{% trans "Explore our network of verified Ethiopian talent, creators, and established businesses." %}</p>
     </div>
-    <a href="{% url 'nexus_feed' %}" class="link-arrow">
-      <span>{% trans "See the full network" %}</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+    <a href="{% url 'nexus_feed' %}" class="btn-primary">
+      <span>{% trans "Discover Talent" %}</span>
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     </a>
   </div>
-
-  <div class="spotlight-scroll reveal delay-1">
-    {% for profile in featured_profiles %}
-      <a href="{{ profile.get_absolute_url|default:'#' }}" class="spotlight-card">
-        <div class="spotlight-cover">
-          {% if profile.cover_image %}
-            <img src="{{ profile.cover_image.url }}" alt="" loading="lazy">
-          {% endif %}
-          <span class="spotlight-badge">
-            <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-            {% trans "Verified" %}
-          </span>
-        </div>
-        <div class="spotlight-avatar">
-          {% if profile.avatar %}
-            <img src="{{ profile.get_avatar_url }}" alt="{{ profile.full_name }}">
-          {% else %}{{ profile.full_name|default:"U"|slice:":1" }}{% endif %}
-        </div>
-        <div class="spotlight-body">
-          <div class="spotlight-name">{{ profile.full_name|default:"Member" }}</div>
-          <div class="spotlight-title">
-            {% if profile.portfolio.headlines.first %}
-              {{ profile.portfolio.headlines.first.title }}
-            {% else %}
-              {{ profile.portfolio.field_of_interest|default:"Professional" }}
-            {% endif %}
-          </div>
-          {% if profile.portfolio.bio_narrative %}
-            <p class="spotlight-bio">{{ profile.portfolio.bio_narrative|truncatewords:24 }}</p>
-          {% endif %}
-        </div>
-      </a>
-    {% endfor %}
-  </div>
 </section>
-{% endif %}
 
-<!-- DISCOVER STRIP -->
-<div class="discover-strip reveal">
-  <div class="discover-copy">
-    <h3>{% trans "Looking for top professionals?" %}</h3>
-    <p>{% trans "Explore our network of verified Ethiopian talent, creators, and established businesses." %}</p>
-  </div>
-  <a href="{% url 'nexus_feed' %}" class="btn-primary">
-    <span>{% trans "Discover Talent" %}</span>
-    <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-  </a>
-</div>
-
-<!-- MISSION -->
+<!-- MISSION AREA -->
 <section class="mission" id="mission">
   <div class="mission-left reveal">
     <h2>{% blocktrans %}Built to unite Ethiopia's professional family.{% endblocktrans %}</h2>
@@ -575,51 +604,68 @@
   </div>
 
   <div class="mission-right">
-    <div class="mission-item reveal delay-1">
-      <div class="mission-num">01</div>
-      <div>
-        <h4>{% trans "A Verified Talent Hub" %}</h4>
-        <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
+    <div class="mission-list">
+      <div class="mission-item reveal delay-1">
+        <div class="mission-num-wrapper">
+          <div class="mission-num">01</div>
+        </div>
+        <div>
+          <h4>{% trans "A Verified Talent Hub" %}</h4>
+          <p>{% trans "CoreLink is Ethiopian-based, created to unite professionals, students, and business owners into a single, vibrant family. Whether it's finding a co-founder for a business, meeting like-minded peers, or reaching for better job opportunities, CoreLink opens the door into our community's talent pool, making it easy to find the exact skills and professionals you need to succeed." %}</p>
+        </div>
       </div>
-    </div>
-    <div class="mission-item reveal delay-1">
-      <div class="mission-num">02</div>
-      <div>
-        <h4>{% trans "Structured, Not Self-Claimed" %}</h4>
-        <p>{% trans "CoreLink Ethiopia is an Ethiopian-based professional and talent hub building a community of Ethiopian students, emerging talent, and established professionals rooted in proof of work, collaboration, and continuous growth." %}</p>
+
+      <div class="mission-item reveal delay-1">
+        <div class="mission-num-wrapper">
+          <div class="mission-num">02</div>
+        </div>
+        <div>
+          <h4>{% trans "Structured, Not Self-Claimed" %}</h4>
+          <p>{% trans "CoreLink Ethiopia is an Ethiopian-based professional and talent hub building a community of Ethiopian students, emerging talent, and established professionals rooted in proof of work, collaboration, and continuous growth." %}</p>
+        </div>
       </div>
-    </div>
-    <div class="mission-item reveal delay-1">
-      <div class="mission-num">03</div>
-      <div>
-        <h4>{% trans "Opportunity, Matched Right" %}</h4>
-        <p>{% trans "Our platform optimizes the Ethiopian professional ecosystem by replacing unverified self-claims with a structured, verified digital database to ensure everyone connects with the exact places they need to grow." %}</p>
+
+      <div class="mission-item reveal delay-1">
+        <div class="mission-num-wrapper">
+          <div class="mission-num">03</div>
+        </div>
+        <div>
+          <h4>{% trans "Opportunity, Matched Right" %}</h4>
+          <p>{% trans "Our platform optimizes the Ethiopian professional ecosystem by replacing unverified self-claims with a structured, verified digital database to ensure everyone connects with the exact places they need to grow." %}</p>
+        </div>
       </div>
-    </div>
-    <div class="mission-item reveal delay-1">
-      <div class="mission-num">04</div>
-      <div>
-        <h4>{% trans "Driving Economic Velocity" %}</h4>
-        <p>{% trans "We empower individuals to build credible digital identities and gain direct access to the right opportunities that truly match their capabilities. By fostering these meaningful connections and collaborations, we are driving national economic velocity and building a better future for Ethiopian talent and established professionals from every field." %}</p>
+
+      <div class="mission-item reveal delay-1">
+        <div class="mission-num-wrapper">
+          <div class="mission-num">04</div>
+        </div>
+        <div>
+          <h4>{% trans "Driving Economic Velocity" %}</h4>
+          <p>{% trans "We empower individuals to build credible digital identities and gain direct access to the right opportunities that truly match their capabilities. By fostering these meaningful connections and collaborations, we are driving national economic velocity and building a better future for Ethiopian talent and established professionals from every field." %}</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA BAND -->
-<div class="cta-band reveal">
-  <h2>{% trans "Ready to build your network?" %}</h2>
-  <p>{% trans "Join the community uniting talent with opportunity across Ethiopia." %}</p>
-  <a href="{% url 'unified_onboarding' %}" class="btn-primary">
-    <span>{% trans "Get Started" %}</span>
-    <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-  </a>
-</div>
+<!-- CTA BAND (Inset Dark Card Layout) -->
+<section class="cta-wrapper reveal">
+  <div class="cta-band">
+    <div class="cta-content">
+      <h2>{% trans "Ready to build your network?" %}</h2>
+      <p>{% trans "Join the definitive infrastructure uniting talent with boundless local and global opportunity across Ethiopia." %}</p>
+      <a href="{% url 'unified_onboarding' %}" class="btn-primary">
+        <span>{% trans "Get Started Today" %}</span>
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-main">
+    <div class="footer-main reveal">
       <div>
         <a href="/" class="footer-logo">core<span>link</span></a>
         <div class="footer-brand">
@@ -637,25 +683,25 @@
       <div class="footer-col">
         <h4>{% trans "Contact" %}</h4>
         <a href="#" class="footer-link" style="pointer-events: none;">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <span>{% trans "Arat Kilo, Addis Ababa, Ethiopia" %}</span>
         </a>
         <a href="tel:+251963062789" class="footer-link">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
           <span>+251 96 306 2789</span>
         </a>
         <a href="mailto:corelinkethiopia@gmail.com" class="footer-link">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           <span>corelinkethiopia@gmail.com</span>
         </a>
         <a href="https://t.me/corelinkteam" target="_blank" rel="noopener" class="footer-link">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
           <span>@corelinkteam</span>
         </a>
       </div>
     </div>
 
-    <div class="footer-bottom">
+    <div class="footer-bottom reveal delay-1">
       <p>{% trans "© 2026 CoreLink Ethiopia. All rights reserved." %}</p>
       <div class="footer-bottom-links">
         <a href="#">{% trans "Privacy Policy" %}</a>
