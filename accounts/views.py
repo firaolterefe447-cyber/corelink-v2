@@ -1084,9 +1084,9 @@ def _send_password_reset_email(user, request) -> bool:
 
 def password_reset_method_selection(request):
     """
-    Landing page for password recovery - user chooses Email or Telegram.
+    Redirect to email password reset (Telegram removed for security).
     """
-    return render(request, "auth/password_reset_method_selection.html")
+    return redirect("password_reset_request_email")
 
 
 def password_reset_request_email(request):
