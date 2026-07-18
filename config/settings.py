@@ -77,9 +77,7 @@ INSTALLED_APPS = [
     "profiles",
     "chat.apps.ChatConfig",
     "operations",
-    "content",
     "network.apps.NetworkConfig",
-    "subscriptions.apps.SubscriptionsConfig",
     "watson",
     "opportunities",
 ]
