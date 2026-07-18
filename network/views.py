@@ -30,8 +30,6 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.postgres.aggregates import StringAgg
 
 # Local App Imports
-from .models import NetworkPost
-from .forms import NetworkPostForm
 
 # For Company Nexus
 from profiles.models import Company, RightNowPost, RightNowLike
@@ -498,123 +496,6 @@ def company_nexus(request):
 
 
 # ==============================================================================
-# 📡 2. LIVE SIGNALS (THE GLOBAL POSTS FEED)
-# ==============================================================================
-def nexus_posts(request):
-    """The Global Community Board for Live Posts."""
-    posts = NetworkPost.objects.filter(is_active=True).select_related(
-        'author__portfolio'
-    ).order_by('-created_at')[:50]
-
-    unread_count = 0
-    if request.user.is_authenticated:
-        try:
-            from chat.models import ChatMessage
-            unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
-        except ImportError:
-            pass
-
-    context = {
-        'posts': posts,
-        'unread_msg_count': unread_count,
-    }
-    return render(request, 'network/nexus_posts.html', context)
-
-
-# ==============================================================================
-# 🛠️ 3. NETWORK POST MANAGEMENT (CRUD)
-# ==============================================================================
-class NetworkPostDetailView(DetailView):
-    """Deep dive page for a specific post."""
-    model = NetworkPost
-    template_name = 'network/signal_detail.html'
-    context_object_name = 'post'
-
-    def get_queryset(self):
-        return NetworkPost.objects.filter(is_active=True).select_related(
-            'author__portfolio'
-        )
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = "View Initiative"
-        return ctx
-
-
-class MyNetworkPostListView(LoginRequiredMixin, ListView):
-    """Dashboard for a user to manage all their past posts."""
-    model = NetworkPost
-    template_name = 'network/my_signals.html'
-    context_object_name = 'posts'
-
-    def get_queryset(self):
-        return NetworkPost.objects.filter(author=self.request.user).order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = "My Initiatives"
-        return ctx
-
-
-class NetworkPostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    """Create a new post to broadcast to the network."""
-    model = NetworkPost
-    form_class = NetworkPostForm
-    template_name = 'network/signal_form.html'
-    success_url = reverse_lazy('nexus_feed')
-    success_message = "Your initiative has been broadcasted to the Nexus!"
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        NetworkPost.objects.filter(author=self.request.user, is_active=True).update(is_active=False)
-        return super().form_valid(form)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = "Broadcast an Initiative"
-        return ctx
-
-
-class NetworkPostUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
-    """Edit an existing post."""
-    model = NetworkPost
-    form_class = NetworkPostForm
-    template_name = 'network/signal_form.html'
-    success_url = reverse_lazy('nexus_feed')
-    success_message = "Your initiative has been updated."
-
-    def test_func(self):
-        return self.request.user == self.get_object().author
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = "Edit your Initiative"
-        ctx['is_edit'] = True
-        return ctx
-
-
-class NetworkPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
-    """Permanently delete a network post."""
-    model = NetworkPost
-    template_name = 'network/signal_confirm_delete.html'
-    success_url = reverse_lazy('nexus_feed')
-    success_message = "Initiative permanently removed."
-
-    def test_func(self):
-        return self.request.user == self.get_object().author
-
-
-# ==============================================================================
 # 📰 RIGHT NOW FEED
 # ==============================================================================
 @require_safe  # Enforces GET requests only for safe feed rendering
@@ -852,24 +733,3 @@ def admin_curation_view(request):
     }
 
     return render(request, 'network/admin_curation.html', context)
-
-
-# ⚠️ Legacy view block preserved exactly as provided to prevent breakage
-class NetworkPostDetailView(DetailView):
-    """Deep dive page for a specific post."""
-    model = NetworkPost
-    template_name = 'network/signal_detail.html'
-    context_object_name = 'post'
-
-    def get_queryset(self):
-        # Only active posts viewable, optimize author fetch
-        return NetworkPost.objects.filter(is_active=True).select_related(
-            'author__visionary_profile',
-            'author__founder_profile',
-            'author__expert_profile'
-        )
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = "View Initiative"
-        return ctx
