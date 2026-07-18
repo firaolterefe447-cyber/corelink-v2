@@ -17,7 +17,6 @@ from unfold.decorators import display, action
 # =========================================================
 # INTERNAL IMPORTS
 # =========================================================
-from operations.mixins import SecurityAuditMixin
 from profiles.models import CompanyMember
 from .forms import CustomUserAdminCreationForm
 from .models import (
@@ -187,7 +186,7 @@ class CityInline(TabularInline):
 # =========================================================
 
 @admin.register(CustomUser)
-class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
+class CustomUserAdmin(ModelAdmin):
     add_form = CustomUserAdminCreationForm
     form = CustomUserChangeForm
     ordering = ('-date_joined',)
@@ -695,7 +694,7 @@ class CustomUserAdmin(SecurityAuditMixin, ModelAdmin):
 # =========================================================
 
 @admin.register(ApplicationRequest)
-class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
+class ApplicationRequestAdmin(ModelAdmin):
     ordering = ('-created_at',)
 
     list_display = ['user', 'role_type', 'status_badge', 'download_cv_btn', 'created_at']
@@ -738,7 +737,7 @@ class ApplicationRequestAdmin(SecurityAuditMixin, ModelAdmin):
 
 
 @admin.register(CommunityContributor)
-class CommunityContributorAdmin(SecurityAuditMixin, ModelAdmin):
+class CommunityContributorAdmin(ModelAdmin):
     ordering = ('-created_at',)
     list_display = ['full_name', 'telegram_username', 'contribution_area', 'contact_status_badge', 'created_at']
     list_filter = ['is_contacted', 'created_at']
@@ -759,7 +758,7 @@ class IDSequenceAdmin(ModelAdmin):
 
 
 @admin.register(StaffUser)
-class StaffUserAdmin(SecurityAuditMixin, ModelAdmin):
+class StaffUserAdmin(ModelAdmin):
     form = StaffUserForm
     list_display = ['display_header', 'phone_number', 'is_active', 'is_superuser']
 

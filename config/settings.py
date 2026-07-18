@@ -76,7 +76,6 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "profiles",
     "chat.apps.ChatConfig",
-    "operations",
     "network.apps.NetworkConfig",
     "watson",
     "opportunities",
@@ -375,17 +374,10 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Security HQ"),
+                "title": _("Staff Control"),
                 "separator": True,
                 "collapsible": True,
                 "items": [
-                    {
-                        "title": _("Blackbox Ledger"),
-                        "icon": "visibility",
-                        "link": "/admin/operations/auditlog/",
-                        "badge": "Top Secret",
-                        "permission": lambda request: request.user.is_superuser,
-                    },
                     {
                         "title": _("Staff Control"),
                         "icon": "admin_panel_settings",
