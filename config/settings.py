@@ -18,16 +18,14 @@ load_dotenv(BASE_DIR / ".env")
 # ==============================================
 # We detect HahuCloud by checking if the 'corelink' system user directory exists.
 # This allows the same file to work on your PC (Local) and the Server (Production).
-IS_HAHU = os.path.exists("/home/corelink")
+IS_HAHU = os.path.exists('/home/corelink')
 
 # ==============================================
 # 2. SECURITY CONFIGURATION
 # ==============================================
 # In production, we fetch the secret key from environment variables for safety.
 # Locally, it falls back to a development key.
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY", "django-insecure-corelink-nexus-v1-development-only"
-)
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-corelink-nexus-v1-development-only')
 
 # DEBUG is automatically DISABLED on the server to prevent exposing code details.
 DEBUG = not IS_HAHU
@@ -38,11 +36,14 @@ ALLOWED_HOSTS = [
     "www.corelink.et",
     "91.204.209.4",
     "localhost",
-    "127.0.0.1",
+    "127.0.0.1"
 ]
 
 # Security requirement for modern Django versions when using forms/admin over HTTPS
-CSRF_TRUSTED_ORIGINS = ["https://corelink.et", "https://www.corelink.et"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://corelink.et",
+    "https://www.corelink.et"
+]
 
 # ==============================================
 # 3. APPLICATION DEFINITIONS
@@ -113,13 +114,13 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # Update this line to use the new function name:
                 "profiles.context_processors.role_and_company_context",
                 "chat.context_processors.unread_notifications",
             ],
         },
     },
 ]
+
 # ==============================================
 # 4. DATABASE CONFIGURATION (POSTGRESQL)
 # ==============================================
@@ -150,7 +151,7 @@ else:
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("DB_NAME", "corelink_corelink_db"),
             "USER": os.getenv("DB_USER", "corelink_firaol"),
-            "PASSWORD": os.getenv("DB_PASSWORD", "corelink_firaol7744$*#"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
             "HOST": os.getenv("DB_HOST", "localhost"),
             "PORT": os.getenv("DB_PORT", "5432"),
         }
@@ -423,9 +424,3 @@ LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# ==============================================
-# 9. TELEGRAM BOT SETTINGS
-# ==============================================
-TELEGRAM_BOT_TOKEN = "8233897962:AAFgzSfOQCj6RJAp3P4PT1j-AQRA1roFQJA"
-TELEGRAM_WEBHOOK_URL = "https://corelink.et/telegram-webhook/"
