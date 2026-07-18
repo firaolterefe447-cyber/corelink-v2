@@ -16,7 +16,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 # Django Messaging & Auth
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -42,18 +41,15 @@ from profiles.models import (
 )
 from profiles.models.new_unified_profile import RightNowPost
 from opportunities.models import JobPost, JobApplication
-from network.views import OmniIndustryOracle
 
 # --- Local Workspace Models ---
 from .models import (
-    Team, TeamMembership, JoinRequest, PreferenceApplication,
-    ConnectionRequest, CompanyMessageToAdmin, ChatMessage
+    CompanyMessageToAdmin, ChatMessage
 )
 
 # --- Local Workspace Forms ---
 from .forms import (
-    TeamProposalForm, JoinRequestForm, PreferenceApplicationForm,
-    ConnectionRequestForm, CompanyMessageForm
+    CompanyMessageForm
 )
 
 logger = logging.getLogger(__name__)
@@ -87,147 +83,13 @@ def get_role_specific_dashboard(user):
     Intelligent router directing users to their designated operational command center.
     """
     if not user.is_authenticated: return reverse('login')
-    if user.role == 'FOUNDER': return reverse('founder_workspace')
-    elif user.role == 'VISIONARY': return reverse('visionary_action_page')
-    elif user.role == 'EXPERT': return reverse('expert_action_page')
-    return reverse('workspace_dashboard')
+    return reverse('right_now_feed')
 
 
 # ==============================================================================================================
 # ███████████████████████████████  3. UNIFIED WORKSPACE HUBS  ██████████████████████████████████████████████████
 # ==============================================================================================================
 
-class WorkspaceDashboardView(LoginRequiredMixin, TemplateView):
-    """Fallback / Universal Dashboard."""
-    template_name = 'workspace/dashboard.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-
-        context['my_teams'] = Team.objects.filter(memberships__user=user).distinct()
-        context['my_requests'] = user.connection_applications.all().order_by('-created_at')
-
-        context['my_opportunities'] = JobPost.objects.filter(
-            posted_by=user
-        ).select_related('company', 'posted_by').order_by('-created_at')
-
-        context['my_applications'] = JobApplication.objects.filter(
-            applicant=user
-        ).select_related('job', 'job__company', 'job__posted_by').order_by('-created_at')
-
-        return context
-
-
-class FounderWorkspaceView(LoginRequiredMixin, TemplateView):
-    """Company Profile and Brand Management for Founders."""
-    template_name = 'workspace/founder_workspace.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-
-        p, _ = FounderProfile.objects.get_or_create(user=user)
-
-        membership = user.company_memberships.filter(is_active=True).first()
-        company = membership.company if membership else None
-
-        services_qs = CompanyService.objects.none()
-        milestones_qs = CompanyMilestone.objects.none()
-
-        if company:
-            services_qs = CompanyService.objects.filter(company=company).prefetch_related('gallery').order_by('order')
-            milestones_qs = CompanyMilestone.objects.filter(company=company).order_by('-year')
-
-        context['profile'] = p
-        context['company'] = company
-        context['services'] = services_qs
-        context['milestones'] = milestones_qs
-
-        return context
-
-
-@login_required
-@require_safe
-def visionary_action_page(request):
-    """Primary operational console for Visionaries."""
-    user = request.user
-
-    my_teams = Team.objects.filter(leader=user).distinct().order_by('-created_at')
-    joined_teams = Team.objects.filter(memberships__user=user).exclude(leader=user).select_related('leader').distinct().order_by('-created_at')
-
-    context = {
-        'page_title': 'Visionary Workspace',
-        'preferences': user.placement_preferences.all().order_by('-created_at'),
-        'my_requests': user.connection_applications.all().order_by('-created_at'),
-        'my_teams': my_teams,
-        'joined_teams': joined_teams,
-        'my_opportunities': JobPost.objects.filter(posted_by=user).select_related('company', 'posted_by').order_by('-created_at'),
-        'my_applications': JobApplication.objects.filter(applicant=user).select_related('job', 'job__company', 'job__posted_by').order_by('-created_at'),
-    }
-    return render(request, 'workspace/visionary_action_page.html', context)
-
-
-@login_required
-@require_safe
-def expert_action_page(request):
-    """Primary operational console for Experts."""
-    user = request.user
-
-    my_teams = Team.objects.filter(leader=user).distinct().order_by('-created_at')
-    joined_teams = Team.objects.filter(memberships__user=user).exclude(leader=user).select_related('leader').distinct().order_by('-created_at')
-
-    context = {
-        'page_title': 'Expert Workspace',
-        'preferences': user.placement_preferences.all().order_by('-created_at'),
-        'my_requests': user.connection_applications.all().order_by('-created_at'),
-        'my_teams': my_teams,
-        'joined_teams': joined_teams,
-        'my_opportunities': JobPost.objects.filter(posted_by=user).select_related('company', 'posted_by').order_by('-created_at'),
-        'my_applications': JobApplication.objects.filter(applicant=user).select_related('job', 'job__company', 'job__posted_by').order_by('-created_at'),
-    }
-    return render(request, 'workspace/expert_action_page.html', context)
-
-
-@login_required
-def workspace_view(request):
-    """
-    Unified Workspace Console (Collaboration Hub).
-    Handles Teams managed, Teams joined, Job Posts, Applications, and Current Focus.
-    """
-    user = request.user
-
-    # 🚀 HIGH-PERFORMANCE QUERY: Prefetches the comments and the users who wrote them
-    # so the template can render the live comment feed instantly without N+1 database hits.
-    active_focus = RightNowPost.objects.filter(
-        profile__user=user,
-        is_active_focus=True
-    ).prefetch_related(
-        'comments__author__user'
-    ).first()
-
-    my_teams = Team.objects.filter(leader=user).prefetch_related('memberships').distinct().order_by('-created_at')
-
-    joined_teams = Team.objects.filter(memberships__user=user).exclude(leader=user).select_related(
-        'leader').distinct().order_by('-created_at')
-
-    my_opportunities = JobPost.objects.filter(posted_by=user).select_related('company', 'posted_by').order_by(
-        '-created_at')
-
-    my_applications = JobApplication.objects.filter(applicant=user).select_related('job', 'job__company',
-                                                                                   'job__posted_by').order_by(
-        '-created_at')
-
-    context = {
-        'page_title': 'Workspace Console',
-        'active_focus': active_focus,
-        'my_teams': my_teams,
-        'joined_teams': joined_teams,
-        'my_opportunities': my_opportunities,
-        'my_applications': my_applications,
-    }
-
-    return render(request, 'workspace/dashboard.html', context)
 from django.db.models import F, Case, When, Value, FloatField, Q, ExpressionWrapper
 from django.db.models.functions import Cast, Coalesce, Greatest, ExtractDay, Now
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -282,47 +144,34 @@ def right_now_feed(request):
     scored_posts = base_posts
 
     if raw_query:
-        (
-            direct_string, semantic_string, loc_tags, skill_tags,
-            min_experience, is_hiring, is_senior, is_junior
-        ) = OmniIndustryOracle.process_omni_intent(raw_query)
+        # Simple search without OmniIndustryOracle (network app removed)
+        scored_posts = scored_posts.annotate(
+            all_headlines=StringAgg('profile__headlines__title', delimiter=' ', distinct=True),
+        )
 
-        for loc in loc_tags:
-            scored_posts = scored_posts.filter(
-                Q(profile__user__current_location__icontains=loc) | Q(profile__location__icontains=loc))
-        if is_hiring:
-            scored_posts = scored_posts.filter(collaboration_status='OPEN')
+        platinum_vector = (
+                SearchVector('title', weight='A') +
+                SearchVector('body_narrative', weight='A') +
+                SearchVector('current_search', weight='B') +
+                SearchVector('all_headlines', weight='C')
+        )
 
-        if direct_string or semantic_string:
-            scored_posts = scored_posts.annotate(
-                all_headlines=StringAgg('profile__headlines__title', delimiter=' ', distinct=True),
+        direct_db_query = SearchQuery(raw_query, search_type='websearch')
+        clean_query_word = raw_query.split()[0].lower()
+
+        results = scored_posts.annotate(
+            platinum_rank=Cast(SearchRank(platinum_vector, direct_db_query) * 1000.0, FloatField()),
+            regex_boost=Case(
+                When(profile__user__full_name__iregex=fr'\b{clean_query_word}\b', then=Value(1000.0)),
+                When(title__iregex=fr'\b{clean_query_word}\b', then=Value(800.0)),
+                When(body_narrative__iregex=fr'\b{clean_query_word}\b', then=Value(600.0)),
+                default=Value(0.0), output_field=FloatField()
             )
-
-            platinum_vector = (
-                    SearchVector('title', weight='A') +
-                    SearchVector('body_narrative', weight='A') +
-                    SearchVector('current_search', weight='B') +
-                    SearchVector('all_headlines', weight='C')
-            )
-
-            direct_db_query = SearchQuery(direct_string, search_type='websearch') if direct_string else None
-            clean_query_word = direct_string.split()[0].lower() if direct_string else raw_query.split()[0].lower()
-
-            results = scored_posts.annotate(
-                platinum_rank=Cast(SearchRank(platinum_vector, direct_db_query) * 1000.0, FloatField()) if direct_db_query else Value(0.0, output_field=FloatField()),
-                regex_boost=Case(
-                    When(profile__user__full_name__iregex=fr'\b{clean_query_word}\b', then=Value(1000.0)),
-                    When(title__iregex=fr'\b{clean_query_word}\b', then=Value(800.0)),
-                    When(body_narrative__iregex=fr'\b{clean_query_word}\b', then=Value(600.0)),
-                    default=Value(0.0), output_field=FloatField()
-                )
-            ).annotate(
-                absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost'), output_field=FloatField())
-            ).filter(
-                Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
-            ).order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
-        else:
-            results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
+        ).annotate(
+            absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost'), output_field=FloatField())
+        ).filter(
+            Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
+        ).order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
     else:
         results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
 
@@ -498,217 +347,8 @@ def admin_curation_view(request):
 
     return render(request, 'workspace/admin_curation.html', context)
 # ==============================================================================================================
-# ███████████████████████████████████  5. TEAM OPERATIONS NEXUS  ███████████████████████████████████████████████
+# ███████████████████████████████████  5. FOUNDER TO ADMIN SECURE TRANSMISSIONS  ███████████████████████████████████████████████
 # ==============================================================================================================
-
-@login_required
-@require_http_methods(["GET", "POST"])
-def create_team_proposal(request, slug=None):
-    """Handles submission of a new team formation proposal OR editing an existing team."""
-    team_instance = get_object_or_404(Team, slug=slug) if slug else None
-
-    if team_instance and team_instance.leader != request.user:
-        messages.error(request, "Access Denied. Only the Team Leader can edit this team.")
-        return redirect('team_detail', slug=team_instance.slug)
-
-    if request.method == 'POST':
-        form = TeamProposalForm(request.POST, instance=team_instance)
-        if form.is_valid():
-            saved_team = form.save(commit=False)
-
-            if not team_instance:
-                # --- CREATE LOGIC ---
-                saved_team.leader = request.user
-                saved_team.status = Team.Status.PENDING
-                saved_team.save()
-                TeamMembership.objects.create(team=saved_team, user=request.user, role=TeamMembership.Role.LEADER)
-                messages.success(request, f"Team '{saved_team.name}' proposal submitted! Admin will review it shortly.")
-
-                # UPDATED: Routes directly to Collaboration Hub
-                return redirect('collaboration_hub')
-            else:
-                # --- EDIT LOGIC ---
-                saved_team.save()
-                messages.success(request, f"Team '{saved_team.name}' updated successfully!")
-
-                # UPDATED: Routes directly to Collaboration Hub
-                return redirect('collaboration_hub')
-    else:
-        form = TeamProposalForm(instance=team_instance)
-
-    return render(request, 'workspace/create_team.html', {'form': form, 'team': team_instance})
-
-@require_safe
-def team_nexus(request):
-    """Public roster of all active, approved teams on the platform."""
-    teams = Team.objects.filter(status=Team.Status.APPROVED).order_by('-created_at')
-    return render(request, 'workspace/team_nexus.html', {'teams': teams})
-
-
-@require_http_methods(["GET", "POST"])
-def team_detail(request, slug):
-    """Detailed inspection view for a specific team, handling join requests. Works for Guests!"""
-    team = get_object_or_404(Team, slug=slug)
-
-    is_member = False
-    has_pending_request = False
-    form = None
-
-    if request.user.is_authenticated:
-        is_member = TeamMembership.objects.filter(team=team, user=request.user).exists()
-        has_pending_request = JoinRequest.objects.filter(team=team, applicant=request.user, status=JoinRequest.Status.PENDING).exists()
-
-        if request.method == 'POST':
-            if is_member or has_pending_request:
-                return redirect('team_detail', slug=team.slug)
-
-            form = JoinRequestForm(request.POST)
-            if form.is_valid():
-                req = form.save(commit=False)
-                req.team = team
-                req.applicant = request.user
-                req.save()
-                messages.success(request, "Request sent to the Team Leader!")
-                return redirect('team_detail', slug=team.slug)
-        else:
-            form = JoinRequestForm()
-
-    return render(request, 'workspace/team_detail.html', {
-        'team': team,
-        'is_member': is_member,
-        'has_pending_request': has_pending_request,
-        'form': form
-    })
-
-
-@login_required
-@require_http_methods(["GET", "POST"])
-def manage_team(request, slug):
-    """Operational console for Team Leaders to manage applications and team status."""
-    try:
-        team_id = uuid.UUID(str(slug))
-        team = get_object_or_404(Team, id=team_id)
-    except (ValueError, TypeError):
-        team = get_object_or_404(Team, slug=slug)
-
-    if team.leader != request.user:
-        messages.error(request, "Access Denied: You are not the leader of this team.")
-        return redirect('team_detail', slug=team.slug)
-
-    pending_requests = team.join_requests.filter(status=JoinRequest.Status.PENDING).select_related('applicant')
-    active_members = team.memberships.all().select_related('user')
-
-    if request.method == 'POST':
-        if 'toggle_recruiting' in request.POST:
-            team.is_recruiting = not team.is_recruiting
-            team.save()
-            status_msg = "OPEN" if team.is_recruiting else "CLOSED"
-            messages.success(request, f"Team recruitment is now {status_msg}.")
-            return redirect('manage_team', slug=team.slug)
-
-        if 'action' in request.POST:
-            req_id = request.POST.get('request_id')
-            action = request.POST.get('action')
-            join_req = get_object_or_404(JoinRequest, id=req_id, team=team)
-
-            if action == 'approve':
-                join_req.status = JoinRequest.Status.APPROVED
-                join_req.save()
-                if not TeamMembership.objects.filter(team=team, user=join_req.applicant).exists():
-                    TeamMembership.objects.create(team=team, user=join_req.applicant, role=TeamMembership.Role.MEMBER)
-                    messages.success(request, f"Welcome {join_req.applicant.get_full_name() or join_req.applicant.username} to the team!")
-
-            elif action == 'reject':
-                join_req.status = JoinRequest.Status.REJECTED
-                join_req.save()
-                messages.info(request, "Application declined.")
-
-            return redirect('manage_team', slug=team.slug)
-
-    return render(request, 'workspace/manage_team.html', {
-        'team': team,
-        'pending_requests': pending_requests,
-        'active_members': active_members
-    })
-
-
-# ==============================================================================================================
-# ████████████████████████  6. WORKSPACE ACTIONS (CONNECTIONS, PREFS, ADMIN MESSAGES)  █████████████████████████
-# ==============================================================================================================
-
-class PreferenceApplicationCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    model = PreferenceApplication
-    form_class = PreferenceApplicationForm
-    template_name = 'workspace/submit_preference_application.html'
-    success_message = "Preferences submitted."
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return get_role_specific_dashboard(self.request.user)
-
-
-class ConnectionRequestCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    model = ConnectionRequest
-    form_class = ConnectionRequestForm
-    template_name = 'workspace/submit_connection_request.html'
-    success_message = "Your connection request has been submitted."
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return get_role_specific_dashboard(self.request.user)
-
-
-class PreferenceApplicationUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = PreferenceApplication
-    form_class = PreferenceApplicationForm
-    template_name = 'workspace/submit_preference_application.html'
-    success_message = "Preferences updated."
-
-    def get_success_url(self): return get_role_specific_dashboard(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['is_edit'] = True
-        return ctx
-
-
-class PreferenceApplicationDeleteView(LoginRequiredMixin, OwnerRequiredMixin, SuccessMessageMixin, DeleteView):
-    model = PreferenceApplication
-    template_name = 'workspace/confirm_delete.html'
-    success_message = "Application withdrawn."
-
-    def get_success_url(self): return get_role_specific_dashboard(self.request.user)
-
-
-class ConnectionRequestUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = ConnectionRequest
-    form_class = ConnectionRequestForm
-    template_name = 'workspace/submit_connection_request.html'
-    success_message = "Request updated."
-
-    def get_success_url(self): return get_role_specific_dashboard(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['is_edit'] = True
-        return ctx
-
-
-class ConnectionRequestDeleteView(LoginRequiredMixin, OwnerRequiredMixin, SuccessMessageMixin, DeleteView):
-    model = ConnectionRequest
-    template_name = 'workspace/confirm_delete.html'
-    success_message = "Request cancelled."
-
-    def get_success_url(self): return get_role_specific_dashboard(self.request.user)
-
-
-# --- FOUNDER TO ADMIN SECURE TRANSMISSIONS ---
 
 class CompanyMessageListView(LoginRequiredMixin, ListView):
     model = CompanyMessageToAdmin

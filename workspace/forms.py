@@ -3,12 +3,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from .models import (
-    CompanyMessageToAdmin,
-    Team,
-    TeamMembership,
-    PreferenceApplication,
-    ConnectionRequest,
-    JoinRequest
+    CompanyMessageToAdmin
 )
 
 logger = logging.getLogger(__name__)
@@ -42,50 +37,6 @@ class TailwindFormMixin:
 # ==============================================================================
 # FORMS
 # ==============================================================================
-
-
-
-class PreferenceApplicationForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = PreferenceApplication
-        # REMOVED 'status' because it shouldn't be set by the user in this form
-        fields = ['target_role_title', 'seeking', 'preferred_location',
-                  'ideal_company_desc', 'value_proposition']
-        widgets = {
-            'ideal_company_desc': forms.Textarea(attrs={'rows': 4}),
-            'value_proposition': forms.Textarea(attrs={'rows': 4}),
-        }
-class ConnectionRequestForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = ConnectionRequest
-        fields = ['title', 'description', 'target_people_description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'target_people_description': forms.Textarea(attrs={'rows': 4}),
-        }
-
-class TeamProposalForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = Team
-        fields = ['name', 'team_type', 'mission', 'roles_needed', 'telegram_link', 'is_recruiting']
-        widgets = {
-            'name': forms.TextInput(attrs={'placeholder': ''}),
-            'team_type': forms.Select(),
-            'mission': forms.Textarea(attrs={'rows': 4, 'placeholder': ''}),
-            'roles_needed': forms.Textarea(attrs={'rows': 3, 'placeholder': ''}),
-            'telegram_link': forms.URLInput(attrs={'placeholder': 'https://t.me/...'}),
-            'is_recruiting': forms.CheckboxInput(),
-        }
-
-class JoinRequestForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = JoinRequest
-        fields = ['narrative']
-        widgets = {
-            'narrative': forms.Textarea(attrs={'rows': 3, 'placeholder': 'I have 3 years of React experience and I love this mission because...'}),
-        }
-
-
 
 class CompanyMessageForm(forms.ModelForm):
     class Meta:

@@ -6,8 +6,7 @@ from django.contrib.auth import get_user_model
 
 # --- UNIFIED MODELS IMPORTS ---
 from profiles.models.new_unified_profile import UserProfile, Skill, Credential
-from profiles.models import FounderProfile
-from workspace.models import Team
+from profiles.models import FounderProfile, Company
 from opportunities.models import JobPost, JobApplication
 
 User = get_user_model()
@@ -73,7 +72,6 @@ def inspect_user(request, user_id):
         context.update({
             'company': company,
             'company_name': company.name if company else "My Enterprise",
-            'my_teams': Team.objects.filter(memberships__user=target_user).distinct(),
             'my_opportunities': JobPost.objects.filter(posted_by=target_user).select_related('company').order_by(
                 '-created_at'),
             'my_applications': JobApplication.objects.filter(applicant=target_user).select_related('job').order_by(
@@ -101,7 +99,6 @@ def ops_pool_browser(request, pool_type):
         }
         return render(request, 'ops/pool_browser.html', context)
     elif pool_type.upper() == 'COMPANY':
-        from workspace.models import Company
         companies = Company.objects.all().prefetch_related('memberships__user')
         context = {
             'companies': companies,
