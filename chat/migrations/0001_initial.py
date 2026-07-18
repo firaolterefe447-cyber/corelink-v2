@@ -1,4 +1,4 @@
-# Generated migration for chat app (renamed from workspace)
+# Generated migration for chat app
 import django.db.models.deletion
 import uuid
 from django.conf import settings

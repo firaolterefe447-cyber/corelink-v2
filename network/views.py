@@ -615,7 +615,7 @@ class NetworkPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMess
 
 
 # ==============================================================================
-# 📰 RIGHT NOW FEED (MOVED FROM WORKSPACE)
+# 📰 RIGHT NOW FEED
 # ==============================================================================
 @require_safe  # Enforces GET requests only for safe feed rendering
 def right_now_feed(request):

@@ -41,12 +41,12 @@ from profiles.models import (
 )
 from opportunities.models import JobPost, JobApplication
 
-# --- Local Workspace Models ---
+# --- Local Chat Models ---
 from .models import (
     CompanyMessageToAdmin, ChatMessage
 )
 
-# --- Local Workspace Forms ---
+# --- Local Chat Forms ---
 from .forms import (
     CompanyMessageForm
 )
@@ -105,13 +105,13 @@ class CompanyMessageCreateView(LoginRequiredMixin, CreateView):
     model = CompanyMessageToAdmin
     form_class = CompanyMessageForm
     template_name = 'chat/company_message_form.html'
-    success_url = reverse_lazy('founder_workspace')
+    success_url = reverse_lazy('company_message_list')
 
     def form_valid(self, form):
         membership = self.request.user.company_memberships.filter(role__in=['OWNER', 'ADMIN'], is_active=True).first()
         if not membership:
             messages.error(self.request, "Access Denied: You must be an active company owner or admin.")
-            return redirect('founder_workspace')
+            return redirect('company_message_list')
 
         form.instance.company = membership.company
         form.instance.founder = self.request.user
@@ -123,7 +123,7 @@ class CompanyMessageUpdateView(LoginRequiredMixin, UpdateView):
     model = CompanyMessageToAdmin
     form_class = CompanyMessageForm
     template_name = 'chat/company_message_update.html'
-    success_url = reverse_lazy('founder_workspace')
+    success_url = reverse_lazy('company_message_list')
 
     def get_queryset(self):
         allowed_companies = self.request.user.company_memberships.filter(
@@ -139,7 +139,7 @@ class CompanyMessageUpdateView(LoginRequiredMixin, UpdateView):
 class CompanyMessageDeleteView(LoginRequiredMixin, DeleteView):
     model = CompanyMessageToAdmin
     template_name = 'chat/company_message_confirm_delete.html'
-    success_url = reverse_lazy('founder_workspace')
+    success_url = reverse_lazy('company_message_list')
 
     def get_queryset(self):
         allowed_companies = self.request.user.company_memberships.filter(

@@ -25,7 +25,7 @@ urlpatterns += i18n_patterns(
     # 🌍 All Distributed Application Routes
     path("", include("core.urls")),  # Contains Home Page ("")
     path("", include("accounts.urls")),  # Contains Auth & Onboarding (/login, /join)
-    path("", include("chat.urls")),  # Contains /workspace, /teams, /challenges (renamed from workspace)
+    path("", include("chat.urls")),  # Contains chat messaging
     path("", include("profiles.urls")),  # Contains /p/..., /company/..., /dashboard/...
     path("ops/", include("operations.urls")),  # Contains Operations God-Mode (/ops/...)
     path("nexus/", include("network.urls")),  # Your already clean Network App
