@@ -1574,7 +1574,7 @@ def company_team_invite(request, slug):
                 ).exists()
                 if has_pending:
                     # Send a reminder notification about the existing invitation
-                    from workspace.models import ChatMessage
+                    from chat.models import ChatMessage
                     # Get the pending invitation
                     pending_invitation = CompanyInvitation.objects.filter(
                         company=company, invited_user=target_user, status=CompanyInvitation.Status.PENDING
@@ -1615,7 +1615,7 @@ def company_team_invite(request, slug):
                 logger.info(f"CompanyInvitation created: {invitation.id}")
                 
                 # Create inbox notification for the invited user
-                from workspace.models import ChatMessage
+                from chat.models import ChatMessage
                 logger.info(f"Attempting to create ChatMessage from {request.user} to {target_user}")
                 try:
                     chat_msg = ChatMessage.objects.create(
@@ -1678,7 +1678,7 @@ def accept_company_invitation(request, invitation_id):
     invitation.save()
     
     # Send confirmation message to the inviter
-    from workspace.models import ChatMessage
+    from chat.models import ChatMessage
     inviter = invitation.company.get_owner_or_admin()
     if inviter:
         try:
@@ -1712,7 +1712,7 @@ def decline_company_invitation(request, invitation_id):
     invitation.save()
     
     # Send notification to the inviter
-    from workspace.models import ChatMessage
+    from chat.models import ChatMessage
     inviter = invitation.company.get_owner_or_admin()
     if inviter:
         try:

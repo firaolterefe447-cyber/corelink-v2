@@ -14,14 +14,16 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
+from django.views.decorators.http import require_http_methods, require_POST, require_safe
 
 from django.db.models import (
     Q, F, Case, When, Value, IntegerField, FloatField, Max, ExpressionWrapper, Prefetch, Count
 )
-from django.db.models.functions import Coalesce, Greatest, Cast, Now, ExtractDay
+from django.db.models.functions import Coalesce, Greatest, Cast, Now, ExtractDay, Length
 
 # Standard Postgres Full-Text Search
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -32,10 +34,10 @@ from .models import NetworkPost
 from .forms import NetworkPostForm
 
 # For Company Nexus
-from profiles.models import Company
+from profiles.models import Company, RightNowPost, RightNowLike
 
 try:
-    from workspace.models import ChatMessage  # Preserving Inbox Badge Logic
+    from chat.models import ChatMessage  # Preserving Inbox Badge Logic
 except ImportError:
     pass
 
@@ -335,7 +337,7 @@ def nexus_feed(request):
     unread_count = 0
     if request.user.is_authenticated:
         try:
-            from workspace.models import ChatMessage
+            from chat.models import ChatMessage
             unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
         except ImportError:
             pass
@@ -480,7 +482,7 @@ def company_nexus(request):
     unread_count = 0
     if request.user.is_authenticated:
         try:
-            from workspace.models import ChatMessage
+            from chat.models import ChatMessage
             unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
         except ImportError:
             pass
@@ -507,7 +509,7 @@ def nexus_posts(request):
     unread_count = 0
     if request.user.is_authenticated:
         try:
-            from workspace.models import ChatMessage
+            from chat.models import ChatMessage
             unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
         except ImportError:
             pass
@@ -610,6 +612,246 @@ class NetworkPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, SuccessMess
 
     def test_func(self):
         return self.request.user == self.get_object().author
+
+
+# ==============================================================================
+# 📰 RIGHT NOW FEED (MOVED FROM WORKSPACE)
+# ==============================================================================
+@require_safe  # Enforces GET requests only for safe feed rendering
+def right_now_feed(request):
+    """
+    Next-Gen Right Now Feed: A living stream of what professionals are building.
+    Strictly enforces that every single post MUST have an explanation (body_narrative).
+    """
+    raw_query = request.GET.get('q', '')
+
+    base_posts = RightNowPost.objects.filter(
+        is_published=True,
+        is_admin_selected=True,
+        profile__user__is_active=True,
+        profile__user__is_public=True,
+        profile__user__is_nexus_visible=True,
+        profile__user__is_banned_from_right_now=False
+    ).exclude(
+        profile__user__role='ADMIN'
+    ).exclude(
+        Q(body_narrative__isnull=True) | Q(body_narrative__exact='') | Q(body_narrative__exact=' ')
+    ).select_related(
+        'profile', 'profile__user'
+    ).prefetch_related(
+        'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        char_length=Length('body_narrative')
+    )
+
+    base_posts = base_posts.annotate(raw_age=Now() - F('created_at'))
+
+    if connection.vendor == 'postgresql':
+        days_old_expr = ExtractDay('raw_age')
+    else:
+        days_old_expr = ExpressionWrapper(
+            Cast(F('raw_age'), FloatField()) / 86400000000.0,
+            output_field=FloatField()
+        )
+
+    scored_posts = base_posts
+
+    if raw_query:
+        # Simple search without OmniIndustryOracle (network app removed)
+        scored_posts = scored_posts.annotate(
+            all_headlines=StringAgg('profile__headlines__title', delimiter=' ', distinct=True),
+        )
+
+        platinum_vector = (
+                SearchVector('title', weight='A') +
+                SearchVector('body_narrative', weight='A') +
+                SearchVector('current_search', weight='B') +
+                SearchVector('all_headlines', weight='C')
+        )
+
+        direct_db_query = SearchQuery(raw_query, search_type='websearch')
+        clean_query_word = raw_query.split()[0].lower()
+
+        results = scored_posts.annotate(
+            platinum_rank=Cast(SearchRank(platinum_vector, direct_db_query) * 1000.0, FloatField()),
+            regex_boost=Case(
+                When(profile__user__full_name__iregex=fr'\b{clean_query_word}\b', then=Value(1000.0)),
+                When(title__iregex=fr'\b{clean_query_word}\b', then=Value(800.0)),
+                When(body_narrative__iregex=fr'\b{clean_query_word}\b', then=Value(600.0)),
+                default=Value(0.0), output_field=FloatField()
+            )
+        ).annotate(
+            absolute_score=ExpressionWrapper(F('platinum_rank') + F('regex_boost'), output_field=FloatField())
+        ).filter(
+            Q(platinum_rank__gt=0.0) | Q(regex_boost__gt=0.0)
+        ).order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
+    else:
+        results = scored_posts.order_by('-profile__user__is_pinned_in_right_now', '-gallery_count', '-char_length')
+
+    results = results.distinct()
+
+    paginator = Paginator(results, 24)
+    page_number = request.GET.get('page')
+    try:
+        posts_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        posts_page = paginator.get_page(1)
+    except EmptyPage:
+        posts_page = paginator.get_page(paginator.num_pages)
+
+    # ==========================================
+    # PHASE 4 MAGIC: PERSIST LIKED STATE
+    # Fetch liked post IDs for the current user for THIS PAGE only
+    # ==========================================
+    user_liked_post_ids = []
+    if request.user.is_authenticated:
+        profile = getattr(request.user, 'userprofile', None)
+        if profile:
+            current_page_post_ids = [p.id for p in posts_page]
+            user_liked_post_ids = list(RightNowLike.objects.filter(
+                profile=profile,
+                post_id__in=current_page_post_ids
+            ).values_list('post_id', flat=True))
+
+    unread_count = 0
+    if request.user.is_authenticated:
+        try:
+            from chat.models import ChatMessage
+            unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
+        except ImportError:
+            pass
+
+    return render(request, 'network/right_now_feed.html', {
+        'posts': posts_page,
+        'search_query': raw_query,
+        'unread_msg_count': unread_count,
+        'user_liked_post_ids': user_liked_post_ids, # Passed to template
+    })
+
+
+class RightNowDetailView(DetailView):
+    """
+    Robust Dedicated view for long-form Right Now updates.
+    Allows users to read massive texts and view all images without bloating the feed.
+    """
+    model = RightNowPost
+    template_name = 'network/right_now_detail.html'
+    context_object_name = 'post'
+    pk_url_kwarg = 'post_id'
+
+    def get_queryset(self):
+        """
+        Optimize the database hits. We pre-fetch the author, their headline,
+        and all gallery media in a single go to prevent N+1 query issues.
+        We also ensure ONLY published posts can be viewed directly.
+        """
+        return RightNowPost.objects.filter(is_published=True).select_related(
+            'profile',
+            'profile__user'
+        ).prefetch_related(
+            'gallery',
+            'profile__headlines'
+        )
+
+    def get_object(self, queryset=None):
+        """
+        Fetch the object and securely/atomically increment the views_count.
+        Using F() expressions prevents race conditions if multiple people click at once.
+        """
+        obj = super().get_object(queryset)
+
+        # Thread-safe increment of view count directly in the DB
+        RightNowPost.objects.filter(pk=obj.pk).update(views_count=F('views_count') + 1)
+
+        # Manually update the local instance so the template shows the new count immediately
+        obj.views_count += 1
+
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 1. Determine if the currently logged-in user liked this specific post
+        user_liked = False
+        if self.request.user.is_authenticated:
+            # Note: Using 'portfolio' because in your model UserProfile has related_name='portfolio'
+            if hasattr(self.request.user, 'portfolio'):
+                user_liked = RightNowLike.objects.filter(
+                    post=self.object,
+                    profile=self.request.user.portfolio
+                ).exists()
+
+        context['is_liked_by_user'] = user_liked
+
+        # 2. Pre-fetch ALL comments efficiently so we don't rely entirely on AJAX for the detail page
+        context['comments'] = self.object.comments.select_related(
+            'author',
+            'author__user'
+        ).order_by('created_at')  # Chronological order makes sense for reading a long thread
+
+        return context
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def admin_curation_view(request):
+    """
+    Admin-only interface to curate which Right Now posts appear in the feed.
+    Only admin-selected posts will be displayed to users.
+    Posts are prioritized by gallery count and character length.
+    """
+    # Check if user is admin
+    if request.user.role != 'ADMIN':
+        messages.error(request, "Access Denied: Admin only.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        action = request.POST.get('action')  # 'select' or 'deselect'
+
+        if post_id:
+            try:
+                post = RightNowPost.objects.get(id=post_id)
+                if action == 'select':
+                    post.is_admin_selected = True
+                    post.save()
+                    messages.success(request, f"Post selected for feed.")
+                elif action == 'deselect':
+                    post.is_admin_selected = False
+                    post.save()
+                    messages.success(request, f"Post removed from feed.")
+            except RightNowPost.DoesNotExist:
+                messages.error(request, "Post not found.")
+
+        return redirect('admin_curation')
+
+    # GET request - show all posts with curation status
+    posts = RightNowPost.objects.filter(
+        is_published=True,
+        profile__user__is_active=True
+    ).select_related(
+        'profile', 'profile__user'
+    ).prefetch_related(
+        'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        char_length=Length('body_narrative')
+    ).order_by('-created_at', '-is_admin_selected', '-gallery_count', '-char_length')
+
+    # Stats
+    total_posts = posts.count()
+    selected_posts = posts.filter(is_admin_selected=True).count()
+    not_selected_posts = total_posts - selected_posts
+
+    context = {
+        'posts': posts,
+        'total_posts': total_posts,
+        'selected_posts': selected_posts,
+        'not_selected_posts': not_selected_posts,
+    }
+
+    return render(request, 'network/admin_curation.html', context)
 
 
 # ⚠️ Legacy view block preserved exactly as provided to prevent breakage

@@ -1,4 +1,4 @@
-# workspace/context_processors.py
+# chat/context_processors.py
 from .models import ChatMessage
 
 def unread_notifications(request):

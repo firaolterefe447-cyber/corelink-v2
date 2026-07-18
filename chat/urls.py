@@ -2,11 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-# Main Workspace/Portfolio URL
-    path('network/right-now/', views.right_now_feed, name='right_now_feed'),
-    path('update/<uuid:post_id>/', views.RightNowDetailView.as_view(), name='right_now_detail'),
-    path('curation/', views.admin_curation_view, name='admin_curation'),
-
     # Message Admin & Support
     path('workspace/message-admin/', views.CompanyMessageCreateView.as_view(), name='company_message_admin'),
     path('support/messages/', views.CompanyMessageListView.as_view(), name='company_message_list'),

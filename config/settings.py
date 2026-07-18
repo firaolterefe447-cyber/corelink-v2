@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     "core",
     "accounts.apps.AccountsConfig",
     "profiles",
-    "workspace",
+    "chat.apps.ChatConfig",
     "operations",
     "content",
     "network.apps.NetworkConfig",
@@ -115,7 +115,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 # Update this line to use the new function name:
                 "profiles.context_processors.role_and_company_context",
-                "workspace.context_processors.unread_notifications",
+                "chat.context_processors.unread_notifications",
             ],
         },
     },

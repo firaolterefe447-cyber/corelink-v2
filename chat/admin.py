@@ -1,5 +1,5 @@
 """
-Workspace Admin Interface - Enterprise Edition
+Chat Admin Interface - Enterprise Edition
 Features: Autocomplete relations, custom HTML badges, annotated analytics, and high-level UX.
 """
 

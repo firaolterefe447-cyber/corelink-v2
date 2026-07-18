@@ -6,7 +6,11 @@ from .views import (
     NetworkPostDeleteView,
     MyNetworkPostListView,
     NetworkPostDetailView,
-    nexus_posts,company_nexus
+    nexus_posts,
+    company_nexus,
+    right_now_feed,
+    RightNowDetailView,
+    admin_curation_view
 )
 
 urlpatterns = [
@@ -22,4 +26,9 @@ path('nexus/signals/', nexus_posts, name='nexus_posts'),
     path('post/<uuid:pk>/', NetworkPostDetailView.as_view(), name='signal_detail'),
     path('<uuid:pk>/edit/', NetworkPostUpdateView.as_view(), name='signal_update'),
     path('<uuid:pk>/delete/', NetworkPostDeleteView.as_view(), name='signal_delete'),
+
+    # Right Now Feed (moved from workspace)
+    path('network/right-now/', right_now_feed, name='right_now_feed'),
+    path('update/<uuid:post_id>/', RightNowDetailView.as_view(), name='right_now_detail'),
+    path('curation/', admin_curation_view, name='admin_curation'),
 ]
