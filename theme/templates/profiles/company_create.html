@@ -13,64 +13,163 @@
 {% endblock navbar %}
 
 {% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-    body { background-color: #F8FAFC; background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%); }
-    .magic-input { width: 100%; background-color: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 1rem; font-weight: 500; color: #0F172A; outline: none; transition: all 0.3s; }
-    .magic-input:focus { background-color: #FFFFFF; border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-    .premium-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 0.5rem; display: block; }
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --app-bg: #F4F7FA;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--app-bg);
+        background-image:
+            radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(241, 245, 249, 0.6) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .app-canvas { padding-left: 2rem; padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
+    }
+    @media (min-width: 1024px) {
+        .app-canvas { padding-left: 4rem; padding-right: 4rem; padding-top: 4rem; padding-bottom: 8rem; }
+    }
+    @media (min-width: 1280px) {
+        .app-canvas { padding-left: 4rem; padding-right: 4rem; max-width: 1600px; margin: 0 auto; }
+    }
+
+    .bento-card {
+        background: rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 2rem;
+        box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+        transition: all 0.4s var(--ease-magic);
+        overflow: hidden;
+        position: relative;
+    }
+    .bento-card:hover { box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.15); border-color: #CBD5E1; transform: translateY(-2px); }
+
+    .btn-action { background: linear-gradient(135deg, #10B981, #059669); color: white; font-weight: 800; padding: 1rem 1.5rem; border-radius: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px; min-height: 56px; width: 100%; }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35); }
+    .btn-action:active { transform: scale(0.96); }
+    .btn-action:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-up { animation: fadeInUp 0.5s var(--ease-magic) forwards; }
+
+    .premium-input { width: 100%; background-color: rgba(248, 250, 252, 0.8); backdrop-filter: blur(8px); border: 1.5px solid #E2E8F0; border-radius: 1rem; padding: 1rem 1.25rem; font-size: 15px; font-weight: 700; color: #0F172A; outline: none; transition: all 0.3s; appearance: none; box-shadow: 0 1px 2px rgba(0,0,0,0.01); }
+    .premium-input::placeholder { color: #94A3B8; font-weight: 600; }
+    .premium-input:hover { border-color: #CBD5E1; }
+    .premium-input:focus { background-color: #FFFFFF; border-color: #10B981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    textarea.premium-input { resize: vertical; line-height: 1.6; min-height: 120px; }
+
+    .premium-label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .form-desc { font-size: 13px; font-weight: 600; color: #64748B; margin-bottom: 0.75rem; line-height: 1.5; }
 </style>
 
-<div class="pt-32 pb-20 px-4 min-h-screen flex items-center justify-center">
-    
-    <div class="w-full max-w-2xl bg-white rounded-[2rem] border border-slate-200 shadow-2xl shadow-emerald-900/5 overflow-hidden">
-        
-        <!-- Header Section -->
-        <div class="px-8 pt-10 pb-8 bg-emerald-50/50 border-b border-emerald-100 text-center relative overflow-hidden">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5 rotate-3 border border-emerald-200 shadow-sm">
-                <i data-lucide="rocket" class="w-8 h-8"></i>
+<main class="app-canvas animate-up">
+
+    <!-- TOP BACK NAVIGATION -->
+    <div class="hidden md:flex mb-6 items-center justify-between">
+        <a href="{% url 'profile_settings' %}" class="inline-flex items-center gap-2.5 text-[14px] font-bold text-slate-500 hover:text-[#10B981] transition-colors group">
+            <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 shadow-sm group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-all">
+                <i data-lucide="arrow-left" class="w-4 h-4 text-slate-600 group-hover:text-[#10B981]"></i>
             </div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">{% trans "Register Your Startup" %}</h1>
-            <p class="text-slate-500 font-medium text-[15px] mt-2 max-w-md mx-auto">
-                {% trans "To unlock the Founder dashboard, create your company entity. You will be assigned as the Owner and CEO." %}
-            </p>
+            {% trans "Back to Settings" %}
+        </a>
+    </div>
+
+    <!-- GLOBAL MESSAGES DISABLED -->
+
+    <!-- ==============================================
+         COMPANY CREATION CARD
+         ============================================== -->
+    <div class="bento-card flex flex-col relative group">
+        <!-- Ambient Glow -->
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-[#10B981]/15 to-emerald-500/10 blur-[60px] rounded-full pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
+
+        <!-- Header Section -->
+        <div class="p-8 sm:p-10 md:p-12 border-b border-slate-100 bg-gradient-to-br from-emerald-50/50 to-white relative z-10">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-200 shadow-sm">
+                    <i data-lucide="rocket" class="w-8 h-8 text-emerald-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{% trans "Register Your Startup" %}</h1>
+                    <p class="text-slate-500 font-medium text-[14px] md:text-[15px] mt-1">
+                        {% trans "Create your company entity to unlock founder features and manage your organization on CoreLink." %}
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Form Section -->
-        <form method="POST" action="{% url 'company_create' %}" class="p-8 md:p-10 space-y-6">
+        <form method="POST" action="{% url 'company_create' %}" class="p-8 sm:p-10 md:p-12 space-y-8 relative z-10">
             {% csrf_token %}
-            
-            <!-- Django Messages DISABLED -->
-
-            <div>
-                <label class="premium-label">{% trans "Company / Startup Name" %} <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" required placeholder="e.g. CoreLink Technologies" class="magic-input">
-            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Company Name -->
+                <div class="md:col-span-2">
+                    <label class="premium-label">{% trans "Company / Startup Name" %} <span class="text-rose-500">*</span></label>
+                    <p class="form-desc">{% trans "The official name of your business or startup." %}</p>
+                    <input type="text" name="name" required placeholder="e.g. CoreLink Technologies" class="premium-input">
+                </div>
+
+                <!-- Industry Sector -->
                 <div>
                     <label class="premium-label">{% trans "Industry Sector" %} <span class="text-rose-500">*</span></label>
-                    <input type="text" name="sector" required placeholder="e.g. FinTech, Agritech, AI" class="magic-input">
+                    <p class="form-desc">{% trans "Primary industry your company operates in." %}</p>
+                    <input type="text" name="sector" required placeholder="e.g. FinTech, Agritech, AI" class="premium-input">
                 </div>
+
+                <!-- HQ Location -->
                 <div>
                     <label class="premium-label">{% trans "HQ Location" %} <span class="text-rose-500">*</span></label>
-                    <input type="text" name="location" required placeholder="e.g. Addis Ababa, Ethiopia" class="magic-input">
+                    <p class="form-desc">{% trans "Where is your company headquartered?" %}</p>
+                    <input type="text" name="location" required placeholder="e.g. Addis Ababa, Ethiopia" class="premium-input">
+                </div>
+
+                <!-- Mission Statement -->
+                <div class="md:col-span-2">
+                    <label class="premium-label">{% trans "Mission Statement (Optional)" %}</label>
+                    <p class="form-desc">{% trans "Briefly describe what problem your company solves." %}</p>
+                    <textarea name="mission_stmt" rows="3" placeholder="What problem is your company solving in the world?" class="premium-input"></textarea>
                 </div>
             </div>
 
-            <div>
-                <label class="premium-label">{% trans "Mission Statement (Optional)" %}</label>
-                <textarea name="mission_stmt" rows="3" placeholder="What problem is your company solving in the world?" class="magic-input resize-none"></textarea>
-            </div>
-
-            <div class="pt-6 border-t border-slate-100 mt-8">
-                <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[15px] transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-600/20 active:scale-[0.98] flex items-center justify-center gap-2">
-                    <i data-lucide="check-circle-2" class="w-5 h-5"></i> {% trans "Create Company & Continue" %}
+            <!-- Submit Button -->
+            <div class="pt-6 border-t border-slate-100">
+                <button type="submit" class="btn-action">
+                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    <span>{% trans "Create Company & Continue" %}</span>
                 </button>
             </div>
         </form>
-
     </div>
-</div>
+
+</main>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
