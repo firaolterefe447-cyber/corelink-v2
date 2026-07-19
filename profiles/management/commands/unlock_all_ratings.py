@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from profiles.models.new_unified_profile import UserProfile
+from profiles.models.user_profile import UserProfile
 
 User = get_user_model()
 

@@ -1,5 +1,5 @@
 from .utils import *
-from .new_unified_profile import *
+from .user_profile import *
 from .company import (
     Company,
     CompanySocialLink,

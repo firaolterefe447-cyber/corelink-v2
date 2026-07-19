@@ -3,7 +3,7 @@
 import django.core.validators
 import django.db.models.deletion
 import django.utils.timezone
-import profiles.models.new_unified_profile
+import profiles.models.user_profile
 import uuid
 from django.conf import settings
 from django.db import migrations, models
@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
                 (
                     "image",
                     models.ImageField(
-                        upload_to=profiles.models.new_unified_profile.project_image_path
+                        upload_to=profiles.models.user_profile.project_image_path
                     ),
                 ),
                 ("caption", models.CharField(blank=True, max_length=200)),
@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        upload_to=profiles.models.new_unified_profile.profile_cv_path,
+                        upload_to=profiles.models.user_profile.profile_cv_path,
                         validators=[
                             django.core.validators.FileExtensionValidator(
                                 allowed_extensions=["pdf"]
@@ -475,7 +475,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        upload_to=profiles.models.new_unified_profile.credential_path,
+                        upload_to=profiles.models.user_profile.credential_path,
                     ),
                 ),
                 (
@@ -552,7 +552,7 @@ class Migration(migrations.Migration):
                     models.ImageField(
                         blank=True,
                         null=True,
-                        upload_to=profiles.models.new_unified_profile.content_media_path,
+                        upload_to=profiles.models.user_profile.content_media_path,
                     ),
                 ),
                 ("visibility", models.CharField(default="PUBLIC", max_length=20)),

@@ -24,7 +24,7 @@ try:
 except ImportError:
     pass
 
-from profiles.models.new_unified_profile import (
+from profiles.models.user_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject, RightNowPost, RightNowMedia,
     ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity, Language,
     Service, ServiceGallery

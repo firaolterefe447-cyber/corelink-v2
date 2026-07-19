@@ -15,7 +15,7 @@ from .models import (
     CompanyMilestone,
     CompanyNews,
 )
-from .models.new_unified_profile import (
+from .models.user_profile import (
     UserProfile,
     ProfileHeadline,
     Skill,

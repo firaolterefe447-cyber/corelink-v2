@@ -28,7 +28,7 @@ from django.db.models import Q
 
 # Custom Models & Forms
 from accounts.models import CustomUser, UniversalSocialLink, UniversalContactMethod
-from profiles.models.new_unified_profile import (
+from profiles.models.user_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject,
     ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity,
     RightNowPost, RightNowMedia, RightNowLike, RightNowComment, Language,
@@ -1995,7 +1995,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.staticfiles import finders
 from PIL import Image, ImageDraw, ImageFont
 
-from profiles.models.new_unified_profile import UserProfile
+from profiles.models.user_profile import UserProfile
 
 User = get_user_model()
 

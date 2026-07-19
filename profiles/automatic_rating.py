@@ -2,7 +2,7 @@ import logging
 import re
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from profiles.models.new_unified_profile import UserProfile
+from profiles.models.user_profile import UserProfile
 
 logger = logging.getLogger(__name__)
 User = get_user_model()

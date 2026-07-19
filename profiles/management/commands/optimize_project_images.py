@@ -4,7 +4,7 @@ This handles images uploaded before the optimization signal was implemented。
 """
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from profiles.models.new_unified_profile import ProjectGallery
+from profiles.models.user_profile import ProjectGallery
 from core.services import optimize_standard_image
 import logging
 
