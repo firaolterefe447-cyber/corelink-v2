@@ -7,7 +7,7 @@
 
 from django.urls import path
 from . import views
-from .views import GrowthLogListView, EssayListView, VisionBlockListView,ServiceDetailView
+from .views import ServiceDetailView
 
 urlpatterns = [
     # ==========================================
@@ -97,10 +97,6 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/services/<uuid:service_id>/gallery/new/', views.ServiceGalleryCreateView.as_view(), name='service_gallery_create'),
     path('dashboard/services/gallery/<uuid:pk>/edit/', views.ServiceGalleryUpdateView.as_view(), name='service_gallery_edit'),
     path('dashboard/services/gallery/<uuid:pk>/delete/', views.ServiceGalleryDeleteView.as_view(), name='service_gallery_delete'),
-
-    path('dashboard/logs/', GrowthLogListView.as_view(), name='manage_growth_logs'),
-    path('dashboard/essays/', EssayListView.as_view(), name='manage_essays'),
-    path('dashboard/visions/', VisionBlockListView.as_view(), name='manage_vision_blocks'),
 
     # I. Live Opportunities (The 10x Feature)
     path('dashboard/opportunities/', views.OpportunityListView.as_view(), name='manage_opportunities'),

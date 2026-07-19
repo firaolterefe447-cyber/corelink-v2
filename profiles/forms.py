@@ -921,7 +921,7 @@ class LanguageForm(TailwindFormMixin, forms.ModelForm):
 # ==============================================================================
 # UPGRADED: SURGICALLY UPDATED GALLERY/ASSET SECTION
 # ==============================================================================
-class ProjectGalleryImageForm(TailwindFormMixin, forms.ModelForm):
+class ProjectGalleryForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ProjectGallery
         fields = ['asset_type', 'image', 'document_file', 'external_url', 'caption']

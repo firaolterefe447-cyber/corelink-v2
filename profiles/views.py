@@ -754,31 +754,6 @@ class ContentPostDeleteView(ContentPostSuccessUrlMixin, PortfolioSecurityMixin, 
     template_name = 'dashboard/shared/confirm_delete.html'
 
 
-class GrowthLogListView(PortfolioSecurityMixin, ListView):
-    model = ContentPost
-    template_name = 'dashboard/portfolio/growth_log_list.html'
-    context_object_name = 'growth_logs'
-
-    def get_queryset(self):
-        return super().get_queryset().filter(post_type='GROWTH_LOG')
-
-class EssayListView(PortfolioSecurityMixin, ListView):
-    model = ContentPost
-    template_name = 'dashboard/portfolio/essay_list.html'
-    context_object_name = 'essays'
-
-    def get_queryset(self):
-        return super().get_queryset().filter(post_type='ESSAY')
-
-class VisionBlockListView(PortfolioSecurityMixin, ListView):
-    model = ContentPost
-    template_name = 'dashboard/portfolio/vision_block_list.html'
-    context_object_name = 'vision_blocks'
-
-    def get_queryset(self):
-        return super().get_queryset().filter(post_type='VISION_BLOCK')
-
-
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║ CLUSTER 6: FUTURE NETWORKING (Intent & Opportunities)                      ║
 # ║ Human Context: Captures the user's career trajectory goals and ephemeral   ║
