@@ -37,7 +37,7 @@ from django.contrib.postgres.aggregates import StringAgg
 # --- Cross-App Models & Oracles ---
 from profiles.models import (
     Company, CompanyMember, CompanyService, CompanyNews,
-    CompanyMilestone, CompanySocialLink, CompanyContactMethod, FounderProfile
+    CompanyMilestone, CompanySocialLink, CompanyContactMethod
 )
 from opportunities.models import JobPost, JobApplication
 

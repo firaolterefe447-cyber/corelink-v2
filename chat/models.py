@@ -15,6 +15,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedModel
+from profiles.models import Company
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class CompanyMessageToAdmin(TimeStampedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Relationships
-    company = models.ForeignKey('profiles.Company', on_delete=models.CASCADE, related_name='admin_messages')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='admin_messages')
     founder = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_messages')
 
     # Content

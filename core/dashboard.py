@@ -1,7 +1,6 @@
 # core/dashboard.py
 from django.utils.translation import gettext_lazy as _
 from accounts.models import CustomUser, ApplicationRequest, CommunityContributor
-from profiles.models import ExpertProfile
 
 def dashboard_callback(request, context):
     # 1. Calculate Stats

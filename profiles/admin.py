@@ -20,9 +20,9 @@ from unfold.contrib.filters.admin import (
     RangeNumericFilter,
 )
 
-# Domain Models
+# Domain Models - Only Unified Profile and Company models
 from .models import (
-    # Unified Profile Cluster (New Architecture)
+    # Unified Profile Cluster
     UserProfile, ProfileHeadline, Skill, Credential,
     PortfolioProject, ProjectGallery, WorkExperience,
     ContentPost, UnifiedJobPreference, LiveOpportunity, Language,
@@ -31,17 +31,10 @@ from .models import (
     # Right Now Ecosystem
     RightNowPost, RightNowMedia, RightNowLike, RightNowComment,
 
-    # Company Cluster (Legacy)
+    # Company Cluster
     Company, CompanyMember, CompanyService, ServiceGalleryImage,
     CompanyMilestone, CompanyNews, NewsGalleryImage, CompanySocialLink, CompanyContactMethod
 )
-
-# Account Models for social links
-try:
-    from accounts.models import UniversalSocialLink, UniversalContactMethod
-except ImportError:
-    UniversalSocialLink = None
-    UniversalContactMethod = None
 
 # ==============================================================================
 # 0. UI HELPERS & DECORATORS

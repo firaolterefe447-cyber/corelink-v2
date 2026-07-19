@@ -648,7 +648,7 @@ class RightNowPost(TimeStampedModel):
     NOTE: Designed to accept `null/blank` heavily to support the upcoming Management Command Data Migration.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    profile = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='right_now_posts')
+    profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='right_now_posts')
 
     # 1. NETWORKING INTENT (What are they looking for right now?)
     current_search = models.CharField(
@@ -763,7 +763,7 @@ class RightNowLike(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(RightNowPost, on_delete=models.CASCADE, related_name='likes')
-    profile = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='liked_posts')
+    profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='liked_posts')
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
@@ -780,7 +780,7 @@ class RightNowComment(models.Model):
     """Stores user comments on Right Now Posts."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(RightNowPost, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='post_comments')
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='post_comments')
     body = models.TextField("Comment Body", max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)

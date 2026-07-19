@@ -46,7 +46,7 @@ from django.views.decorators.http import require_POST
 
 # Import models needed for admin views
 from profiles.models.new_unified_profile import UserProfile, Skill, Credential
-from profiles.models import FounderProfile, Company
+from profiles.models import Company
 from opportunities.models import JobPost, JobApplication
 
 

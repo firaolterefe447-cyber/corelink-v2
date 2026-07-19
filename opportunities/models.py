@@ -5,11 +5,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 Domain: Career Opportunities & Professional Marketplace
-Description: 
+Description:
     Comprehensive opportunity management system featuring intelligent job matching,
     challenge-based hiring, AI-powered recommendations, and professional growth
     tracking for the CoreLink ecosystem.
-    
+
 Key Features:
     • Multi-type opportunity management (Jobs, Gigs, Challenges, Advisory)
     • AI-powered skill matching and compatibility scoring
@@ -28,6 +28,8 @@ Author: CoreLink Development Team
 Version: 2.0.0
 Last Updated: 2024
 """
+
+from profiles.models import Company
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # # SYSTEM IMPORTS & DEPENDENCIES
@@ -269,8 +271,8 @@ class JobPost(TimeStampedModel):
     )
 
     company = models.ForeignKey(
-        'profiles.Company', 
-        on_delete=models.CASCADE, 
+        Company,
+        on_delete=models.CASCADE,
         related_name='opportunities', 
         null=True, 
         blank=True,
@@ -660,7 +662,7 @@ class JobApplication(TimeStampedModel):
 
     # THE CORE LINK INNOVATION: Proof of Work
     attached_project = models.ForeignKey(
-        'profiles.Project',
+        'profiles.PortfolioProject',
         on_delete=models.SET_NULL,
         null=True, 
         blank=True,

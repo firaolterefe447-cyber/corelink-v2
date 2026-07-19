@@ -33,8 +33,8 @@ from .forms import OpportunitySearchForm
 from .models import JobPost, JobApplication
 from .forms import OpportunitySubmissionForm, OpportunitySearchForm
 
-# Assuming Project is in profiles.models based on your Challenge logic
-from profiles.models import Company, CompanyMember, Project
+# Using unified PortfolioProject instead of legacy Project
+from profiles.models import Company, CompanyMember, PortfolioProject
 
 
 # ==============================================================================
@@ -356,7 +356,7 @@ class OpportunityDetailView(DetailView):
             ).exists()
 
             # 🔥 CRITICAL FIX: Pass the user's projects to the template so they can attach them for Challenge Mode!
-            context['my_projects'] = Project.objects.filter(profile__user=self.request.user)
+            context['my_projects'] = PortfolioProject.objects.filter(profile__user=self.request.user)
 
         return context
 
@@ -385,7 +385,7 @@ def link_profile_action(request, slug):
     attached_project = None
 
     if attached_project_id:
-        attached_project = Project.objects.filter(id=attached_project_id, profile__user=request.user).first()
+        attached_project = PortfolioProject.objects.filter(id=attached_project_id, profile__user=request.user).first()
 
     # 3. Strict Challenge Validation
     if job.requires_challenge and not attached_project:
