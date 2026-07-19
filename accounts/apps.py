@@ -22,33 +22,41 @@ class AccountsConfig(AppConfig):
                 # This is the "Brain". We gather all related text into one invisible block.
                 text_chunks = [obj.full_name, obj.current_location or "", obj.get_role_display()]
 
-                # 1. If VISIONARY: Grab their Headline, Bio, and Interest
-                if obj.role == 'VISIONARY' and hasattr(obj, 'visionary_profile'):
-                    vp = obj.visionary_profile
+                # Use unified UserProfile for all roles
+                if hasattr(obj, 'portfolio'):
+                    profile = obj.portfolio
                     text_chunks.extend([
-                        vp.headline or "",
-                        vp.bio_narrative or "",
-                        vp.field_of_interest or "",
-                        vp.right_now or ""
+                        profile.bio_narrative or "",
+                        profile.field_of_interest or "",
+                        profile.location or "",
+                        profile.institution or ""
                     ])
 
-                # 2. If EXPERT: Grab Bio, Headlines, and Skills
-                elif obj.role == 'EXPERT' and hasattr(obj, 'expert_profile'):
-                    ep = obj.expert_profile
-                    text_chunks.extend([ep.bio_narrative or "", ep.right_now or ""])
-
-                    # Dig deeper: Grab their multiple headlines and skills!
-                    for hl in ep.headlines.all():
+                    # Grab headlines
+                    for hl in profile.headlines.all():
                         text_chunks.append(hl.title)
-                    for skill in ep.skills.all():
+
+                    # Grab skills
+                    for skill in profile.skills.all():
                         text_chunks.append(skill.name)
 
-                # 3. If FOUNDER: Grab their LIVE Company Data (ignoring the temporary fields)
-                elif obj.role == 'FOUNDER':
-                    if hasattr(obj, 'founder_profile'):
-                        text_chunks.append(obj.founder_profile.right_now or "")
+                    # Grab work experience
+                    for exp in profile.experiences.all():
+                        text_chunks.extend([
+                            exp.company_name or "",
+                            exp.role_title or "",
+                            exp.description or ""
+                        ])
 
-                    # Dig deeper: Go into the CompanyMember table and grab the real company!
+                    # Grab projects
+                    for project in profile.projects.all():
+                        text_chunks.extend([
+                            project.title or "",
+                            project.main_description or ""
+                        ])
+
+                # For FOUNDER: Also grab company data
+                if obj.role == 'FOUNDER':
                     for membership in obj.company_memberships.filter(is_active=True):
                         company = membership.company
                         text_chunks.extend([
