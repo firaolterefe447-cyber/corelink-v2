@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("accounts", "0015_backfill_first_last_name"),
-        ("profiles", "0012_alter_company_created_at_alter_company_updated_at_and_more"),
+        ("profiles", "0001_initial"),
     ]
 
     operations = [

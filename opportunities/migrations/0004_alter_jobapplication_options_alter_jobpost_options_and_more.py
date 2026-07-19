@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("opportunities", "0003_alter_jobpost_level"),
-        ("profiles", "0012_alter_company_created_at_alter_company_updated_at_and_more"),
+        ("profiles", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
