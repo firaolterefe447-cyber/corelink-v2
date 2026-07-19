@@ -244,29 +244,7 @@ def unified_onboarding_view(request):
         form = UnifiedOnboardingForm()
 
     # We will render the single unified template here
-    return render(request, "auth/unified_onboarding.html", {"form": form})
-
-
-def apply_contributor_view(request):
-    """
-    Handles Volunteer/Contributor Registration.
-    """
-    if request.method == "POST":
-        form = CommunityContributorForm(request.POST)
-        if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Thank you! We will contact you on Telegram.")
-                return redirect("application_success")
-            except Exception as e:
-                logger.error(f"Contributor Application Failed: {str(e)}")
-                messages.error(request, "An internal error occurred.")
-        else:
-            messages.error(request, "Please check your input.")
-    else:
-        form = CommunityContributorForm()
-
-    return render(request, "auth/apply_contributor.html", {"form": form})
+    return render(request, "auth/signup.html", {"form": form})
 
 
 # ==============================================================================

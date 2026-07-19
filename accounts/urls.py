@@ -68,10 +68,8 @@ urlpatterns = [
     # ==========================================
     # 🚀 NEW UNIFIED ONBOARDING FLOW
     # ==========================================
-    path("join/", views.unified_onboarding_view, name="unified_onboarding"),
+    path("join/", views.unified_onboarding_view, name="signup"),
     path("join/success/", views.application_success_view, name="application_success"),
-    # Contributor/Volunteer form wasn't part of the unified form, so it keeps its own view
-    path("join/volunteer/", views.apply_contributor_view, name="apply_contributor"),
     # ==========================================
     # API ENDPOINTS
     # ==========================================
