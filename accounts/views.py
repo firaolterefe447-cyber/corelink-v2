@@ -1012,7 +1012,7 @@ def deactivate_account(request):
         )
         return redirect("login")
 
-    return render(request, "accounts/deactivate_confirm.html")
+    return render(request, "auth/accounts/deactivate_confirm.html")
 
 
 from django.contrib.auth.views import PasswordChangeView
