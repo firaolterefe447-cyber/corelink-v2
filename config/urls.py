@@ -22,15 +22,15 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
-    # 🌍 All Distributed Application Routes
-    path("", include("core.urls")),  # Contains Home Page ("") and Admin Inspection Views
+    # Distributed Application Routes
+    path("", include("core.urls")),  # Home Page and Admin Inspection Views
     path("", include("accounts.urls")),  # Contains Auth & Onboarding (/login, /join)
     path("", include("chat.urls")),  # Contains chat messaging
-    path("", include("profiles.urls")),  # Contains /p/..., /company/..., /dashboard/...
+    path("", include("profiles.urls")),  # Profiles and dashboard
     path("nexus/", include("network.urls")),  # Your already clean Network App
     path(
         "opportunities/", include("opportunities.urls")
-    ),  # Your already clean Opportunities App
+    ),
     prefix_default_language=False,
 )
 

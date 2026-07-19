@@ -19,9 +19,7 @@ from profiles.models import Company
 
 logger = logging.getLogger(__name__)
 
-# ==============================================================================
-# SECTION 2: COMPANY MESSAGES TO ADMIN
-# ==============================================================================
+# Company Messages to Admin
 
 class CompanyMessageToAdmin(TimeStampedModel):
     class Status(models.TextChoices):
@@ -61,9 +59,7 @@ class CompanyMessageToAdmin(TimeStampedModel):
         return f"{self.title} - {self.company.name} ({self.get_status_display()})"
 
 
-# ==============================================================================
-# SECTION 4: COMMUNICATIONS / CHAT
-# ==============================================================================
+# Communications / Chat
 
 class ChatMessage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -78,7 +74,7 @@ class ChatMessage(models.Model):
     is_edited = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
 
-    # 2. SMART PROPERTIES (Helps the template know if it's an image or a PDF)
+    # Smart Properties
     @property
     def is_image(self):
         if not self.attachment:

@@ -1,33 +1,24 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    CORELINK UNIFIED PORTFOLIO SYSTEM                         ║
-║                    The "Fluid Lego Block" Architecture                       ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-Description:
-A next-generation, fluid professional identity system. Replaces rigid
-"Expert/Visionary" boxes with a unified profile where users attach modular
-blocks (Skills, Projects, Content, Credentials) that evolve with their career.
+CoreLink Unified Portfolio System
 
-Features:
-• Zero Data Loss: Contains every historical field from legacy profiles.
-• High Performance: State caching, UUIDs, async image optimization.
+A fluid professional identity system that replaces rigid profile boxes with a unified
+profile where users attach modular blocks (Skills, Projects, Content, Credentials)
+that evolve with their career.
 """
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# 0. SYSTEM IMPORTS & DEPENDENCIES
-# ═══════════════════════════════════════════════════════════════════════════════
+# System Imports & Dependencies
 import uuid
 import logging
-import requests  # Requires: pip install requests
-from bs4 import BeautifulSoup  # Requires: pip install beautifulsoup4
+import requests
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from typing import Any, List
 
 from django.conf import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator, MinLengthValidator
 from django.db import models, transaction
-from django.db.models import F  # Consolidated from mid-file
-from django.db.models.signals import post_save, post_delete  # Consolidated from mid-file
+from django.db.models import F
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
@@ -40,11 +31,7 @@ from .utils import SEARCH_OPTIONS, COLLAB_CHOICES
 logger = logging.getLogger(__name__)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 1: MEDIA & STORAGE ALLOCATION
-# Human Context: Centralizing upload paths keeps our cloud storage organized 
-# and makes it infinitely easier to migrate or backup specific asset types.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Media & Storage Allocation Functions
 
 def profile_cv_path(instance: Any, filename: str) -> str:
     ext = filename.split('.')[-1]
@@ -71,18 +58,10 @@ def service_gallery_path(instance: Any, filename: str) -> str:
     return f"portfolio/services/{instance.service.profile.pk}/{uuid.uuid4().hex[:12]}.{ext}"
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 2: THE CORE IDENTITY LAYER
-# Human Context: This is the user's "Home Base". Everything they do, build, or 
-# share ties back to this single, unified entity. It carries their legacy data 
-# while powering their future networking intent.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Core Identity Layer
 
 class UserProfile(TimeStampedModel):
-    """
-    The Core Identity. Replaces both ExpertProfile and VisionaryProfile.
-    This acts as the "Dashboard" where a user sets their current real-time intent.
-    """
+    """The Core Identity - replaces both ExpertProfile and VisionaryProfile."""
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -91,16 +70,16 @@ class UserProfile(TimeStampedModel):
     )
     slug = models.SlugField(_("Profile URL Slug"), max_length=255, unique=True, blank=True, db_index=True)
 
-    # --- Legacy Data Preservation (Maps perfectly from Visionary & Expert) ---
+    # Legacy Data Preservation
     location = models.CharField(_("Location"), max_length=100, blank=True, null=True)
     institution = models.CharField(_("Institution / School"), max_length=200, blank=True, null=True)
     field_of_interest = models.CharField(_("Primary Interest"), max_length=100, blank=True, null=True)
     years_experience = models.PositiveSmallIntegerField(_("Years of Experience"), default=0)
 
-    # --- The Professional Narrative ---
+    # Professional Narrative
     bio_narrative = models.TextField(_("Deep Biography / Long-term Goal"), blank=True)
 
-    # ⚠️ LEGACY FIELDS PRESERVED FOR MIGRATION SCRIPT ⚠️
+    # Legacy Fields Preserved for Migration
     current_mission = models.TextField(
         _("Current Focus (Right Now)"),
         max_length=1000,
@@ -109,7 +88,7 @@ class UserProfile(TimeStampedModel):
         help_text=_("What are you building or learning this exact month? (Migrated from 'right_now')")
     )
 
-    # --- Real-Time Networking Intent ---
+    # Real-Time Networking Intent
     current_search = models.CharField(
         _("Current Objective"),
         max_length=20, choices=SEARCH_OPTIONS, default='LEARNING', db_index=True
@@ -118,7 +97,7 @@ class UserProfile(TimeStampedModel):
         _("Availability"), max_length=20, choices=COLLAB_CHOICES, default='OPEN', db_index=True
     )
 
-    # --- Scoring & Algorithms ---
+    # Scoring & Algorithms
     admin_rating = models.PositiveSmallIntegerField(
         _("Platform Rating"), default=0,
         validators=[MinValueValidator(0), MaxValueValidator(5)]
@@ -130,13 +109,13 @@ class UserProfile(TimeStampedModel):
     is_rating_locked = models.BooleanField(default=False)
     last_signal_update = models.DateTimeField(default=timezone.now, db_index=True)
 
-    # --- Profile Verification ---
+    # Profile Verification
     profile_verified = models.BooleanField(
         _("Profile Verified"), default=False,
         help_text="Indicates if the user has completed a complete profile and is verified by the platform"
     )
 
-    # --- Assets ---
+    # Assets
     cv_file = models.FileField(
         _("Resume / CV PDF"), upload_to=profile_cv_path, null=True, blank=True,
         validators=[FileExtensionValidator(allowed_extensions=['pdf'])]
@@ -162,7 +141,7 @@ class UserProfile(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         """Auto-generates slug and updates signal decay based on intent changes."""
-        # 1. Update Signal Decay (Only if values actually changed)
+        # Update Signal Decay (Only if values actually changed)
         if self.pk:
             changed = False
             if hasattr(self, '_initial_current_mission') and self.current_mission != getattr(self, '_initial_current_mission'):
@@ -173,7 +152,7 @@ class UserProfile(TimeStampedModel):
             if changed:
                 self.last_signal_update = timezone.now()
 
-        # 2. Slug Generation
+        # Slug Generation
         if not self.slug:
             base_name = getattr(self.user, 'full_name', getattr(self.user, 'phone_number', 'user'))
             base_slug = slugify(base_name) or 'user'
@@ -186,7 +165,7 @@ class UserProfile(TimeStampedModel):
 
         super().save(*args, **kwargs)
 
-        # 3. Reset trackers post-save
+        # Reset trackers post-save
         self._initial_current_mission = self.current_mission
         self._initial_current_search = self.current_search
 
@@ -196,10 +175,7 @@ class UserProfile(TimeStampedModel):
 
 
 class ProfileHeadline(models.Model):
-    """
-    Allows users to have multiple identities (e.g., 'Senior Dev' & 'Angel Investor').
-    Human Context: Careers are no longer strictly linear. We let people define their multitudes.
-    """
+    """Allows users to have multiple identities (e.g., 'Senior Dev' & 'Angel Investor')."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='headlines')
     title = models.CharField(_("Headline"), max_length=120)
@@ -210,11 +186,7 @@ class ProfileHeadline(models.Model):
         ordering = ['-is_primary', 'order']
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 3: THE FOUNDATION (Resume & Verification Blocks)
-# Human Context: Replaces the traditional, boring 1-page PDF resume with verified, 
-# structured data that algorithms and recruiters can easily understand.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Foundation Layer (Resume & Verification Blocks)
 
 class WorkExperience(models.Model):
     """Standard CV timeline mapping roles & companies."""
@@ -407,15 +379,10 @@ class Language(models.Model):
         return f"{lang_name} - {self.get_proficiency_display()}"
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 4: PROOF OF WORK & EXPRESSION
-# Human Context: The Universal Evidence Library. Upgraded to support every
-# profession on earth (Law, Medicine, Tech, Art) while strictly preserving
-# 100% of legacy data for hundreds of thousands of live users.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Proof of Work & Expression Layer
 
 class PortfolioProject(TimeStampedModel):
-    """The ultimate proof-of-work display. Upgraded for universal professional support."""
+    """The ultimate proof-of-work display for professional portfolios."""
 
     class Category(models.TextChoices):
         SOFTWARE_DATA = 'SOFTWARE_DATA', _('Software, AI & Data Science')
@@ -456,7 +423,7 @@ class PortfolioProject(TimeStampedModel):
             "Stores infinite profession-specific inputs natively (e.g., {'jurisdiction': 'NY'} or {'tech_stack': ['React']})")
     )
 
-    # --- 2. LEGACY DATA (STRICTLY PRESERVED) ---
+    # Legacy Data (Strictly Preserved)
     title = models.CharField(max_length=200)
     context = models.CharField(max_length=20, choices=ProjectContext.choices, default=ProjectContext.PRACTICE)
     role = models.CharField(max_length=100, blank=True)
@@ -485,7 +452,7 @@ class ProjectGallery(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(PortfolioProject, on_delete=models.CASCADE, related_name='gallery')
 
-    # --- 1. NEW ASSET FIELDS (Safely Added) ---
+    # New Asset Fields
     asset_type = models.CharField(max_length=20, choices=AssetType.choices, default=AssetType.IMAGE)
     document_file = models.FileField(
         upload_to=project_image_path, blank=True, null=True,
@@ -493,8 +460,7 @@ class ProjectGallery(models.Model):
     )
     external_url = models.URLField(max_length=500, blank=True, null=True)
 
-    # --- 2. LEGACY FIELDS (PRESERVED) ---
-    # Relaxed to blank/null=True so future PDF uploads don't crash demanding an image.
+    # Legacy Fields (Preserved)
     image = models.ImageField(upload_to=project_image_path, blank=True, null=True)
     caption = models.CharField(max_length=200, blank=True)
     order = models.PositiveIntegerField(default=0)
@@ -584,11 +550,7 @@ class ContentPost(TimeStampedModel):
         return f"{self.get_post_type_display()} - {self.title}"
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 5: OPPORTUNITIES & CAREER MATCHING
-# Human Context: Actively bridging the gap between talent and opportunity. 
-# Captures both long-term preferences and ephemeral "I'm looking right now" flags.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Opportunities & Career Matching Layer
 
 class UnifiedJobPreference(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -601,11 +563,7 @@ class UnifiedJobPreference(models.Model):
 
 
 class LiveOpportunity(TimeStampedModel):
-    """
-    Ephemeral "Pings" to the network (e.g., 'Available for hire').
-    Human Context: Solves the 'cold start' problem of networking by letting 
-    users broadcast highly specific, time-sensitive needs.
-    """
+    """Ephemeral "Pings" to the network (e.g., 'Available for hire')."""
     class RequestType(models.TextChoices):
         MENTOR = 'MENTOR', _('Seeking a Mentor')
         HACKATHON = 'HACKATHON', _('Weekend Project Partner')
@@ -635,22 +593,14 @@ class LiveOpportunity(TimeStampedModel):
         return self.expires_at > timezone.now()
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 6: THE "RIGHT NOW" SOCIAL ECOSYSTEM
-# Human Context: The living heartbeat of the platform. Instead of a static profile, 
-# this acts as a real-time status update combined with a highly engaging feed.
-# ═══════════════════════════════════════════════════════════════════════════════
+# Right Now Social Ecosystem
 
 class RightNowPost(TimeStampedModel):
-    """
-    The Core Feed Model for the "Right Now" ecosystem.
-    Dual purpose: Acts as a feed post AND as the user's current profile focus.
-    NOTE: Designed to accept `null/blank` heavily to support the upcoming Management Command Data Migration.
-    """
+    """The Core Feed Model for the "Right Now" ecosystem."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='right_now_posts')
 
-    # 1. NETWORKING INTENT (What are they looking for right now?)
+    # Networking Intent
     current_search = models.CharField(
         _("Current Objective"),
         max_length=20, choices=SEARCH_OPTIONS, default='LEARNING', db_index=True,
@@ -662,7 +612,7 @@ class RightNowPost(TimeStampedModel):
         null=True, blank=True
     )
 
-    # 2. THE CONTENT
+    # Content
     title = models.CharField(_("Headline / Milestone"), max_length=200, blank=True, null=True)
     body_narrative = models.TextField(_("The Update (Markdown)"), blank=True, null=True)
 
@@ -673,13 +623,13 @@ class RightNowPost(TimeStampedModel):
     link_image_url = models.URLField(max_length=500, blank=True, null=True)
     link_domain = models.CharField(max_length=100, blank=True, null=True)
 
-    # 4. DENORMALIZED METRICS (For blazing fast feeds)
+    # Denormalized Metrics
     views_count = models.PositiveIntegerField(default=0)
     clicks_count = models.PositiveIntegerField(default=0, help_text=_("Clicks on external_link"))
     likes_count = models.PositiveIntegerField(default=0)
     comments_count = models.PositiveIntegerField(default=0)
 
-    # 5. STATE & VISIBILITY
+    # State & Visibility
     is_published = models.BooleanField(_("Show in Global Feed"), default=True, db_index=True)
     is_active_focus = models.BooleanField(
         _("Pinned to Profile Top"), default=True, db_index=True,
@@ -700,11 +650,11 @@ class RightNowPost(TimeStampedModel):
         ]
 
     def save(self, *args, **kwargs):
-        # 1. Handle Link Fetching (Only if link is new/changed)
+        # Handle Link Fetching (Only if link is new/changed)
         if self.external_link and not self.link_title:
             self._fetch_link_metadata()
 
-        # 2. Handle Profile Pinning Atomically
+        # Handle Profile Pinning Atomically
         with transaction.atomic():
             if self.is_active_focus:
                 RightNowPost.objects.filter(profile=self.profile).exclude(pk=self.pk).update(is_active_focus=False)
@@ -714,7 +664,7 @@ class RightNowPost(TimeStampedModel):
             super().save(*args, **kwargs)
 
     def _fetch_link_metadata(self):
-        """Scrapes Open Graph (OG) tags so the UI doesn't have to."""
+        """Scrapes Open Graph (OG) tags for link preview."""
         try:
             domain = urlparse(self.external_link).netloc
             self.link_domain = domain.replace("www.", "")
@@ -757,10 +707,7 @@ class RightNowMedia(models.Model):
 
 
 class RightNowLike(models.Model):
-    """
-    Tracks which profile liked which post.
-    Enforces that a user can only like a post once.
-    """
+    """Tracks which profile liked which post (enforces one like per user)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(RightNowPost, on_delete=models.CASCADE, related_name='likes')
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='liked_posts')
@@ -794,14 +741,9 @@ class RightNowComment(models.Model):
         return f"Comment by {self.author.user} on {self.post.id}"
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CLUSTER 7: SYSTEM AUTOMATION & SIGNAL HANDLERS
-# Human Context: Keeping denormalized counts accurate and running heavy tasks 
-# (like image processing) entirely asynchronously post-commit so user 
-# experience remains blazingly fast.
-# ═══════════════════════════════════════════════════════════════════════════════
+# System Automation & Signal Handlers
 
-# --- LIKE COUNTERS ---
+# Like Counters
 @receiver(post_save, sender=RightNowLike)
 def increment_likes_count(sender, instance, created, **kwargs):
     if created:
@@ -811,7 +753,7 @@ def increment_likes_count(sender, instance, created, **kwargs):
 def decrement_likes_count(sender, instance, **kwargs):
     RightNowPost.objects.filter(id=instance.post_id, likes_count__gt=0).update(likes_count=F('likes_count') - 1)
 
-# --- COMMENT COUNTERS ---
+# Comment Counters
 @receiver(post_save, sender=RightNowComment)
 def increment_comments_count(sender, instance, created, **kwargs):
     if created:
@@ -821,9 +763,9 @@ def increment_comments_count(sender, instance, created, **kwargs):
 def decrement_comments_count(sender, instance, **kwargs):
     RightNowPost.objects.filter(id=instance.post_id, comments_count__gt=0).update(comments_count=F('comments_count') - 1)
 
-# --- ASYNC IMAGE OPTIMIZATION ---
+# Async Image Optimization
 def _perform_optimization(instance_id: Any, model_class: type, field_name: str) -> None:
-    """Internal helper executing heavy image optimization post-commit."""
+    """Internal helper for image optimization post-commit."""
     try:
         instance = model_class.objects.get(pk=instance_id)
         image_field = getattr(instance, field_name)
@@ -846,7 +788,7 @@ def _perform_optimization(instance_id: Any, model_class: type, field_name: str) 
 @receiver(post_save, sender=ContentPost)
 @receiver(post_save, sender=RightNowMedia)
 def optimize_portfolio_images_async(sender: Any, instance: Any, created: bool, **kwargs: Any) -> None:
-    """Intercepts media uploads to run optimizations via transaction.on_commit."""
+    """Intercepts media uploads to run optimizations asynchronously."""
     target_fields = []
 
     if sender == ProjectGallery:

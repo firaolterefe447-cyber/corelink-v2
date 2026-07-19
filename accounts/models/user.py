@@ -231,46 +231,45 @@ class CustomUser(AbstractUser, TimeStampedModel):
         db_index=True,
         help_text=_("Pin this user to the top of the Nexus Feed"),
     )
-    # ========================================================
-    # NEW: RIGHT NOW FEED CONTROLS
-    # ========================================================
+    
+    # Right Now Feed Controls
     is_pinned_in_right_now = models.BooleanField(
         _("Pinned in Right Now Feed"),
         default=False,
         db_index=True,
-        help_text=_("Pin this user to the absolute top of the Right Now (Live Intent) feed."),
+        help_text=_("Pin this user to the top of the Right Now feed"),
     )
     is_banned_from_right_now = models.BooleanField(
         _("Banned from Right Now Feed"),
         default=False,
         db_index=True,
-        help_text=_("Completely hide this user from the Right Now feed (if they post spam/generic missions)."),
+        help_text=_("Hide this user from the Right Now feed"),
     )
-    # NEW: HOME PAGE CURATION CONTROLS
-    # ========================================================
+    
+    # Home Page Curation Controls
     is_hero_avatar_selected = models.BooleanField(
         _("Hero Avatar"),
         default=False,
         db_index=True,
-        help_text=_("Pin this user to the top hero section avatar cluster on the landing page."),
+        help_text=_("Pin this user to the hero section on landing page"),
     )
     is_home_profile_selected = models.BooleanField(
         _("Home Profile"),
         default=False,
         db_index=True,
-        help_text=_("Pin this user to the Talent Network card section on the landing page."),
+        help_text=_("Pin this user to the Talent Network section on landing page"),
     )
     is_top_10 = models.BooleanField(
         _("Top 10 Talent"),
         default=False,
         db_index=True,
-        help_text=_("Pin this user to the Top 10 section (displayed first in Nexus Feed, random order)."),
+        help_text=_("Pin this user to the Top 10 section on Nexus Feed"),
     )
     home_page_top = models.BooleanField(
         _("Home Page Top"),
         default=False,
         db_index=True,
-        help_text=_("Pin this user to the top section of the home page."),
+        help_text=_("Pin this user to the top section of home page"),
     )
     is_contacted = models.BooleanField(
         _("Contacted Status"),
@@ -338,27 +337,16 @@ class CustomUser(AbstractUser, TimeStampedModel):
         return f"{self.display_name} ({self.corelink_id or self.phone_number})"
 
     def get_absolute_url(self) -> str:
-        """
-        Returns the URL for the user's Unified Portfolio.
-        This version treats Founders as individuals, allowing them to have
-        personal portfolios distinct from their company profiles.
-        """
+        """Returns the URL for the user's Unified Portfolio."""
         slug = None
 
         try:
-            # 1. Fetch the Unified Profile slug for EVERYONE
-            # We check the 'portfolio' related_name from UserProfile
             if hasattr(self, "portfolio") and self.portfolio.slug:
                 slug = self.portfolio.slug
-
         except Exception as e:
-            # Ensure 'logger' is imported in your models.py
             logger.warning(f"Error resolving absolute URL for user {self.id}: {e}")
 
-        # 2. Fallback chain: Slug -> CoreLink ID -> UUID string
-        # This ensures the link never breaks, even if the profile isn't fully set up.
         identifier = slug or self.corelink_id or str(self.id)
-
         return reverse("public_profile", kwargs={"identifier": identifier})
 
     @property

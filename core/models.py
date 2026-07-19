@@ -1,77 +1,20 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    CORELINK FOUNDATION MODELS                               ║
-║                    Base Architecture & System Components                   ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+CoreLink Foundation Models
 
-Domain: Core Platform Infrastructure
-Description: 
-    Foundational models providing base functionality for the entire CoreLink platform.
-    Includes abstract base classes, media management, and system-wide utilities.
-    
-Key Features:
-    • TimeStampedModel: Audit trail foundation
-    • SiteMediaAsset: Dynamic content management
-    • SiteTextAsset: Configurable text content
-    • Reusable abstract base classes
-    • System-wide asset organization
-
-Architecture:
-    - TimeStampedModel: Abstract base with timestamps
-    - SiteMediaAsset: Managed media assets (banners, sliders)
-    - SiteTextAsset: Managed text content (headlines, static text)
-
-Author: CoreLink Development Team
-Version: 2.0.0
-Last Updated: 2024
+Foundational models providing base functionality for the entire CoreLink platform.
+Includes abstract base classes, media management, and system-wide utilities.
 """
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # SYSTEM IMPORTS & DEPENDENCIES
-# ═══════════════════════════════════════════════════════════════════════════════
+# System Imports & Dependencies
 import uuid
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # 1. ABSTRACT BASE CLASSES
-# ═══════════════════════════════════════════════════════════════════════════════
+# Abstract Base Classes
 
 class TimeStampedModel(models.Model):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    ABSTRACT TIMESTAMP BASE CLASS                           ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Provides automatic timestamp tracking for all platform models
-    
-    Features:
-    • Automatic creation timestamp
-    • Automatic update timestamp
-    • Database-level timestamp management
-    • Abstract base class for inheritance
-    
-    Usage:
-        class MyModel(TimeStampedModel):
-            name = models.CharField(max_length=100)
-    
-    Benefits:
-    - Consistent audit trail across all models
-    - Automatic timestamp management
-    - No manual timestamp handling required
-    - Optimized database queries with proper indexing
-    
-    Performance:
-    - Database-level timestamp generation
-    - No application-level timestamp logic
-    - Efficient for high-concurrency environments
-    
-    Security:
-    - Tamper-proof timestamps (database-controlled)
-    - Reliable audit trail for compliance
-    - Consistent timing across all operations
-    """
+    """Abstract base class providing automatic timestamp tracking."""
     created_at = models.DateTimeField(
         auto_now_add=True,
         help_text=_("Timestamp when the record was created")
@@ -88,48 +31,10 @@ class TimeStampedModel(models.Model):
             models.Index(fields=['updated_at']),
         ]
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # 2. SITE ASSETS MANAGEMENT
-# ═══════════════════════════════════════════════════════════════════════════════
+# Site Assets Management
 
 class SiteMediaAsset(TimeStampedModel):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    DYNAMIC MEDIA ASSET MANAGER                            ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Centralized management of platform media assets and promotional content
-    
-    Features:
-    • Zone-based asset organization (HOME_HERO, SIDEBAR_BANNER, etc.)
-    • Ordered display support for carousels
-    • Click-through URL tracking
-    • Active/inactive status control
-    • Automatic timestamp tracking
-    
-    Usage Examples:
-    - Homepage hero banners
-    - Sidebar promotional graphics
-    - Footer partner logos
-    - Event announcement banners
-    - Seasonal campaign assets
-    
-    Zone System:
-    - HOME_HERO: Main homepage carousel
-    - SIDEBAR_BANNER: Sidebar promotional content
-    - FOOTER_LOGOS: Partner and sponsor logos
-    - EVENT_BANNER: Event-specific promotions
-    
-    Performance:
-    - Optimized database queries with proper indexing
-    - Efficient zone-based filtering
-    - Ordered display for smooth UI rendering
-    
-    Management:
-    - Admin-friendly interface
-    - Bulk upload capabilities
-    - Status control for scheduling
-    """
+    """Centralized management of platform media assets and promotional content."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     zone_slug = models.CharField(
         max_length=100,
@@ -180,51 +85,7 @@ class SiteMediaAsset(TimeStampedModel):
         return bool(self.target_link)
 
 class SiteTextAsset(models.Model):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    CONFIGURABLE TEXT CONTENT MANAGER                       ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Dynamic text content management for platform customization
-    
-    Features:
-    • Key-based text identification system
-    • Rich text support for formatted content
-    • Admin-friendly content management
-    • Descriptive metadata for organization
-    • Static and dynamic content support
-    
-    Usage Examples:
-    - Homepage headlines and taglines
-    - Footer copyright notices
-    - Legal disclaimers and policies
-    - Marketing copy and descriptions
-    - System messages and notifications
-    
-    Key System:
-    - HOME_HEADLINE: Main homepage title
-    - FOOTER_COPYRIGHT: Copyright notice
-    - PRIVACY_POLICY: Privacy policy content
-    - TERMS_OF_SERVICE: Legal terms
-    - CONTACT_INFO: Contact information
-    
-    Content Types:
-    - Plain text: Simple messages and labels
-    - Rich text: HTML-formatted content
-    - Markdown: Structured documentation
-    - JSON: Configuration data
-    
-    Benefits:
-    - No code deployment for text changes
-    - Multi-language support ready
-    - SEO-friendly content management
-    - A/B testing capabilities
-    
-    Performance:
-    - Efficient key-based lookups
-    - Cached content delivery
-    - Minimal database overhead
-    """
+    """Dynamic text content management for platform customization."""
     key = models.CharField(
         max_length=100, 
         primary_key=True,

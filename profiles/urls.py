@@ -1,8 +1,7 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    CORELINK UNIFIED PORTFOLIO URLS                           ║
-║                    Clean, RESTful, and Highly Scalable Routing               ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+CoreLink Unified Portfolio URLs
+
+Clean, RESTful, and highly scalable routing.
 """
 
 from django.urls import path
@@ -10,9 +9,7 @@ from . import views
 from .views import ServiceDetailView
 
 urlpatterns = [
-    # ==========================================
-    # --- 1. PUBLIC PROFILES & ROUTING ---
-    # ==========================================
+    # Public Profiles & Routing
     # Handles User Slugs, Company Slugs, and CoreLink IDs dynamically
     path('p/<str:identifier>/', views.public_profile_view, name='public_profile'),
     path('p/<str:identifier>/og-image/', views.profile_og_image, name='profile_og_image'),
@@ -21,9 +18,7 @@ urlpatterns = [
     # Optional explicitly routed company profile (kept for backward compatibility)
     path('p/company/<slug:slug>/', views.company_public_profile, name='company_public_profile'),
 
-    # ==========================================
-    # --- 2. DASHBOARD & MAIN LOBBY ---
-    # ==========================================
+    # Dashboard & Main Lobby
     path("dashboard/", views.dashboard_view, name="dashboard"),
     path('dashboard/settings/', views.ProfileSettingsView.as_view(), name='profile_settings'),
 
@@ -31,9 +26,7 @@ urlpatterns = [
     path('dashboard/media/', views.IdentityMediaView.as_view(), name='media_manager'),
     path('dashboard/media/delete/<str:asset_type>/', views.delete_media_asset, name='media_delete'),
 
-    # ==========================================
-    # --- 3. UNIFIED PORTFOLIO BUILDER (LEGO BLOCKS) ---
-    # ==========================================
+    # Unified Portfolio Builder
 
     # A. Professional Roles (Headlines)
     path('dashboard/headlines/', views.HeadlineListView.as_view(), name='manage_headlines'),
@@ -104,9 +97,7 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/opportunities/<uuid:pk>/edit/', views.OpportunityUpdateView.as_view(), name='opportunity_edit'),
     path('dashboard/opportunities/<uuid:pk>/delete/', views.OpportunityDeleteView.as_view(), name='opportunity_delete'),
 
-    # ==========================================
-    # --- 4. NETWORK & CONTACTS ---
-    # ==========================================
+    # Network & Contacts
 # The Engagement APIs
     path('api/right-now/<uuid:post_id>/toggle-like/', views.api_toggle_like, name='api_toggle_like'),
     path('api/right-now/<uuid:post_id>/add-comment/', views.api_add_comment, name='api_add_comment'),
@@ -125,9 +116,7 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/network/contact/<uuid:pk>/edit/', views.ContactUpdateView.as_view(), name='contact_edit'),
     path('dashboard/network/contact/<uuid:pk>/delete/', views.ContactDeleteView.as_view(), name='contact_delete'),
 
-    # ==========================================
-    # --- 5. ENTERPRISE / COMPANY CMS ---
-    # ==========================================
+    # Enterprise / Company CMS
 
     # Company Onboarding
     path('company/onboarding/', views.company_create, name='company_create'),

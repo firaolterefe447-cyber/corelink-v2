@@ -4,27 +4,16 @@ from django.utils.translation import gettext_lazy as _
 import django.conf.locale
 from dotenv import load_dotenv
 
-# ==============================================
-# 0. BASE DIRECTORY SETUP
-# ==============================================
-# Resolves the absolute path to the project root
+# Base Directory Setup
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
 load_dotenv(BASE_DIR / ".env")
 
-# ==============================================
-# 1. ENVIRONMENT DETECTION (CRITICAL)
-# ==============================================
-# We detect HahuCloud by checking if the 'corelink' system user directory exists.
-# This allows the same file to work on your PC (Local) and the Server (Production).
+# Environment Detection
 IS_HAHU = os.path.exists('/home/corelink')
 
-# ==============================================
-# 2. SECURITY CONFIGURATION
-# ==============================================
-# In production, we fetch the secret key from environment variables for safety.
-# Locally, it falls back to a development key.
+# Security Configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-corelink-nexus-v1-development-only')
 
 # DEBUG is automatically DISABLED on the server to prevent exposing code details.
@@ -45,9 +34,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.corelink.et"
 ]
 
-# ==============================================
-# 3. APPLICATION DEFINITIONS
-# ==============================================
+# Application Definitions
 INSTALLED_APPS = [
     # Premium Admin Theme (Must be above django.contrib.admin)
     "unfold",
@@ -61,7 +48,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third-Party Optimization Tools
+    # Third-Party Tools
     "tailwind",
     "theme",
     "django_browser_reload",
@@ -83,7 +70,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # Whitenoise handles static file compression and caching for fast loading
+    # Whitenoise for static file compression and caching
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -118,11 +105,9 @@ TEMPLATES = [
     },
 ]
 
-# ==============================================
-# 4. DATABASE CONFIGURATION (POSTGRESQL)
-# ==============================================
+# Database Configuration (PostgreSQL)
 if IS_HAHU:
-    # PRODUCTION: Using the PostgreSQL database created in cPanel
+    # Production: PostgreSQL database
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -134,7 +119,7 @@ if IS_HAHU:
         }
     }
 elif os.getenv("USE_SQLITE") == "True":
-    # LOCAL: Using SQLite if requested
+    # Local: SQLite database
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -142,7 +127,7 @@ elif os.getenv("USE_SQLITE") == "True":
         }
     }
 else:
-    # LOCAL: Default to PostgreSQL
+    # Local: Default PostgreSQL
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -154,9 +139,7 @@ else:
         }
     }
 
-# ==============================================
-# 5. AUTHENTICATION & LOCALIZATION
-# ==============================================
+# Authentication & Localization
 AUTH_PASSWORD_VALIDATORS = (
     []
 )  # Keeping simple for now; recommended to enable in final stage
@@ -217,7 +200,7 @@ LANGUAGES = [
     ("om", _("Oromo")),
 ]
 
-# 1. Define metadata for BOTH Amharic and Oromo
+# Define metadata for Amharic and Oromo
 EXTRA_LANG_INFO = {
     "am": {
         "bidi": False,
@@ -233,22 +216,19 @@ EXTRA_LANG_INFO = {
     },
 }
 
-# 2. Inject it into Django's global locale info permanently
+# Inject into Django's global locale info
 django.conf.locale.LANG_INFO.update(EXTRA_LANG_INFO)
 
-# 3. Create a folder path for translation files
+# Translation files path
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "locale"),
 ]
 
-# ==============================================
-# 6. STATIC AND MEDIA ASSETS (HAHU NATIVE)
-# ==============================================
-# STATIC: For CSS, JS, and project-wide logos
+# Static and Media Assets
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "theme/static")]
 
-# MEDIA: For user-uploaded images and dynamic hero banners
+# Media: User-uploaded images and dynamic content
 MEDIA_URL = "/media/"
 
 if IS_HAHU:
@@ -256,11 +236,11 @@ if IS_HAHU:
     STATIC_ROOT = "/home/corelink/public_html/static"
     MEDIA_ROOT = "/home/corelink/public_html/media"
 else:
-    # On your PC, assets are kept in the project folder
+    # Local: assets in project folder
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# Efficient storage management for production
+# Storage management
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -270,11 +250,9 @@ STORAGES = {
     },
 }
 
-# ==============================================
-# 7. TAILWIND & ADMIN THEME CONFIGURATION
-# ==============================================
+# Tailwind & Admin Theme Configuration
 TAILWIND_APP_NAME = "theme"
-# Automatically detects if Node.js is needed based on environment
+# Node.js path detection
 NPM_BIN_PATH = None if IS_HAHU else r"C:\Program Files\nodejs\npm.cmd"
 
 UNFOLD = {
@@ -282,7 +260,7 @@ UNFOLD = {
     "SITE_TITLE": "CoreLink Nexus",
     "SITE_HEADER": "CORE.LINK",
     "SITE_URL": "/",
-    # COLORS configuration
+    # Colors configuration
     "COLORS": {
         "primary": {
             "50": "236 253 245",
@@ -409,9 +387,7 @@ UNFOLD = {
         },
     ],
 }
-# ==============================================
-# 8. ACCESS CONTROL REDIRECTS
-# ==============================================
+# Access Control Redirects
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"

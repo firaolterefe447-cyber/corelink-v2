@@ -1,39 +1,13 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    CORELINK OPPORTUNITIES PLATFORM                           ║
-║                    Professional Career & Project Marketplace                ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+CoreLink Opportunities Platform
 
-Domain: Career Opportunities & Professional Marketplace
-Description:
-    Comprehensive opportunity management system featuring intelligent job matching,
-    challenge-based hiring, AI-powered recommendations, and professional growth
-    tracking for the CoreLink ecosystem.
-
-Key Features:
-    • Multi-type opportunity management (Jobs, Gigs, Challenges, Advisory)
-    • AI-powered skill matching and compatibility scoring
-    • Challenge-based hiring with proof-of-work requirements
-    • Application workflow management with tracking
-    • External job aggregation and seeding capabilities
-    • Real-time analytics and engagement metrics
-
-Architecture:
-    - Skill: Taxonomy for AI-powered matching
-    - JobPost: Master opportunity model with flexible attributes
-    - JobApplication: Application management with AI analysis
-    - Intelligent matching and recommendation engine
-
-Author: CoreLink Development Team
-Version: 2.0.0
-Last Updated: 2024
+Professional career and project marketplace with intelligent job matching,
+challenge-based hiring, AI-powered recommendations, and application tracking.
 """
 
 from profiles.models import Company
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # SYSTEM IMPORTS & DEPENDENCIES
-# ═══════════════════════════════════════════════════════════════════════════════
+# System Imports & Dependencies
 import uuid
 from django.db import models
 from django.db.models import F
@@ -43,48 +17,13 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # INTERNAL DEPENDENCIES
-# ═══════════════════════════════════════════════════════════════════════════════
+# Internal Dependencies
 from core.models import TimeStampedModel
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # 1. SKILL TAXONOMY SYSTEM
-# ═══════════════════════════════════════════════════════════════════════════════
+# Skill Taxonomy System
 
 class Skill(TimeStampedModel):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    AI-READY SKILL TAXONOMY                               ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Advanced skill taxonomy system for intelligent matching and AI analysis
-    
-    Features:
-    • AI alias system for semantic understanding
-    • Category-based organization for filtering
-    • Future-proof vector embedding support
-    • Automatic slug generation for URLs
-    • Multi-language support ready
-    
-    AI Capabilities:
-    - Semantic skill matching (ReactJS == React)
-    - Vector embedding storage for similarity search
-    - Automatic skill categorization
-    - Trend analysis and demand forecasting
-    
-    Taxonomy Structure:
-    - Technical Skills (Programming, Frameworks, Tools)
-    - Soft Skills (Leadership, Communication, Problem-solving)
-    - Domain Skills (Finance, Healthcare, Education)
-    - Emerging Skills (AI/ML, Blockchain, IoT)
-    
-    Usage:
-    - Job requirement matching
-    - Candidate skill assessment
-    - Learning path recommendations
-    - Market trend analysis
-    """
+    """AI-ready skill taxonomy system for intelligent matching."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(
         max_length=50, 
@@ -170,47 +109,9 @@ class Skill(TimeStampedModel):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class JobPost(TimeStampedModel):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    MASTER OPPORTUNITY MANAGEMENT SYSTEM                     ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Comprehensive opportunity management supporting diverse job types and workflows
-    
-    Features:
-    • Multi-type opportunity support (Full-time, Contract, Gig, Challenge, Advisory)
-    • AI-powered skill matching and compatibility scoring
-    • Challenge-based hiring with proof-of-work requirements
-    • External job aggregation and seeding capabilities
-    • Flexible deadline management with smart validation
-    • Real-time analytics and engagement tracking
-    
-    Opportunity Types:
-    - Traditional: Full-time, Part-time, Contract roles
-    - Flexible: Gigs, Quick tasks, Micro-opportunities
-    - Advisory: Mentorship, Consulting, Board positions
-    - Innovation: Business challenges, Problem-solving contests
-    - Social: Volunteer, Community impact roles
-    
-    AI Integration:
-    - Semantic skill matching
-    - Candidate compatibility scoring
-    - Automated job description analysis
-    - Market salary benchmarking
-    - Trend prediction and insights
-    
-    Workflow Management:
-    1. Draft creation (internal or external)
-    2. Admin review and approval
-    3. Publication and promotion
-    4. Application collection and screening
-    5. Interview and selection process
-    6. Hiring and onboarding
-    """
+    """Comprehensive opportunity management for diverse job types and workflows."""
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # OPPORTUNITY CLASSIFICATION
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Opportunity Classification
     class JobType(models.TextChoices):
         """Comprehensive opportunity type classification"""
         FULL_TIME = 'FULL_TIME', _('Full-Time Role')
@@ -241,9 +142,7 @@ class JobPost(TimeStampedModel):
         EXECUTIVE = 'EXECUTIVE', _('Executive / Director')
         ANY = 'ANY', _('Any Level / Not Applicable')
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # SYSTEM IDENTITY & SEO
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # System Identity & SEO
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slug = models.SlugField(
         max_length=255, 
@@ -252,9 +151,7 @@ class JobPost(TimeStampedModel):
         help_text=_("SEO-friendly URL. Auto-generated from title.")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 1. SOURCE & ATTRIBUTION (Flexible Multi-source)
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Source & Attribution
     posted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.SET_NULL, 
@@ -311,9 +208,7 @@ class JobPost(TimeStampedModel):
         help_text=_("Source platform (e.g., 'Telegram', 'EthioJobs')")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 2. CONTENT & DESCRIPTION
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Content & Description
     title = models.CharField(
         max_length=200,
         help_text=_("Clear, descriptive job title")
@@ -330,9 +225,7 @@ class JobPost(TimeStampedModel):
         help_text=_("Optional cover image for visual appeal")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 3. CLASSIFICATION & METADATA
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Classification & Metadata
     job_type = models.CharField(
         max_length=20, 
         choices=JobType.choices, 
@@ -392,9 +285,7 @@ class JobPost(TimeStampedModel):
         help_text=_("Maximum salary (annual or hourly as appropriate)")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 4. DEADLINE MANAGEMENT (Smart Hybrid Approach)
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Deadline Management
     deadline_date = models.DateField(
         null=True, 
         blank=True,
@@ -410,9 +301,7 @@ class JobPost(TimeStampedModel):
         help_text=_("No specific deadline - always accepting applications")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 5. CORELINK INNOVATION (Challenge Mode)
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # CoreLink Innovation (Challenge Mode)
     requires_challenge = models.BooleanField(
         default=False,
         help_text=_("Require applicants to complete a challenge")
@@ -422,9 +311,7 @@ class JobPost(TimeStampedModel):
         help_text=_("Detailed challenge requirements (e.g., 'Attach a React hooks project')")
     )
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # 6. SKILLS & AI METADATA
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Skills & AI Metadata
     required_skills = models.ManyToManyField(
         'Skill', 
         blank=True, 
@@ -440,7 +327,7 @@ class JobPost(TimeStampedModel):
         help_text=_("Total applications received")
     )
 
-    # 🤖 AI & Future Readiness
+    # AI & Future Readiness
     ai_metadata = models.JSONField(
         default=dict, 
         blank=True,
@@ -465,22 +352,14 @@ class JobPost(TimeStampedModel):
         ]
 
     def save(self, *args, **kwargs):
-        """
-        Enhanced save method with smart validation and auto-generation.
-        
-        Features:
-        - Auto-generate SEO-friendly slug
-        - Auto-set published timestamp
-        - Smart deadline resolution
-        - AI metadata preparation
-        """
+        """Enhanced save method with auto-generation and validation."""
         # Auto-generate SEO friendly Slug
         if not self.slug:
             base_slug = slugify(self.title)
             short_id = str(self.id).split('-')[0]
             self.slug = f"{base_slug}-{short_id}"
 
-        # Auto-set published_at when status changes to ACTIVE
+        # Auto-set published timestamp when status changes to ACTIVE
         if self.status == self.Status.ACTIVE and not self.published_at:
             self.published_at = timezone.now()
 
@@ -490,29 +369,14 @@ class JobPost(TimeStampedModel):
         super().save(*args, **kwargs)
 
     def _resolve_deadline_logic(self):
-        """
-        Intelligent deadline management with auto-correction.
-        
-        Logic:
-        - If date OR text provided → Not open-ended
-        - If both blank → Assume open-ended
-        - Prevents validation errors for admins
-        """
+        """Intelligent deadline management with auto-correction."""
         if self.deadline_date or self.deadline_text:
             self.is_open_ended = False
         elif not self.deadline_date and not self.deadline_text:
             self.is_open_ended = True
 
     def clean(self):
-        """
-        Comprehensive validation with smart error handling.
-        
-        Features:
-        - Smart deadline validation
-        - Salary range validation
-        - Challenge requirement validation
-        - External URL validation
-        """
+        """Comprehensive validation with smart error handling."""
         super().clean()
         errors = []
         row_id = self.title if self.title else "New Job"
@@ -540,9 +404,7 @@ class JobPost(TimeStampedModel):
     def __str__(self) -> str:
         return f"{self.title} @ {self.get_company_name()}"
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # HELPER METHODS & PROPERTIES
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # Helper Methods & Properties
     def get_company_name(self):
         """Get the best available company name"""
         if self.company:
@@ -590,45 +452,10 @@ class JobPost(TimeStampedModel):
         from django.urls import reverse
         return reverse('opportunities:detail', kwargs={'slug': self.slug})
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # 3. APPLICATION MANAGEMENT SYSTEM
-# ═══════════════════════════════════════════════════════════════════════════════
+# Application Management System
 
 class JobApplication(TimeStampedModel):
-    """
-    ╔══════════════════════════════════════════════════════════════════════════════╗
-    ║                    APPLICATION MANAGEMENT & AI MATCHING                     ║
-    ╚══════════════════════════════════════════════════════════════════════════════╝
-    
-    Purpose: Advanced application management with AI-powered matching and proof-of-work
-    
-    Features:
-    • AI compatibility scoring and analysis
-    • Challenge-based application validation
-    • Portfolio project integration
-    • Application workflow tracking
-    • Rich candidate profiling
-    
-    AI Integration:
-    - Skill compatibility scoring
-    - Experience level matching
-    - Cultural fit analysis
-    - Success probability prediction
-    
-    Workflow Stages:
-    1. Linked: Initial application submission
-    2. Viewed: Recruiter has reviewed
-    3. Shortlisted: Passed initial screening
-    4. Interview: Selected for interviews
-    5. Rejected: Not suitable for role
-    6. Hired: Successfully placed
-    
-    Proof of Work:
-    - Portfolio project attachment
-    - Challenge completion verification
-    - Skill demonstration validation
-    - Reference checking integration
-    """
+    """Advanced application management with AI-powered matching and proof-of-work."""
 
     class Status(models.TextChoices):
         """Application workflow status tracking"""
@@ -677,7 +504,7 @@ class JobApplication(TimeStampedModel):
         help_text=_("Current application status")
     )
 
-    # 🤖 AI Match Logic
+    # AI Match Logic
     match_score = models.FloatField(
         default=0.0, 
         help_text=_("AI compatibility score (0-100)")
@@ -701,25 +528,14 @@ class JobApplication(TimeStampedModel):
         ]
 
     def clean(self):
-        """
-        Application validation with challenge requirements.
-        
-        Ensures challenge-based jobs have appropriate proof of work.
-        """
+        """Application validation with challenge requirements."""
         if self.job.requires_challenge and not self.attached_project:
             raise ValidationError({
                 'attached_project': _('This role requires you to attach a project/proof of work.')
             })
 
     def save(self, *args, **kwargs):
-        """
-        Enhanced save with automatic application counting.
-        
-        Features:
-        - Auto-increment job application count
-        - AI match score calculation
-        - Status change tracking
-        """
+        """Enhanced save with automatic application counting."""
         is_new = self._state.adding
         super().save(*args, **kwargs)
 
@@ -731,23 +547,9 @@ class JobApplication(TimeStampedModel):
         applicant_name = self.applicant.get_full_name() or self.applicant.username
         return f"{applicant_name} → {self.job.title}"
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # # AI MATCHING & ANALYSIS
-    # ═══════════════════════════════════════════════════════════════════════════════
+    # AI Matching & Analysis
     def calculate_match_score(self):
-        """
-        Calculate AI-powered compatibility score.
-        
-        Algorithm:
-        1. Skill matching (40%)
-        2. Experience level (20%)
-        3. Portfolio relevance (20%)
-        4. Location preference (10%)
-        5. Cultural fit (10%)
-        
-        Returns:
-            float: Compatibility score (0-100)
-        """
+        """Calculate AI-powered compatibility score."""
         # Placeholder for AI matching algorithm
         # This would integrate with the AI service
         score = 75.0  # Base score
@@ -766,15 +568,7 @@ class JobApplication(TimeStampedModel):
         return self.match_score
 
     def advance_status(self, new_status):
-        """
-        Advance application through workflow stages.
-        
-        Args:
-            new_status: New status from Status choices
-            
-        Raises:
-            ValueError: If invalid status transition
-        """
+        """Advance application through workflow stages."""
         valid_transitions = {
             self.Status.LINKED: [self.Status.VIEWED, self.Status.REJECTED],
             self.Status.VIEWED: [self.Status.SHORTLISTED, self.Status.REJECTED, self.Status.INTERVIEW],

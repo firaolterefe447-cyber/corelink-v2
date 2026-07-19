@@ -4,19 +4,15 @@ from . import views
 app_name = 'opportunities'
 
 urlpatterns =[
-    # ==========================================
-    # 1. PUBLIC DISCOVERY (The Feed & Search)
-    # ==========================================
+    # Public Discovery (Feed & Search)
     path('', views.OpportunityFeedView.as_view(), name='feed'),
 path('post-job/', views.PublicOpportunityCreateView.as_view(), name='public_post'),
-    # 🚀 FIX: Map UUID first for old unmigrated jobs, then Slug for new jobs
+    # Map UUID first for old unmigrated jobs, then Slug for new jobs
     path('job/<uuid:pk>/', views.OpportunityDetailView.as_view(), name='detail_pk'),
     path('job/<slug:slug>/', views.OpportunityDetailView.as_view(), name='detail'),
     path('job/<slug:slug>/og-image/', views.opportunity_og_image, name='og_image'),
 
-    # ==========================================
-    # 2. ACTIONS (Apply / Scout)
-    # ==========================================
+    # Actions (Apply / Scout)
     path('job/<uuid:pk>/apply/', views.link_profile_action, name='apply_pk'),
     path('job/<slug:slug>/apply/', views.link_profile_action, name='apply'),
 
@@ -35,9 +31,7 @@ path('post-job/', views.PublicOpportunityCreateView.as_view(), name='public_post
     path('workspace/job/<uuid:pk>/delete/', views.OpportunityDeleteView.as_view(), name='delete_pk'),
     path('workspace/job/<slug:slug>/delete/', views.OpportunityDeleteView.as_view(), name='delete'),
 
-    # ==========================================
-    # 4. RECRUITER PIPELINE (Manage Applicants)
-    # ==========================================
+    # Recruiter Pipeline (Manage Applicants)
     path('workspace/job/<uuid:pk>/pipeline/', views.ApplicantBoardView.as_view(), name='applicant_board_pk'),
     path('workspace/job/<slug:slug>/pipeline/', views.ApplicantBoardView.as_view(), name='applicant_board'),
 

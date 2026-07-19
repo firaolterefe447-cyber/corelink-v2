@@ -3,9 +3,7 @@ from . import views
 from .views import CoreLinkPasswordChangeView
 
 urlpatterns = [
-    # ==========================================
-    # AUTHENTICATION
-    # ==========================================
+    # Authentication
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("verify-email/", views.email_verification_view, name="email_verification"),
@@ -21,9 +19,7 @@ urlpatterns = [
         name="google_role_selection",
     ),
     path("create-password/", views.create_password_view, name="create_password"),
-    # ==========================================
-    # PASSWORD RESET (EMAIL RECOVERY)
-    # ==========================================
+    # Password Reset (Email Recovery)
     path(
         "password/reset/",
         views.password_reset_method_selection,
@@ -49,9 +45,7 @@ urlpatterns = [
         views.password_reset_confirm,
         name="password_reset_confirm",
     ),
-    # ==========================================
-    # ACCOUNT MANAGEMENT
-    # ==========================================
+    # Account Management
     path("privacy/toggle/", views.toggle_privacy, name="toggle_privacy"),
     path("deactivate/", views.deactivate_account, name="deactivate_account"),
     path("email/register/", views.register_email_view, name="register_email"),
@@ -65,12 +59,8 @@ urlpatterns = [
         CoreLinkPasswordChangeView.as_view(),
         name="password_change",
     ),
-    # ==========================================
-    # 🚀 NEW UNIFIED ONBOARDING FLOW
-    # ==========================================
+    # Unified Onboarding Flow
     path("join/", views.unified_onboarding_view, name="signup"),
-    # ==========================================
-    # API ENDPOINTS
-    # ==========================================
+    # API Endpoints
     path("api/cities/", views.get_cities, name="api_get_cities"),
 ]
