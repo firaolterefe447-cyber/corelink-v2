@@ -333,6 +333,10 @@ class Command(BaseCommand):
         dry_run = kwargs.get('dry_run', True)
         force = kwargs.get('force', False)
         
+        # If force is True, disable dry-run mode
+        if force:
+            dry_run = False
+        
         if not dry_run and not force:
             self.stdout.write(self.style.ERROR("[SAFETY ERROR]:"))
             self.stdout.write("   To run in LIVE mode, you must use --force flag")
