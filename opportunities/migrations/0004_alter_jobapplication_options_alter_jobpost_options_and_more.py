@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 help_text="Portfolio project demonstrating relevant skills",
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                to="profiles.project",
+                to="profiles.portfolioproject",
             ),
         ),
         migrations.AlterField(

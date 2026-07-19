@@ -15,13 +15,13 @@ class Migration(migrations.Migration):
             name="looking_for",
             field=models.CharField(
                 choices=[
-                    ("Expanding", "Expanding"),
+                    ("EXPANDING", "Expanding"),
                     ("FUNDRAISING", "Seeking Investment"),
                     ("HIRING", "Hiring"),
                     ("PARTNERING", "Seeking Co-Founders"),
                     ("SALES", "Seeking B2B Clients"),
                 ],
-                default="Expanding",
+                default="EXPANDING",
                 max_length=20,
                 verbose_name="Current Company Objective",
             ),
