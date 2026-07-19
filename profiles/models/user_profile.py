@@ -1,9 +1,6 @@
 """
-CoreLink Unified Portfolio System
-
-A fluid professional identity system that replaces rigid profile boxes with a unified
-profile where users attach modular blocks (Skills, Projects, Content, Credentials)
-that evolve with their career.
+User profile model to capture professional identity including skills, projects,
+work experience, credentials, and networking intent.
 """
 
 # System Imports & Dependencies
