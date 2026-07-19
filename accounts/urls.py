@@ -69,7 +69,6 @@ urlpatterns = [
     # 🚀 NEW UNIFIED ONBOARDING FLOW
     # ==========================================
     path("join/", views.unified_onboarding_view, name="signup"),
-    path("join/success/", views.application_success_view, name="application_success"),
     # ==========================================
     # API ENDPOINTS
     # ==========================================

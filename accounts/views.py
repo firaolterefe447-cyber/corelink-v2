@@ -195,14 +195,6 @@ def _route_user_to_dashboard(user):
 # ==============================================================================
 
 
-def application_success_view(request):
-    """
-    The 'Waiting Room' page.
-    Users (like Founders) are redirected here after submitting their application.
-    """
-    return render(request, "auth/application_success.html")
-
-
 # ==============================================================================
 # 🚀 NEW UNIFIED ONBOARDING VIEW
 # ==============================================================================
@@ -465,10 +457,6 @@ def register_email_view(request):
                                 del request.session["pending_password_reset_needs_verification"]
                             
                             return render(request, "auth/email_verified_password_reset.html")
-
-                        # Handle Founders: they might still be unverified by admin
-                        if user.role == "FOUNDER" and not user.is_verified:
-                            return redirect("application_success")
 
                         return _route_user_to_dashboard(user)
                     else:
