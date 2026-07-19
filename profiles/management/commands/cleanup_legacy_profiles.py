@@ -221,17 +221,25 @@ class Command(BaseCommand):
             with open(init_file, 'r') as f:
                 content = f.read()
             
-            # Remove legacy imports
-            lines_to_remove = [
-                'from .expert import (',
-                'from .visionary import (', 
-                'from .founder import FounderProfile',
-            ]
-            
-            new_content = content
-            for line in lines_to_remove:
-                if line in new_content:
-                    new_content = new_content.replace(line, '')
+            # Remove entire expert import block
+            import re
+            new_content = re.sub(
+                r'from \.expert import \([^)]+\)\n',
+                '',
+                content
+            )
+            # Remove entire visionary import block
+            new_content = re.sub(
+                r'from \.visionary import \([^)]+\)\n',
+                '',
+                new_content
+            )
+            # Remove founder import
+            new_content = re.sub(
+                r'from \.founder import FounderProfile\n',
+                '',
+                new_content
+            )
             
             with open(init_file, 'w') as f:
                 f.write(new_content)
