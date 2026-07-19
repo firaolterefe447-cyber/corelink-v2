@@ -192,10 +192,8 @@ class Command(BaseCommand):
                             self.stdout.write(f"   [DRY RUN] Would drop: {table}")
                             dropped_tables.append(table)
                         else:
-                            # Disable foreign key checks temporarily
-                            cursor.execute("SET FOREIGN_KEY_CHECKS=0")
-                            cursor.execute(f"DROP TABLE IF EXISTS {table}")
-                            cursor.execute("SET FOREIGN_KEY_CHECKS=1")
+                            # PostgreSQL doesn't need foreign key checks disabled for DROP TABLE IF EXISTS
+                            cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE")
                             self.stdout.write(self.style.SUCCESS(f"   [OK] Dropped: {table}"))
                             dropped_tables.append(table)
                     except Exception as e:
