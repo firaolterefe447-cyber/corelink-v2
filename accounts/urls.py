@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import CoreLinkPasswordChangeView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Authentication
@@ -19,31 +20,33 @@ urlpatterns = [
         name="google_role_selection",
     ),
     path("create-password/", views.create_password_view, name="create_password"),
-    # Password Reset (Email Recovery)
+    # Password Reset (Standard Django Flow)
     path(
         "password/reset/",
-        views.password_reset_method_selection,
-        name="password_reset_method_selection",
+        views.CustomPasswordResetView.as_view(),
+        name="password_reset",
     ),
     path(
-        "password/reset/email/",
-        views.password_reset_request_email,
-        name="password_reset_request_email",
-    ),
-    path(
-        "password/reset/email/entry/",
-        views.password_reset_email_entry,
-        name="password_reset_email_entry",
-    ),
-    path(
-        "password/reset/email/verify/",
-        views.password_reset_email_verify,
-        name="password_reset_email_verify",
+        "password/reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="auth/password_reset_done.html"
+        ),
+        name="password_reset_done",
     ),
     path(
         "password/reset/confirm/<uidb64>/<token>/",
-        views.password_reset_confirm,
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="auth/password_reset_confirm.html",
+            success_url="/password/reset/complete/",
+        ),
         name="password_reset_confirm",
+    ),
+    path(
+        "password/reset/complete/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="auth/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
     ),
     # Account Management
     path("privacy/toggle/", views.toggle_privacy, name="toggle_privacy"),
