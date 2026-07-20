@@ -80,18 +80,7 @@ class PortfolioSecurityMixin(LoginRequiredMixin):
 class ContentPostSuccessUrlMixin:
     """Dynamically returns the success URL based on the saved object's post_type."""
     def get_success_url(self):
-        post_type = self.object.post_type
-
-        # Note: Replace the strings inside reverse() with the ACTUAL names
-        # you defined in your urls.py for those list views.
-        if post_type == 'GROWTH_LOG':
-            return reverse('manage_growth_logs')
-        elif post_type == 'VISION_BLOCK':
-            return reverse('manage_vision_blocks')
-        elif post_type == 'ESSAY':
-            return reverse('manage_essays')
-
-        # Fallback just in case
+        # All content types use the unified manage_contents view
         return reverse('manage_contents')
 
 class PortfolioCreateMixin:
@@ -723,6 +712,15 @@ def auto_detect_project_category(request):
 class ContentPostListView(PortfolioSecurityMixin, ListView):
     model = ContentPost
     template_name = 'dashboard/portfolio/content_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        post_type = self.request.GET.get('type')
+        if post_type:
+            valid_types = [choice[0] for choice in ContentPost.PostType.choices]
+            if post_type in valid_types:
+                queryset = queryset.filter(post_type=post_type)
+        return queryset
 
 class ContentPostCreateView(ContentPostSuccessUrlMixin, RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
     model = ContentPost
