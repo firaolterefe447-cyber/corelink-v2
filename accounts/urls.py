@@ -38,6 +38,7 @@ urlpatterns = [
         auth_views.PasswordResetConfirmView.as_view(
             template_name="auth/password_reset_confirm.html",
             success_url="/password/reset/complete/",
+            post_reset_login=True,
         ),
         name="password_reset_confirm",
     ),

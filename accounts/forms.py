@@ -65,6 +65,8 @@ class TailwindFormMixin:
     """
 
     def __init__(self, *args, **kwargs):
+        # Pop request if passed, but don't use it in this mixin
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
         # --- ICON ASSETS (Encoded SVGs for CSS) ---

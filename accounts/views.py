@@ -1014,16 +1014,11 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
     Custom password reset view that looks up users by email instead of username.
     """
     form_class = PasswordResetRequestForm
-    template_name = "auth/password_reset.html"
+    template_name = "auth/password_reset_request.html"
     email_template_name = "emails/password_reset_email.html"
     subject_template_name = "emails/password_reset_subject.txt"
     success_url = "/password/reset/done/"
     html_email_template_name = "emails/password_reset_email.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({"request": self.request})
-        return kwargs
 
     def form_valid(self, form):
         email = form.cleaned_data["email"]
