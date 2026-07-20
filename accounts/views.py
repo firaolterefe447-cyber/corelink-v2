@@ -1026,21 +1026,6 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
         user = CustomUser.objects.filter(email__iexact=email).first()
         
         if user and user.email:
-            # Override the internal form's user for Django's email sending
-            # Django's PasswordResetView uses form.cleaned_data['email'] to find user
-            # but since we use phone_number as USERNAME_FIELD, we need to manually send
-            opts = {
-                "use_https": self.request.is_secure(),
-                "token_generator": self.token_generator,
-                "from_email": self.from_email,
-                "email_template_name": self.email_template_name,
-                "subject_template_name": self.subject_template_name,
-                "request": self.request,
-                "html_email_template_name": self.html_email_template_name,
-                "extra_email_context": self.extra_email_context,
-            }
-            opts.update(self.get_extra_context())
-            
             # Generate token and uid
             token = self.token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
