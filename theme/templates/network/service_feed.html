@@ -203,11 +203,31 @@
     .service-card:nth-child(5) { animation-delay: 0.25s; }
     .service-card:nth-child(6) { animation-delay: 0.30s; }
 
+    /* Service Card - Premium Glass Style */
+    .service-card {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .service-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
+    }
+
     /* Gallery Grid */
     .gallery-grid {
         display: grid;
         gap: 4px;
         background: #f8fafc;
+        border-radius: 1.5rem 1.5rem 0 0;
+        overflow: hidden;
     }
     .gallery-item {
         position: relative;
@@ -359,7 +379,7 @@
         </div>
 
         <!-- SERVICES GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 px-4 md:px-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 px-4 md:px-0">
             {% for service in services %}
                 <article class="service-card anim-smooth-appear" style="animation-delay: {{ forloop.counter|add:0 }}0ms;">
                     
@@ -409,18 +429,19 @@
                             {% endwith %}
                         </a>
                     {% else %}
-                        <!-- No Gallery - Innovative Circular Avatar Design -->
-                        <a href="{% url 'feed_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group">
+                        <!-- No Gallery - Premium Circular Avatar Design -->
+                        <a href="{% url 'feed_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group rounded-t-[1.5rem]">
                             
-                            <!-- Decorative rings -->
+                            <!-- Animated decorative rings -->
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <div class="w-48 h-48 md:w-56 md:h-56 rounded-full border border-blue-100/40 opacity-60 group-hover:scale-110 transition-transform duration-500"></div>
                                 <div class="absolute w-64 h-64 md:w-72 md:h-72 rounded-full border border-indigo-100/30 opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
                                 <div class="absolute w-80 h-80 md:w-96 md:h-96 rounded-full border border-slate-200/20 opacity-30 group-hover:scale-100 transition-transform duration-900"></div>
                             </div>
                             
-                            <!-- Large circular avatar -->
+                            <!-- Large circular avatar with premium shadow -->
                             <div class="relative z-10">
+                                <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[10px] transform translate-y-2 scale-[0.85] transition-all duration-300 group-hover:scale-100 group-hover:translate-y-3 group-hover:bg-slate-900/25"></div>
                                 <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                                     {% if service.profile.user.avatar %}
                                         <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
@@ -432,14 +453,14 @@
                                 </div>
                             </div>
                             
-                            <!-- Hover overlay gradient -->
+                            <!-- Premium hover overlay -->
                             <div class="absolute inset-0 bg-gradient-to-t from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </a>
                     {% endif %}
 
                     <!-- Service Content -->
-                    <div class="p-5 md:p-6">
-                        <!-- Provider Info -->
+                    <div class="p-5 md:p-6 flex-1 flex flex-col">
+                        <!-- Provider Info - Clean Header -->
                         <div class="flex items-center gap-3 mb-4">
                             <a href="{% url 'public_profile' service.profile.slug %}" class="avatar-circle group/avatar">
                                 {% if service.profile.user.avatar %}
@@ -450,32 +471,34 @@
                                     </div>
                                 {% endif %}
                             </a>
-                            <div class="min-w-0">
-                                <a href="{% url 'public_profile' service.profile.slug %}" class="text-[15px] md:text-[16px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors truncate block">
+                            <div class="min-w-0 flex-1">
+                                <a href="{% url 'public_profile' service.profile.slug %}" class="text-[15px] md:text-[16px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors truncate block leading-tight">
                                     {{ service.profile.user.full_name|default:"Unknown" }}
                                 </a>
-                                <span class="text-[13px] text-slate-500 font-semibold truncate block">
+                                <span class="text-[12.5px] text-slate-500 font-semibold truncate block leading-tight">
                                     {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- Service Title -->
-                        <a href="{% url 'feed_service_detail' service.id %}">
-                            <h3 class="text-[18px] md:text-[19px] font-black text-slate-900 mb-2.5 leading-tight hover:text-[#0A66C2] transition-colors line-clamp-2 tracking-tight">
+                        <a href="{% url 'feed_service_detail' service.id %}" class="block mb-3">
+                            <h3 class="text-[17px] md:text-[18px] font-black text-slate-900 leading-snug hover:text-[#0A66C2] transition-colors line-clamp-2 tracking-tight font-heading">
                                 {{ service.title }}
                             </h3>
                         </a>
 
                         <!-- Service Description -->
-                        <p class="text-[14px] md:text-[14.5px] text-slate-600 leading-relaxed mb-4 line-clamp-3 font-medium">
-                            {{ service.description }}
-                        </p>
+                        <div class="mb-4 flex-grow">
+                            <p class="text-[13.5px] md:text-[14px] text-slate-600 leading-relaxed line-clamp-3 font-medium">
+                                {{ service.description }}
+                            </p>
+                        </div>
 
                         <!-- Meta Info -->
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 mb-4">
+                        <div class="flex items-center gap-3 mb-4 text-[12px] text-slate-500 font-semibold">
                             {% if service.profile.location %}
-                                <span class="flex items-center gap-1.5 text-[12px] font-black text-slate-500">
+                                <span class="flex items-center gap-1.5">
                                     <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
                                     {{ service.profile.location }}
                                 </span>
@@ -483,7 +506,7 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="grid grid-cols-2 gap-2.5">
+                        <div class="grid grid-cols-2 gap-2.5 mt-auto pt-3 border-t border-slate-100">
                             <!-- View Service Button -->
                             <a href="{% url 'feed_service_detail' service.id %}" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
                                 <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
