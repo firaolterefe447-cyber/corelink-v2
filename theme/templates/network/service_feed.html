@@ -171,34 +171,33 @@
         width: 100%;
         position: relative;
         z-index: 10;
-        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
+        padding: calc(5.5rem + env(safe-area-inset-top)) 0 calc(6.5rem + env(safe-area-inset-bottom)) 0;
     }
     @media (min-width: 768px) {
-        .auth-canvas { padding-left: calc(240px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
+        .app-canvas { padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
+        .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
         .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
     }
     @media (min-width: 1024px) {
-        .auth-canvas { padding-left: calc(260px + 3rem); padding-right: 3rem; padding-top: 3rem; }
-    }
-    @media (min-width: 1280px) {
-        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
+        .auth-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
+        .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
     }
 
     /* Premium Glass Service Card */
     .service-card {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1.5rem;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         overflow: hidden;
         opacity: 0;
         animation: smoothAppear 0.5s var(--ease-magic) forwards;
     }
     .service-card:hover {
-        border-color: rgba(203, 213, 225, 1);
-        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
-        transform: translateY(-4px);
+        border-color: #CBD5E1;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
     }
 
     /* Staggered load */
@@ -315,10 +314,10 @@
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} anim-smooth-appear">
 
     <!-- MAIN FEED CONTAINER -->
-    <div class="max-w-6xl mx-auto w-full relative z-10">
+    <div class="max-w-[1280px] mx-auto w-full relative z-10">
 
         <!-- HERO SECTION -->
-        <div class="mb-8 md:mb-12 anim-smooth-appear">
+        <div class="mb-8 md:mb-12 anim-smooth-appear px-4 md:px-0">
             <h1 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 font-heading">
                 {% trans "Explore services from our community" %}
             </h1>
