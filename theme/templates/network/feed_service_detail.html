@@ -234,59 +234,6 @@
             </a>
         </div>
 
-        <!-- HERO GALLERY -->
-        {% if service.gallery.all %}
-            <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-8 shadow-2xl">
-                {% if service.gallery.count == 1 %}
-                    <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" loading="eager">
-                {% else %}
-                    <div class="grid grid-cols-2 h-full">
-                        <div class="relative">
-                            <img src="{{ service.gallery.all.0.image.url }}" alt="{{ service.title }}" class="w-full h-full" loading="eager">
-                        </div>
-                        <div class="grid grid-rows-2 gap-1">
-                            {% for gallery_item in service.gallery.all|slice:"1:3" %}
-                                <div class="relative overflow-hidden">
-                                    <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover">
-                                </div>
-                            {% endfor %}
-                            {% if service.gallery.count > 3 %}
-                                <div class="relative bg-slate-900 flex items-center justify-center">
-                                    <span class="text-white font-black text-2xl">+{{ service.gallery.count|add:"-3" }}</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <!-- No Gallery - Large Circular Avatar -->
-            <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-8 flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 shadow-2xl relative overflow-hidden">
-                <!-- Decorative rings -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-64 h-64 rounded-full border border-blue-100/40 opacity-60"></div>
-                    <div class="absolute w-80 h-80 rounded-full border border-indigo-100/30 opacity-40"></div>
-                    <div class="absolute w-96 h-96 rounded-full border border-slate-200/20 opacity-30"></div>
-                </div>
-                
-                <!-- Large circular avatar -->
-                <div class="relative z-10">
-                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden">
-                        {% if service.profile.user.avatar %}
-                            <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100">
-                                <span class="text-[#0A66C2] font-black text-4xl md:text-5xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="absolute -bottom-2 -right-2 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#0A66C2] to-blue-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-                        <i data-lucide="briefcase" class="w-5 h-5 md:w-6 md:h-6 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-
         <!-- SERVICE INFO CARD -->
         <div class="premium-card p-6 md:p-8 mb-8">
             <!-- Provider Info -->
@@ -333,6 +280,59 @@
                     {{ service.description }}
                 </p>
             </div>
+
+            <!-- HERO GALLERY -->
+            {% if service.gallery.all %}
+                <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-6 shadow-2xl">
+                    {% if service.gallery.count == 1 %}
+                        <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" loading="eager">
+                    {% else %}
+                        <div class="grid grid-cols-2 h-full">
+                            <div class="relative">
+                                <img src="{{ service.gallery.all.0.image.url }}" alt="{{ service.title }}" class="w-full h-full" loading="eager">
+                            </div>
+                            <div class="grid grid-rows-2 gap-1">
+                                {% for gallery_item in service.gallery.all|slice:"1:3" %}
+                                    <div class="relative overflow-hidden">
+                                        <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover">
+                                    </div>
+                                {% endfor %}
+                                {% if service.gallery.count > 3 %}
+                                    <div class="relative bg-slate-900 flex items-center justify-center">
+                                        <span class="text-white font-black text-2xl">+{{ service.gallery.count|add:"-3" }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <!-- No Gallery - Large Circular Avatar -->
+                <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-6 flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 shadow-2xl relative overflow-hidden">
+                    <!-- Decorative rings -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-64 h-64 rounded-full border border-blue-100/40 opacity-60"></div>
+                        <div class="absolute w-80 h-80 rounded-full border border-indigo-100/30 opacity-40"></div>
+                        <div class="absolute w-96 h-96 rounded-full border border-slate-200/20 opacity-30"></div>
+                    </div>
+                    
+                    <!-- Large circular avatar -->
+                    <div class="relative z-10">
+                        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden">
+                            {% if service.profile.user.avatar %}
+                                <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100">
+                                    <span class="text-[#0A66C2] font-black text-4xl md:text-5xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#0A66C2] to-blue-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                            <i data-lucide="briefcase" class="w-5 h-5 md:w-6 md:h-6 text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
