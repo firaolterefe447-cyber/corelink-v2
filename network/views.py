@@ -619,6 +619,7 @@ def service_feed(request):
     """
     Service Marketplace Feed: Browse professional services offered by users.
     Prioritizes services with gallery images and rich descriptions.
+    Prevents consecutive listings from the same user.
     """
     raw_query = request.GET.get('q', '')
 
@@ -660,7 +661,30 @@ def service_feed(request):
 
     results = results.distinct()
 
-    paginator = Paginator(results, 24)
+    # Interleave services to prevent consecutive listings from same user
+    results_list = list(results)
+    
+    if results_list:
+        # Group services by user ID
+        from collections import defaultdict
+        user_services = defaultdict(list)
+        for service in results_list:
+            user_id = service.profile.user.id
+            user_services[user_id].append(service)
+        
+        # Interleave: take one service from each user in rotation
+        interleaved = []
+        user_ids = list(user_services.keys())
+        max_services = max(len(services) for services in user_services.values())
+        
+        for i in range(max_services):
+            for user_id in user_ids:
+                if i < len(user_services[user_id]):
+                    interleaved.append(user_services[user_id][i])
+        
+        results_list = interleaved
+
+    paginator = Paginator(results_list, 24)
     page_number = request.GET.get('page')
     try:
         services_page = paginator.get_page(page_number)
