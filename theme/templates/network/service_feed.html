@@ -382,15 +382,36 @@
                             {% endwith %}
                         </a>
                     {% else %}
-                        <!-- No Gallery Placeholder - Premium Style -->
-                        <a href="{% url 'public_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center relative overflow-hidden group">
-                            <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div class="text-center relative z-10">
-                                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
-                                    <i data-lucide="briefcase" class="w-8 h-8 text-slate-300"></i>
-                                </div>
-                                <span class="text-slate-400 text-sm font-semibold">{% trans "No Images" %}</span>
+                        <!-- No Gallery - Innovative Circular Avatar Design -->
+                        <a href="{% url 'public_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group">
+                            
+                            <!-- Decorative rings -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-48 h-48 md:w-56 md:h-56 rounded-full border border-blue-100/40 opacity-60 group-hover:scale-110 transition-transform duration-500"></div>
+                                <div class="absolute w-64 h-64 md:w-72 md:h-72 rounded-full border border-indigo-100/30 opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
+                                <div class="absolute w-80 h-80 md:w-96 md:h-96 rounded-full border border-slate-200/20 opacity-30 group-hover:scale-100 transition-transform duration-900"></div>
                             </div>
+                            
+                            <!-- Large circular avatar -->
+                            <div class="relative z-10">
+                                <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                                    {% if service.profile.user.avatar %}
+                                        <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100">
+                                            <span class="text-[#0A66C2] font-black text-4xl md:text-5xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Service icon badge -->
+                                <div class="absolute -bottom-2 -right-2 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#0A66C2] to-blue-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                                    <i data-lucide="briefcase" class="w-5 h-5 md:w-6 md:h-6 text-white"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </a>
                     {% endif %}
 
