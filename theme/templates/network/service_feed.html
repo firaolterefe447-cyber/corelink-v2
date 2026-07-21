@@ -451,7 +451,7 @@
                         </p>
 
                         <!-- Meta Info -->
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 mb-4">
                             {% if service.profile.location %}
                                 <span class="flex items-center gap-1.5 text-[12px] font-black text-slate-500">
                                     <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -463,6 +463,28 @@
                                     <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
                                     {{ service.profile.oracle_score }}%
                                 </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <!-- View Profile Button -->
+                            <a href="{% url 'public_profile' service.profile.slug %}" target="_blank" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
+                                <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
+                                <span class="truncate">{% trans "View Profile" %}</span>
+                            </a>
+
+                            <!-- Request Button (Opens Chat) -->
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'chat_with' service.profile.user.id %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
+                                    <i data-lucide="send" class="w-4 h-4 text-white/90 shrink-0"></i>
+                                    <span class="truncate">{% trans "Request" %}</span>
+                                </a>
+                            {% else %}
+                                <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" aria-label="{% trans 'Request service' %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
+                                    <i data-lucide="send" class="w-4 h-4 text-white/90 shrink-0"></i>
+                                    <span class="truncate">{% trans "Request" %}</span>
+                                </button>
                             {% endif %}
                         </div>
                     </div>
