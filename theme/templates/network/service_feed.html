@@ -350,30 +350,6 @@
             <h2 class="text-[1.35rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Available Services" %}</h2>
         </div>
 
-        {% if request.user.is_authenticated %}
-        <!-- NAV TABS -->
-        <div class="flex items-center justify-center gap-4 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 w-full px-2 relative z-10">
-            <a href="{% url 'right_now_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-indigo-200 transition-all group shrink-0 top-[1px]">
-                <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                    <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-                        {% trans "Updates" %}
-                    </span>
-                    <div class="flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-[2px] md:px-2.5 md:py-[3px] rounded-full shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0">
-                        <span class="relative flex h-1.5 w-1.5 shrink-0">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                        </span>
-                        <span class="text-[9px] font-black text-white tracking-widest leading-none mt-[1px]">NEW</span>
-                    </div>
-                </div>
-            </a>
-
-            <a href="{% url 'service_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Services" %}</span>
-            </a>
-        </div>
-        {% endif %}
-
         <!-- SERVICES GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 px-4 md:px-0">
             {% for service in services %}
@@ -579,9 +555,10 @@
         <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
     </a>
 
-    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
+    <a href="{% url 'service_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Services" %}</span>
     </a>
 
     <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
