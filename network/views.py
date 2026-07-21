@@ -747,6 +747,42 @@ class RightNowDetailView(DetailView):
         return context
 
 
+class FeedServiceDetailView(DetailView):
+    """
+    World-class service detail page for the feed.
+    Different from the profile service detail - this is a dedicated feed experience.
+    """
+    model = Service
+    template_name = 'network/feed_service_detail.html'
+    context_object_name = 'service'
+    slug_url_kwarg = 'service_id'
+    slug_field = 'id'
+
+    def get_queryset(self):
+        return Service.objects.filter(
+            profile__user__is_active=True
+        ).select_related(
+            'profile', 'profile__user'
+        ).prefetch_related(
+            'gallery', 'profile__headlines', 'profile__skills'
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = self.object
+        
+        # Get related services from the same provider
+        related_services = Service.objects.filter(
+            profile=service.profile,
+            profile__user__is_active=True
+        ).exclude(id=service.id)[:4]
+        
+        context.update({
+            'related_services': related_services,
+        })
+        return context
+
+
 @login_required
 @require_http_methods(["GET", "POST"])
 def admin_curation_view(request):

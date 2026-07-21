@@ -5,7 +5,8 @@ from .views import (
     right_now_feed,
     RightNowDetailView,
     admin_curation_view,
-    service_feed
+    service_feed,
+    FeedServiceDetailView
 )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
 
     # Service Feed
     path('services/', service_feed, name='service_feed'),
+    path('services/<uuid:service_id>/', FeedServiceDetailView.as_view(), name='feed_service_detail'),
 ]

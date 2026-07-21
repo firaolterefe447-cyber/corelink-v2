@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block meta_tags %}
+<meta property="og:title" content="{{ service.title }} - CoreLink Services">
+<meta property="og:description" content="{{ service.description|truncatewords:20 }}">
+{% if service.gallery.first %}
+<meta property="og:image" content="{{ service.gallery.first.image.url }}">
+{% endif %}
+{% endblock %}
+
+{% block navbar %}
+{% if request.user.is_authenticated %}
+
+<!-- ==============================================
+     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
+     ============================================== -->
+<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[240px] lg:w-[260px] xl:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+
+        <!-- Top Section: Logo & Links -->
+        <div class="flex-1">
+            <!-- Typographic Logo -->
+            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="flex flex-col gap-1.5">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "My profile" %}
+                </a>
+
+                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Discover" %}
+                </a>
+
+                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Updates" %}
+                </a>
+
+                <a href="{% url 'service_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
+                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                    {% trans "Services" %}
+                </a>
+
+                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+                    {% trans "Opportunities" %}
+                </a>
+
+                <a href="/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
+                        </div>
+                        {% trans "Inbox" %}
+                    </div>
+                    {% if unread_msg_count > 0 %}
+                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
+                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                        </span>
+                    {% endif %}
+                </a>
+            </nav>
+        </div>
+
+        <!-- Actions Bottom -->
+        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                <span>{% trans "Settings" %}</span>
+            </a>
+
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>{% trans "Logout" %}</span>
+            </a>
+        </div>
+
+    </div>
+</aside>
+
+<!-- MOBILE TOP BAR - AUTHENTICATED -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'service_feed' %}'">
+        <i data-lucide="arrow-left" class="w-5 h-5 text-slate-700 mr-2"></i>
+        <span class="font-heading font-black text-[18px] tracking-[-0.04em] text-slate-900 lowercase">corelink</span>
+    </div>
+    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
+    </button>
+</div>
+
+{% else %}
+
+<!-- ==============================================
+     MINIMAL TOP BAR - UNAUTHENTICATED
+     ============================================== -->
+<div class="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 md:px-8 lg:px-12 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
+    <div class="flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'service_feed' %}'">
+        <i data-lucide="arrow-left" class="w-5 h-5 text-slate-700 mr-2"></i>
+        <span class="font-heading font-black text-[24px] md:text-[26px] tracking-[-0.04em] text-slate-900 lowercase">corelink</span>
+    </div>
+    <a href="{% url 'signup' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:opacity-90 text-white font-black text-[13px] md:text-[15px] px-5 py-2 md:px-7 md:py-2.5 rounded-full shadow-md transition-all active:scale-95 flex items-center gap-2">
+        <span>{% trans "Join Hub" %}</span>
+        <i data-lucide="arrow-right" class="w-4 h-4 hidden md:block"></i>
+    </a>
+</div>
+
+{% endif %}
+{% endblock navbar %}
+
+{% block content %}
+<div id="top-loading-bar"></div>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --blue: #0A66C2;
+    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+    #top-loading-bar {
+        position: fixed; top: 0; left: 0; height: 4px;
+        background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb);
+        z-index: 99999; width: 0%; pointer-events: none;
+        box-shadow: 0 0 10px rgba(10, 102, 194, 0.5); opacity: 0;
+        transition: width 0.4s ease-out, opacity 0.4s ease-in;
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: #F4F7FA;
+        background-image:
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
+        background-attachment: fixed;
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: calc(4rem + env(safe-area-inset-top)) 1.25rem calc(5rem + env(safe-area-inset-bottom)) 1.25rem;
+    }
+    @media (min-width: 768px) {
+        .auth-canvas { padding-left: calc(240px + 2.5rem); padding-right: 2.5rem; padding-top: 2.5rem; padding-bottom: 4rem; }
+        .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
+    }
+    @media (min-width: 1024px) {
+        .auth-canvas { padding-left: calc(260px + 3rem); padding-right: 3rem; padding-top: 3rem; }
+    }
+    @media (min-width: 1280px) {
+        .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
+    }
+
+    /* Hero Gallery */
+    .hero-gallery {
+        position: relative;
+        border-radius: 2rem;
+        overflow: hidden;
+        background: #e2e8f0;
+    }
+    .hero-gallery img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Premium Card */
+    .premium-card {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .premium-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
+        transform: translateY(-4px);
+    }
+
+    /* Avatar */
+    .avatar-xl {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .avatar-xl img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+</style>
+
+<!-- ==============================================
+     MAIN LAYOUT
+     ============================================== -->
+<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} anim-smooth-appear">
+
+    <div class="max-w-4xl mx-auto w-full relative z-10">
+
+        <!-- BACK BUTTON -->
+        <div class="mb-6">
+            <a href="{% url 'service_feed' %}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 font-semibold transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>{% trans "Back to Services" %}</span>
+            </a>
+        </div>
+
+        <!-- HERO GALLERY -->
+        {% if service.gallery.all %}
+            <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-8 shadow-2xl">
+                {% if service.gallery.count == 1 %}
+                    <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" loading="eager">
+                {% else %}
+                    <div class="grid grid-cols-2 h-full">
+                        <div class="relative">
+                            <img src="{{ service.gallery.all.0.image.url }}" alt="{{ service.title }}" class="w-full h-full" loading="eager">
+                        </div>
+                        <div class="grid grid-rows-2 gap-1">
+                            {% for gallery_item in service.gallery.all|slice:"1:3" %}
+                                <div class="relative overflow-hidden">
+                                    <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover">
+                                </div>
+                            {% endfor %}
+                            {% if service.gallery.count > 3 %}
+                                <div class="relative bg-slate-900 flex items-center justify-center">
+                                    <span class="text-white font-black text-2xl">+{{ service.gallery.count|add:"-3" }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <!-- No Gallery - Large Circular Avatar -->
+            <div class="hero-gallery aspect-[16/9] md:aspect-[21/9] mb-8 flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 shadow-2xl relative overflow-hidden">
+                <!-- Decorative rings -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-64 h-64 rounded-full border border-blue-100/40 opacity-60"></div>
+                    <div class="absolute w-80 h-80 rounded-full border border-indigo-100/30 opacity-40"></div>
+                    <div class="absolute w-96 h-96 rounded-full border border-slate-200/20 opacity-30"></div>
+                </div>
+                
+                <!-- Large circular avatar -->
+                <div class="relative z-10">
+                    <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden">
+                        {% if service.profile.user.avatar %}
+                            <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100">
+                                <span class="text-[#0A66C2] font-black text-4xl md:text-5xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-[#0A66C2] to-blue-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                        <i data-lucide="briefcase" class="w-5 h-5 md:w-6 md:h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- SERVICE INFO CARD -->
+        <div class="premium-card p-6 md:p-8 mb-8">
+            <!-- Provider Info -->
+            <div class="flex items-center gap-4 mb-6">
+                <a href="{% url 'public_profile' service.profile.slug %}" target="_blank" class="avatar-xl">
+                    {% if service.profile.user.avatar %}
+                        <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+                            <span class="text-[#0A66C2] font-black text-2xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="flex-1 min-w-0">
+                    <a href="{% url 'public_profile' service.profile.slug %}" target="_blank" class="text-[20px] md:text-[22px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors truncate block">
+                        {{ service.profile.user.full_name|default:"Unknown" }}
+                    </a>
+                    <span class="text-[14px] text-slate-500 font-semibold truncate block">
+                        {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}
+                    </span>
+                    {% if service.profile.location %}
+                        <div class="flex items-center gap-1.5 text-[13px] text-slate-500 font-semibold mt-1">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                            {{ service.profile.location }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% if service.profile.oracle_score %}
+                    <div class="flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+                        <i data-lucide="star" class="w-4 h-4 text-emerald-600 fill-current"></i>
+                        <span class="text-[13px] font-black text-emerald-600">{{ service.profile.oracle_score }}%</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Service Title -->
+            <h1 class="text-[28px] md:text-[36px] font-black text-slate-900 leading-tight tracking-tight mb-4">
+                {{ service.title }}
+            </h1>
+
+            <!-- Service Description -->
+            <div class="prose prose-slate max-w-none mb-6">
+                <p class="text-[16px] md:text-[17px] text-slate-600 leading-relaxed font-medium whitespace-pre-line">
+                    {{ service.description }}
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'chat_with' service.profile.user.id %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[15px] py-3.5 rounded-xl transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        <span>{% trans "Request Service" %}</span>
+                    </a>
+                {% else %}
+                    <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[15px] py-3.5 rounded-xl transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        <span>{% trans "Request Service" %}</span>
+                    </button>
+                {% endif %}
+                <a href="{% url 'public_profile' service.profile.slug %}" target="_blank" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[15px] py-3.5 rounded-xl transition-all duration-300 active:scale-95 shadow-sm">
+                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                    <span>{% trans "View Full Profile" %}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- GALLERY GRID (if more images) -->
+        {% if service.gallery.count > 2 %}
+            <div class="premium-card p-6 md:p-8 mb-8">
+                <h2 class="text-[20px] font-black text-slate-900 mb-4">{% trans "Gallery" %}</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {% for gallery_item in service.gallery.all %}
+                        <div class="aspect-square rounded-xl overflow-hidden bg-slate-100">
+                            <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- RELATED SERVICES -->
+        {% if related_services %}
+            <div class="mb-8">
+                <h2 class="text-[20px] font-black text-slate-900 mb-4">{% trans "More Services from This Provider" %}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for related in related_services %}
+                        <a href="{% url 'feed_service_detail' related.id %}" class="premium-card p-5 block group">
+                            <div class="flex items-start gap-4">
+                                {% if related.gallery.first %}
+                                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                                        <img src="{{ related.gallery.first.image.url }}" alt="{{ related.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    </div>
+                                {% else %}
+                                    <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="briefcase" class="w-8 h-8 text-slate-300"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-[16px] font-black text-slate-900 mb-1 line-clamp-2 group-hover:text-[#0A66C2] transition-colors">
+                                        {{ related.title }}
+                                    </h3>
+                                    <p class="text-[13px] text-slate-500 line-clamp-2 font-medium">
+                                        {{ related.description }}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</main>
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+{% if not is_inspector and request.user.is_authenticated %}
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "My profile" %}</span>
+    </a>
+
+    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
+    </a>
+
+    <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
+        <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Updates" %}</span>
+    </a>
+
+    <a href="{% url 'service_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Services" %}</span>
+    </a>
+
+    <a href="/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
+        <div class="relative">
+            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+            {% if unread_msg_count > 0 %}<span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>{% endif %}
+        </div>
+        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
+    </a>
+</nav>
+{% endif %}
+{% endblock content %}
