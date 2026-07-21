@@ -1,0 +1,374 @@
+{% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreLink - Services</title>
+    <meta property="og:title" content="CoreLink - Professional Services">
+    <meta property="og:description" content="Discover professional services offered by talented individuals.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<style>
+    :root {
+        --font-heading: 'Plus Jakarta Sans', sans-serif;
+        --font-body: 'Inter', sans-serif;
+        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
+        --blue: #0A66C2;
+        --blue-dark: #0856A8;
+    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: var(--font-body);
+        background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
+        color: #0F172A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+
+    .app-canvas {
+        width: 100%;
+        position: relative;
+        z-index: 10;
+        padding: 2rem 1.25rem 4rem 1.25rem;
+    }
+    @media (min-width: 768px) {
+        .app-canvas { padding: 4rem 3rem 6rem 3rem; }
+    }
+    @media (min-width: 1024px) {
+        .app-canvas { max-width: 1400px; margin: 0 auto; padding: 5rem 4rem 8rem 4rem; }
+    }
+
+    /* Service Card */
+    .service-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        overflow: hidden;
+    }
+    .service-card:hover {
+        border-color: #CBD5E1;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        transform: translateY(-4px);
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+        display: grid;
+        gap: 4px;
+        background: #f8fafc;
+    }
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        background: #e2e8f0;
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .service-card:hover .gallery-item img {
+        transform: scale(1.05);
+    }
+
+    /* Search Input */
+    .search-input {
+        width: 100%;
+        border: 2px solid #E2E8F0;
+        border-radius: 1rem;
+        background: #ffffff;
+        padding: 1rem 1.25rem;
+        font-size: 15px;
+        font-weight: 600;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+    .search-input:focus {
+        border-color: rgba(10, 102, 194, 0.45);
+        box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.08);
+    }
+
+    /* Avatar */
+    .avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Pagination */
+    .pagination-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-size: 14px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .pagination-btn.primary {
+        background: #0f172a;
+        color: white;
+        border: 1px solid #0f172a;
+    }
+    .pagination-btn.primary:hover {
+        background: #1e293b;
+    }
+    .pagination-btn.secondary {
+        background: white;
+        color: #475569;
+        border: 1px solid #E2E8F0;
+    }
+    .pagination-btn.secondary:hover {
+        background: #f8fafc;
+        border-color: #CBD5E1;
+    }
+
+    /* Animations */
+    @keyframes smoothAppear {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-smooth-appear {
+        animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: white;
+        border: 2px dashed #E2E8F0;
+        border-radius: 2rem;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+</style>
+
+<body>
+    <main class="app-canvas anim-smooth-appear">
+        <div class="max-w-7xl mx-auto w-full relative z-10">
+
+            <!-- HERO HEADER SECTION -->
+            <div class="mb-8 md:mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <h1 class="text-[28px] sm:text-[36px] md:text-[44px] font-black text-slate-900 leading-tight tracking-tight">
+                        Professional Services
+                    </h1>
+                    <p class="text-[15px] sm:text-[16px] text-slate-500 mt-3 font-medium max-w-xl">
+                        Discover talented professionals offering expert services. Browse by category, expertise, or search for what you need.
+                    </p>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="w-full md:w-96">
+                    <form method="GET" action="">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                name="q" 
+                                value="{{ search_query }}" 
+                                placeholder="Search services..." 
+                                class="search-input pr-12"
+                            >
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0A66C2] transition-colors">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SERVICES GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for service in services %}
+                    <article class="service-card anim-smooth-appear" style="animation-delay: {{ forloop.counter|add:0 }}0ms;">
+                        
+                        <!-- Gallery Section (Prioritized) -->
+                        {% if service.gallery.all %}
+                            <a href="{% url 'public_service_detail' service.id %}" class="block">
+                                {% with count=service.gallery.count %}
+                                <div class="gallery-grid">
+                                    {% if count == 1 %}
+                                        <div class="gallery-item aspect-[4/3]">
+                                            <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}">
+                                        </div>
+                                    {% elif count == 2 %}
+                                        <div class="grid grid-cols-2 aspect-[4/3]">
+                                            {% for gallery_item in service.gallery.all|slice:":2" %}
+                                                <div class="gallery-item">
+                                                    <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% elif count == 3 %}
+                                        <div class="grid grid-cols-2">
+                                            <div class="col-span-2 aspect-[16/9] gallery-item">
+                                                <img src="{{ service.gallery.all.0.image.url }}" alt="{{ service.title }}">
+                                            </div>
+                                            {% for gallery_item in service.gallery.all|slice:"1:" %}
+                                                <div class="aspect-square gallery-item">
+                                                    <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% elif count >= 4 %}
+                                        <div class="grid grid-cols-2 aspect-square">
+                                            {% for gallery_item in service.gallery.all|slice:":4" %}
+                                                <div class="gallery-item relative">
+                                                    <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
+                                                    {% if forloop.last and count > 4 %}
+                                                        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                                            <span class="text-white font-black text-[18px]">+{{ count|add:"-4" }}</span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% endwith %}
+                            </a>
+                        {% else %}
+                            <!-- No Gallery Placeholder -->
+                            <a href="{% url 'public_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <i data-lucide="briefcase" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>
+                                    <span class="text-slate-400 text-sm font-semibold">No Images</span>
+                                </div>
+                            </a>
+                        {% endif %}
+
+                        <!-- Service Content -->
+                        <div class="p-5">
+                            <!-- Provider Info -->
+                            <div class="flex items-center gap-3 mb-4">
+                                <a href="{% url 'public_profile' service.profile.slug %}" class="avatar-circle">
+                                    {% if service.profile.user.avatar %}
+                                        <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}">
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                                            <span class="text-slate-400 font-bold text-lg">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                </a>
+                                <div class="min-w-0">
+                                    <a href="{% url 'public_profile' service.profile.slug %}" class="text-[15px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors truncate block">
+                                        {{ service.profile.user.full_name|default:"Unknown" }}
+                                    </a>
+                                    <span class="text-[13px] text-slate-500 font-medium truncate block">
+                                        {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Service Title -->
+                            <a href="{% url 'public_service_detail' service.id %}">
+                                <h3 class="text-[18px] font-black text-slate-900 mb-2 leading-tight hover:text-[#0A66C2] transition-colors line-clamp-2">
+                                    {{ service.title }}
+                                </h3>
+                            </a>
+
+                            <!-- Service Description -->
+                            <p class="text-[14px] text-slate-600 leading-relaxed mb-4 line-clamp-3">
+                                {{ service.description }}
+                            </p>
+
+                            <!-- Meta Info -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                                {% if service.profile.location %}
+                                    <span class="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500">
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                        {{ service.profile.location }}
+                                    </span>
+                                {% endif %}
+                                {% if service.profile.oracle_score %}
+                                    <span class="flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600">
+                                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                        {{ service.profile.oracle_score }}%
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+
+                {% empty %}
+                    <div class="col-span-full empty-state">
+                        <div class="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-5 border border-slate-100 shadow-inner mx-auto">
+                            <i data-lucide="briefcase" class="w-10 h-10 text-slate-300"></i>
+                        </div>
+                        <h3 class="text-[20px] font-black text-slate-900 mb-2">No services found</h3>
+                        <p class="text-[14.5px] text-slate-500 max-w-md mb-8 font-medium leading-relaxed mx-auto">
+                            {% if search_query %}
+                                No services match your search. Try different keywords.
+                            {% else %}
+                                There are currently no services available.
+                            {% endif %}
+                        </p>
+                        {% if search_query %}
+                            <a href="{% url 'service_feed' %}" class="pagination-btn secondary inline-block">
+                                Clear Search
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- PAGINATION -->
+            {% if services.has_other_pages %}
+                <div class="flex justify-center pt-10 pb-8">
+                    <div class="flex gap-3">
+                        {% if services.has_previous %}
+                            <a href="?q={{ search_query }}&page={{ services.previous_page_number }}" class="pagination-btn secondary">
+                                Previous
+                            </a>
+                        {% endif %}
+                        {% if services.has_next %}
+                            <a href="?q={{ search_query }}&page={{ services.next_page_number }}" class="pagination-btn primary">
+                                Next
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

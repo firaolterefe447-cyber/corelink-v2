@@ -32,7 +32,7 @@ from django.contrib.postgres.aggregates import StringAgg
 # Local App Imports
 
 # For Company Nexus
-from profiles.models import Company, RightNowPost, RightNowLike
+from profiles.models import Company, RightNowPost, RightNowLike, Service, ServiceGallery
 
 try:
     from chat.models import ChatMessage  # Preserving Inbox Badge Logic
@@ -608,6 +608,79 @@ def right_now_feed(request):
         'search_query': raw_query,
         'unread_msg_count': unread_count,
         'user_liked_post_ids': user_liked_post_ids, # Passed to template
+    })
+
+
+# ==============================================================================
+# 💼 SERVICE FEED
+# ==============================================================================
+@require_safe
+def service_feed(request):
+    """
+    Service Marketplace Feed: Browse professional services offered by users.
+    Prioritizes services with gallery images and rich descriptions.
+    """
+    raw_query = request.GET.get('q', '')
+
+    base_services = Service.objects.filter(
+        is_active=True,
+        profile__user__is_active=True,
+        profile__user__is_public=True,
+        profile__user__is_nexus_visible=True
+    ).exclude(
+        profile__user__role='ADMIN'
+    ).select_related(
+        'profile', 'profile__user'
+    ).prefetch_related(
+        'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        description_length=Length('description')
+    )
+
+    if raw_query:
+        # Search across service title, description, and user profile info
+        search_vector = (
+            SearchVector('title', weight='A') +
+            SearchVector('description', weight='A') +
+            SearchVector('profile__user__full_name', weight='B') +
+            SearchVector('profile__headlines__title', weight='C')
+        )
+
+        search_query = SearchQuery(raw_query, search_type='websearch')
+
+        results = base_services.annotate(
+            search_rank=Cast(SearchRank(search_vector, search_query) * 1000.0, FloatField())
+        ).filter(
+            search_rank__gt=0.0
+        ).order_by('-search_rank', '-gallery_count', '-description_length')
+    else:
+        # Default ordering: prioritize services with gallery images
+        results = base_services.order_by('-gallery_count', '-description_length', 'order', 'title')
+
+    results = results.distinct()
+
+    paginator = Paginator(results, 24)
+    page_number = request.GET.get('page')
+    try:
+        services_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        services_page = paginator.get_page(1)
+    except EmptyPage:
+        services_page = paginator.get_page(paginator.num_pages)
+
+    unread_count = 0
+    if request.user.is_authenticated:
+        try:
+            from chat.models import ChatMessage
+            unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
+        except ImportError:
+            pass
+
+    return render(request, 'network/service_feed.html', {
+        'services': services_page,
+        'search_query': raw_query,
+        'unread_msg_count': unread_count,
     })
 
 
