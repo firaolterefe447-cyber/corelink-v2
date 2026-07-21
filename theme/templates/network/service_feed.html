@@ -311,6 +311,19 @@
     <!-- MAIN FEED CONTAINER -->
     <div class="max-w-[1280px] mx-auto w-full relative z-10">
 
+        {% if request.user.is_authenticated %}
+        <!-- NAV TABS -->
+        <div class="flex items-center justify-center gap-4 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-10 w-full px-2 relative z-10">
+            <a href="{% url 'right_now_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-slate-300 transition-all group shrink-0 top-[1px]">
+                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-slate-500 hover:text-slate-900">{% trans "Discover Updates" %}</span>
+            </a>
+
+            <a href="{% url 'service_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
+                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Services" %}</span>
+            </a>
+        </div>
+        {% endif %}
+
         <!-- HERO SECTION -->
         <div class="mb-8 md:mb-12 anim-smooth-appear px-4 md:px-0">
             <h1 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 font-heading">
@@ -344,19 +357,6 @@
         <div class="flex items-center justify-between mb-6 md:mb-10 px-5 md:px-2 border-b border-slate-200/80 pb-3 md:pb-4 relative z-10 anim-smooth-appear" style="animation-delay: 0.2s;">
             <h2 class="text-[1.35rem] md:text-[1.8rem] font-black text-slate-900 font-heading tracking-tight">{% trans "Available Services" %}</h2>
         </div>
-
-        {% if request.user.is_authenticated %}
-        <!-- NAV TABS -->
-        <div class="flex items-center justify-center gap-4 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-12 w-full px-2 relative z-10">
-            <a href="{% url 'right_now_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-slate-300 transition-all group shrink-0 top-[1px]">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-slate-500 hover:text-slate-900">{% trans "Discover Updates" %}</span>
-            </a>
-
-            <a href="{% url 'service_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Services" %}</span>
-            </a>
-        </div>
-        {% endif %}
 
         <!-- SERVICES GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 px-4 md:px-0">
