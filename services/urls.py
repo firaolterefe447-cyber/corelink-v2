@@ -8,7 +8,11 @@ from . import views
 app_name = 'services'
 
 urlpatterns = [
-    # Public Service Detail
+    # Public Service Feed
+    path('services/', views.service_feed, name='service_feed'),
+    path('services/<uuid:service_id>/', views.FeedServiceDetailView.as_view(), name='feed_service_detail'),
+    
+    # Public Service Detail (Profile-based)
     path('p/<str:identifier>/service/<uuid:pk>/', views.service_detail_view, name='public_service_detail'),
     
     # Dashboard Services Management

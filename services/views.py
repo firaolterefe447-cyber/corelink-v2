@@ -3,6 +3,7 @@ Service Views - Professional services offered by users
 """
 
 import logging
+from collections import defaultdict
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
 from django.urls import reverse_lazy, reverse
@@ -10,7 +11,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.decorators.http import require_safe
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count, Q, F
+from django.db.models.functions import Length, Cast
+from django.db.models import FloatField
 
 from accounts.models import CustomUser
 from profiles.models.user_profile import UserProfile
@@ -283,3 +289,137 @@ def service_detail_view(request, identifier, pk):
     }
     
     return render(request, 'services/service_detail.html', context)
+
+
+# ==============================================================================
+# 💼 SERVICE FEED (Public Discovery)
+# ==============================================================================
+@require_safe
+def service_feed(request):
+    """
+    Service Marketplace Feed: Browse professional services offered by users.
+    Prioritizes services with gallery images and rich descriptions.
+    Prevents consecutive listings from the same user.
+    """
+    raw_query = request.GET.get('q', '')
+
+    base_services = Service.objects.filter(
+        is_active=True,
+        profile__user__is_active=True,
+        profile__user__is_public=True,
+        profile__user__is_nexus_visible=True
+    ).exclude(
+        profile__user__role='ADMIN'
+    ).select_related(
+        'profile', 'profile__user'
+    ).prefetch_related(
+        'gallery', 'profile__headlines'
+    ).annotate(
+        gallery_count=Count('gallery'),
+        description_length=Length('description')
+    )
+
+    if raw_query:
+        # Search across service title, description, and user profile info
+        from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+        
+        search_vector = (
+            SearchVector('title', weight='A') +
+            SearchVector('description', weight='A') +
+            SearchVector('profile__user__full_name', weight='B') +
+            SearchVector('profile__headlines__title', weight='C')
+        )
+
+        search_query = SearchQuery(raw_query, search_type='websearch')
+
+        results = base_services.annotate(
+            search_rank=Cast(SearchRank(search_vector, search_query) * 1000.0, FloatField())
+        ).filter(
+            search_rank__gt=0.0
+        ).order_by('-search_rank', '-gallery_count', '-description_length')
+    else:
+        # Default ordering: prioritize services with gallery images
+        results = base_services.order_by('-gallery_count', '-description_length', 'order', 'title')
+
+    results = results.distinct()
+
+    # Interleave services to prevent consecutive listings from same user
+    results_list = list(results)
+    
+    if results_list:
+        # Group services by user ID
+        user_services = defaultdict(list)
+        for service in results_list:
+            user_id = service.profile.user.id
+            user_services[user_id].append(service)
+        
+        # Interleave: take one service from each user in rotation
+        interleaved = []
+        user_ids = list(user_services.keys())
+        max_services = max(len(services) for services in user_services.values())
+        
+        for i in range(max_services):
+            for user_id in user_ids:
+                if i < len(user_services[user_id]):
+                    interleaved.append(user_services[user_id][i])
+        
+        results_list = interleaved
+
+    paginator = Paginator(results_list, 24)
+    page_number = request.GET.get('page')
+    try:
+        services_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        services_page = paginator.get_page(1)
+    except EmptyPage:
+        services_page = paginator.get_page(paginator.num_pages)
+
+    unread_count = 0
+    if request.user.is_authenticated:
+        try:
+            from chat.models import ChatMessage
+            unread_count = ChatMessage.objects.filter(receiver=request.user, is_read=False).count()
+        except ImportError:
+            pass
+
+    return render(request, 'services/service_feed.html', {
+        'services': services_page,
+        'search_query': raw_query,
+        'unread_msg_count': unread_count,
+    })
+
+
+class FeedServiceDetailView(DetailView):
+    """
+    World-class service detail page for the feed.
+    Different from the profile service detail - this is a dedicated feed experience.
+    """
+    model = Service
+    template_name = 'services/feed_service_detail.html'
+    context_object_name = 'service'
+    slug_url_kwarg = 'service_id'
+    slug_field = 'id'
+
+    def get_queryset(self):
+        return Service.objects.filter(
+            profile__user__is_active=True
+        ).select_related(
+            'profile', 'profile__user'
+        ).prefetch_related(
+            'gallery', 'profile__headlines', 'profile__skills'
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = self.object
+        
+        # Get related services from the same provider
+        related_services = Service.objects.filter(
+            profile=service.profile,
+            profile__user__is_active=True
+        ).exclude(id=service.id)[:4]
+        
+        context.update({
+            'related_services': related_services,
+        })
+        return context

@@ -207,70 +207,58 @@
 <div class="pl-6 pr-4 text-on-surface-variant">
 <span class="material-symbols-outlined text-[24px]">search</span>
 </div>
-<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-4" placeholder="Search for 'Fractional CTO', 'UX Audit' or 'Cloud Migration'..." type="text"/>
+<form action="" method="get" class="flex-1 flex items-center">
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-4" name="q" placeholder="Search for 'Fractional CTO', 'UX Audit' or 'Cloud Migration'..." type="text" value="{{ search_query }}"/>
 <button class="primary-gradient text-on-primary px-8 py-3 rounded-[18px] font-label-sm text-label-sm shadow-md hover:shadow-lg active:scale-95 magic-ease">
                         Find Experts
                     </button>
+</form>
 </div>
 </section>
 <!-- Service Feed Grid -->
 <section class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
-<!-- Service Card A: Gallery Focused -->
-<div class="animate-entrance group" style="animation-delay: 0.3s;">
+{% for service in services %}
+<div class="animate-entrance group" style="animation-delay: {{ forloop.counter0|add:3|multiply:0.1 }}s;">
+<a href="{% url 'services:feed_service_detail' service_id=service.id %}" class="block">
 <div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30">
+{% if service.gallery.all %}
 <!-- Gallery Layout -->
 <div class="grid grid-cols-3 h-64 gap-1 p-1">
+{% with gallery_images=service.gallery.all %}
+{% if gallery_images|length >= 3 %}
 <div class="col-span-2 rounded-l-[20px] overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="A clean, minimalist high-fidelity UI design for a SaaS analytics dashboard. Features soft purple and indigo accents, elegant line charts, and deep glassmorphism effects. The aesthetic is ultra-professional, targeting enterprise software standards with expansive whitespace and precise geometric icons." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfOO02n50F4cnIjaezZGkgSZg9xQ-GcQ_KZe5EhEb2AtzbAK_8mSFrbRZGV_cPWCL9deAKOOYuy5wD89VAnqehBI2ZfwAuKYwS3XmNT68zqeaOlbKLo_5RmPPbyi3Sdf71W200gNtZWPVkbyhoNaw2kKO2BDgQaAhviZsuGCFJxUo90aDC9LOSSpt37f_100ZaznDN-rZFWc8jWlTQBZ3gszYaSrX8gbM0WFvxeHYPZQNw2Bi-etRo1JFmzlNqSc7J_dMu0rrFnvhj"/>
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.0.image.url }}" alt="{{ service.title }}"/>
 </div>
 <div class="flex flex-col gap-1">
 <div class="h-1/2 rounded-tr-[20px] overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="Close-up detail of a mobile app prototype design showing a fluid navigation menu and premium icon set. The lighting is bright and high-key, with a palette of soft slates and vibrant blue highlights. Professional craftsmanship is evident in every pixel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1s2_gTJ9wxja6NEaiRuU1XxZS0YWXBamCohOdnLBTWk9lzB4LgMSSeWYB-UGyzlPrboVFqsBjPuwsGMshLm5BEdQU4XXtdOAdl4lbSNakbxUDqThk7kzIUVwc79Mrk2hW7wAP4orU7TSGTldzcNwzlwzzQn95ic3eXx02Jhd6nflEoBQ0oY8CqU7aifxaMAmsOpzUmaXoYxgzUZqi3j3nH3kQnheTEJ3LWDOr5Rn7QAp9JDgojStMiRh3AmrrBCUp1CrzU2Bdishc"/>
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.1.image.url }}" alt="{{ service.title }}"/>
 </div>
 <div class="h-1/2 overflow-hidden relative">
+{% if gallery_images|length > 3 %}
 <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white z-10">
-<span class="font-label-sm">+12</span>
+<span class="font-label-sm">+{{ gallery_images|length|add:-3 }}</span>
 </div>
-<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="A collection of designer style guides and component libraries displayed on multiple professional monitors in a bright, modern studio. The mood is focused and sophisticated, emphasizing structured design processes and high-level strategy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVatWQoSmX99n7EXJNJ6TiqTD-lgzP3AxHF5zxadoXUlnKDOl5axz3f_2rLZjrsv_Bsvxuf0-8EUeGwcVHDXhwIT7L-xvbz9VWaQua2I_EVWLfpaSk080kCUffw4DBv1RJUwuz6WUfBT8fubxXXL-cN7qe0AsyTorP0TY-wlr_FwTlyWtPe6a1P69Pk7hRcsmhP9L_iAWpu7q5BSgEKeTYbwhLbZS0tAkNPvXFzwqYl3OfS6gSxItRqDKTp-y_a6Nb6wg77rkGsWXu"/>
-</div>
-</div>
-</div>
-<!-- Card Content -->
-<div class="p-8 flex flex-col flex-1">
-<div class="flex items-start justify-between mb-4">
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden -mt-14 relative z-20">
-<img class="w-full h-full object-cover" data-alt="A studio portrait of a female senior UX designer with a confident, friendly smile. She is in a high-key setting with soft, even lighting that feels modern and approachable. The style is clean, corporate professional with a creative edge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBUma7Z6ODCJDjq1fbLOhDTdZa_-ua8XyN7Tx_rJBIRS2svZx0nIZj1-8SDqQWCqNMyVbb019RkJ-cWi52oRHMKmm2t6HQnAsPRppvaiewikdq2UqCkIFzM3-pY4e3Z4gkAzQ6ziHEGjLEMQKwdieNJZeHHdqvhDEJBCMkCmIh5KIAR7m2whCviptkKmGSAze-jh13Cq7uKvYLTG_kmNxNidLSFdUmB6-vv5c09OvefhHlKmE-yXMLrvblER_ODDejbr48oYoD7WhK"/>
-</div>
-<div class="pt-2">
-<h3 class="font-headline-md text-headline-md text-on-surface">Full-Scale SaaS Product Design & Prototyping</h3>
-<p class="font-label-sm text-label-sm text-primary">Sarah Jenkins, Senior UX Designer</p>
+{% endif %}
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.2.image.url }}" alt="{{ service.title }}"/>
 </div>
 </div>
-<div class="flex items-center gap-1 text-on-tertiary-fixed">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-bold">4.9</span>
+{% elif gallery_images|length == 2 %}
+<div class="col-span-2 rounded-l-[20px] overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.0.image.url }}" alt="{{ service.title }}"/>
 </div>
+<div class="h-full rounded-tr-[20px] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.1.image.url }}" alt="{{ service.title }}"/>
 </div>
-<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
-                                End-to-end design systems and high-fidelity prototyping for enterprise platforms. Specialized in complex data visualization and user workflows.
-                            </p>
-<div class="mt-auto flex items-center justify-between">
-<div class="flex gap-2">
-<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">UI/UX</span>
-<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">SaaS</span>
+{% else %}
+<div class="col-span-3 h-full rounded-[20px] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" src="{{ gallery_images.0.image.url }}" alt="{{ service.title }}"/>
 </div>
-<span class="font-headline-md text-headline-md text-on-surface">From $4,500</span>
+{% endif %}
+{% endwith %}
 </div>
-</div>
-</div>
-</div>
-<!-- Service Card B: Avatar-focused -->
-<div class="animate-entrance group" style="animation-delay: 0.4s;">
-<div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30">
-<!-- Visual Header -->
+{% else %}
+<!-- Avatar-focused Layout (no gallery) -->
 <div class="h-64 primary-gradient relative flex items-center justify-center overflow-hidden">
-<!-- Abstract WebGL-like pattern using SVG mask -->
 <div class="absolute inset-0 opacity-20">
 <svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
 <defs>
@@ -281,47 +269,83 @@
 <rect fill="url(#grid)" height="100%" width="100%"></rect>
 </svg>
 </div>
-<!-- Animated Avatar Rings -->
 <div class="relative z-10">
 <div class="avatar-ring absolute -inset-6 border border-white/30 rounded-full"></div>
 <div class="avatar-ring absolute -inset-10 border border-white/10 rounded-full" style="animation-direction: reverse; animation-duration: 15s;"></div>
 <div class="w-32 h-32 rounded-full border-4 border-white/50 shadow-2xl overflow-hidden relative bg-white">
-<img class="w-full h-full object-cover" data-alt="A professional portrait of an Asian male backend architect. He is wearing a minimalist black turtleneck, posed against a dark, sophisticated architectural background with subtle blue rim lighting. The mood is highly technical, authoritative, and elite." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnCf9FgvAaa3Wx_LQP380PJscve4gYXOX96tkylLZmtqfK12s4lGk-6Iht7_I7o68uAIIriO5nwDwmxoAfEsujsGeX1r94SBqT1E0beBzJU4er_aWf1-BW0bGnV2M9XzSeP-614IdjVsFvG7dcdkSN6aHfNnHdiGtXXIls85j3dYUPSEXMuYGQItnMylOC6PVL8n_oovojOaQSuHY6gp7QLYYutp8ZdOSh8YjPRa0QOg2FP2iTkChT3TCBYqXwJYGo3wni7uWyBUzQ"/>
+{% if service.profile.user.avatar %}
+<img class="w-full h-full object-cover" src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}"/>
+{% else %}
+<div class="w-full h-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant text-2xl font-bold">
+{{ service.profile.user.full_name|slice:":1"|upper }}
+</div>
+{% endif %}
 </div>
 </div>
 </div>
+{% endif %}
 <!-- Card Content -->
 <div class="p-8 flex flex-col flex-1">
-<div class="flex flex-col mb-4">
-<h3 class="font-headline-md text-headline-md text-on-surface">Scalable Microservices Architecture & API Design</h3>
-<p class="font-label-sm text-label-sm text-primary">Marcus Chen, Backend Architect</p>
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+{% if service.gallery.all %}
+<div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden -mt-14 relative z-20 bg-white">
+{% if service.profile.user.avatar %}
+<img class="w-full h-full object-cover" src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}"/>
+{% else %}
+<div class="w-full h-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant text-lg font-bold">
+{{ service.profile.user.full_name|slice:":1"|upper }}
 </div>
-<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
-                                High-performance system design utilizing Go and Rust. Specialized in distributed systems, Kubernetes orchestration, and event-driven architectures.
-                            </p>
-<div class="mt-auto">
-<div class="flex items-center justify-between mb-4">
-<div class="flex gap-2">
-<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Infrastructure</span>
-<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Backend</span>
+{% endif %}
 </div>
+{% endif %}
+<div class="{% if service.gallery.all %}pt-2{% else %}">
+<h3 class="font-headline-md text-headline-md text-on-surface">{{ service.title }}</h3>
+<p class="font-label-sm text-label-sm text-primary">{{ service.profile.user.full_name }}</p>
+</div>
+</div>
+{% if service.profile.oracle_score %}
 <div class="flex items-center gap-1 text-on-tertiary-fixed">
 <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="font-bold">5.0</span>
+<span class="font-bold">{{ service.profile.oracle_score|floatformat:1 }}</span>
+</div>
+{% endif %}
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
+{{ service.description|truncatewords:20 }}
+</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+{% for headline in service.profile.headlines.all|slice:":2" %}
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">{{ headline.title }}</span>
+{% empty %}
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Professional Service</span>
+{% endfor %}
 </div>
 </div>
-<div class="flex items-center justify-between">
-<span class="font-headline-md text-headline-md text-on-surface">$180<span class="text-label-sm text-on-surface-variant">/hr</span></span>
-<button class="px-6 py-2 rounded-full border border-primary text-primary font-label-sm text-label-sm hover:bg-primary hover:text-white transition-all duration-300">
-                                        View Profile
-                                    </button>
 </div>
 </div>
+</a>
 </div>
+{% empty %}
+<div class="col-span-full text-center py-16">
+<p class="text-on-surface-variant font-body-lg">No services found. Be the first to offer your services!</p>
 </div>
-</div>
-<!-- More cards could follow here... -->
+{% endfor %}
 </section>
+
+<!-- Pagination -->
+{% if services.has_other_pages %}
+<div class="flex justify-center items-center gap-4 mt-12">
+{% if services.has_previous %}
+<a href="?page={{ services.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all">Previous</a>
+{% endif %}
+<span class="text-on-surface-variant font-label-sm">Page {{ services.number }} of {{ services.paginator.num_pages }}</span>
+{% if services.has_next %}
+<a href="?page={{ services.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all">Next</a>
+{% endif %}
+</div>
+{% endif %}
 </div>
 <!-- Mobile BottomNavBar -->
 <nav class="lg:hidden fixed bottom-0 w-full h-16 bg-surface/80 backdrop-blur-[20px] border-t border-outline-variant/30 flex justify-around items-center px-4 z-50">
