@@ -35,7 +35,7 @@ urlpatterns = [
     ),
     path(
         "password/reset/confirm/<token>/",
-        views.CustomPasswordResetConfirmView.as_view(),
+        views.custom_password_reset_confirm_view,
         name="password_reset_confirm",
     ),
     path(

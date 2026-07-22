@@ -1070,30 +1070,42 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
         return redirect(self.success_url)
 
 
-class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+def custom_password_reset_confirm_view(request, token):
     """
-    Custom password reset confirm view that uses signed tokens (like email verification).
+    Custom password reset confirm view that uses signed tokens.
     """
-    template_name = "auth/password_reset_confirm.html"
-    success_url = "/password/reset/complete/"
-    post_reset_login = True
+    from django.contrib.auth.forms import SetPasswordForm
 
-    def get_user(self, uidb64):
-        # Override to use signed token instead of uidb64
-        try:
-            payload = signing.loads(self.kwargs['token'], salt="accounts.password-reset", max_age=900)  # 15 minutes
-            token_uid = payload.get("uid")
-            token_email = payload.get("email")
-            user = CustomUser.objects.filter(pk=token_uid).first()
-            if user and user.email and user.email.lower() == token_email:
-                return user
-        except (SignatureExpired, BadSignature):
-            pass
-        return None
+    user = None
+    valid_link = False
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        user = self.get_user(None)
-        if user:
-            kwargs['user'] = user
-        return kwargs
+    try:
+        payload = signing.loads(token, salt="accounts.password-reset", max_age=900)  # 15 minutes
+        token_uid = payload.get("uid")
+        token_email = payload.get("email")
+        user = CustomUser.objects.filter(pk=token_uid).first()
+        if user and user.email and user.email.lower() == token_email:
+            valid_link = True
+    except (SignatureExpired, BadSignature):
+        valid_link = False
+
+    if request.method == "POST":
+        if valid_link and user:
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, user)
+                login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+                messages.success(request, "Your password has been reset successfully.")
+                return redirect("password_reset_complete")
+        else:
+            messages.error(request, "Invalid or expired reset link.")
+            return redirect("password_reset")
+    else:
+        if valid_link and user:
+            form = SetPasswordForm(user)
+        else:
+            messages.error(request, "Invalid or expired reset link.")
+            return redirect("password_reset")
+
+    return render(request, "auth/password_reset_confirm.html", {"form": form, "valid_link": valid_link})
