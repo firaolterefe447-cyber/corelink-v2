@@ -65,6 +65,18 @@ class CustomUserChangeForm(forms.ModelForm):
         help_text=_("Check this to stop the AI Oracle from auto-updating this rating.")
     )
 
+    years_experience = forms.IntegerField(
+        min_value=0, required=False,
+        label=_("Years of Experience"),
+        help_text=_("User's professional experience in years.")
+    )
+
+    field_of_interest = forms.CharField(
+        max_length=100, required=False,
+        label=_("Field of Interest"),
+        help_text=_("User's primary professional field or area of expertise.")
+    )
+
     class Meta:
         model = CustomUser
         fields = '__all__'
