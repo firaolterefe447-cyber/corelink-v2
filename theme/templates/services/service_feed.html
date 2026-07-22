@@ -4,605 +4,599 @@
 {% block meta_tags %}
 <meta property="og:title" content="CoreLink - Services">
 <meta property="og:description" content="Discover professional services offered by talented individuals.">
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+<!-- Tailwind Configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                "colors": {
+                    "on-surface-variant": "#414752",
+                    "surface-dim": "#d8dae2",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c1c6d4",
+                    "on-tertiary-fixed": "#331200",
+                    "tertiary-container": "#a94b00",
+                    "on-surface": "#191c21",
+                    "surface-tint": "#005eb5",
+                    "inverse-surface": "#2e3037",
+                    "error": "#ba1a1a",
+                    "primary": "#004e99",
+                    "on-primary-fixed": "#001b3d",
+                    "secondary-fixed-dim": "#c3c0ff",
+                    "primary-container": "#0a66c2",
+                    "primary-fixed": "#d6e3ff",
+                    "on-primary": "#ffffff",
+                    "on-background": "#191c21",
+                    "tertiary": "#833900",
+                    "surface-container": "#ecedf6",
+                    "inverse-primary": "#a8c8ff",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#4b41e1",
+                    "on-tertiary-container": "#ffe0d1",
+                    "primary-fixed-dim": "#a8c8ff",
+                    "on-secondary-fixed": "#0f0069",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#3323cc",
+                    "tertiary-fixed": "#ffdbca",
+                    "surface-container-low": "#f2f3fb",
+                    "secondary-fixed": "#e2dfff",
+                    "tertiary-fixed-dim": "#ffb68e",
+                    "on-tertiary-fixed-variant": "#773300",
+                    "surface-variant": "#e1e2ea",
+                    "on-secondary-container": "#fffbff",
+                    "on-primary-fixed-variant": "#00468a",
+                    "background": "#f9f9ff",
+                    "surface-container-highest": "#e1e2ea",
+                    "on-primary-container": "#dbe6ff",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-container": "#645efb",
+                    "surface-container-high": "#e6e8f0",
+                    "inverse-on-surface": "#eff0f9",
+                    "outline": "#727783",
+                    "surface": "#f9f9ff"
+                },
+                "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+                },
+                "spacing": {
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "base": "8px"
+                },
+                "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                    "label-sm": ["Inter", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "display-xl": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"]
+                },
+                "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                    "display-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                    "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "500"}]
+                }
+            },
+        },
+    }
+</script>
+
+<style>
+    /* Theme Base Styles to map into the parent environment securely */
+    .new-theme-scope {
+        background-color: var(--background, #f9f9ff);
+        color: var(--on-surface, #191c21);
+        font-family: 'Inter', sans-serif;
+    }
+
+    @keyframes entrance-stagger {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-entrance {
+        opacity: 0;
+        animation: entrance-stagger 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .magic-ease {
+        transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .avatar-ring {
+        animation: rotate-ring 15s linear infinite;
+    }
+
+    @keyframes rotate-ring {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .primary-gradient {
+        background: linear-gradient(135deg, #005eb5 0%, #4b41e1 100%);
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Ensure old inherited styles don't conflict */
+    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+</style>
 {% endblock %}
 
 {% block navbar %}
-{% if request.user.is_authenticated %}
-
-<!-- ==============================================
-     LEFT SIDEBAR NAVIGATION (PC) - PREMIUM UX
-     ============================================== -->
-<aside class="hidden md:flex flex-col fixed top-0 left-0 w-[240px] lg:w-[260px] xl:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
-    <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
-
-        <!-- Top Section: Logo & Links -->
-        <div class="flex-1">
-            <!-- Typographic Logo -->
-            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
-                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-                <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
-            </div>
-
-            <!-- Desktop Navigation Links -->
-            <nav class="flex flex-col gap-1.5">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "My profile" %}
-                </a>
-
-                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "Discover" %}
-                </a>
-
-                <a href="{% url 'service_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
-                    <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-[#0A66C2]"></i></div>
-                    {% trans "Services" %}
-                </a>
-
-                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
-                    {% trans "Opportunities" %}
-                </a>
-
-                <a href="/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
-                    <div class="flex items-center gap-4">
-                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
-                            <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
-                        </div>
-                        {% trans "Inbox" %}
-                    </div>
-                    {% if unread_msg_count > 0 %}
-                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
-                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                        </span>
-                    {% endif %}
-                </a>
-            </nav>
+<div class="new-theme-scope">
+    {% if request.user.is_authenticated %}
+    <!-- Desktop NavigationDrawer -->
+    <aside class="fixed left-0 top-0 h-full w-[280px] bg-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm hidden lg:flex flex-col p-8 z-50">
+        <!-- Logo -->
+        <div class="mb-12 flex items-center cursor-pointer select-none" onclick="window.location.href='{% url 'dashboard' %}'">
+            <span class="font-headline-lg-mobile text-[28px] font-black tracking-tight text-on-surface lowercase">core</span>
+            <span class="font-headline-lg-mobile text-[28px] font-black tracking-tight text-transparent bg-clip-text primary-gradient lowercase">link</span>
         </div>
 
-        <!-- Actions Bottom -->
-        <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>{% trans "Settings" %}</span>
+        <nav class="flex-1 space-y-2">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>
+                <span class="font-label-sm text-label-sm">{% trans "My profile" %}</span>
             </a>
+            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">explore</span>
+                <span class="font-label-sm text-label-sm">{% trans "Discover" %}</span>
+            </a>
+            <a href="{% url 'service_feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-primary/5 text-primary font-bold border border-primary/10">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">work</span>
+                <span class="font-label-sm text-label-sm">{% trans "Services" %}</span>
+            </a>
+            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">business_center</span>
+                <span class="font-label-sm text-label-sm">{% trans "Opportunities" %}</span>
+            </a>
+            <a href="/messages/" class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined group-hover:scale-110 transition-transform">mail</span>
+                    <span class="font-label-sm text-label-sm">{% trans "Inbox" %}</span>
+                </div>
+                {% if unread_msg_count > 0 %}
+                    <span class="flex items-center justify-center min-w-[20px] h-[20px] px-1.5 bg-error text-white text-[11px] font-bold rounded-full">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </a>
+        </nav>
 
-            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-                <span>{% trans "Logout" %}</span>
+        <div class="pt-8 mt-8 border-t border-outline-variant/20 space-y-2">
+            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+                <span class="font-label-sm text-label-sm">{% trans "Settings" %}</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-error/10 transition-all duration-300 text-error group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">logout</span>
+                <span class="font-label-sm text-label-sm">{% trans "Logout" %}</span>
             </a>
         </div>
+    </aside>
 
-    </div>
-</aside>
+    <!-- Mobile TopAppBar -->
+    <header class="lg:hidden flex justify-between items-center px-margin-mobile h-[max(4rem,calc(4rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] w-full sticky top-0 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/20 z-50">
+        <button onclick="toggleMobileNavDrawer()" class="w-10 h-10 flex items-center justify-center rounded-full active:scale-95 transition-transform text-on-surface-variant">
+            <span class="material-symbols-outlined pointer-events-none">menu</span>
+        </button>
+        <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <span class="font-headline-lg-mobile text-[22px] font-black text-on-surface lowercase">core</span>
+            <span class="font-headline-lg-mobile text-[22px] font-black text-transparent bg-clip-text primary-gradient lowercase">link</span>
+        </div>
+        <a href="{% url 'dashboard' %}" class="w-9 h-9 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+            {% if request.user.avatar %}
+                <img src="{{ request.user.avatar.url }}" alt="Profile" class="w-full h-full object-cover"/>
+            {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold">{{ request.user.full_name|slice:":1"|upper }}</div>
+            {% endif %}
+        </a>
+    </header>
 
-<!-- MOBILE TOP BAR - AUTHENTICATED -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm">
-    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
-    </div>
-    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
-        <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
-    </button>
+    {% else %}
+    <!-- Unauthenticated Minimal TopBar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 flex items-center justify-between px-6 lg:px-12 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)]">
+        <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <span class="font-headline-lg-mobile text-[26px] font-black text-on-surface lowercase">core</span>
+            <span class="font-headline-lg-mobile text-[26px] font-black text-transparent bg-clip-text primary-gradient lowercase">link</span>
+        </div>
+        <a href="{% url 'signup' %}" class="primary-gradient text-on-primary font-label-sm text-label-sm px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+            <span>{% trans "Join Hub" %}</span>
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </a>
+    </header>
+    {% endif %}
 </div>
-
-{% else %}
-
-<!-- ==============================================
-     MINIMAL TOP BAR - UNAUTHENTICATED
-     ============================================== -->
-<div class="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 md:px-8 lg:px-12 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
-    <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <span class="font-heading font-black text-[24px] md:text-[26px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
-        <span class="font-heading font-black text-[24px] md:text-[26px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
-    </div>
-    <a href="{% url 'signup' %}" class="bg-gradient-to-r from-[#0A66C2] to-indigo-600 hover:opacity-90 text-white font-black text-[13px] md:text-[15px] px-5 py-2 md:px-7 md:py-2.5 rounded-full shadow-md transition-all active:scale-95 flex items-center gap-2">
-        <span>{% trans "Join Hub" %}</span>
-        <i data-lucide="arrow-right" class="w-4 h-4 hidden md:block"></i>
-    </a>
-</div>
-
-{% endif %}
 {% endblock navbar %}
 
 {% block content %}
-<div id="top-loading-bar"></div>
+<div class="new-theme-scope min-h-screen relative overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container pb-24 lg:pb-12 {% if request.user.is_authenticated %}lg:ml-[280px]{% else %}pt-24{% endif %}">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Atmospheric Gradients -->
+    <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+    <div class="fixed bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
-<style>
-    :root {
-        --font-heading: 'Plus Jakarta Sans', sans-serif;
-        --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
-        --blue: #0A66C2;
-        --blue-dark: #0856A8;
-    }
-    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
-    #top-loading-bar {
-        position: fixed; top: 0; left: 0; height: 4px;
-        background: linear-gradient(to right, #60a5fa, #0A66C2, #2563eb);
-        z-index: 99999; width: 0%; pointer-events: none;
-        box-shadow: 0 0 10px rgba(10, 102, 194, 0.5); opacity: 0;
-        transition: width 0.4s ease-out, opacity 0.4s ease-in;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: #F4F7FA;
-        background-image:
-            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
-            radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
-        background-attachment: fixed;
-        color: #0F172A;
-        -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image:
-            radial-gradient(circle at 20% 50%, rgba(10, 102, 194, 0.04) 0%, transparent 50%),
-            radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
-    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .app-canvas {
-        width: 100%;
-        position: relative;
-        z-index: 10;
-        padding: calc(5.5rem + env(safe-area-inset-top)) 0 calc(6.5rem + env(safe-area-inset-bottom)) 0;
-    }
-    @media (min-width: 768px) {
-        .app-canvas { padding: calc(5.5rem + env(safe-area-inset-top)) 1.25rem calc(6.5rem + env(safe-area-inset-bottom)) 1.25rem; }
-        .auth-canvas { padding-left: calc(260px + 2rem); padding-right: 2rem; padding-top: 3rem; padding-bottom: 6rem; }
-        .unauth-canvas { padding: 8rem 3rem 6rem 3rem; }
-    }
-    @media (min-width: 1024px) {
-        .auth-canvas { padding-left: calc(280px + 2rem); padding-right: 2rem; padding-top: 4rem; padding-bottom: 8rem; }
-        .unauth-canvas { padding: 9rem 5rem 8rem 5rem; }
-    }
-
-    /* Premium Glass Service Card */
-    .service-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 1.25rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        overflow: hidden;
-        opacity: 0;
-        animation: smoothAppear 0.5s var(--ease-magic) forwards;
-    }
-    .service-card:hover {
-        border-color: #CBD5E1;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        transform: translateY(-2px);
-    }
-
-    /* Staggered load */
-    .service-card:nth-child(1) { animation-delay: 0.05s; }
-    .service-card:nth-child(2) { animation-delay: 0.10s; }
-    .service-card:nth-child(3) { animation-delay: 0.15s; }
-    .service-card:nth-child(4) { animation-delay: 0.20s; }
-    .service-card:nth-child(5) { animation-delay: 0.25s; }
-    .service-card:nth-child(6) { animation-delay: 0.30s; }
-
-    /* Service Card - Premium Glass Style */
-    .service-card {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1.5rem;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        display: flex;
-        flex-direction: column;
-        opacity: 0;
-        animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-    .service-card:hover {
-        border-color: rgba(203, 213, 225, 1);
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
-    }
-
-    /* Gallery Grid */
-    .gallery-grid {
-        display: grid;
-        gap: 4px;
-        background: #f8fafc;
-        border-radius: 1.5rem 1.5rem 0 0;
-        overflow: hidden;
-    }
-    .gallery-item {
-        position: relative;
-        overflow: hidden;
-        background: #e2e8f0;
-    }
-    .gallery-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    .service-card:hover .gallery-item img {
-        transform: scale(1.05);
-    }
-
-    /* Avatar */
-    .avatar-circle {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #ffffff;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-    .avatar-circle img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-
-    /* Premium Search Input */
-    .magic-input { width: 100%; background-color: transparent; border: none; outline: none; }
-
-    /* Empty State */
-    .empty-state {
-        background: rgba(255, 255, 255, 0.98);
-        border: 2px dashed rgba(226, 232, 240, 0.9);
-        border-radius: 2rem;
-        padding: 4rem 2rem;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-    }
-
-    /* Marketplace Hero Styles */
-    .marketplace-hero {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 2rem;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .category-pill {
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(102, 126, 234, 0.3);
-        color: #667eea;
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .category-pill:hover {
-        background: #667eea;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        border: 1px solid rgba(102, 126, 234, 0.2);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-</style>
-
-<!-- ==============================================
-     MAIN LAYOUT
-     ============================================== -->
-<main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% else %}unauth-canvas{% endif %} anim-smooth-appear">
-
-    <!-- MAIN FEED CONTAINER -->
-    <div class="max-w-[1280px] mx-auto w-full relative z-10">
+    <div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop py-8 lg:py-12">
 
         {% if request.user.is_authenticated %}
         <!-- NAV TABS -->
-        <div class="flex items-center justify-center gap-4 md:gap-12 border-b border-slate-200/90 mb-8 md:mb-10 w-full px-2 relative z-10">
-            <a href="{% url 'right_now_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-transparent hover:border-slate-300 transition-all group shrink-0 top-[1px]">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap text-slate-500 hover:text-slate-900">{% trans "Discover Updates" %}</span>
-            </a>
-
-            <a href="{% url 'service_feed' %}" class="relative flex items-center justify-center pb-3 border-b-[2.5px] border-[#0A66C2] text-[#0A66C2] shrink-0">
-                <span class="text-[12px] md:text-[13px] font-black uppercase tracking-wider md:tracking-[0.15em] whitespace-nowrap">{% trans "Discover Services" %}</span>
-            </a>
+        <div class="flex items-center justify-center gap-6 mb-12 animate-entrance" style="animation-delay: 0.05s;">
+            <div class="inline-flex p-1.5 bg-surface-container-high rounded-[20px] shadow-inner">
+                <a href="{% url 'right_now_feed' %}" class="px-6 py-2.5 rounded-[14px] text-on-surface-variant font-label-sm font-bold hover:text-on-surface transition-colors">
+                    {% trans "Updates" %}
+                </a>
+                <a href="{% url 'service_feed' %}" class="px-6 py-2.5 rounded-[14px] bg-white shadow-sm text-primary font-label-sm font-bold">
+                    {% trans "Services" %}
+                </a>
+            </div>
         </div>
         {% endif %}
 
-        <!-- HERO SECTION -->
-        <div class="mb-8 md:mb-12 anim-smooth-appear px-4 md:px-0">
-            <h1 class="text-2xl md:text-3xl font-black text-slate-900 mb-2 font-heading">
-                {% trans "Explore community services" %}
+        <!-- Hero Section -->
+        <section class="animate-entrance mb-12 text-center lg:text-left" style="animation-delay: 0.1s;">
+            <h1 class="font-headline-lg text-headline-lg font-[900] text-on-surface mb-4 leading-tight">
+                {% trans "Explore community" %} <span class="text-transparent bg-clip-text primary-gradient">{% trans "services" %}</span>
             </h1>
-            <p class="text-slate-600 text-sm md:text-base mb-6 font-medium">
-                {% trans "Connect with verified professionals for any project" %}
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto lg:mx-0">
+                {% trans "Connect with world-class independent professionals curated for elite projects and high-performance teams." %}
             </p>
+        </section>
 
-            <!-- Search Bar -->
-            <form method="GET" class="w-full max-w-3xl mx-auto">
-                <div class="relative flex items-center w-full bg-white/95 border border-slate-200/90 rounded-full md:rounded-[1.5rem] overflow-hidden focus-within:border-[#0A66C2]/50 focus-within:ring-4 focus-within:ring-[#0A66C2]/8 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-                    <i data-lucide="search" class="w-5 h-5 md:w-6 md:h-6 text-[#0A66C2] shrink-0 ml-4 md:ml-5"></i>
-
-                    <input type="text" name="q" value="{{ search_query }}"
-                        class="flex-grow h-12 md:h-14 px-3 md:px-5 text-[14.5px] md:text-[16px] text-slate-900 font-bold placeholder:text-slate-400 bg-transparent border-none outline-none"
-                        placeholder="{% trans 'Search services...' %}"
-                        autocomplete="off">
-
-                    {% if search_query %}
-                        <a href="{% url 'service_feed' %}" class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-slate-400 hover:text-[#0A66C2] transition-colors mr-1 md:mr-2" aria-label="{% trans 'Clear search' %}">
-                            <i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i>
-                        </a>
-                    {% endif %}
-
-                    <button type="submit" class="bg-[#0A66C2] hover:bg-[#0856A8] text-white font-bold w-12 h-12 md:w-auto md:h-14 md:px-8 rounded-full md:rounded-[1.25rem] transition-all active:scale-95 shrink-0 flex items-center justify-center shadow-md">
-                        <span class="hidden md:block text-[14px] uppercase tracking-[0.1em]">{% trans "Search" %}</span>
-                        <i data-lucide="search" class="w-5 h-5 block md:hidden"></i>
-                    </button>
+        <!-- Premium Search Bar -->
+        <section class="animate-entrance mb-16 relative" style="animation-delay: 0.2s;">
+            <form method="GET" action="{% url 'service_feed' %}" class="glass-card p-2 rounded-[24px] shadow-sm flex items-center group focus-within:ring-2 focus-within:ring-primary/30 magic-ease max-w-3xl">
+                <div class="pl-6 pr-4 text-primary">
+                    <span class="material-symbols-outlined text-[24px]">search</span>
                 </div>
-            </form>
-        </div>
 
-        <!-- SERVICES GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 px-4 md:px-0">
+                <input type="text" name="q" value="{{ search_query }}"
+                    class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-4 px-0 outline-none w-full"
+                    placeholder="{% trans "Search for 'Web Development', 'UI Design' or 'Consulting'..." %}"
+                    autocomplete="off">
+
+                {% if search_query %}
+                    <a href="{% url 'service_feed' %}" class="w-10 h-10 flex items-center justify-center text-outline hover:text-error transition-colors rounded-full" aria-label="{% trans 'Clear search' %}">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </a>
+                {% endif %}
+
+                <button type="submit" class="hidden sm:block primary-gradient text-on-primary px-8 py-3.5 rounded-[18px] font-label-sm text-label-sm shadow-md hover:shadow-lg active:scale-95 magic-ease ml-2 whitespace-nowrap">
+                    {% trans "Find Experts" %}
+                </button>
+            </form>
+        </section>
+
+        <!-- Service Feed Grid -->
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
             {% for service in services %}
-                <article class="service-card anim-smooth-appear" style="animation-delay: {{ forloop.counter|add:0 }}0ms;">
-                    
-                    <!-- Gallery Section (Prioritized) -->
-                    {% if service.gallery.all %}
-                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block">
+                {% if service.gallery.all %}
+
+                <!-- Service Card: Gallery Focused -->
+                <div class="animate-entrance group" style="animation-delay: {{ forloop.counter|add:2 }}00ms;">
+                    <div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,94,181,0.15)] magic-ease border border-outline-variant/40">
+
+                        <!-- Dynamic Gallery Layout -->
+                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block h-64 p-1">
                             {% with count=service.gallery.count %}
-                            <div class="gallery-grid">
-                                {% if count == 1 %}
-                                    <div class="gallery-item aspect-[4/3]">
-                                        <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}">
-                                    </div>
-                                {% elif count == 2 %}
-                                    <div class="grid grid-cols-2 aspect-[4/3]">
-                                        {% for gallery_item in service.gallery.all|slice:":2" %}
-                                            <div class="gallery-item">
-                                                <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% elif count == 3 %}
-                                    <div class="grid grid-cols-2">
-                                        <div class="col-span-2 aspect-[16/9] gallery-item">
-                                            <img src="{{ service.gallery.all.0.image.url }}" alt="{{ service.title }}">
+                                {% if count >= 3 %}
+                                    <div class="grid grid-cols-3 h-full gap-1">
+                                        <div class="col-span-2 rounded-l-[20px] overflow-hidden relative bg-surface-container-high">
+                                            <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
                                         </div>
-                                        {% for gallery_item in service.gallery.all|slice:"1:" %}
-                                            <div class="aspect-square gallery-item">
-                                                <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
+                                        <div class="flex flex-col gap-1 h-full">
+                                            <div class="h-[calc(50%-2px)] rounded-tr-[20px] overflow-hidden bg-surface-container-high">
+                                                <img src="{{ service.gallery.all.1.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
                                             </div>
-                                        {% endfor %}
-                                    </div>
-                                {% elif count >= 4 %}
-                                    <div class="grid grid-cols-2 aspect-square">
-                                        {% for gallery_item in service.gallery.all|slice:":4" %}
-                                            <div class="gallery-item relative">
-                                                <img src="{{ gallery_item.image.url }}" alt="{{ service.title }}">
-                                                {% if forloop.last and count > 4 %}
-                                                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                                                        <span class="text-white font-black text-[18px]">+{{ count|add:"-4" }}</span>
+                                            <div class="h-[calc(50%-2px)] rounded-br-[20px] overflow-hidden relative bg-surface-container-high">
+                                                {% if count > 3 %}
+                                                    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center text-white z-10">
+                                                        <span class="font-headline-md text-headline-md">+{{ count|add:"-2" }}</span>
                                                     </div>
                                                 {% endif %}
+                                                <img src="{{ service.gallery.all.2.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
                                             </div>
-                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                {% elif count == 2 %}
+                                    <div class="grid grid-cols-2 h-full gap-1">
+                                        <div class="rounded-l-[20px] overflow-hidden relative bg-surface-container-high">
+                                            <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
+                                        </div>
+                                        <div class="rounded-r-[20px] overflow-hidden relative bg-surface-container-high">
+                                            <img src="{{ service.gallery.all.1.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="h-full rounded-[20px] overflow-hidden relative bg-surface-container-high">
+                                        <img src="{{ service.gallery.first.image.url }}" alt="{{ service.title }}" class="w-full h-full object-cover group-hover:scale-105 magic-ease">
                                     </div>
                                 {% endif %}
-                            </div>
                             {% endwith %}
                         </a>
-                    {% else %}
-                        <!-- No Gallery - Premium Circular Avatar Design -->
-                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group rounded-t-[1.5rem]">
-                            
-                            <!-- Animated decorative rings -->
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="w-48 h-48 md:w-56 md:h-56 rounded-full border border-blue-100/40 opacity-60 group-hover:scale-110 transition-transform duration-500"></div>
-                                <div class="absolute w-64 h-64 md:w-72 md:h-72 rounded-full border border-indigo-100/30 opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
-                                <div class="absolute w-80 h-80 md:w-96 md:h-96 rounded-full border border-slate-200/20 opacity-30 group-hover:scale-100 transition-transform duration-900"></div>
+
+                        <!-- Card Content -->
+                        <div class="p-6 sm:p-8 flex flex-col flex-1">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <a href="{% url 'public_profile' service.profile.slug %}" class="w-14 h-14 rounded-full border-4 border-white shadow-sm overflow-hidden -mt-[4.5rem] relative z-20 bg-surface-container shrink-0 hover:scale-105 transition-transform">
+                                        {% if service.profile.user.avatar %}
+                                            <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <div class="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold text-xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</div>
+                                        {% endif %}
+                                    </a>
+                                    <div class="pt-1">
+                                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}">
+                                            <h3 class="font-headline-md text-[18px] sm:text-headline-md text-on-surface hover:text-primary transition-colors line-clamp-1">{{ service.title }}</h3>
+                                        </a>
+                                        <a href="{% url 'public_profile' service.profile.slug %}" class="font-label-sm text-label-sm text-primary hover:underline line-clamp-1">
+                                            {{ service.profile.user.full_name|default:"Unknown" }} <span class="text-on-surface-variant font-normal">&bull; {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}</span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <!-- Large circular avatar with premium shadow -->
-                            <div class="relative z-10">
-                                <div class="absolute inset-0 bg-slate-900/15 rounded-full blur-[10px] transform translate-y-2 scale-[0.85] transition-all duration-300 group-hover:scale-100 group-hover:translate-y-3 group-hover:bg-slate-900/25"></div>
-                                <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white shadow-xl border-4 border-white relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+
+                            <p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
+                                {{ service.description }}
+                            </p>
+
+                            <div class="mt-auto pt-4 border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex gap-2 flex-wrap">
+                                    {% if service.profile.location %}
+                                        <span class="px-3 py-1.5 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">location_on</span>
+                                            {{ service.profile.location }}
+                                        </span>
+                                    {% endif %}
+                                    {% if service.profile.field_of_interest %}
+                                        <span class="px-3 py-1.5 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">
+                                            {{ service.profile.field_of_interest }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="px-5 py-2 rounded-xl bg-surface-container border border-outline-variant/50 text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors">
+                                        {% trans "View" %}
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{% url 'chat_with' service.profile.user.id %}" class="px-5 py-2 rounded-xl primary-gradient text-white font-label-sm text-label-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
+                                        </a>
+                                    {% else %}
+                                        <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" class="px-5 py-2 rounded-xl primary-gradient text-white font-label-sm text-label-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+
+                <!-- Service Card: Avatar-focused (No Gallery) -->
+                <div class="animate-entrance group" style="animation-delay: {{ forloop.counter|add:2 }}00ms;">
+                    <div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,94,181,0.15)] magic-ease border border-outline-variant/40">
+
+                        <!-- Visual Header -->
+                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block h-56 primary-gradient relative flex items-center justify-center overflow-hidden">
+                            <!-- Abstract Pattern -->
+                            <div class="absolute inset-0 opacity-10">
+                                <svg height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" width="100%">
+                                    <defs>
+                                        <pattern height="10" id="grid-{{ service.id }}" patternUnits="userSpaceOnUse" width="10">
+                                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"></path>
+                                        </pattern>
+                                    </defs>
+                                    <rect fill="url(#grid-{{ service.id }})" height="100%" width="100%"></rect>
+                                </svg>
+                            </div>
+
+                            <!-- Animated Avatar -->
+                            <div class="relative z-10 group-hover:scale-105 transition-transform duration-500">
+                                <div class="avatar-ring absolute -inset-6 border border-white/20 rounded-full"></div>
+                                <div class="avatar-ring absolute -inset-10 border border-white/10 rounded-full" style="animation-direction: reverse; animation-duration: 20s;"></div>
+
+                                <div class="w-32 h-32 rounded-full border-[5px] border-white/80 shadow-2xl overflow-hidden relative bg-white">
                                     {% if service.profile.user.avatar %}
                                         <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="w-full h-full object-cover">
                                     {% else %}
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100">
-                                            <span class="text-[#0A66C2] font-black text-4xl md:text-5xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
+                                        <div class="w-full h-full flex items-center justify-center bg-primary/5 text-primary font-black text-5xl">
+                                            {{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}
                                         </div>
                                     {% endif %}
                                 </div>
                             </div>
-                            
-                            <!-- Premium hover overlay -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </a>
-                    {% endif %}
 
-                    <!-- Service Content -->
-                    <div class="p-5 md:p-6 flex-1 flex flex-col">
-                        <!-- Provider Info - Clean Header -->
-                        <div class="flex items-center gap-3 mb-4">
-                            <a href="{% url 'public_profile' service.profile.slug %}" class="avatar-circle group/avatar">
-                                {% if service.profile.user.avatar %}
-                                    <img src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}" class="transition-transform duration-300 group-hover/avatar:scale-105">
-                                {% else %}
-                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-                                        <span class="text-[#0A66C2] font-black text-lg">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</span>
-                                    </div>
-                                {% endif %}
-                            </a>
-                            <div class="min-w-0 flex-1">
-                                <a href="{% url 'public_profile' service.profile.slug %}" class="text-[15px] md:text-[16px] font-black text-slate-900 hover:text-[#0A66C2] transition-colors truncate block leading-tight">
-                                    {{ service.profile.user.full_name|default:"Unknown" }}
+                        <!-- Card Content -->
+                        <div class="p-6 sm:p-8 flex flex-col flex-1">
+                            <div class="flex flex-col mb-4">
+                                <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}">
+                                    <h3 class="font-headline-md text-[18px] sm:text-headline-md text-on-surface hover:text-primary transition-colors line-clamp-2 leading-snug">{{ service.title }}</h3>
                                 </a>
-                                <span class="text-[12.5px] text-slate-500 font-semibold truncate block leading-tight">
-                                    {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}
-                                </span>
+                                <a href="{% url 'public_profile' service.profile.slug %}" class="font-label-sm text-label-sm text-primary mt-1 hover:underline">
+                                    {{ service.profile.user.full_name|default:"Unknown" }} <span class="text-on-surface-variant font-normal">&bull; {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}</span>
+                                </a>
                             </div>
-                        </div>
 
-                        <!-- Service Title -->
-                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block mb-3">
-                            <h3 class="text-[17px] md:text-[18px] font-black text-slate-900 leading-snug hover:text-[#0A66C2] transition-colors line-clamp-2 tracking-tight font-heading">
-                                {{ service.title }}
-                            </h3>
-                        </a>
-
-                        <!-- Service Description -->
-                        <div class="mb-4 flex-grow">
-                            <p class="text-[13.5px] md:text-[14px] text-slate-600 leading-relaxed line-clamp-3 font-medium">
+                            <p class="text-on-surface-variant font-body-md mb-6 line-clamp-3">
                                 {{ service.description }}
                             </p>
-                        </div>
 
-                        <!-- Meta Info -->
-                        <div class="flex items-center gap-3 mb-4 text-[12px] text-slate-500 font-semibold">
-                            {% if service.profile.location %}
-                                <span class="flex items-center gap-1.5">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
-                                    {{ service.profile.location }}
-                                </span>
-                            {% endif %}
-                        </div>
+                            <div class="mt-auto pt-4 border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex gap-2 flex-wrap">
+                                    {% if service.profile.location %}
+                                        <span class="px-3 py-1.5 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">location_on</span>
+                                            {{ service.profile.location }}
+                                        </span>
+                                    {% endif %}
+                                </div>
 
-                        <!-- Action Buttons -->
-                        <div class="grid grid-cols-2 gap-2.5 mt-auto pt-3 border-t border-slate-100">
-                            <!-- View Service Button -->
-                            <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
-                                <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
-                                <span class="truncate">{% trans "View" %}</span>
-                            </a>
-
-                            <!-- Request Button (Opens Chat) -->
-                            {% if request.user.is_authenticated %}
-                                <a href="{% url 'chat_with' service.profile.user.id %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
-                                    <i data-lucide="send" class="w-4 h-4 text-white/90 shrink-0"></i>
-                                    <span class="truncate">{% trans "Request" %}</span>
-                                </a>
-                            {% else %}
-                                <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" aria-label="{% trans 'Request service' %}" class="flex items-center justify-center gap-2 bg-gradient-to-tr from-[#0A66C2] to-blue-500 hover:from-blue-600 hover:to-[#0856A8] text-white font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-[0_4px_12px_rgba(10,102,194,0.25)] hover:shadow-[0_6px_16px_rgba(10,102,194,0.4)] hover:-translate-y-0.5 border border-transparent">
-                                    <i data-lucide="send" class="w-4 h-4 text-white/90 shrink-0"></i>
-                                    <span class="truncate">{% trans "Request" %}</span>
-                                </button>
-                            {% endif %}
+                                <div class="flex gap-2 w-full sm:w-auto">
+                                    <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-xl bg-surface-container border border-outline-variant/50 text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors">
+                                        {% trans "View" %}
+                                    </a>
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{% url 'chat_with' service.profile.user.id %}" class="flex-1 sm:flex-none justify-center px-5 py-2.5 rounded-xl primary-gradient text-white font-label-sm text-label-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
+                                        </a>
+                                    {% else %}
+                                        <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" class="flex-1 sm:flex-none justify-center px-5 py-2.5 rounded-xl primary-gradient text-white font-label-sm text-label-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </article>
+                </div>
+
+                {% endif %}
 
             {% empty %}
-                <div class="col-span-full empty-state">
-                    <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[2rem] flex items-center justify-center mb-5 border border-blue-100 shadow-inner mx-auto">
-                        <i data-lucide="briefcase" class="w-10 h-10 text-[#0A66C2]"></i>
-                    </div>
-                    <h3 class="text-[20px] font-black text-slate-900 mb-2">{% trans "No services found" %}</h3>
-                    <p class="text-[14.5px] text-slate-500 max-w-md mb-8 font-medium leading-relaxed mx-auto">
+                <!-- Empty State -->
+                <div class="col-span-full animate-entrance">
+                    <div class="glass-card rounded-[32px] p-12 text-center flex flex-col items-center justify-center border-dashed border-2 border-outline-variant/50 shadow-sm max-w-2xl mx-auto mt-8">
+                        <div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <span class="material-symbols-outlined text-[48px] text-primary">search_off</span>
+                        </div>
+                        <h3 class="font-headline-lg text-[24px] sm:text-[28px] text-on-surface mb-3">{% trans "No services found" %}</h3>
+                        <p class="font-body-md text-on-surface-variant max-w-md mx-auto mb-8">
+                            {% if search_query %}
+                                {% trans "We couldn't find any services matching your search. Try adjusting your keywords or category." %}
+                            {% else %}
+                                {% trans "There are currently no services available. Check back later!" %}
+                            {% endif %}
+                        </p>
                         {% if search_query %}
-                            {% trans "No services match your search. Try different keywords." %}
-                        {% else %}
-                            {% trans "There are currently no services available." %}
+                            <a href="{% url 'service_feed' %}" class="px-8 py-3 rounded-[16px] bg-surface-container-high text-on-surface font-label-sm text-label-sm hover:bg-outline-variant/30 transition-colors flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">refresh</span> {% trans "Clear Search" %}
+                            </a>
                         {% endif %}
-                    </p>
-                    {% if search_query %}
-                        <a href="{% url 'service_feed' %}" class="px-6 py-3.5 bg-white border border-slate-200/90 rounded-xl text-slate-700 font-bold hover:text-[#0A66C2] hover:border-blue-200 transition-colors active:scale-95 text-[13px] md:text-[14px] shadow-sm inline-flex items-center gap-2">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> {% trans "Clear Search" %}
-                        </a>
-                    {% endif %}
+                    </div>
                 </div>
             {% endfor %}
-        </div>
+        </section>
 
-        <!-- PAGINATION -->
+        <!-- Pagination -->
         {% if services.has_other_pages %}
-            <div class="flex justify-center pt-10 pb-8 px-4 md:px-0">
-                <div class="flex gap-2">
+            <div class="flex justify-center mt-16 animate-entrance" style="animation-delay: 0.8s;">
+                <div class="inline-flex items-center gap-2 glass-card p-2 rounded-2xl">
                     {% if services.has_previous %}
-                        <a href="?q={{ search_query }}&page={{ services.previous_page_number }}" class="px-5 py-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-[13.5px] font-bold text-slate-600 hover:bg-slate-50 transition-all">
-                            {% trans "Previous" %}
+                        <a href="?q={{ search_query }}&page={{ services.previous_page_number }}" class="px-6 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-sm text-label-sm flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span> {% trans "Previous" %}
                         </a>
+                    {% else %}
+                        <span class="px-6 py-2.5 rounded-xl text-outline/50 font-label-sm text-label-sm flex items-center gap-1 cursor-not-allowed">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span> {% trans "Previous" %}
+                        </span>
                     {% endif %}
+
+                    <div class="w-[1px] h-6 bg-outline-variant/30 mx-2"></div>
+
                     {% if services.has_next %}
-                        <a href="?q={{ search_query }}&page={{ services.next_page_number }}" class="px-5 py-2.5 bg-slate-900 border border-slate-900 shadow-sm rounded-xl text-[13.5px] font-bold text-white hover:bg-black transition-all">
-                            {% trans "Next" %}
+                        <a href="?q={{ search_query }}&page={{ services.next_page_number }}" class="px-6 py-2.5 rounded-xl primary-gradient text-white shadow-md hover:shadow-lg transition-all active:scale-95 font-label-sm text-label-sm flex items-center gap-1">
+                            {% trans "Next" %} <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                         </a>
+                    {% else %}
+                        <span class="px-6 py-2.5 rounded-xl text-outline/50 font-label-sm text-label-sm flex items-center gap-1 cursor-not-allowed">
+                            {% trans "Next" %} <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        </span>
                     {% endif %}
                 </div>
             </div>
         {% endif %}
 
     </div>
-</main>
 
-<!-- MOBILE BOTTOM NAVIGATION -->
-{% if not is_inspector and request.user.is_authenticated %}
-<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+    <!-- Mobile BottomNavBar (Authenticated Only) -->
+    {% if not is_inspector and request.user.is_authenticated %}
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 w-full h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-surface/90 backdrop-blur-[20px] border-t border-outline-variant/30 flex justify-around items-center px-2 z-50 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] prevent-select">
+        <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors w-full h-full gap-1 pt-1">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-label-sm text-[10px] font-bold">{% trans "Profile" %}</span>
+        </a>
+        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors w-full h-full gap-1 pt-1">
+            <span class="material-symbols-outlined">explore</span>
+            <span class="font-label-sm text-[10px] font-bold">{% trans "Discover" %}</span>
+        </a>
+        <a href="{% url 'service_feed' %}" class="flex flex-col items-center justify-center text-primary relative w-full h-full gap-1 pt-1">
+            <div class="absolute top-0 w-10 h-1 bg-primary rounded-b-full"></div>
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">work</span>
+            <span class="font-label-sm text-[10px] font-black">{% trans "Services" %}</span>
+        </a>
+        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors w-full h-full gap-1 pt-1">
+            <span class="material-symbols-outlined">business_center</span>
+            <span class="font-label-sm text-[10px] font-bold">{% trans "Projects" %}</span>
+        </a>
+        <a href="/messages/" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors w-full h-full gap-1 pt-1 relative">
+            <div class="relative">
+                <span class="material-symbols-outlined">mail</span>
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute -top-1.5 -right-2 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-error text-white text-[9px] font-bold rounded-full border border-surface">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </div>
+            <span class="font-label-sm text-[10px] font-bold">{% trans "Inbox" %}</span>
+        </a>
+    </nav>
+    {% endif %}
 
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "My profile" %}</span>
-    </a>
+</div>
 
-    <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Discover" %}</span>
-    </a>
+<!-- Micro-interaction Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Intersection Observer for scroll animations if they are far down
+        const observerOptions = {
+            threshold: 0.05,
+            rootMargin: "0px 0px -50px 0px"
+        };
 
-    <a href="{% url 'service_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
-        <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
-        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-black whitespace-nowrap">{% trans "Services" %}</span>
-    </a>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Ensure elements that enter viewport trigger their animation
+                    entry.target.style.opacity = "1";
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
-    <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all">
-        <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Opportunities" %}</span>
-    </a>
-
-    <a href="/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 transition-all relative">
-        <div class="relative">
-            <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
-            {% if unread_msg_count > 0 %}<span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white">{% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}</span>{% endif %}
-        </div>
-        <span class="text-[11px] font-bold whitespace-nowrap">{% trans "Inbox" %}</span>
-    </a>
-</nav>
-{% endif %}
+        document.querySelectorAll('.animate-entrance').forEach(el => observer.observe(el));
+    });
+</script>
 {% endblock content %}
