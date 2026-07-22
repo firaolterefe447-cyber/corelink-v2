@@ -1065,4 +1065,4 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
             email_message.send(fail_silently=False)
         
         # Always show success message for security (don't reveal if email exists)
-        return super().form_valid(form)
+        return redirect(self.success_url)
