@@ -1044,7 +1044,7 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 "domain": self.request.get_host(),
                 "reset_link": reset_link,
                 "full_name": user.full_name or "there",
-                "expiry_hours": 24,
+                "expiry_minutes": 15,
                 "support_email": settings.DEFAULT_FROM_EMAIL,
                 "user": user,
             }
