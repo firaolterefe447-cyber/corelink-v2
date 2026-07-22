@@ -1032,7 +1032,7 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 "uid": str(user.id),
                 "email": user.email.lower(),
             }
-            token = signing.dumps(payload, salt="accounts.password-reset", max_age=900)  # 15 minutes
+            token = signing.dumps(payload, salt="accounts.password-reset")
 
             # Build reset link
             reset_link = self.request.build_absolute_uri(
@@ -1081,7 +1081,7 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     def get_user(self, uidb64):
         # Override to use signed token instead of uidb64
         try:
-            payload = signing.loads(self.kwargs['token'], salt="accounts.password-reset", max_age=900)
+            payload = signing.loads(self.kwargs['token'], salt="accounts.password-reset", max_age=900)  # 15 minutes
             token_uid = payload.get("uid")
             token_email = payload.get("email")
             user = CustomUser.objects.filter(pk=token_uid).first()
