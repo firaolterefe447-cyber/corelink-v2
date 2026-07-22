@@ -865,4 +865,4 @@ def admin_curation_view(request):
         'not_selected_posts': not_selected_posts,
     }
 
-    return render(request, 'network/admin_curation.html', context)
+    return render(request, 'admin/admin_curation.html', context)
