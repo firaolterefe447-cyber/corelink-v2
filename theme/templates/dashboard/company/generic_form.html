@@ -707,13 +707,15 @@
                                     {% endif %}
                                     <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
                                     <div class="absolute inset-0 bg-slate-900/50 opacity-0 group-active:opacity-100 sm:group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                                        <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 active:scale-100 sm:group-hover:scale-100 touch-manipulation">
+                                        <!-- Fixed: Passes explicit event to override browser form submit behavior -->
+                                        <button type="button" onclick="toggleDeleteExisting(event, '{{ media.pk }}')" class="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 active:scale-100 sm:group-hover:scale-100 touch-manipulation">
                                             <i data-lucide="trash-2" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                         </button>
                                     </div>
                                 </div>
                                 {% endfor %}
                             {% endif %}
+
                             <!-- BUG FIX: Changed from <button> to <label>. Ensures the browser NEVER accidentally navigates away -->
                             <label for="gallery-upload" id="gallery-add-btn" class="aspect-square rounded-lg sm:rounded-[0.85rem] bg-slate-50 hover:bg-blue-50 active:bg-blue-100 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 active:text-blue-600 transition-colors border-2 border-dashed border-slate-300 hover:border-blue-300 cursor-pointer touch-manipulation">
                                 <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 text-lg pointer-events-none">+</div>
@@ -830,7 +832,6 @@
             dw.classList.add('drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
-    } else { closeAllDrawers(); }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -913,19 +914,19 @@
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
                 const spinner = document.getElementById('submit-spinner');
-                
+
                 setTimeout(() => {
                     btn.classList.add('btn-loading');
                     btn.style.transform = 'scale(0.98)';
                     text.style.opacity = '0';
-                    icon.style.display = 'none';
+                    if (icon) icon.style.display = 'none';
                     spinner.style.display = 'inline-block';
                 }, 10);
             });
         }
 
         // =========================================================
-        // ROBUST ASSET VAULT GALLERY (FIXED BUGS)
+        // ROBUST ASSET VAULT GALLERY (100% BULLETPROOF)
         // =========================================================
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
@@ -933,7 +934,7 @@
 
         if (fileInput && galleryGrid && addBtn) {
             let queuedFiles = [];
-            const maxFileSize = 12 * 1024 * 1024; // 12MB limit protects against browser crashes
+            const maxFileSize = 12 * 1024 * 1024; // Generous 12MB limit protects against browser crashes
 
             fileInput.addEventListener('change', function(e) {
                 if (!e.target.files || e.target.files.length === 0) return;
@@ -971,6 +972,7 @@
                 queuedFiles.forEach((file, index) => {
                     // Fix missing previews: Mobile browsers sometimes drop the MIME type. Regex check fixes this.
                     const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name);
+                    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
                     const div = document.createElement('div');
                     div.className = 'queued-image relative group aspect-square rounded-[0.85rem] overflow-hidden shadow-sm bg-white border-2 border-[#0A66C2] flex items-center justify-center';
@@ -979,25 +981,22 @@
                     galleryGrid.insertBefore(div, addBtn);
 
                     if (isImage) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            div.innerHTML = `
-                                <img src="${e.target.result}" class="w-full h-full object-cover animate-fade-in" alt="preview">
-                                <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                </button>
-                            `;
-                        };
-                        // Read file data safely
-                        reader.readAsDataURL(file);
+                        // ZERO-MEMORY OBJECT URL: Prevents iOS/Android Chrome from crashing on heavy files
+                        const objectUrl = URL.createObjectURL(file);
+                        div.innerHTML = `
+                            <img src="${objectUrl}" class="w-full h-full object-cover animate-fade-in" alt="preview" onload="URL.revokeObjectURL(this.src)">
+                            <button type="button" onclick="removeQueuedFile(event, ${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        `;
                     } else {
-                        // Fallback UI for non-image files
+                        // PDF Document / Fallback UI
                         div.innerHTML = `
                             <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">FILE</span>
+                                <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">${isPDF ? 'PDF' : 'FILE'}</span>
                             </div>
-                            <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
+                            <button type="button" onclick="removeQueuedFile(event, ${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         `;
@@ -1014,14 +1013,21 @@
                 }
             }
 
-            window.removeQueuedFile = function(index) {
-                if(window.event) window.event.preventDefault();
+            // Explicitly map functions globally with explicit Event Object handling
+            window.removeQueuedFile = function(e, index) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 queuedFiles.splice(index, 1);
                 updateGalleryUI();
             };
 
-            window.toggleDeleteExisting = function(mediaPk) {
-                if(window.event) window.event.preventDefault();
+            window.toggleDeleteExisting = function(e, mediaPk) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 const checkbox = document.getElementById(`delete-${mediaPk}`);
                 const wrapper = document.getElementById(`existing-wrapper-${mediaPk}`);
 
