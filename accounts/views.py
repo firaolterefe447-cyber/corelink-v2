@@ -1025,20 +1025,22 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
         email = form.cleaned_data["email"]
         # Find user by email (case-insensitive)
         user = CustomUser.objects.filter(email__iexact=email).first()
-        
+
         if user and user.email:
-            # Generate token and uid
-            token = self.token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            
+            # Use signing approach (same as email verification) for reliability
+            payload = {
+                "uid": str(user.id),
+                "email": user.email.lower(),
+            }
+            token = signing.dumps(payload, salt="accounts.password-reset", max_age=900)  # 15 minutes
+
             # Build reset link
             reset_link = self.request.build_absolute_uri(
-                f"/password/reset/confirm/{uid}/{token}/"
+                f"/password/reset/confirm/{token}/"
             )
-            
+
             context = {
                 "email": user.email,
-                "uid": uid,
                 "token": token,
                 "protocol": "https" if self.request.is_secure() else "http",
                 "domain": self.request.get_host(),
@@ -1048,12 +1050,12 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
                 "support_email": settings.DEFAULT_FROM_EMAIL,
                 "user": user,
             }
-            
+
             # Render email content
             subject = render_to_string(self.subject_template_name, context).strip()
             html_content = render_to_string(self.email_template_name, context)
             text_content = strip_tags(html_content)
-            
+
             # Send email
             email_message = EmailMultiAlternatives(
                 subject=subject,
@@ -1063,6 +1065,35 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
             )
             email_message.attach_alternative(html_content, "text/html")
             email_message.send(fail_silently=False)
-        
+
         # Always show success message for security (don't reveal if email exists)
         return redirect(self.success_url)
+
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    """
+    Custom password reset confirm view that uses signed tokens (like email verification).
+    """
+    template_name = "auth/password_reset_confirm.html"
+    success_url = "/password/reset/complete/"
+    post_reset_login = True
+
+    def get_user(self, uidb64):
+        # Override to use signed token instead of uidb64
+        try:
+            payload = signing.loads(self.kwargs['token'], salt="accounts.password-reset", max_age=900)
+            token_uid = payload.get("uid")
+            token_email = payload.get("email")
+            user = CustomUser.objects.filter(pk=token_uid).first()
+            if user and user.email and user.email.lower() == token_email:
+                return user
+        except (SignatureExpired, BadSignature):
+            pass
+        return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        user = self.get_user(None)
+        if user:
+            kwargs['user'] = user
+        return kwargs
