@@ -1019,6 +1019,7 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
     subject_template_name = "emails/password_reset_subject.txt"
     success_url = "/password/reset/done/"
     html_email_template_name = "emails/password_reset_email.html"
+    from_email = settings.DEFAULT_FROM_EMAIL
 
     def form_valid(self, form):
         email = form.cleaned_data["email"]
