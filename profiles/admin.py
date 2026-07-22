@@ -26,7 +26,6 @@ from .models import (
     UserProfile, ProfileHeadline, Skill, Credential,
     PortfolioProject, ProjectGallery, WorkExperience,
     ContentPost, UnifiedJobPreference, LiveOpportunity, Language,
-    Service, ServiceGallery,
 
     # Right Now Ecosystem
     RightNowPost, RightNowMedia, RightNowLike, RightNowComment,
@@ -171,31 +170,6 @@ class LanguageInline(TabularInline):
     tab = True
     fields = ('language_code', 'custom_language_name', 'proficiency', 'is_primary')
 
-class ServiceGalleryInline(TabularInline):
-    model = ServiceGallery
-    extra = 1
-    tab = True
-    fields = ('image_preview', 'image', 'caption', 'order')
-    readonly_fields = ('image_preview',)
-
-    @display(description='Preview')
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" class="h-12 w-auto rounded border border-gray-200 shadow-sm" />', obj.image.url)
-        return "-"
-
-class ServiceInline(StackedInline):
-    model = Service
-    extra = 1
-    tab = True
-    fields = ('title', 'description', 'is_active', 'order')
-    verbose_name = "Service"
-    verbose_name_plural = "Services (Quick Add)"
-    
-    # Include gallery inline for easy file uploads
-    inlines = [ServiceGalleryInline]
-
-
 # UniversalSocialLink and UniversalContactMethod belong to CustomUser, not UserProfile
 # They should be managed in accounts/admin.py, not here
 
@@ -300,7 +274,6 @@ class UserProfileAdmin(ModelAdmin):
         LanguageInline,
         UnifiedJobPreferenceInline,
         LiveOpportunityInline,
-        ServiceInline,
     ]
 
     # Note: UniversalSocialLink and UniversalContactMethod are managed in accounts/admin.py
@@ -714,59 +687,6 @@ class LiveOpportunityAdmin(ModelAdmin):
             return format_html('<span class="text-emerald-500 font-bold">🟢 Broadcasting</span>')
 
         return format_html('<span class="text-gray-400 font-semibold">⏏ Expired</span>')
-
-
-# ==============================================================================
-# 8. USER SERVICES ADMINS (NEW - distinct from Company Services)
-# ==============================================================================
-
-@admin.register(Service)
-class ServiceAdmin(ModelAdmin):
-    list_display = ('title', 'profile_link', 'is_active_badge', 'gallery_count', 'created_at')
-    list_filter = ('is_active', 'created_at')
-    search_fields = ('title', 'description', 'profile__user__email')
-    autocomplete_fields = ['profile']
-    inlines = [ServiceGalleryInline]
-
-    fieldsets = (
-        (None, {'fields': ('profile', 'title', 'description')}),
-        ('Settings', {'fields': (('is_active', 'order'),)}),
-    )
-
-    @display(description=_("Profile"))
-    def profile_link(self, obj):
-        url = get_admin_url(obj.profile)
-        name = getattr(obj.profile.user, 'full_name', str(obj.profile.user))
-        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, name)
-
-    @display(description="Status")
-    def is_active_badge(self, obj):
-        if obj.is_active:
-            return format_html('<span class="bg-emerald-500 text-white px-2 py-1 rounded text-xs font-semibold">Active</span>')
-        return format_html('<span class="bg-gray-400 text-white px-2 py-1 rounded text-xs font-semibold">Inactive</span>')
-
-    @display(description="Images")
-    def gallery_count(self, obj):
-        return obj.gallery.count()
-
-
-@admin.register(ServiceGallery)
-class ServiceGalleryAdmin(ModelAdmin):
-    list_display = ('service_link', 'image_preview', 'caption', 'order')
-    list_filter = ('service',)
-    search_fields = ('caption', 'service__title')
-    autocomplete_fields = ['service']
-
-    @display(description=_("Service"))
-    def service_link(self, obj):
-        url = get_admin_url(obj.service)
-        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.service.title)
-
-    @display(description='Image')
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" class="h-10 w-auto rounded border border-gray-200 shadow-sm" />', obj.image.url)
-        return "-"
 
 
 # ==============================================================================

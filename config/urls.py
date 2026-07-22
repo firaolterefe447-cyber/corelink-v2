@@ -27,6 +27,7 @@ urlpatterns += i18n_patterns(
     path("", include("accounts.urls")),  # Contains Auth & Onboarding (/login, /join)
     path("", include("chat.urls")),  # Contains chat messaging
     path("", include("profiles.urls")),  # Profiles and dashboard
+    path("", include("services.urls")),  # Services management
     path("nexus/", include("network.urls")),  # Your already clean Network App
     path(
         "opportunities/", include("opportunities.urls")

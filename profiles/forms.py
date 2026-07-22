@@ -26,8 +26,7 @@ except ImportError:
 
 from profiles.models.user_profile import (
     UserProfile, ProfileHeadline, Skill, Credential, PortfolioProject, RightNowPost, RightNowMedia,
-    ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity, Language,
-    Service, ServiceGallery
+    ProjectGallery, WorkExperience, ContentPost, UnifiedJobPreference, LiveOpportunity, Language
 )
 
 from profiles.models import (
@@ -611,72 +610,6 @@ class JobPreferenceForm(TailwindFormMixin, forms.ModelForm):
             'commitment_type': _("Are you seeking full-time, part-time, or contract-based opportunities?"),
             'description': _("Describe the type of work environment, team culture, or industry challenges you want to tackle."),
         }
-
-
-class ServiceForm(TailwindFormMixin, forms.ModelForm):
-    """Form for user services - distinct from company services."""
-    class Meta:
-        model = Service
-        fields = ['title', 'description', 'is_active']
-
-        labels = {
-            'title': _("Service Title"),
-            'description': _("Service Description"),
-            'is_active': _("Currently Available"),
-        }
-
-        help_texts = {
-            'title': _("The name of the service you offer (e.g., 'Web Development', 'Business Consulting', 'Graphic Design')."),
-            'description': _("Provide a detailed explanation of your service, what you deliver, and how you help clients."),
-            'is_active': _("Uncheck this if you're not currently accepting new requests for this service."),
-        }
-
-        widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'e.g., Professional Photography Services'}),
-            'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Describe your service in detail...', 'class': 'markdown-editor'}),
-        }
-
-    def clean_title(self):
-        """Ensure title is meaningful."""
-        title = self.cleaned_data.get('title', '').strip()
-        if not title:
-            raise ValidationError(_("Service title is required."))
-        if len(title) < 3:
-            raise ValidationError(_("Service title should be at least 3 characters."))
-        return title
-
-    def clean_description(self):
-        """Ensure meaningful description."""
-        desc = self.cleaned_data.get('description', '').strip()
-        if not desc:
-            raise ValidationError(_("Service description is required. Tell us about your service."))
-        if len(desc) < 20:
-            raise ValidationError(_("Description should be at least 20 characters. Share more details!"))
-        return desc
-
-
-class ServiceGalleryForm(TailwindFormMixin, forms.ModelForm):
-    """Form for adding images to service gallery."""
-    class Meta:
-        model = ServiceGallery
-        fields = ['image', 'caption', 'order']
-
-        labels = {
-            'image': _("Upload Image"),
-            'caption': _("Image Caption"),
-            'order': _("Display Order"),
-        }
-
-        help_texts = {
-            'image': _("Upload an image showcasing your service work."),
-            'caption': _("Optional: Add a brief description for this image."),
-            'order': _("Lower numbers appear first in the gallery."),
-        }
-
-        widgets = {
-            'caption': forms.TextInput(attrs={'placeholder': 'e.g., Before and after of our work'}),
-        }
-
 
 # ==============================================================================
 # 4. COMPANY & ADMIN FORMS (UNIVERSAL & PROFESSIONAL)

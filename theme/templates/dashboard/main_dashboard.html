@@ -725,11 +725,11 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-2 w-full">
                     <h3 class="font-heading text-[1.2rem] md:text-[1.3rem] font-extrabold text-slate-900 tracking-[-0.02em] leading-none cursor-default">{% trans "Services" %}</h3>
                     <div class="flex flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                        <a href="{% url 'manage_services' %}" class="btn-manage-text">
+                        <a href="{% url 'services:manage_services' %}" class="btn-manage-text">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Manage" %}</span>
                         </a>
-                        <a href="{% url 'service_create' %}" class="btn-add-solid flex-1 sm:flex-none">
+                        <a href="{% url 'services:service_create' %}" class="btn-add-solid flex-1 sm:flex-none">
                             <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
                             <span class="pointer-events-none">{% trans "Add Service" %}</span>
                         </a>
@@ -742,7 +742,7 @@
                     {% if services %}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {% for service in services|slice:":4" %}
-                            <a href="{% url 'manage_services' %}" class="rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/service cursor-pointer p-5">
+                            <a href="{% url 'services:manage_services' %}" class="rounded-xl overflow-hidden relative block border border-slate-200/80 hover:border-[#0A66C2] transition-colors bg-white group/service cursor-pointer p-5">
                                 <div class="flex items-start gap-4">
                                     {% if service.gallery.first %}
                                         <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
@@ -770,7 +770,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <a href="{% url 'service_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                        <a href="{% url 'services:service_create' %}" class="group block w-full rounded-xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-blue-300 transition-colors p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
                             <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors pointer-events-none"><i data-lucide="briefcase" class="w-6 h-6"></i></div>
                             <h4 class="font-bold text-slate-700 text-[15px] group-hover:text-blue-600 transition-colors pointer-events-none">{% trans "Add your services" %}</h4>
                         </a>

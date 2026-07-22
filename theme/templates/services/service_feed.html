@@ -384,7 +384,7 @@
                     
                     <!-- Gallery Section (Prioritized) -->
                     {% if service.gallery.all %}
-                        <a href="{% url 'feed_service_detail' service.id %}" class="block">
+                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block">
                             {% with count=service.gallery.count %}
                             <div class="gallery-grid">
                                 {% if count == 1 %}
@@ -429,7 +429,7 @@
                         </a>
                     {% else %}
                         <!-- No Gallery - Premium Circular Avatar Design -->
-                        <a href="{% url 'feed_service_detail' service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group rounded-t-[1.5rem]">
+                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block aspect-[4/3] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 flex items-center justify-center relative overflow-hidden group rounded-t-[1.5rem]">
                             
                             <!-- Animated decorative rings -->
                             <div class="absolute inset-0 flex items-center justify-center">
@@ -481,7 +481,7 @@
                         </div>
 
                         <!-- Service Title -->
-                        <a href="{% url 'feed_service_detail' service.id %}" class="block mb-3">
+                        <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block mb-3">
                             <h3 class="text-[17px] md:text-[18px] font-black text-slate-900 leading-snug hover:text-[#0A66C2] transition-colors line-clamp-2 tracking-tight font-heading">
                                 {{ service.title }}
                             </h3>
@@ -507,7 +507,7 @@
                         <!-- Action Buttons -->
                         <div class="grid grid-cols-2 gap-2.5 mt-auto pt-3 border-t border-slate-100">
                             <!-- View Service Button -->
-                            <a href="{% url 'feed_service_detail' service.id %}" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
+                            <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="flex items-center justify-center gap-2 bg-white border-[1.5px] border-slate-200 hover:border-[#0A66C2]/40 hover:bg-blue-50 text-slate-700 hover:text-[#0A66C2] font-bold text-[13px] py-3 rounded-[0.85rem] transition-all duration-300 active:scale-95 shadow-sm">
                                 <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
                                 <span class="truncate">{% trans "View" %}</span>
                             </a>

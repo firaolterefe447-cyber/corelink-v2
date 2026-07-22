@@ -1,3 +1,285 @@
-from django.shortcuts import render
+"""
+Service Views - Professional services offered by users
+"""
 
-# Create your views here.
+import logging
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import Http404
+from django.urls import reverse_lazy, reverse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from accounts.models import CustomUser
+from profiles.models.user_profile import UserProfile
+from .models import Service, ServiceGallery
+from .forms import ServiceForm, ServiceGalleryForm
+
+logger = logging.getLogger(__name__)
+
+
+# Mixins for security and functionality
+class RoleAwareFormMixin:
+    """Injects the request.user into the form so it dynamically adapts to roles."""
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class PortfolioSecurityMixin(LoginRequiredMixin):
+    """Locks queries so users can only ever view/edit/delete their own portfolio blocks."""
+    def get_queryset(self):
+        # Handle models that might not have a profile field
+        if hasattr(self.model, 'profile'):
+            return self.model.objects.filter(profile__user=self.request.user)
+        # For models with direct user relationship
+        elif hasattr(self.model, 'user'):
+            return self.model.objects.filter(user=self.request.user)
+        else:
+            # For nested models (like ServiceGallery), filter through parent
+            return self.model.objects.all()
+
+
+class PortfolioCreateMixin:
+    """Automatically attaches the user's portfolio to the object being created."""
+    def form_valid(self, form):
+        # 1. Get or create the user's profile
+        portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+        # 2. Attach the profile to the form instance before saving
+        form.instance.profile = portfolio
+        messages.success(self.request, "Added successfully.")
+        response = super().form_valid(form)
+        # 3. TRANSACTION-SAFE: Queue Oracle update after transaction commits
+        from profiles.automatic_rating import CoreLinkOracle
+        try:
+            transaction.on_commit(lambda: CoreLinkOracle.update_user_rating(self.request.user.id))
+            logger.info(f"[ORACLE QUEUED] Oracle update queued for user {self.request.user.id} after creating {form.instance.__class__.__name__}")
+        except Exception as e:
+            logger.error(f"[ORACLE QUEUED] Failed to queue update for user {self.request.user.id}: {str(e)}", exc_info=True)
+        return response
+
+
+class OracleUpdateMixin:
+    """
+    TRANSACTION-SAFE FALLBACK: Queues Oracle update after any profile modification.
+    This ensures scores update even if Django signals fail to fire, while respecting DB locks.
+    """
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Queue Oracle update after transaction commits (prevents race conditions)
+        from profiles.automatic_rating import CoreLinkOracle
+        try:
+            user_id = self.request.user.id
+            transaction.on_commit(lambda: CoreLinkOracle.update_user_rating(user_id))
+            logger.info(f"[ORACLE QUEUED] Oracle update queued for user {user_id} after updating {form.instance.__class__.__name__}")
+        except Exception as e:
+            logger.error(f"[ORACLE QUEUED] Failed to queue update for user {self.request.user.id}: {str(e)}", exc_info=True)
+        return response
+
+
+# --- SERVICES (User Services - distinct from Company Services) ---
+class ServiceListView(PortfolioSecurityMixin, ListView):
+    model = Service
+    template_name = 'services/service_list.html'
+    context_object_name = 'services'
+
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
+
+
+class ServiceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
+    model = Service
+    form_class = ServiceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('services:manage_services')
+
+    def get_queryset(self):
+        # Override to avoid filtering on create
+        return Service.objects.all()
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Get portfolio and attach to form
+            portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+            form.instance.profile = portfolio
+            
+            self.object = form.save()
+            
+            # Handle multiple image uploads for the gallery
+            uploaded_count = 0
+            for image in self.request.FILES.getlist('gallery_images'):
+                try:
+                    # Validate file size (10MB max)
+                    if image.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {image.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{image.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    ServiceGallery.objects.create(
+                        service=self.object,
+                        image=image
+                    )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {image.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{image.name}': {str(e)}")
+                    continue
+        
+        msg = "Service created successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} image(s) added to gallery."
+        messages.success(self.request, msg)
+        return redirect(self.get_success_url())
+
+
+class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
+    model = Service
+    form_class = ServiceForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+    success_url = reverse_lazy('services:manage_services')
+
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save()
+            
+            # Handle adding new gallery images
+            uploaded_count = 0
+            for image in self.request.FILES.getlist('gallery_images'):
+                try:
+                    # Validate file size (10MB max)
+                    if image.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {image.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{image.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    ServiceGallery.objects.create(
+                        service=self.object,
+                        image=image
+                    )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {image.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{image.name}': {str(e)}")
+                    continue
+            
+            # Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                ServiceGallery.objects.filter(id__in=delete_ids, service=self.object).delete()
+        
+        msg = "Service updated successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} image(s) added to gallery."
+        messages.success(self.request, msg)
+        return redirect(self.get_success_url())
+
+
+class ServiceDeleteView(PortfolioSecurityMixin, DeleteView):
+    model = Service
+    template_name = 'dashboard/shared/confirm_delete.html'
+    success_url = reverse_lazy('services:manage_services')
+
+    def get_queryset(self):
+        # Ensure user has a portfolio
+        if not hasattr(self.request.user, 'portfolio'):
+            return Service.objects.none()
+        return Service.objects.filter(profile=self.request.user.portfolio)
+
+
+class ServiceGalleryListView(PortfolioSecurityMixin, ListView):
+    model = ServiceGallery
+    template_name = 'services/service_gallery_list.html'
+    context_object_name = 'gallery_images'
+
+    def get_queryset(self):
+        # Filter gallery images for a specific service
+        service_id = self.kwargs.get('service_id')
+        if service_id:
+            return ServiceGallery.objects.filter(service_id=service_id, service__profile__user=self.request.user)
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service_id = self.kwargs.get('service_id')
+        if service_id:
+            context['service'] = get_object_or_404(Service, id=service_id, profile__user=self.request.user)
+        return context
+
+
+class ServiceGalleryCreateView(RoleAwareFormMixin, CreateView):
+    model = ServiceGallery
+    form_class = ServiceGalleryForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+
+    def get_success_url(self):
+        return reverse('services:manage_service_gallery', kwargs={'service_id': self.object.service.id})
+
+    def form_valid(self, form):
+        service_id = self.kwargs.get('service_id')
+        service = get_object_or_404(Service, id=service_id, profile__user=self.request.user)
+        form.instance.service = service
+        messages.success(self.request, "Gallery image added successfully.")
+        return super().form_valid(form)
+
+
+class ServiceGalleryUpdateView(OracleUpdateMixin, RoleAwareFormMixin, UpdateView):
+    model = ServiceGallery
+    form_class = ServiceGalleryForm
+    template_name = 'dashboard/portfolio/generic_form.html'
+
+    def get_success_url(self):
+        return reverse('services:manage_service_gallery', kwargs={'service_id': self.object.service.id})
+
+    def get_queryset(self):
+        return ServiceGallery.objects.filter(service__profile__user=self.request.user)
+
+
+class ServiceGalleryDeleteView(DeleteView):
+    model = ServiceGallery
+    template_name = 'dashboard/shared/confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('services:manage_service_gallery', kwargs={'service_id': self.object.service.id})
+
+    def get_queryset(self):
+        return ServiceGallery.objects.filter(service__profile__user=self.request.user)
+
+
+# Public Service Detail View
+def service_detail_view(request, identifier, pk):
+    """
+    Public Service Detail View.
+    Shows full service information including gallery and description.
+    """
+    # Get the user profile from identifier (slug or CoreLink ID)
+    target_user = None
+    portfolio = UserProfile.objects.filter(slug=identifier).first()
+    
+    if portfolio:
+        target_user = portfolio.user
+    else:
+        target_user = get_object_or_404(CustomUser, corelink_id=identifier)
+    
+    # Get the specific service
+    if not hasattr(target_user, 'portfolio') or not target_user.portfolio:
+        raise Http404("User profile not found")
+    service = get_object_or_404(Service, pk=pk, profile=target_user.portfolio)
+    
+    context = {
+        'profile': target_user.portfolio,
+        'user': target_user,
+        'service': service,
+    }
+    
+    return render(request, 'services/service_detail.html', context)

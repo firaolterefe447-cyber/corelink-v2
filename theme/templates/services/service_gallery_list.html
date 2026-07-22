@@ -99,25 +99,6 @@
 
     h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
-    /* =========================================
-       PRIMARY BUTTON (Matches Main Page)
-       ========================================= */
-    .btn-primary-gradient {
-        background: linear-gradient(135deg, #0952A5, #073E89);
-        color: #ffffff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(9, 82, 165, 0.28);
-        transition: all 0.2s ease-out;
-    }
-    .btn-primary-gradient:hover {
-        box-shadow: 0 6px 16px rgba(9, 82, 165, 0.38);
-        transform: translateY(-2px);
-    }
-    .btn-primary-gradient:active {
-        transform: translateY(0);
-        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
-    }
-
     /* Premium Buttons */
     .btn-profile-primary {
         background: linear-gradient(135deg, #0952A5, #073E89);
@@ -207,117 +188,86 @@
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Gallery Grid */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    @media (min-width: 768px) {
+        .gallery-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+    }
 </style>
 
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} anim-smooth-appear">
 
     <!-- WRAPPER TO KEEP IT READABLE & CENTERED -->
-    <div class="max-w-4xl mx-auto w-full relative z-10">
+    <div class="max-w-5xl mx-auto w-full relative z-10">
 
         <!-- Header Controls -->
         <div class="mb-6 lg:mb-8 flex items-center justify-between">
-            <a href="{% url 'dashboard' %}" class="btn-profile-secondary">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Dashboard" %}
+            <a href="{% url 'services:manage_services' %}" class="btn-profile-secondary">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Back to Services" %}
             </a>
-            <a href="{% url 'service_create' %}" class="btn-add-solid">
-                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "New Service" %}
+            <a href="{% url 'services:service_gallery_create' service.id %}" class="btn-add-solid">
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add Image" %}
             </a>
         </div>
 
         <!-- HEADER TITLE -->
         <div class="mb-6 lg:mb-8">
             <h1 class="text-h2 text-slate-900 break-words w-full mb-2">
-                {% trans "Manage Services" %}
+                {% trans "Service Gallery" %}
             </h1>
             <p class="text-[13px] text-slate-500 font-medium">
-                {% trans "Showcase the professional services you offer to clients." %}
+                {% trans "Manage images for" %} <strong>{{ service.title }}</strong>
             </p>
         </div>
 
         <!-- ==============================================
-             CLEAN CARD LIST
+             GALLERY GRID
              ============================================== -->
-        <div class="space-y-4">
-
-            {% for service in services %}
-                <div class="bento-card p-5 md:p-6 flex flex-col">
-
-                    <!-- Card Header -->
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            {% if service.is_active %}
-                                <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-md text-[11px] font-bold uppercase tracking-wider">
-                                    {% trans "Active" %}
-                                </span>
-                            {% else %}
-                                <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-500 rounded-md text-[11px] font-bold uppercase tracking-wider">
-                                    {% trans "Inactive" %}
-                                </span>
-                            {% endif %}
+        {% if gallery_images %}
+            <div class="gallery-grid">
+                {% for image in gallery_images %}
+                    <div class="bento-card p-3 md:p-4 flex flex-col">
+                        <div class="relative aspect-square rounded-lg overflow-hidden mb-3 bg-slate-100">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption|default:'Service image' }}" class="w-full h-full object-cover">
+                            <div class="absolute top-2 right-2 flex gap-1">
+                                <a href="{% url 'services:service_gallery_edit' image.pk %}" class="w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white text-slate-600 hover:text-white rounded-lg transition-all border border-slate-200 hover:border-[#0A66C2] hover:bg-[#0A66C2]">
+                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'services:service_gallery_delete' image.pk %}" class="w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white text-slate-600 hover:text-white rounded-lg transition-all border border-slate-200 hover:border-rose-500 hover:bg-rose-500">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
                         </div>
-
-                        <div class="flex items-center gap-1.5">
-                            <a href="{% url 'manage_service_gallery' service.id %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-[#0A66C2] text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-[#0A66C2]" title="{% trans 'Manage Gallery' %}">
-                                <i data-lucide="image" class="w-3.5 h-3.5"></i>
-                            </a>
-                            <a href="{% url 'service_edit' service.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-[#0A66C2] text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-[#0A66C2]">
-                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                            </a>
-                            <a href="{% url 'service_delete' service.pk %}" class="w-8 h-8 flex items-center justify-center bg-slate-50 hover:bg-rose-500 text-slate-500 hover:text-white rounded-lg transition-all border border-slate-100 hover:border-rose-500">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
+                        {% if image.caption %}
+                            <p class="text-[13px] text-slate-600 font-medium line-clamp-2">
+                                {{ image.caption }}
+                            </p>
+                        {% endif %}
                     </div>
-
-                    <!-- Content -->
-                    <h3 class="text-[16px] md:text-[17px] font-bold text-slate-900 mb-2 leading-snug">
-                        <a href="{% url 'services:public_service_detail' request.user.portfolio.slug service.pk %}" class="hover:text-[#0A66C2] transition-colors">
-                            {{ service.title }}
-                        </a>
-                    </h3>
-                    {% if service.description %}
-                        <p class="text-[14px] text-slate-600 leading-[1.7] mb-4 font-medium whitespace-pre-line">
-                            {{ service.description|truncatewords:30 }}
-                        </p>
-                    {% endif %}
-
-                    <!-- Gallery Preview -->
-                    {% if service.gallery.all %}
-                        <div class="flex gap-2 mt-3 mb-4 overflow-x-auto pb-2">
-                            {% for image in service.gallery.all|slice:":3" %}
-                                <img src="{{ image.image.url }}" alt="{{ image.caption|default:'Service image' }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200">
-                            {% endfor %}
-                            {% if service.gallery.all.count > 3 %}
-                                <div class="w-16 h-16 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold">
-                                    +{{ service.gallery.all.count|add:"-3" }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-
-                    <!-- Footer Info -->
-                    <div class="flex flex-wrap items-center gap-2 mt-auto pt-3 border-t border-slate-100">
-                        <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-600 rounded-md text-[12px] font-semibold">
-                            {{ service.gallery.all.count }} {% trans "Images" %}
-                        </span>
-                    </div>
-
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- EMPTY STATE -->
+            <div class="bento-card p-8 md:p-12 text-center flex flex-col items-center justify-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
+                    <i data-lucide="image" class="w-8 h-8 text-[#0A66C2]"></i>
                 </div>
-            {% empty %}
-                <!-- CLEAN EMPTY STATE -->
-                <div class="bento-card p-8 md:p-12 text-center flex flex-col items-center justify-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center mb-5 border border-blue-100">
-                        <i data-lucide="briefcase" class="w-8 h-8 text-[#0A66C2]"></i>
-                    </div>
-                    <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No services added yet" %}</h3>
-                    <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed mb-6">{% trans "Add the professional services you offer. Describe what you do and showcase your work with images." %}</p>
-                    <a href="{% url 'service_create' %}" class="btn-profile-primary">
-                        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add First Service" %}
-                    </a>
-                </div>
-            {% endfor %}
+                <h3 class="text-[18px] md:text-[20px] font-bold text-slate-900 mb-2">{% trans "No images added yet" %}</h3>
+                <p class="text-[13px] text-slate-500 font-medium max-w-sm leading-relaxed mb-6">{% trans "Add images to showcase your service work and attract potential clients." %}</p>
+                <a href="{% url 'services:service_gallery_create' service.id %}" class="btn-profile-primary">
+                    <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Add First Image" %}
+                </a>
+            </div>
+        {% endif %}
 
-        </div>
     </div>
 </main>
 
@@ -363,10 +313,10 @@
      MOBILE NAVIGATION & LANG DRAWERS
      ============================================== -->
 <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/60 z-[110] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" aria-hidden="true"></div>
-<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px_rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
+<div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-[0_-24px_60px rgba(0,0,0,0.15)] z-[120] drawer-closed transition-transform duration-500 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(2rem,var(--app-safe-bottom))] prevent-select p-6">
     <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
     <div class="space-y-2 w-full custom-scroll overflow-y-auto">
-        <a href="{% url 'dashboard' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Dashboard" %}</a>
+        <a href="{% url 'services:manage_services' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i></div> {% trans "Back to Services" %}</a>
         <div class="h-px bg-slate-100 my-3 mx-2"></div>
         <button onclick="window.location.href='{% url 'profile_settings' %}'" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-xl text-[15px] font-bold text-slate-800 flex items-center gap-4 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-slate-200 shadow-sm flex items-center justify-center"><i data-lucide="settings" class="w-4 h-4 text-slate-600"></i></div> {% trans "Profile Settings" %}</button>
         <a href="{% url 'logout' %}" class="w-full text-left p-4 bg-rose-50/50 hover:bg-rose-100 rounded-xl font-bold text-rose-600 text-[15px] flex items-center gap-4 transition-colors mt-2 min-h-[44px]"><div class="w-8 h-8 rounded-lg bg-white border border-rose-100 shadow-sm flex items-center justify-center"><i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i></div> {% trans "Logout" %}</a>

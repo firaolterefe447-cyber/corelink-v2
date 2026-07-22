@@ -32,7 +32,8 @@ from django.contrib.postgres.aggregates import StringAgg
 # Local App Imports
 
 # For Company Nexus
-from profiles.models import Company, RightNowPost, RightNowLike, Service, ServiceGallery
+from profiles.models import Company, RightNowPost, RightNowLike
+from services.models import Service, ServiceGallery
 
 try:
     from chat.models import ChatMessage  # Preserving Inbox Badge Logic
@@ -701,7 +702,7 @@ def service_feed(request):
         except ImportError:
             pass
 
-    return render(request, 'network/service_feed.html', {
+    return render(request, 'services/service_feed.html', {
         'services': services_page,
         'search_query': raw_query,
         'unread_msg_count': unread_count,
@@ -777,7 +778,7 @@ class FeedServiceDetailView(DetailView):
     Different from the profile service detail - this is a dedicated feed experience.
     """
     model = Service
-    template_name = 'network/feed_service_detail.html'
+    template_name = 'services/feed_service_detail.html'
     context_object_name = 'service'
     slug_url_kwarg = 'service_id'
     slug_field = 'id'

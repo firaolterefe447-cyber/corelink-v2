@@ -6,7 +6,6 @@ Clean, RESTful, and highly scalable routing.
 
 from django.urls import path
 from . import views
-from .views import ServiceDetailView
 
 urlpatterns = [
     # Public Profiles & Routing
@@ -14,7 +13,6 @@ urlpatterns = [
     path('p/<str:identifier>/', views.public_profile_view, name='public_profile'),
     path('p/<str:identifier>/og-image/', views.profile_og_image, name='profile_og_image'),
     path('p/<str:identifier>/project/<uuid:pk>/', views.project_detail_view, name='public_project_detail'),
-    path('p/<str:identifier>/service/<uuid:pk>/', views.service_detail_view, name='public_service_detail'),
     # Optional explicitly routed company profile (kept for backward compatibility)
     path('p/company/<slug:slug>/', views.company_public_profile, name='company_public_profile'),
 
@@ -80,16 +78,6 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
     path('dashboard/languages/new/', views.LanguageCreateView.as_view(), name='language_create'),
     path('dashboard/languages/<uuid:pk>/edit/', views.LanguageUpdateView.as_view(), name='language_edit'),
     path('dashboard/languages/<uuid:pk>/delete/', views.LanguageDeleteView.as_view(), name='language_delete'),
-
-    # I. User Services (distinct from Company Services)
-    path('dashboard/services/', views.ServiceListView.as_view(), name='manage_services'),
-    path('dashboard/services/new/', views.ServiceCreateView.as_view(), name='service_create'),
-    path('dashboard/services/<uuid:pk>/edit/', views.ServiceUpdateView.as_view(), name='service_edit'),
-    path('dashboard/services/<uuid:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
-    path('dashboard/services/<uuid:service_id>/gallery/', views.ServiceGalleryListView.as_view(), name='manage_service_gallery'),
-    path('dashboard/services/<uuid:service_id>/gallery/new/', views.ServiceGalleryCreateView.as_view(), name='service_gallery_create'),
-    path('dashboard/services/gallery/<uuid:pk>/edit/', views.ServiceGalleryUpdateView.as_view(), name='service_gallery_edit'),
-    path('dashboard/services/gallery/<uuid:pk>/delete/', views.ServiceGalleryDeleteView.as_view(), name='service_gallery_delete'),
 
     # I. Live Opportunities (The 10x Feature)
     path('dashboard/opportunities/', views.OpportunityListView.as_view(), name='manage_opportunities'),
@@ -160,7 +148,6 @@ path('api/right-now/create/', views.api_create_right_now, name='api_create_right
 
     # Media API Endpoint (Already in views, just adding the route)
     path('company/<slug:slug>/media/', views.company_media_manage, name='company_media_manage'),
-path('service/<uuid:pk>/', ServiceDetailView.as_view(), name='public_service_detail'),
     # Company Network/Contacts
     path('company/network/', views.ManageCompanyNetworkView.as_view(), name='manage_company_network'),
     path('company/contact/add/', views.CompanyContactCreateView.as_view(), name='company_contact_create'),
