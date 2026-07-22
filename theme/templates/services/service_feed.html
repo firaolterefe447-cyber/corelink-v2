@@ -1,582 +1,374 @@
-{% extends 'base.html' %}
-{% load static i18n %}
+<!DOCTYPE html>
 
-{% block meta_tags %}
-<meta property="og:title" content="CoreLink - Services">
-<meta property="og:description" content="Discover professional services offered by talented individuals.">
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet" />
-<!-- Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
-<!-- Tailwind Configuration -->
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CoreLink | Discover Services</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
 <script id="tailwind-config">
-    tailwind.config = {
+      tailwind.config = {
         darkMode: "class",
         theme: {
-            extend: {
-                "colors": {
-                    "on-surface-variant": "#414752",
-                    "surface-dim": "#d8dae2",
-                    "on-error": "#ffffff",
-                    "outline-variant": "#c1c6d4",
-                    "on-tertiary-fixed": "#331200",
-                    "tertiary-container": "#a94b00",
-                    "on-surface": "#191c21",
-                    "surface-tint": "#005eb5",
-                    "inverse-surface": "#2e3037",
-                    "error": "#ba1a1a",
-                    "primary": "#004e99",
-                    "on-primary-fixed": "#001b3d",
-                    "secondary-fixed-dim": "#c3c0ff",
-                    "primary-container": "#0a66c2",
-                    "primary-fixed": "#d6e3ff",
-                    "on-primary": "#ffffff",
-                    "on-background": "#191c21",
-                    "tertiary": "#833900",
-                    "surface-container": "#ecedf6",
-                    "inverse-primary": "#a8c8ff",
-                    "on-error-container": "#93000a",
-                    "on-secondary": "#ffffff",
-                    "surface-container-lowest": "#ffffff",
-                    "secondary": "#4b41e1",
-                    "on-tertiary-container": "#ffe0d1",
-                    "primary-fixed-dim": "#a8c8ff",
-                    "on-secondary-fixed": "#0f0069",
-                    "on-tertiary": "#ffffff",
-                    "on-secondary-fixed-variant": "#3323cc",
-                    "tertiary-fixed": "#ffdbca",
-                    "surface-container-low": "#f2f3fb",
-                    "secondary-fixed": "#e2dfff",
-                    "tertiary-fixed-dim": "#ffb68e",
-                    "on-tertiary-fixed-variant": "#773300",
-                    "surface-variant": "#e1e2ea",
-                    "on-secondary-container": "#fffbff",
-                    "on-primary-fixed-variant": "#00468a",
-                    "background": "#f9f9ff",
-                    "surface-container-highest": "#e1e2ea",
-                    "on-primary-container": "#dbe6ff",
-                    "error-container": "#ffdad6",
-                    "surface-bright": "#f9f9ff",
-                    "secondary-container": "#645efb",
-                    "surface-container-high": "#e6e8f0",
-                    "inverse-on-surface": "#eff0f9",
-                    "outline": "#727783",
-                    "surface": "#f9f9ff"
-                },
-                "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "2xl": "1rem",
-                    "3xl": "1.5rem",
-                    "full": "9999px"
-                },
-                "spacing": {
-                    "container-max": "1280px",
-                    "margin-mobile": "20px",
-                    "gutter": "24px",
-                    "margin-desktop": "48px",
-                    "base": "8px"
-                },
-                "fontFamily": {
-                    "headline-md": ["Plus Jakarta Sans", "sans-serif"],
-                    "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
-                    "label-sm": ["Inter", "sans-serif"],
-                    "body-lg": ["Inter", "sans-serif"],
-                    "display-xl": ["Plus Jakarta Sans", "sans-serif"],
-                    "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
-                    "body-md": ["Inter", "sans-serif"]
-                },
-                "fontSize": {
-                    "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
-                    "label-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
-                    "display-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
-                    "headline-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
-                    "body-md": ["15px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "500"}]
-                }
+          extend: {
+            "colors": {
+                "on-surface-variant": "#414752",
+                "surface-dim": "#d8dae2",
+                "on-error": "#ffffff",
+                "outline-variant": "#c1c6d4",
+                "on-tertiary-fixed": "#331200",
+                "tertiary-container": "#a94b00",
+                "on-surface": "#191c21",
+                "surface-tint": "#005eb5",
+                "inverse-surface": "#2e3037",
+                "error": "#ba1a1a",
+                "primary": "#004e99",
+                "on-primary-fixed": "#001b3d",
+                "secondary-fixed-dim": "#c3c0ff",
+                "primary-container": "#0a66c2",
+                "primary-fixed": "#d6e3ff",
+                "on-primary": "#ffffff",
+                "on-background": "#191c21",
+                "tertiary": "#833900",
+                "surface-container": "#ecedf6",
+                "inverse-primary": "#a8c8ff",
+                "on-error-container": "#93000a",
+                "on-secondary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "secondary": "#4b41e1",
+                "on-tertiary-container": "#ffe0d1",
+                "primary-fixed-dim": "#a8c8ff",
+                "on-secondary-fixed": "#0f0069",
+                "on-tertiary": "#ffffff",
+                "on-secondary-fixed-variant": "#3323cc",
+                "tertiary-fixed": "#ffdbca",
+                "surface-container-low": "#f2f3fb",
+                "secondary-fixed": "#e2dfff",
+                "tertiary-fixed-dim": "#ffb68e",
+                "on-tertiary-fixed-variant": "#773300",
+                "surface-variant": "#e1e2ea",
+                "on-secondary-container": "#fffbff",
+                "on-primary-fixed-variant": "#00468a",
+                "background": "#f9f9ff",
+                "surface-container-highest": "#e1e2ea",
+                "on-primary-container": "#dbe6ff",
+                "error-container": "#ffdad6",
+                "surface-bright": "#f9f9ff",
+                "secondary-container": "#645efb",
+                "surface-container-high": "#e6e8f0",
+                "inverse-on-surface": "#eff0f9",
+                "outline": "#727783",
+                "surface": "#f9f9ff"
             },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "container-max": "1280px",
+                "margin-mobile": "20px",
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "base": "8px"
+            },
+            "fontFamily": {
+                "headline-md": ["Plus Jakarta Sans"],
+                "headline-lg-mobile": ["Plus Jakarta Sans"],
+                "label-sm": ["Inter"],
+                "body-lg": ["Inter"],
+                "display-xl": ["Plus Jakarta Sans"],
+                "headline-lg": ["Plus Jakarta Sans"],
+                "body-md": ["Inter"]
+            },
+            "fontSize": {
+                "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "label-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                "display-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
+                "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "500"}]
+            }
+          },
         },
-    }
-</script>
-
+      }
+    </script>
 <style>
-    /* Scope Reset & Variables */
-    .theme-scope {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--background, #f9f9ff);
-        color: var(--on-surface, #191c21);
-    }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Magic Easing & Animations */
-    .magic-bezier { transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-
-    @keyframes smoothAppear {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .animate-stagger > * {
-        opacity: 0;
-        animation: smoothAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    /* Core Design Elements */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(226, 232, 240, 0.5);
-    }
-    .primary-gradient {
-        background: linear-gradient(135deg, #004e99 0%, #4b41e1 100%);
-    }
-
-    /* Gallery Focus Hover */
-    .gallery-img { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-    .group:hover .gallery-img { transform: scale(1.05); }
-
-    .drawer-open { transform: translate3d(0, 0, 0); }
-    .drawer-closed { transform: translate3d(-100%, 0, 0); }
-</style>
-{% endblock meta_tags %}
-
-{% block navbar %}
-<div class="theme-scope">
-    {% if request.user.is_authenticated %}
-
-    <!-- ==============================================
-         DESKTOP SIDEBAR (Exactly mapped to Dashboard structure)
-         ============================================== -->
-    <aside class="hidden lg:flex flex-col fixed top-0 left-0 w-[280px] h-[100dvh] bg-surface/80 backdrop-blur-xl border-r border-outline-variant/30 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
-        <div class="flex flex-col h-full py-8 px-6 min-h-[600px]">
-
-            <!-- Logo -->
-            <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
-                <span class="font-headline-lg-mobile font-black text-[28px] tracking-[-0.04em] text-on-surface lowercase">core</span>
-                <span class="font-headline-lg-mobile font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text primary-gradient lowercase">link</span>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="flex flex-col gap-2 flex-1">
-                <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-surface-container-high/60 text-on-surface-variant hover:text-on-surface font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">person</span>
-                    {% trans "My profile" %}
-                </a>
-
-                <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-surface-container-high/60 text-on-surface-variant hover:text-on-surface font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">explore</span>
-                    {% trans "Discover" %}
-                </a>
-
-                <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-surface-container-high/60 text-on-surface-variant hover:text-on-surface font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">bolt</span>
-                    {% trans "Updates" %}
-                </a>
-
-                <!-- ACTIVE TAB: SERVICES -->
-                <a href="{% url 'service_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl bg-primary/5 border border-primary/10 text-primary font-bold transition-colors" aria-current="page">
-                    <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">work</span>
-                    {% trans "Services" %}
-                </a>
-
-                <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl hover:bg-surface-container-high/60 text-on-surface-variant hover:text-on-surface font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">business_center</span>
-                    {% trans "Opportunities" %}
-                </a>
-
-                <a href="/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-2xl hover:bg-surface-container-high/60 text-on-surface-variant hover:text-on-surface font-label-sm transition-colors">
-                    <div class="flex items-center gap-4">
-                        <span class="material-symbols-outlined text-[22px]">mail</span>
-                        {% trans "Inbox" %}
-                    </div>
-                    {% if unread_msg_count > 0 %}
-                        <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-error text-white text-[11px] font-bold rounded-full">
-                            {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                        </span>
-                    {% endif %}
-                </a>
-            </nav>
-
-            <!-- Bottom Settings / Logout -->
-            <div class="pt-6 border-t border-outline-variant/20 flex flex-col gap-2 mt-auto">
-                <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">settings</span>
-                    <span>{% trans "Settings" %}</span>
-                </a>
-
-                <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-error hover:bg-error/10 font-label-sm transition-colors">
-                    <span class="material-symbols-outlined text-[22px]">logout</span>
-                    <span>{% trans "Logout" %}</span>
-                </a>
-            </div>
-        </div>
-    </aside>
-
-    <!-- ==============================================
-         MOBILE TOP BAR (Accounts for iOS Safe Area Notch)
-         ============================================== -->
-    <header class="lg:hidden flex justify-between items-center px-margin-mobile h-[max(4rem,calc(4rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] w-full sticky top-0 z-[90] bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm prevent-select">
-        <button onclick="toggleMobileMenu()" class="w-10 h-10 flex items-center justify-center rounded-full active:scale-95 transition-transform text-on-surface-variant">
-            <span class="material-symbols-outlined pointer-events-none text-[26px]">menu</span>
-        </button>
-
-        <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-            <span class="font-headline-lg-mobile font-black text-on-surface lowercase">core</span>
-            <span class="font-headline-lg-mobile font-black text-transparent bg-clip-text primary-gradient lowercase">link</span>
-        </div>
-
-        <a href="{% url 'dashboard' %}" class="h-9 w-9 rounded-full overflow-hidden border border-outline-variant/50 active:scale-95 transition-transform bg-surface-container-highest">
-            {% if request.user.avatar %}
-                <img src="{{ request.user.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
-            {% else %}
-                <div class="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold text-sm">{{ request.user.full_name|slice:":1"|upper }}</div>
-            {% endif %}
-        </a>
-    </header>
-
-    <!-- Mobile Slide-out Menu Backdrop -->
-    <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="lg:hidden fixed inset-0 bg-on-surface/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-    <!-- Mobile Slide-out Menu (Optional fallback if they click hamburger instead of bottom nav) -->
-    <aside id="mobile-menu-drawer" class="lg:hidden fixed top-0 left-0 w-[260px] h-[100dvh] bg-surface z-[120] drawer-closed transition-transform duration-300 shadow-2xl flex flex-col pt-[env(safe-area-inset-top)]">
-        <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
-            <div class="flex items-center">
-                <span class="font-headline-lg-mobile text-[24px] font-black text-on-surface lowercase">core</span>
-                <span class="font-headline-lg-mobile text-[24px] font-black text-transparent bg-clip-text primary-gradient lowercase">link</span>
-            </div>
-            <button onclick="toggleMobileMenu()" class="p-1 rounded-full text-on-surface-variant bg-surface-container hover:bg-surface-container-high transition-colors">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
-        </div>
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:bg-surface-container-high/60 font-label-sm"><span class="material-symbols-outlined">person</span> {% trans "My profile" %}</a>
-            <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:bg-surface-container-high/60 font-label-sm"><span class="material-symbols-outlined">explore</span> {% trans "Discover" %}</a>
-            <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:bg-surface-container-high/60 font-label-sm"><span class="material-symbols-outlined">bolt</span> {% trans "Updates" %}</a>
-            <a href="{% url 'service_feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl bg-primary/5 text-primary font-bold"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">work</span> {% trans "Services" %}</a>
-            <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:bg-surface-container-high/60 font-label-sm"><span class="material-symbols-outlined">business_center</span> {% trans "Opportunities" %}</a>
-            <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-on-surface-variant hover:bg-surface-container-high/60 font-label-sm mt-4 border-t border-outline-variant/20 pt-4"><span class="material-symbols-outlined">settings</span> {% trans "Settings" %}</a>
-            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-2xl text-error hover:bg-error/10 font-label-sm"><span class="material-symbols-outlined">logout</span> {% trans "Logout" %}</a>
-        </nav>
-    </aside>
-
-    {% else %}
-
-    <!-- ==============================================
-         UNAUTHENTICATED TOP BAR
-         ============================================== -->
-    <header class="fixed top-0 left-0 right-0 z-[90] bg-surface/90 backdrop-blur-xl border-b border-outline-variant/20 flex items-center justify-between px-6 lg:px-12 h-[max(4.5rem,calc(4.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] shadow-sm">
-        <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-            <span class="font-headline-lg-mobile text-[26px] font-black text-on-surface lowercase">core</span>
-            <span class="font-headline-lg-mobile text-[26px] font-black text-transparent bg-clip-text primary-gradient lowercase">link</span>
-        </div>
-        <a href="{% url 'signup' %}" class="primary-gradient text-white font-label-sm px-6 py-2.5 rounded-full shadow-md hover:shadow-lg transition-transform active:scale-95 flex items-center gap-2">
-            <span>{% trans "Join Hub" %}</span>
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </a>
-    </header>
-    {% endif %}
-</div>
-{% endblock navbar %}
-
-
-{% block content %}
-<div class="theme-scope min-h-screen relative selection:bg-primary-container selection:text-on-primary-container">
-
-    <!-- Atmospheric Gradients -->
-    <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
-    <div class="fixed bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
-
-    <!-- MAIN CONTENT AREA -->
-    <main class="{% if request.user.is_authenticated %}lg:ml-[280px]{% else %}pt-24{% endif %} px-margin-mobile lg:px-margin-desktop pt-8 pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-16 max-w-[1400px] mx-auto animate-stagger">
-
-        <!-- Hero Section -->
-        <section class="text-center space-y-3 mb-8 lg:mb-12">
-            <h2 class="font-headline-lg text-[32px] sm:text-headline-lg text-on-surface font-black tracking-tight leading-tight">
-                {% trans "Elite" %} <span class="text-transparent bg-clip-text primary-gradient">{% trans "Marketplace" %}</span>
-            </h2>
-            <p class="font-body-lg text-on-surface-variant max-w-lg mx-auto opacity-80 leading-relaxed">
-                {% trans "Connect with world-class independent professionals curated for elite projects and high-performance teams." %}
-            </p>
-        </section>
-
-        <!-- Search Section -->
-        <section class="relative max-w-3xl mx-auto mb-10 lg:mb-12">
-            <form method="GET" action="{% url 'service_feed' %}" class="flex items-center bg-white rounded-full px-5 py-3 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05)] border border-outline-variant/60 focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary/40 transition-all duration-300">
-                <span class="material-symbols-outlined text-outline ml-1 mr-3 text-[26px]">search</span>
-                <input type="text" name="q" value="{{ search_query }}"
-                    class="bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface placeholder:text-outline/70 px-0 outline-none h-10"
-                    placeholder="{% trans "Search elite services, skills, or professionals..." %}"
-                    autocomplete="off">
-
-                {% if search_query %}
-                    <a href="{% url 'service_feed' %}" class="text-outline hover:text-error transition-colors p-2 flex items-center justify-center rounded-full mr-1">
-                        <span class="material-symbols-outlined text-[20px]">close</span>
-                    </a>
-                {% endif %}
-
-                <button type="submit" class="hidden sm:flex items-center justify-center bg-surface-container hover:bg-surface-container-high rounded-full p-2.5 ml-2 transition-colors active:scale-95">
-                    <span class="material-symbols-outlined text-primary text-[22px]">tune</span>
-                </button>
-            </form>
-        </section>
-
-        {% if request.user.is_authenticated %}
-        <!-- Nav Tabs -->
-        <nav class="flex justify-center space-x-8 sm:space-x-12 border-b border-outline-variant/30 mb-10">
-            <a href="{% url 'right_now_feed' %}" class="pb-3 text-on-surface-variant hover:text-on-surface font-label-sm font-bold relative transition-colors uppercase tracking-wider text-[12px] sm:text-[13px]">
-                {% trans "Discover Updates" %}
-            </a>
-            <a href="{% url 'service_feed' %}" class="pb-3 text-primary font-black font-label-sm relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:bg-primary after:rounded-t-full transition-all uppercase tracking-wider text-[12px] sm:text-[13px]">
-                {% trans "Discover Services" %}
-            </a>
-        </nav>
-        {% endif %}
-
-        <!-- Services Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-            {% for service in services %}
-                <article class="glass-card rounded-3xl overflow-hidden shadow-[0_2px_12px_rgba(15,23,42,0.04)] group hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] magic-bezier transition-all duration-500 border border-outline-variant/40 flex flex-col" style="animation-delay: {{ forloop.counter|add:1 }}00ms;">
-
-                    <!-- Dynamic Gallery Layout (Restricted to h-56 height) -->
-                    <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="relative h-56 w-full block shrink-0 bg-surface-container-high">
-                        {% if service.gallery.all %}
-                            {% with count=service.gallery.count %}
-                                {% if count == 1 %}
-                                    <img src="{{ service.gallery.first.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}">
-                                {% elif count == 2 %}
-                                    <div class="grid grid-cols-2 h-full w-full gap-0.5">
-                                        <div class="overflow-hidden h-full"><img src="{{ service.gallery.first.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}"></div>
-                                        <div class="overflow-hidden h-full"><img src="{{ service.gallery.all.1.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}"></div>
-                                    </div>
-                                {% else %}
-                                    <div class="grid grid-cols-3 h-full w-full gap-0.5">
-                                        <div class="col-span-2 overflow-hidden h-full">
-                                            <img src="{{ service.gallery.first.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}">
-                                        </div>
-                                        <div class="flex flex-col gap-0.5 h-full">
-                                            <div class="h-1/2 overflow-hidden">
-                                                <img src="{{ service.gallery.all.1.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}">
-                                            </div>
-                                            <div class="h-1/2 overflow-hidden relative">
-                                                {% if count > 3 %}
-                                                    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center text-white z-10">
-                                                        <span class="font-headline-md font-bold">+{{ count|add:"-2" }}</span>
-                                                    </div>
-                                                {% endif %}
-                                                <img src="{{ service.gallery.all.2.image.url }}" class="gallery-img w-full h-full object-cover" alt="{{ service.title }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        {% else %}
-                            <!-- No Gallery Fallback -->
-                            <div class="w-full h-full primary-gradient relative flex items-center justify-center overflow-hidden">
-                                <div class="absolute inset-0 opacity-10">
-                                    <svg height="100%" preserveAspectRatio="none" viewBox="0 0 100 100" width="100%">
-                                        <defs>
-                                            <pattern height="10" id="grid-{{ service.id }}" patternUnits="userSpaceOnUse" width="10">
-                                                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"></path>
-                                            </pattern>
-                                        </defs>
-                                        <rect fill="url(#grid-{{ service.id }})" height="100%" width="100%"></rect>
-                                    </svg>
-                                </div>
-                                <span class="material-symbols-outlined text-white/30 text-[80px]">work</span>
-                            </div>
-                        {% endif %}
-
-                        <!-- Avatar Overlaying Image -->
-                        <div class="absolute bottom-[-24px] left-6 z-20">
-                            <object data="{% url 'public_profile' service.profile.slug %}" type="invalid/type" class="w-full h-full hidden"></object>
-                            <a href="{% url 'public_profile' service.profile.slug %}" class="block h-14 w-14 rounded-full border-[3px] border-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] overflow-hidden bg-white hover:scale-105 transition-transform">
-                                {% if service.profile.user.avatar %}
-                                    <img src="{{ service.profile.user.avatar.url }}" class="w-full h-full object-cover" alt="{{ service.profile.user.full_name }}">
-                                {% else %}
-                                    <div class="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold text-xl">{{ service.profile.user.full_name|default:"U"|slice:":1"|upper }}</div>
-                                {% endif %}
-                            </a>
-                        </div>
-                    </a>
-
-                    <!-- Card Body -->
-                    <div class="pt-10 pb-6 px-6 space-y-4 flex-1 flex flex-col">
-                        <div class="space-y-1.5 flex-1">
-                            <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="block">
-                                <h3 class="font-headline-md text-[18px] sm:text-[20px] text-on-surface font-extrabold leading-snug line-clamp-2 hover:text-primary transition-colors">{{ service.title }}</h3>
-                            </a>
-                            <a href="{% url 'public_profile' service.profile.slug %}" class="font-body-md text-on-surface-variant text-[14px] hover:text-primary transition-colors block line-clamp-1">
-                                <span class="font-bold text-on-surface">{{ service.profile.user.full_name|default:"Unknown" }}</span> &bull; {{ service.profile.headlines.first.title|default:service.profile.field_of_interest|default:"Professional" }}
-                            </a>
-                            <p class="font-body-md text-on-surface-variant/90 text-[14px] line-clamp-2 mt-3 leading-relaxed">
-                                {{ service.description }}
-                            </p>
-                        </div>
-
-                        <!-- Meta Info (Location) -->
-                        <div class="flex flex-wrap items-center gap-3 text-on-surface-variant text-[13px] font-semibold pt-1">
-                            {% if service.profile.location %}
-                                <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[16px]">location_on</span> {{ service.profile.location }}</span>
-                            {% endif %}
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[16px]">verified</span> {% trans "Verified" %}</span>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex space-x-3 pt-3 border-t border-outline-variant/20">
-                            <a href="{% url 'services:public_service_detail' service.profile.slug service.id %}" class="flex-1 py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-center active:scale-95 transition-all magic-bezier border border-outline-variant/30">
-                                {% trans "View" %}
-                            </a>
-
-                            {% if request.user.is_authenticated %}
-                                <a href="{% url 'chat_with' service.profile.user.id %}" class="flex-[1.5] py-3 px-4 rounded-xl primary-gradient text-white font-label-sm text-center active:scale-95 transition-all magic-bezier shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
-                                </a>
-                            {% else %}
-                                <button onclick="openLoginModal('{{ service.profile.user.full_name|escapejs }}')" class="flex-[1.5] py-3 px-4 rounded-xl primary-gradient text-white font-label-sm text-center active:scale-95 transition-all magic-bezier shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 flex items-center justify-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Request" %}
-                                </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </article>
-
-            {% empty %}
-                <!-- Empty State -->
-                <div class="col-span-full py-16 px-4">
-                    <div class="glass-card rounded-[32px] p-10 md:p-14 text-center flex flex-col items-center justify-center border-dashed border-2 border-outline-variant/60 shadow-sm max-w-2xl mx-auto">
-                        <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                            <span class="material-symbols-outlined text-[40px] text-primary">search_off</span>
-                        </div>
-                        <h3 class="font-headline-lg text-[24px] text-on-surface font-extrabold mb-3">{% trans "No services found" %}</h3>
-                        <p class="font-body-md text-on-surface-variant max-w-md mx-auto mb-8">
-                            {% if search_query %}
-                                {% trans "We couldn't find any elite services matching your search. Try adjusting your keywords." %}
-                            {% else %}
-                                {% trans "There are currently no services available. Check back soon!" %}
-                            {% endif %}
-                        </p>
-                        {% if search_query %}
-                            <a href="{% url 'service_feed' %}" class="px-8 py-3.5 rounded-2xl bg-surface-container-high text-on-surface font-label-sm hover:bg-outline-variant/30 transition-colors flex items-center gap-2 active:scale-95">
-                                <span class="material-symbols-outlined text-[18px]">refresh</span> {% trans "Clear Search" %}
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </section>
-
-        <!-- Pagination -->
-        {% if services.has_other_pages %}
-            <div class="flex justify-center mt-12 lg:mt-16 pb-8">
-                <div class="inline-flex items-center gap-2 glass-card p-1.5 rounded-2xl">
-                    {% if services.has_previous %}
-                        <a href="?q={{ search_query }}&page={{ services.previous_page_number }}" class="px-5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-sm flex items-center gap-1 active:scale-95">
-                            <span class="material-symbols-outlined text-[18px]">arrow_back</span> {% trans "Previous" %}
-                        </a>
-                    {% endif %}
-
-                    {% if services.has_previous and services.has_next %}
-                        <div class="w-[1px] h-6 bg-outline-variant/40 mx-1"></div>
-                    {% endif %}
-
-                    {% if services.has_next %}
-                        <a href="?q={{ search_query }}&page={{ services.next_page_number }}" class="px-5 py-2.5 rounded-xl primary-gradient text-white shadow-md hover:shadow-lg transition-all active:scale-95 font-label-sm flex items-center gap-1">
-                            {% trans "Next" %} <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
-
-    </main>
-
-    <!-- ==============================================
-         MOBILE BOTTOM NAVIGATION (Exactly mapped to Dashboard structure & layout)
-         ============================================== -->
-    {% if not is_inspector and request.user.is_authenticated %}
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-surface/95 backdrop-blur-[20px] border-t border-outline-variant/30 flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(0,0,0,0.06)] prevent-select px-1 theme-scope">
-        <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-on-surface-variant hover:text-on-surface transition-colors">
-            <span class="material-symbols-outlined text-[24px]">person</span>
-            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "My profile" %}</span>
-        </a>
-        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-on-surface-variant hover:text-on-surface transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[24px]">explore</span>
-            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
-        </a>
-
-        <!-- ACTIVE TAB: SERVICES -->
-        <a href="{% url 'service_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-primary relative">
-            <div class="absolute top-0 w-10 h-[3px] bg-primary rounded-b-full"></div>
-            <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">work</span>
-            <span class="text-[11px] font-black whitespace-nowrap tracking-wide">{% trans "Services" %}</span>
-        </a>
-
-        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-on-surface-variant hover:text-on-surface transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[24px]">business_center</span>
-            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Projects" %}</span>
-        </a>
-        <a href="/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-on-surface-variant hover:text-on-surface transition-colors active:scale-95 relative">
-            <div class="relative">
-                <span class="material-symbols-outlined text-[24px]">mail</span>
-                {% if unread_msg_count > 0 %}
-                    <span class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-error text-white text-[9px] font-bold rounded-full border-[2px] border-surface">
-                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
-                    </span>
-                {% endif %}
-            </div>
-            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
-        </a>
-    </nav>
-    {% endif %}
-
-</div>
-
-<!-- Scripts -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Simple Intersection Observer to trigger scroll animations elegantly
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = "1";
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.animate-stagger > *').forEach(el => observer.observe(el));
-    });
-
-    // Mobile Sidebar Drawer Toggle (if hamburger menu clicked)
-    function toggleMobileMenu() {
-        const drawer = document.getElementById('mobile-menu-drawer');
-        const backdrop = document.getElementById('mobile-menu-backdrop');
-        if (drawer.classList.contains('drawer-closed')) {
-            drawer.classList.remove('drawer-closed');
-            drawer.classList.add('drawer-open');
-            backdrop.classList.remove('opacity-0', 'pointer-events-none');
-            document.body.style.overflow = 'hidden';
-        } else {
-            drawer.classList.remove('drawer-open');
-            drawer.classList.add('drawer-closed');
-            backdrop.classList.add('opacity-0', 'pointer-events-none');
-            document.body.style.overflow = '';
+        @keyframes entrance-stagger {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-    }
-</script>
-{% endblock content %}
+
+        .animate-entrance {
+            animation: entrance-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .magic-ease {
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .avatar-ring {
+            animation: rotate-ring 10s linear infinite;
+        }
+
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .primary-gradient {
+            background: linear-gradient(135deg, #005eb5 0%, #4b41e1 100%);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen font-body-md selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- Desktop NavigationDrawer -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm hidden lg:flex flex-col p-8 z-50">
+<div class="mb-12">
+<span class="font-headline-md text-headline-md font-extrabold tracking-tighter text-on-surface">corelink</span>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">grid_view</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-surface-container-high/50 text-primary font-bold relative after:absolute after:left-0 after:h-6 after:w-1 after:bg-primary after:rounded-full after:transition-all cubic-bezier(0.22, 1, 0.36, 1) transform translate-x-1" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-sm text-label-sm">Marketplace</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">chat_bubble</span>
+<span class="font-label-sm text-label-sm">Messages</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">description</span>
+<span class="font-label-sm text-label-sm">Contracts</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">groups</span>
+<span class="font-label-sm text-label-sm">Network</span>
+</a>
+</nav>
+<div class="pt-8 mt-8 border-t border-outline-variant/20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior executive in a minimalist, high-key studio setting. The person has a warm, confident expression, wearing a navy blue tailored blazer. The background is a soft, blurred office environment with hints of clean glass and greenery, reinforcing the modern power-broker aesthetic with premium slate-blue lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcfhZqEz5gCnc1uIqv02TiRhRp1NnDCKL16go4NK-quVEIbqPars-YvYTyeHerKrQow83o2rjAI3Uxe5SamSrkaoUvd6SwhFBDNtzT4WT7rHKRhD4GnLmo-wqxa1wVIN9BVoQXecJpjGleqLQS_x_WVA3frmYQM787_FEzSifg8TvjlIJCHDBngLLLHgghw50HXeww_Ph0fUVIQgoYF7CZEPvHtiz8jJRf4J_X5jbkVH5FmJw1CycMPOHVkI9uSYq4ygswV1ivGUom"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">Alex Rivera</p>
+<p class="text-[12px] text-on-surface-variant">Enterprise Account</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Mobile TopAppBar -->
+<header class="lg:hidden flex justify-between items-center px-margin-mobile h-16 w-full sticky top-0 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/20 z-50">
+<button class="w-10 h-10 flex items-center justify-center rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-black lowercase text-on-surface">corelink</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small circular professional avatar of a creative director against a neutral grey studio background. The style is minimalist and clean, reflecting high-tier professional service standards." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYfPTrKqB8EhY5-0LcNzrNBejQ7mzM6D7lzTKevphZ5NHI8LrFpTDUfGRq-wL31hOQFMf0MeS8DjLIrU-G1mcYx7eYn5QfnW2eB0x48_pkGaP9Rc-7P_eZgQzsK9TfMYu6UPMoL86wpWmmodp_zwI4QToZ72jSYIY_UWWW9IBtNINUExXsEbBZA69uVm3V_YUB3zWJNxmFEUjZ2qGJX68Pqo8AZrZEJjKH2_KTQAFV7MGZdKIWg5HwxEpHDoVwp5HUETx5LLycu2ok"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="lg:ml-[280px] min-h-screen relative pb-24 lg:pb-12">
+<!-- Atmospheric Gradients -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop py-12">
+<!-- Hero Section -->
+<section class="animate-entrance mb-16" style="animation-delay: 0.1s;">
+<h1 class="font-headline-lg text-headline-lg font-[900] text-on-surface mb-4 leading-tight">
+                    Explore community <span class="text-transparent bg-clip-text primary-gradient">services</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Connect with world-class independent professionals curated for elite projects and high-performance teams.
+                </p>
+</section>
+<!-- Premium Search Bar -->
+<section class="animate-entrance mb-16 relative" style="animation-delay: 0.2s;">
+<div class="glass-card p-2 rounded-[24px] shadow-sm flex items-center group focus-within:ring-2 focus-within:ring-primary/20 magic-ease">
+<div class="pl-6 pr-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-[24px]">search</span>
+</div>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-4" placeholder="Search for 'Fractional CTO', 'UX Audit' or 'Cloud Migration'..." type="text"/>
+<button class="primary-gradient text-on-primary px-8 py-3 rounded-[18px] font-label-sm text-label-sm shadow-md hover:shadow-lg active:scale-95 magic-ease">
+                        Find Experts
+                    </button>
+</div>
+</section>
+<!-- Service Feed Grid -->
+<section class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+<!-- Service Card A: Gallery Focused -->
+<div class="animate-entrance group" style="animation-delay: 0.3s;">
+<div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30">
+<!-- Gallery Layout -->
+<div class="grid grid-cols-3 h-64 gap-1 p-1">
+<div class="col-span-2 rounded-l-[20px] overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="A clean, minimalist high-fidelity UI design for a SaaS analytics dashboard. Features soft purple and indigo accents, elegant line charts, and deep glassmorphism effects. The aesthetic is ultra-professional, targeting enterprise software standards with expansive whitespace and precise geometric icons." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfOO02n50F4cnIjaezZGkgSZg9xQ-GcQ_KZe5EhEb2AtzbAK_8mSFrbRZGV_cPWCL9deAKOOYuy5wD89VAnqehBI2ZfwAuKYwS3XmNT68zqeaOlbKLo_5RmPPbyi3Sdf71W200gNtZWPVkbyhoNaw2kKO2BDgQaAhviZsuGCFJxUo90aDC9LOSSpt37f_100ZaznDN-rZFWc8jWlTQBZ3gszYaSrX8gbM0WFvxeHYPZQNw2Bi-etRo1JFmzlNqSc7J_dMu0rrFnvhj"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="h-1/2 rounded-tr-[20px] overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="Close-up detail of a mobile app prototype design showing a fluid navigation menu and premium icon set. The lighting is bright and high-key, with a palette of soft slates and vibrant blue highlights. Professional craftsmanship is evident in every pixel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1s2_gTJ9wxja6NEaiRuU1XxZS0YWXBamCohOdnLBTWk9lzB4LgMSSeWYB-UGyzlPrboVFqsBjPuwsGMshLm5BEdQU4XXtdOAdl4lbSNakbxUDqThk7kzIUVwc79Mrk2hW7wAP4orU7TSGTldzcNwzlwzzQn95ic3eXx02Jhd6nflEoBQ0oY8CqU7aifxaMAmsOpzUmaXoYxgzUZqi3j3nH3kQnheTEJ3LWDOr5Rn7QAp9JDgojStMiRh3AmrrBCUp1CrzU2Bdishc"/>
+</div>
+<div class="h-1/2 overflow-hidden relative">
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white z-10">
+<span class="font-label-sm">+12</span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-105 magic-ease" data-alt="A collection of designer style guides and component libraries displayed on multiple professional monitors in a bright, modern studio. The mood is focused and sophisticated, emphasizing structured design processes and high-level strategy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVatWQoSmX99n7EXJNJ6TiqTD-lgzP3AxHF5zxadoXUlnKDOl5axz3f_2rLZjrsv_Bsvxuf0-8EUeGwcVHDXhwIT7L-xvbz9VWaQua2I_EVWLfpaSk080kCUffw4DBv1RJUwuz6WUfBT8fubxXXL-cN7qe0AsyTorP0TY-wlr_FwTlyWtPe6a1P69Pk7hRcsmhP9L_iAWpu7q5BSgEKeTYbwhLbZS0tAkNPvXFzwqYl3OfS6gSxItRqDKTp-y_a6Nb6wg77rkGsWXu"/>
+</div>
+</div>
+</div>
+<!-- Card Content -->
+<div class="p-8 flex flex-col flex-1">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden -mt-14 relative z-20">
+<img class="w-full h-full object-cover" data-alt="A studio portrait of a female senior UX designer with a confident, friendly smile. She is in a high-key setting with soft, even lighting that feels modern and approachable. The style is clean, corporate professional with a creative edge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBUma7Z6ODCJDjq1fbLOhDTdZa_-ua8XyN7Tx_rJBIRS2svZx0nIZj1-8SDqQWCqNMyVbb019RkJ-cWi52oRHMKmm2t6HQnAsPRppvaiewikdq2UqCkIFzM3-pY4e3Z4gkAzQ6ziHEGjLEMQKwdieNJZeHHdqvhDEJBCMkCmIh5KIAR7m2whCviptkKmGSAze-jh13Cq7uKvYLTG_kmNxNidLSFdUmB6-vv5c09OvefhHlKmE-yXMLrvblER_ODDejbr48oYoD7WhK"/>
+</div>
+<div class="pt-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Full-Scale SaaS Product Design & Prototyping</h3>
+<p class="font-label-sm text-label-sm text-primary">Sarah Jenkins, Senior UX Designer</p>
+</div>
+</div>
+<div class="flex items-center gap-1 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">4.9</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
+                                End-to-end design systems and high-fidelity prototyping for enterprise platforms. Specialized in complex data visualization and user workflows.
+                            </p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">UI/UX</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">SaaS</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">From $4,500</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card B: Avatar-focused -->
+<div class="animate-entrance group" style="animation-delay: 0.4s;">
+<div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30">
+<!-- Visual Header -->
+<div class="h-64 primary-gradient relative flex items-center justify-center overflow-hidden">
+<!-- Abstract WebGL-like pattern using SVG mask -->
+<div class="absolute inset-0 opacity-20">
+<svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
+<defs>
+<pattern height="10" id="grid" patternunits="userSpaceOnUse" width="10">
+<path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<!-- Animated Avatar Rings -->
+<div class="relative z-10">
+<div class="avatar-ring absolute -inset-6 border border-white/30 rounded-full"></div>
+<div class="avatar-ring absolute -inset-10 border border-white/10 rounded-full" style="animation-direction: reverse; animation-duration: 15s;"></div>
+<div class="w-32 h-32 rounded-full border-4 border-white/50 shadow-2xl overflow-hidden relative bg-white">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of an Asian male backend architect. He is wearing a minimalist black turtleneck, posed against a dark, sophisticated architectural background with subtle blue rim lighting. The mood is highly technical, authoritative, and elite." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnCf9FgvAaa3Wx_LQP380PJscve4gYXOX96tkylLZmtqfK12s4lGk-6Iht7_I7o68uAIIriO5nwDwmxoAfEsujsGeX1r94SBqT1E0beBzJU4er_aWf1-BW0bGnV2M9XzSeP-614IdjVsFvG7dcdkSN6aHfNnHdiGtXXIls85j3dYUPSEXMuYGQItnMylOC6PVL8n_oovojOaQSuHY6gp7QLYYutp8ZdOSh8YjPRa0QOg2FP2iTkChT3TCBYqXwJYGo3wni7uWyBUzQ"/>
+</div>
+</div>
+</div>
+<!-- Card Content -->
+<div class="p-8 flex flex-col flex-1">
+<div class="flex flex-col mb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Scalable Microservices Architecture & API Design</h3>
+<p class="font-label-sm text-label-sm text-primary">Marcus Chen, Backend Architect</p>
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
+                                High-performance system design utilizing Go and Rust. Specialized in distributed systems, Kubernetes orchestration, and event-driven architectures.
+                            </p>
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-4">
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Infrastructure</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Backend</span>
+</div>
+<div class="flex items-center gap-1 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">5.0</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-on-surface">$180<span class="text-label-sm text-on-surface-variant">/hr</span></span>
+<button class="px-6 py-2 rounded-full border border-primary text-primary font-label-sm text-label-sm hover:bg-primary hover:text-white transition-all duration-300">
+                                        View Profile
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- More cards could follow here... -->
+</section>
+</div>
+<!-- Mobile BottomNavBar -->
+<nav class="lg:hidden fixed bottom-0 w-full h-16 bg-surface/80 backdrop-blur-[20px] border-t border-outline-variant/30 flex justify-around items-center px-4 z-50">
+<a class="flex flex-col items-center justify-center text-primary font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-sm text-[10px]">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="font-label-sm text-[10px]">Inbox</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span class="font-label-sm text-[10px]">Projects</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</a>
+</nav>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-entrance');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-entrance').forEach(el => observer.observe(el));
+
+            // Soft Hover Sound/Haptic feedback (simulation)
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    // Visual state is handled by CSS, logic could go here
+                });
+            });
+        });
+    </script>
+</body></html>
