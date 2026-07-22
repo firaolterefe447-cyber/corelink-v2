@@ -826,6 +826,40 @@ class ServiceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecur
         # Override to avoid filtering on create
         return Service.objects.all()
 
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Get portfolio and attach to form
+            portfolio, _ = UserProfile.objects.get_or_create(user=self.request.user)
+            form.instance.profile = portfolio
+            
+            self.object = form.save()
+            
+            # Handle multiple image uploads for the gallery
+            uploaded_count = 0
+            for image in self.request.FILES.getlist('gallery_images'):
+                try:
+                    # Validate file size (10MB max)
+                    if image.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {image.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{image.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    ServiceGallery.objects.create(
+                        service=self.object,
+                        image=image
+                    )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {image.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{image.name}': {str(e)}")
+                    continue
+        
+        msg = "Service created successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} image(s) added to gallery."
+        messages.success(self.request, msg)
+        return redirect(self.get_success_url())
+
 class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Service
     form_class = ServiceForm
@@ -837,6 +871,40 @@ class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurity
         if not hasattr(self.request.user, 'portfolio'):
             return Service.objects.none()
         return Service.objects.filter(profile=self.request.user.portfolio)
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save()
+            
+            # Handle adding new gallery images
+            uploaded_count = 0
+            for image in self.request.FILES.getlist('gallery_images'):
+                try:
+                    # Validate file size (10MB max)
+                    if image.size > 10 * 1024 * 1024:
+                        logger.warning(f"File {image.name} exceeded 10MB limit")
+                        messages.warning(self.request, f"File '{image.name}' was skipped (exceeds 10MB limit).")
+                        continue
+                    
+                    ServiceGallery.objects.create(
+                        service=self.object,
+                        image=image
+                    )
+                    uploaded_count += 1
+                except Exception as e:
+                    logger.error(f"Error uploading file {image.name}: {str(e)}")
+                    messages.warning(self.request, f"Error uploading '{image.name}': {str(e)}")
+                    continue
+            
+            # Handle deleting selected gallery images
+            if delete_ids := self.request.POST.getlist('delete_images'):
+                ServiceGallery.objects.filter(id__in=delete_ids, service=self.object).delete()
+        
+        msg = "Service updated successfully!"
+        if uploaded_count > 0:
+            msg += f" {uploaded_count} image(s) added to gallery."
+        messages.success(self.request, msg)
+        return redirect(self.get_success_url())
 
 class ServiceDeleteView(PortfolioSecurityMixin, DeleteView):
     model = Service
