@@ -96,7 +96,7 @@ class ServiceListView(PortfolioSecurityMixin, ListView):
 class ServiceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecurityMixin, CreateView):
     model = Service
     form_class = ServiceForm
-    template_name = 'dashboard/portfolio/generic_form.html'
+    template_name = 'dashboard/services/generic_form.html'
     success_url = reverse_lazy('services:manage_services')
 
     def get_queryset(self):
@@ -141,7 +141,7 @@ class ServiceCreateView(RoleAwareFormMixin, PortfolioCreateMixin, PortfolioSecur
 class ServiceUpdateView(OracleUpdateMixin, RoleAwareFormMixin, PortfolioSecurityMixin, UpdateView):
     model = Service
     form_class = ServiceForm
-    template_name = 'dashboard/portfolio/generic_form.html'
+    template_name = 'dashboard/services/generic_form.html'
     success_url = reverse_lazy('services:manage_services')
 
     def get_queryset(self):
