@@ -97,12 +97,18 @@ class CustomUserChangeForm(forms.ModelForm):
             if profile:
                 self.fields['admin_rating'].initial = profile.admin_rating
                 self.fields['is_rating_locked'].initial = getattr(profile, 'is_rating_locked', False)
+                self.fields['years_experience'].initial = profile.years_experience
+                self.fields['field_of_interest'].initial = profile.field_of_interest
             else:
                 self.fields['admin_rating'].disabled = True
                 self.fields['is_rating_locked'].disabled = True
+                self.fields['years_experience'].disabled = True
+                self.fields['field_of_interest'].disabled = True
                 self.fields['admin_rating'].help_text = _(
                     "User does not have an active Unified Portfolio yet. Cannot set rating.")
                 self.fields['is_rating_locked'].help_text = _("Portfolio required to lock rating.")
+                self.fields['years_experience'].help_text = _("Portfolio required to edit experience.")
+                self.fields['field_of_interest'].help_text = _("Portfolio required to edit field.")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -509,6 +515,12 @@ class CustomUserAdmin(ModelAdmin):
             ),
             "classes": ["tab"]
         }),
+        (_("Professional Bio"), {
+            "fields": (
+                ('years_experience', 'field_of_interest')
+            ),
+            "classes": ["tab"]
+        }),
         (_("📞 CRM / Contact Status"), {
             "fields": (
                 'is_contacted',
@@ -567,6 +579,8 @@ class CustomUserAdmin(ModelAdmin):
         if profile:
             rating = form.cleaned_data.get('admin_rating')
             is_locked = form.cleaned_data.get('is_rating_locked')
+            years_exp = form.cleaned_data.get('years_experience')
+            field_interest = form.cleaned_data.get('field_of_interest')
             is_verified = getattr(obj, 'profile_verified', False)
             update_fields = []
 
@@ -577,6 +591,14 @@ class CustomUserAdmin(ModelAdmin):
             if is_locked is not None and getattr(profile, 'is_rating_locked', None) != is_locked:
                 profile.is_rating_locked = is_locked
                 update_fields.append('is_rating_locked')
+
+            if years_exp is not None and getattr(profile, 'years_experience', None) != years_exp:
+                profile.years_experience = years_exp
+                update_fields.append('years_experience')
+
+            if field_interest is not None and getattr(profile, 'field_of_interest', None) != field_interest:
+                profile.field_of_interest = field_interest
+                update_fields.append('field_of_interest')
 
             if getattr(profile, 'profile_verified', None) != is_verified:
                 profile.profile_verified = is_verified
