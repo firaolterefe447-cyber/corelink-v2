@@ -61,7 +61,7 @@
         <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
         <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
     </div>
-    <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+    <button type="button" onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
         <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
     </button>
 </div>
@@ -488,11 +488,11 @@
             padding-top: 3rem;
             padding-bottom: 3rem;
         }
-        
+
         .django-form {
             gap: 1.5rem !important;
         }
-        
+
         #form-grid {
             gap: 1.5rem !important;
         }
@@ -503,7 +503,7 @@
             padding-top: 4rem;
             padding-bottom: 4rem;
         }
-        
+
         .django-form {
             gap: 1.75rem !important;
         }
@@ -551,9 +551,6 @@
         pointer-events: auto;
     }
 
-    
-    }
-
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
@@ -561,7 +558,6 @@
 <main class="app-canvas {% if request.user.is_authenticated %}auth-canvas{% endif %} animate-slide-in">
     <!-- WRAPPER -->
     <div class="max-w-[1000px] mx-auto w-full relative z-10">
-
 
         <!-- CLEAN BENTO CARD CONTAINER -->
         <div class="w-full bg-white/98 backdrop-blur-xl rounded-[1.25rem] md:rounded-[1.5rem] border border-slate-200/90 shadow-[0_4px_24px_rgba(15,23,42,0.08),0_1px_4px_rgba(15,23,42,0.04)] overflow-hidden relative z-10">
@@ -686,26 +682,41 @@
                             </p>
                         </div>
 
-                        <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*" class="hidden">
+                        <!-- Fixed accept types for both images and PDFs -->
+                        <input type="file" id="gallery-upload" name="gallery_images" multiple accept="image/*,.pdf,application/pdf" class="hidden">
 
                         <div id="gallery-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
                             {% if form.instance.pk and form.instance.gallery.all %}
                                 {% for media in form.instance.gallery.all %}
                                 <div class="relative group aspect-square rounded-lg sm:rounded-[0.85rem] overflow-hidden bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all" id="existing-wrapper-{{ media.pk }}">
-                                    <img src="{{ media.image.url }}" class="w-full h-full object-cover" loading="lazy">
+                                    {% if media.image %}
+                                        <img src="{{ media.image.url }}" class="w-full h-full object-cover" loading="lazy">
+                                    {% elif media.document_file %}
+                                        <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
+                                            <i data-lucide="file-text" class="w-6 sm:w-8 h-6 sm:h-8 mb-1"></i>
+                                            <span class="text-[8px] sm:text-[10px] font-bold uppercase truncate px-1 w-full text-center">PDF</span>
+                                        </div>
+                                    {% elif media.external_url %}
+                                        <div class="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-500">
+                                            <i data-lucide="link" class="w-6 sm:w-8 h-6 sm:h-8 mb-1"></i>
+                                            <span class="text-[8px] sm:text-[10px] font-bold uppercase truncate px-1 w-full text-center">Link</span>
+                                        </div>
+                                    {% endif %}
                                     <input type="checkbox" name="delete_images" value="{{ media.pk }}" id="delete-{{ media.pk }}" class="hidden">
                                     <div class="absolute inset-0 bg-slate-900/50 opacity-0 group-active:opacity-100 sm:group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                                        <button type="button" onclick="toggleDeleteExisting('{{ media.pk }}')" class="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 active:scale-100 sm:group-hover:scale-100 touch-manipulation">
+                                        <!-- Pass explicit event object to block form submission -->
+                                        <button type="button" onclick="toggleDeleteExisting(event, '{{ media.pk }}')" class="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg transition-transform transform scale-90 active:scale-100 sm:group-hover:scale-100 touch-manipulation">
                                             <i data-lucide="trash-2" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                                         </button>
                                     </div>
                                 </div>
                                 {% endfor %}
                             {% endif %}
-                            <!-- BUG FIX: Changed from <button> to <label>. Ensures the browser NEVER accidentally navigates away -->
+
+                            <!-- BUG FIX: Use pure label element. Children have pointer-events-none to prevent click interception -->
                             <label for="gallery-upload" id="gallery-add-btn" class="aspect-square rounded-lg sm:rounded-[0.85rem] bg-slate-50 hover:bg-blue-50 active:bg-blue-100 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 active:text-blue-600 transition-colors border-2 border-dashed border-slate-300 hover:border-blue-300 cursor-pointer touch-manipulation">
                                 <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 text-lg pointer-events-none">+</div>
-                                <span class="text-[11px] sm:text-[12px] font-bold px-1 text-center leading-snug pointer-events-none" id="gallery-btn-text">Add Image</span>
+                                <span class="text-[11px] sm:text-[12px] font-bold px-1 text-center leading-snug pointer-events-none" id="gallery-btn-text">Add Media</span>
                             </label>
                         </div>
                     </div>
@@ -804,7 +815,6 @@
             dw.classList.replace('drawer-closed', 'drawer-open');
             document.body.classList.add('body-lock');
         } else { closeAllDrawers(); }
-    } else { closeAllDrawers(); }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -817,13 +827,10 @@
         const categoryInput = document.getElementById('id_category_select');
 
         if (categoryInput) {
-
-            // Ultimate protection: Ensure the browser selects the placeholder visually
             if (!isEditMode) {
                 categoryInput.selectedIndex = 0;
             }
 
-            // HIGHLY EXPLICIT, "EXPLAIN-LIKE-I'M-5" HELP TEXTS FOR EVERY FIELD
             const contentMaps = {
                 'SOFTWARE_DATA': {
                     title: { label: "App or Project Name", help: "Official name of your software, app, AI model, or data project.", place: "E.g., E-commerce Platform, ML Model" },
@@ -906,14 +913,12 @@
 
             const fieldsToToggle = ['title', 'role', 'link', 'main_description'];
             const gallerySection = document.getElementById('gallery-section');
-            const submitSection = document.getElementById('submit-section');
             const subtitle = document.getElementById('form-subtitle');
 
             function applyDynamicUI() {
                 const val = categoryInput.value;
                 const map = contentMaps[val] || contentMaps['DEFAULT'];
 
-                // Always show fields - dynamic enhancement only
                 subtitle.innerText = val ? "We've customized the form for your industry." : "Fill out the details below.";
 
                 fieldsToToggle.forEach(f => {
@@ -945,14 +950,12 @@
             }
 
             categoryInput.addEventListener('change', applyDynamicUI);
-            applyDynamicUI(); // Run once on load to establish the state
+            applyDynamicUI();
         }
 
         // =========================================================
-        // OTHER LOGIC (Radios, Auto-expand Textareas, Image Uploads)
+        // OTHER LOGIC (Radios, Auto-expand Textareas)
         // =========================================================
-
-        // 1. Convert ONLY unthemed radios to selects (Ignore our new Pill Groups)
         const allRadios = document.querySelectorAll('.django-form input[type="radio"]:not(.radio-pill-group input)');
         if (allRadios.length > 0) {
             const radioGroups = {};
@@ -987,7 +990,6 @@
             });
         }
 
-        // 2. Auto-expand textareas with mobile optimization
         const textareas = document.querySelectorAll('textarea');
         textareas.forEach(textarea => {
             textarea.removeAttribute('required');
@@ -1005,12 +1007,10 @@
             setTimeout(adjustHeight, 100);
         });
 
-        // Mobile keyboard detection and body scroll management
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
-                    // Scroll to element when focused on mobile
                     setTimeout(() => {
                         this.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 100);
@@ -1025,20 +1025,17 @@
                 const text = document.getElementById('submit-text');
                 const icon = document.getElementById('submit-icon');
                 const spinner = document.getElementById('submit-spinner');
-                
+
                 setTimeout(() => {
                     btn.classList.add('btn-loading');
                     btn.style.transform = 'scale(0.98)';
                     text.style.opacity = '0';
-                    icon.style.display = 'none';
+                    if (icon) icon.style.display = 'none';
                     spinner.style.display = 'inline-block';
                 }, 10);
             });
         }
 
-        // =========================================================
-        // "I CURRENTLY WORK HERE" CHECKBOX LOGIC
-        // =========================================================
         const isCurrentCheckbox = document.getElementById('id_is_current');
         const endDateWrapper = document.querySelector('[data-field-name="end_date"]');
 
@@ -1062,138 +1059,7 @@
         }
 
         // =========================================================
-        // AI AUTO-DETECT CATEGORY FOR PROJECTS (Hidden Field)
-        // =========================================================
-        const categoryField = document.getElementById('id_category');
-        const titleField = document.getElementById('id_title');
-        const roleField = document.getElementById('id_role');
-        const descriptionField = document.getElementById('id_main_description');
-        const roleHelpText = document.getElementById('help-role');
-        const descHelpText = document.getElementById('help-main_description');
-
-        // Category-specific help text mappings
-        const categoryHelpText = {
-            'SOFTWARE_DATA': {
-                role: 'Your tech stack and specific role (e.g., "React Frontend + Node.js Backend")',
-                description: 'Describe the tech stack, architecture, key features, and impact (e.g., user metrics, performance)'
-            },
-            'HARDWARE_ROBOTICS': {
-                role: 'Your technical contribution (e.g., "Firmware development for Arduino-based system")',
-                description: 'Describe hardware components, sensors used, functionality, and any testing results'
-            },
-            'MEDICAL_CLINICAL': {
-                role: 'Your medical role and specialty (e.g., "Principal Investigator - Cardiology")',
-                description: 'Describe research methodology, patient population, key findings, and clinical significance'
-            },
-            'LEGAL_POLICY': {
-                role: 'Your legal role (e.g., "Lead Counsel - Constitutional Law")',
-                description: 'Describe legal issues addressed, jurisdiction, arguments made, and outcomes achieved'
-            },
-            'SCIENCE_RESEARCH': {
-                role: 'Your research role (e.g., "Lab Lead - Molecular Biology")',
-                description: 'Describe hypothesis, methodology, experimental results, and scientific conclusions'
-            },
-            'DESIGN_UX': {
-                role: 'Your design role (e.g., "UX Researcher + UI Designer")',
-                description: 'Describe design process, user research findings, tools used (Figma, Sketch), and design impact'
-            },
-            'ARCHITECTURE_CIVIL': {
-                role: 'Your engineering role (e.g., "Structural Engineer - Commercial Buildings")',
-                description: 'Describe project scope, materials used, engineering challenges, and construction details'
-            },
-            'BUSINESS_FINANCE': {
-                role: 'Your business role (e.g., "Co-founder & CFO")',
-                description: 'Describe business model, market opportunity, key metrics, and financial achievements'
-            },
-            'MARKETING_MEDIA': {
-                role: 'Your marketing role (e.g., "Digital Marketing Manager")',
-                description: 'Describe campaign strategy, channels used, engagement metrics, and marketing outcomes'
-            },
-            'ARTS_CREATIVE': {
-                role: 'Your creative role (e.g., "Director & Cinematographer")',
-                description: 'Describe creative concept, artistic techniques, platforms, and audience reception'
-            },
-            'EDUCATION_TRAINING': {
-                role: 'Your educational role (e.g., "Curriculum Designer - STEM")',
-                description: 'Describe learning objectives, teaching methods, student outcomes, and educational impact'
-            },
-            'OPERATIONS_TRADES': {
-                role: 'Your operational role (e.g., "Operations Manager - Supply Chain")',
-                description: 'Describe operational processes, efficiency improvements, and measurable outcomes'
-            },
-            'OTHER': {
-                role: 'Your specific contribution to this project',
-                description: 'Describe the project, your role, approach taken, and impact achieved'
-            }
-        };
-
-        const defaultHelpText = {
-            role: 'Your specific contribution.',
-            description: 'Describe the project, problem, approach, and impact.'
-        };
-
-        if (categoryField && titleField) {
-            let debounceTimer;
-            const DEBOUNCE_DELAY = 800;
-
-            async function autoDetectCategory() {
-                const title = titleField?.value || '';
-                const role = roleField?.value || '';
-                const description = descriptionField?.value || '';
-
-                if (title.length < 3) return;
-
-                try {
-                    const response = await fetch('{% url "auto_detect_project_category" %}?' + new URLSearchParams({
-                        title: title,
-                        role: role,
-                        description: description
-                    }));
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.category && data.confidence >= 2.0) {
-                            // Auto-set the hidden category field
-                            categoryField.value = data.category;
-                            
-                            // Update help text dynamically based on detected category
-                            updateHelpText(data.category);
-                        }
-                    }
-                } catch (error) {
-                    console.log('Auto-detect failed:', error);
-                }
-            }
-
-            function updateHelpText(category) {
-                const help = categoryHelpText[category] || defaultHelpText;
-                
-                if (roleHelpText && help.role) {
-                    roleHelpText.textContent = help.role;
-                    roleHelpText.classList.add('animate-fade-in');
-                    setTimeout(() => roleHelpText.classList.remove('animate-fade-in'), 300);
-                }
-                
-                if (descHelpText && help.description) {
-                    descHelpText.textContent = help.description;
-                    descHelpText.classList.add('animate-fade-in');
-                    setTimeout(() => descHelpText.classList.remove('animate-fade-in'), 300);
-                }
-            }
-
-            // Debounced auto-detect on field changes
-            function triggerAutoDetect() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(autoDetectCategory, DEBOUNCE_DELAY);
-            }
-
-            titleField?.addEventListener('input', triggerAutoDetect);
-            roleField?.addEventListener('input', triggerAutoDetect);
-            descriptionField?.addEventListener('input', triggerAutoDetect);
-        }
-
-        // =========================================================
-        // ROBUST ASSET VAULT GALLERY (FIXED BUGS)
+        // ROBUST ASSET VAULT GALLERY (100% BULLETPROOF)
         // =========================================================
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
@@ -1201,7 +1067,7 @@
 
         if (fileInput && galleryGrid && addBtn) {
             let queuedFiles = [];
-            const maxFileSize = 12 * 1024 * 1024; // 12MB limit protects against browser crashes
+            const maxFileSize = 12 * 1024 * 1024; // Generous 12MB limit
 
             fileInput.addEventListener('change', function(e) {
                 if (!e.target.files || e.target.files.length === 0) return;
@@ -1214,65 +1080,56 @@
                         hasOversized = true;
                         return;
                     }
-                    // Prevent duplicates safely
                     if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) {
                         queuedFiles.push(file);
                     }
                 });
 
-                // Set a timeout so mobile browsers don't glitch or refresh when the file picker closes
                 if (hasOversized) {
                     setTimeout(() => alert('Some files were skipped because they exceed the 12MB limit.'), 500);
                 }
 
-                // Reset input value so selecting the same file twice triggers change event again
-                fileInput.value = '';
-
+                fileInput.value = ''; // Reset so same file can be selected again if needed
                 updateGalleryUI();
             });
 
             function updateGalleryUI() {
-                // 1. Remove existing dynamically added previews
                 document.querySelectorAll('.queued-image').forEach(el => el.remove());
 
-                // 2. Build the new previews
                 queuedFiles.forEach((file, index) => {
-                    // Fix missing previews: Mobile browsers sometimes drop the MIME type. Regex check fixes this.
+                    // Mobile-safe file type checking
                     const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name);
+                    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
                     const div = document.createElement('div');
                     div.className = 'queued-image relative group aspect-square rounded-[0.85rem] overflow-hidden shadow-sm bg-white border-2 border-[#0A66C2] flex items-center justify-center';
 
-                    // Safely insert before the explicitly targeted Add button to prevent DOM errors
                     galleryGrid.insertBefore(div, addBtn);
 
                     if (isImage) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            div.innerHTML = `
-                                <img src="${e.target.result}" class="w-full h-full object-cover animate-fade-in" alt="preview">
-                                <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                </button>
-                            `;
-                        };
-                        // Read file data safely
-                        reader.readAsDataURL(file);
+                        // ZERO-MEMORY OBJECT URL: Prevents iOS/Android Chrome from crashing on heavy files
+                        const objectUrl = URL.createObjectURL(file);
+                        div.innerHTML = `
+                            <img src="${objectUrl}" class="w-full h-full object-cover animate-fade-in" alt="preview" onload="URL.revokeObjectURL(this.src)">
+                            <button type="button" onclick="removeQueuedFile(event, ${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        `;
                     } else {
-                        // Fallback UI for non-image files
+                        // PDF/Document Fallback
                         div.innerHTML = `
                             <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">FILE</span>
+                                <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">${isPDF ? 'PDF' : 'FILE'}</span>
                             </div>
-                            <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
+                            <button type="button" onclick="removeQueuedFile(event, ${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         `;
                     }
                 });
 
-                // 3. Attach files to the hidden input so Django can save them
+                // Safely update the hidden HTML input form
                 try {
                     const dataTransfer = new DataTransfer();
                     queuedFiles.forEach(file => dataTransfer.items.add(file));
@@ -1282,14 +1139,21 @@
                 }
             }
 
-            window.removeQueuedFile = function(index) {
-                if(window.event) window.event.preventDefault();
+            // Exposing explicitly to Window object with direct Event Object passing
+            window.removeQueuedFile = function(e, index) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 queuedFiles.splice(index, 1);
                 updateGalleryUI();
             };
 
-            window.toggleDeleteExisting = function(mediaPk) {
-                if(window.event) window.event.preventDefault();
+            window.toggleDeleteExisting = function(e, mediaPk) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
                 const checkbox = document.getElementById(`delete-${mediaPk}`);
                 const wrapper = document.getElementById(`existing-wrapper-${mediaPk}`);
 
@@ -1301,8 +1165,6 @@
                 }
             };
         }
-
     });
 </script>
 {% endblock %}
-
