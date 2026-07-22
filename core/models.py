@@ -31,10 +31,4 @@ class TimeStampedModel(models.Model):
             models.Index(fields=['updated_at']),
         ]
 
-# Site Assets Management
-# NOTE: SiteMediaAsset and SiteTextAsset have been removed as they were unused
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# # 3. UTILITY FUNCTIONS & HELPERS
-# ═══════════════════════════════════════════════════════════════════════════════
-# NOTE: Utility functions for SiteMediaAsset and SiteTextAsset have been removed
