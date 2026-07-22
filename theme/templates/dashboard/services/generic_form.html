@@ -702,10 +702,11 @@
                                 </div>
                                 {% endfor %}
                             {% endif %}
-                            <button type="button" onclick="document.getElementById('gallery-upload').click()" class="aspect-square rounded-lg sm:rounded-[0.85rem] bg-slate-50 hover:bg-blue-50 active:bg-blue-100 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 active:text-blue-600 transition-colors border-2 border-dashed border-slate-300 hover:border-blue-300 touch-manipulation">
-                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 text-lg">+</div>
-                                <span class="text-[11px] sm:text-[12px] font-bold px-1 text-center leading-snug" id="gallery-btn-text">Add Image</span>
-                            </button>
+                            <!-- BUG FIX: Changed from <button> to <label>. Ensures the browser NEVER accidentally navigates away -->
+                            <label for="gallery-upload" id="gallery-add-btn" class="aspect-square rounded-lg sm:rounded-[0.85rem] bg-slate-50 hover:bg-blue-50 active:bg-blue-100 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 active:text-blue-600 transition-colors border-2 border-dashed border-slate-300 hover:border-blue-300 cursor-pointer touch-manipulation">
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full shadow-sm flex items-center justify-center text-slate-400 text-lg pointer-events-none">+</div>
+                                <span class="text-[11px] sm:text-[12px] font-bold px-1 text-center leading-snug pointer-events-none" id="gallery-btn-text">Add Image</span>
+                            </label>
                         </div>
                     </div>
                 {% endif %}
@@ -1191,78 +1192,104 @@
             descriptionField?.addEventListener('input', triggerAutoDetect);
         }
 
+        // =========================================================
+        // ROBUST ASSET VAULT GALLERY (FIXED BUGS)
+        // =========================================================
         const fileInput = document.getElementById('gallery-upload');
         const galleryGrid = document.getElementById('gallery-grid');
-        if (fileInput && galleryGrid) {
+        const addBtn = document.getElementById('gallery-add-btn');
+
+        if (fileInput && galleryGrid && addBtn) {
             let queuedFiles = [];
-            
-            // Mobile browser detection
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const maxFileSize = isMobile ? 4 * 1024 * 1024 : 10 * 1024 * 1024; // 4MB mobile, 10MB desktop
-            
+            const maxFileSize = 12 * 1024 * 1024; // 12MB limit protects against browser crashes
+
             fileInput.addEventListener('change', function(e) {
-                try {
-                    const newFiles = Array.from(e.target.files);
-                    let validFiles = [];
-                    
-                    newFiles.forEach(file => {
-                        // File size validation
-                        if (file.size > maxFileSize) {
-                            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-                            const limitMB = (maxFileSize / (1024 * 1024)).toFixed(0);
-                            alert(`File "${file.name}" (${sizeMB}MB) exceeds the ${limitMB}MB limit. Please select a smaller file.`);
-                            return;
-                        }
-                        
-                        // Check for duplicates
-                        if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) {
-                            validFiles.push(file);
-                        }
-                    });
-                    
-                    validFiles.forEach(file => queuedFiles.push(file));
-                    
-                    // Use setTimeout to prevent UI blocking on mobile
-                    setTimeout(() => updateGalleryUI(), 50);
-                } catch (error) {
-                    console.error('File upload error:', error);
-                    alert('There was an error processing the file. Please try again.');
+                if (!e.target.files || e.target.files.length === 0) return;
+
+                const newFiles = Array.from(e.target.files);
+                let hasOversized = false;
+
+                newFiles.forEach(file => {
+                    if (file.size > maxFileSize) {
+                        hasOversized = true;
+                        return;
+                    }
+                    // Prevent duplicates safely
+                    if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        queuedFiles.push(file);
+                    }
+                });
+
+                // Set a timeout so mobile browsers don't glitch or refresh when the file picker closes
+                if (hasOversized) {
+                    setTimeout(() => alert('Some files were skipped because they exceed the 12MB limit.'), 500);
                 }
+
+                // Reset input value so selecting the same file twice triggers change event again
+                fileInput.value = '';
+
+                updateGalleryUI();
             });
 
             function updateGalleryUI() {
+                // 1. Remove existing dynamically added previews
                 document.querySelectorAll('.queued-image').forEach(el => el.remove());
-                const addBtn = galleryGrid.lastElementChild;
 
+                // 2. Build the new previews
                 queuedFiles.forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const innerPreview = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    // Fix missing previews: Mobile browsers sometimes drop the MIME type. Regex check fixes this.
+                    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name);
 
-                        const div = document.createElement('div');
-                        div.className = 'queued-image relative group aspect-square rounded-[0.85rem] overflow-hidden shadow-sm bg-white border-2 border-[#0A66C2]';
+                    const div = document.createElement('div');
+                    div.className = 'queued-image relative group aspect-square rounded-[0.85rem] overflow-hidden shadow-sm bg-white border-2 border-[#0A66C2] flex items-center justify-center';
+
+                    // Safely insert before the explicitly targeted Add button to prevent DOM errors
+                    galleryGrid.insertBefore(div, addBtn);
+
+                    if (isImage) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            div.innerHTML = `
+                                <img src="${e.target.result}" class="w-full h-full object-cover animate-fade-in" alt="preview">
+                                <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                </button>
+                            `;
+                        };
+                        // Read file data safely
+                        reader.readAsDataURL(file);
+                    } else {
+                        // Fallback UI for non-image files
                         div.innerHTML = `
-                            ${innerPreview}
-                            <button type="button" onclick="removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100 z-10">
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                <span class="text-[10px] font-bold uppercase truncate px-2 w-full text-center">FILE</span>
+                            </div>
+                            <button type="button" onclick="event.preventDefault(); removeQueuedFile(${index})" class="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur hover:bg-rose-500 hover:text-white text-rose-500 rounded-full flex items-center justify-center shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform scale-100 md:scale-90 md:group-hover:scale-100 z-10 touch-manipulation">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         `;
-                        galleryGrid.insertBefore(div, addBtn);
-                    };
-                    reader.readAsDataURL(file);
+                    }
                 });
 
-                const dataTransfer = new DataTransfer();
-                queuedFiles.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
+                // 3. Attach files to the hidden input so Django can save them
+                try {
+                    const dataTransfer = new DataTransfer();
+                    queuedFiles.forEach(file => dataTransfer.items.add(file));
+                    fileInput.files = dataTransfer.files;
+                } catch(err) {
+                    console.error('DataTransfer failed:', err);
+                }
             }
 
             window.removeQueuedFile = function(index) {
+                if(window.event) window.event.preventDefault();
                 queuedFiles.splice(index, 1);
                 updateGalleryUI();
             };
 
             window.toggleDeleteExisting = function(mediaPk) {
+                if(window.event) window.event.preventDefault();
                 const checkbox = document.getElementById(`delete-${mediaPk}`);
                 const wrapper = document.getElementById(`existing-wrapper-${mediaPk}`);
 

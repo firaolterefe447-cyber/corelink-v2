@@ -1757,46 +1757,77 @@
 
     function previewQuickImages(input) {
         try {
-            // Mobile browser detection
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const maxFileSize = isMobile ? 4 * 1024 * 1024 : 10 * 1024 * 1024; // 4MB mobile, 10MB desktop
-            
+            const maxFileSize = 12 * 1024 * 1024; // 12MB limit protects against browser crashes
             const container = document.getElementById('quick-image-preview-container');
-            if (input.files.length > 0) {
-                // Validate file sizes
-                for (let file of input.files) {
-                    if (file.size > maxFileSize) {
-                        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-                        const limitMB = (maxFileSize / (1024 * 1024)).toFixed(0);
-                        alert(`File "${file.name}" (${sizeMB}MB) exceeds the ${limitMB}MB limit. Please select a smaller file.`);
-                        input.value = '';
-                        return;
-                    }
+            
+            if (!input.files || input.files.length === 0) return;
+
+            const newFiles = Array.from(input.files);
+            let hasOversized = false;
+
+            newFiles.forEach(file => {
+                if (file.size > maxFileSize) {
+                    hasOversized = true;
+                    return;
                 }
-                
+                // Prevent duplicates safely
+                if (!quickFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    quickFiles.push(file);
+                }
+            });
+
+            // Set a timeout so mobile browsers don't glitch or refresh when the file picker closes
+            if (hasOversized) {
+                setTimeout(() => alert('Some files were skipped because they exceed the 12MB limit.'), 500);
+            }
+
+            // Reset input value so selecting the same file twice triggers change event again
+            input.value = '';
+
+            if (quickFiles.length > 0) {
                 container.classList.remove('hidden');
                 container.classList.add('flex');
 
-                Array.from(input.files).forEach((file, index) => {
-                    quickFiles.push(file);
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const div = document.createElement('div');
-                        div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105';
+                // Update UI with all queued files
+                container.innerHTML = '';
+                quickFiles.forEach((file, index) => {
+                    // Fix missing previews: Mobile browsers sometimes drop the MIME type. Regex check fixes this.
+                    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(file.name);
+
+                    const div = document.createElement('div');
+                    div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105';
+
+                    if (isImage) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            div.innerHTML = `
+                                <img src="${e.target.result}" class="w-full h-full object-cover animate-fade-in">
+                                <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="event.preventDefault(); removeQuickImage(this, ${index})">
+                                    <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
+                                </div>
+                            `;
+                            if (typeof lucide !== 'undefined') lucide.createIcons();
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        // Fallback UI for non-image files
                         div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="removeQuickImage(this, ${quickFiles.length - 1})">
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-[#0A66C2]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="event.preventDefault(); removeQuickImage(this, ${index})">
                                 <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
                             </div>
                         `;
-                        container.appendChild(div);
                         if (typeof lucide !== 'undefined') lucide.createIcons();
-                    };
-                    reader.readAsDataURL(file);
+                    }
+                    container.appendChild(div);
                 });
+            } else {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
             }
-            // Reset input so the same file can be selected again if removed
-            input.value = '';
+
             handleQuickUpdateInput(document.getElementById('right_now_text'));
         } catch (error) {
             console.error('Quick image upload error:', error);
