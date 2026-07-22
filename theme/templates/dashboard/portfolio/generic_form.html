@@ -1193,12 +1193,39 @@
         const galleryGrid = document.getElementById('gallery-grid');
         if (fileInput && galleryGrid) {
             let queuedFiles = [];
+            
+            // Mobile browser detection
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const maxFileSize = isMobile ? 4 * 1024 * 1024 : 10 * 1024 * 1024; // 4MB mobile, 10MB desktop
+            
             fileInput.addEventListener('change', function(e) {
-                const newFiles = Array.from(e.target.files);
-                newFiles.forEach(file => {
-                    if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) queuedFiles.push(file);
-                });
-                updateGalleryUI();
+                try {
+                    const newFiles = Array.from(e.target.files);
+                    let validFiles = [];
+                    
+                    newFiles.forEach(file => {
+                        // File size validation
+                        if (file.size > maxFileSize) {
+                            const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                            const limitMB = (maxFileSize / (1024 * 1024)).toFixed(0);
+                            alert(`File "${file.name}" (${sizeMB}MB) exceeds the ${limitMB}MB limit. Please select a smaller file.`);
+                            return;
+                        }
+                        
+                        // Check for duplicates
+                        if (!queuedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                            validFiles.push(file);
+                        }
+                    });
+                    
+                    validFiles.forEach(file => queuedFiles.push(file));
+                    
+                    // Use setTimeout to prevent UI blocking on mobile
+                    setTimeout(() => updateGalleryUI(), 50);
+                } catch (error) {
+                    console.error('File upload error:', error);
+                    alert('There was an error processing the file. Please try again.');
+                }
             });
 
             function updateGalleryUI() {

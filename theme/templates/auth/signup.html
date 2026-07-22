@@ -1077,6 +1077,17 @@
             return;
         }
 
+        // Mobile browser safety check
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            // Reduce file size limit for mobile
+            if(file.size > 4 * 1024 * 1024) {
+                alert("For mobile devices, please select an image under 4MB for better performance.");
+                input.value = '';
+                return;
+            }
+        }
+
         const reader = new FileReader();
         reader.onload = function(e) {
             const cropperModal = document.getElementById('cropper-modal');

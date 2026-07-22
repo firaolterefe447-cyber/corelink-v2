@@ -1756,32 +1756,53 @@
     }
 
     function previewQuickImages(input) {
-        const container = document.getElementById('quick-image-preview-container');
-        if (input.files.length > 0) {
-            container.classList.remove('hidden');
-            container.classList.add('flex');
+        try {
+            // Mobile browser detection
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const maxFileSize = isMobile ? 4 * 1024 * 1024 : 10 * 1024 * 1024; // 4MB mobile, 10MB desktop
+            
+            const container = document.getElementById('quick-image-preview-container');
+            if (input.files.length > 0) {
+                // Validate file sizes
+                for (let file of input.files) {
+                    if (file.size > maxFileSize) {
+                        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                        const limitMB = (maxFileSize / (1024 * 1024)).toFixed(0);
+                        alert(`File "${file.name}" (${sizeMB}MB) exceeds the ${limitMB}MB limit. Please select a smaller file.`);
+                        input.value = '';
+                        return;
+                    }
+                }
+                
+                container.classList.remove('hidden');
+                container.classList.add('flex');
 
-            Array.from(input.files).forEach((file, index) => {
-                quickFiles.push(file);
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const div = document.createElement('div');
-                    div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105';
-                    div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="removeQuickImage(this, ${quickFiles.length - 1})">
-                            <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                };
-                reader.readAsDataURL(file);
-            });
+                Array.from(input.files).forEach((file, index) => {
+                    quickFiles.push(file);
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const div = document.createElement('div');
+                        div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-rose-500/80 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onclick="removeQuickImage(this, ${quickFiles.length - 1})">
+                                <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            // Reset input so the same file can be selected again if removed
+            input.value = '';
+            handleQuickUpdateInput(document.getElementById('right_now_text'));
+        } catch (error) {
+            console.error('Quick image upload error:', error);
+            alert('There was an error processing the image. Please try again.');
         }
-        // Reset input so the same file can be selected again if removed
-        input.value = '';
-        handleQuickUpdateInput(document.getElementById('right_now_text'));
+    }
     }
 
     function removeQuickImage(btnElement, index) {
