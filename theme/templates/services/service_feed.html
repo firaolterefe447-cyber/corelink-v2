@@ -154,6 +154,21 @@
         .drawer-closed { transform: translate3d(0, 100%, 0); }
         body.body-lock { overflow: hidden !important; touch-action: none !important; }
 
+        /* Mobile Filter Drawer */
+        .filter-drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -4px 32px rgba(0,0,0,0.12);
+            z-index: 200;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        }
+
         /* Animations */
         @keyframes entrance-stagger {
             from { opacity: 0; transform: translateY(20px); }
@@ -272,24 +287,143 @@
                 </p>
             </section>
 
-            <!-- Premium Search Bar -->
-            <section class="animate-entrance mb-12 relative" style="animation-delay: 0.2s;">
+            <!-- Premium Search Bar with Filter Toggle -->
+            <section class="animate-entrance mb-8 relative" style="animation-delay: 0.2s;">
                 <div class="glass-card p-2 md:p-3 rounded-[24px] shadow-sm flex items-center group focus-within:ring-2 focus-within:ring-primary/20 magic-ease">
                     <div class="pl-4 md:pl-6 pr-3 md:pr-4 text-on-surface-variant flex items-center">
                         <i data-lucide="search" class="w-5 h-5 md:w-6 md:h-6 text-slate-400"></i>
                     </div>
                     <form action="" method="get" class="flex-1 flex items-center">
                         <input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-3 md:py-4 w-full" name="q" placeholder="Search for 'Fractional CTO', 'UX Audit'..." type="text" value="{{ search_query }}"/>
+                        <button type="button" onclick="toggleFilterDrawer()" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[13px] transition-all active:scale-95 mr-2">
+                            <i data-lucide="filter" class="w-4 h-4"></i>
+                            <span>Filters</span>
+                            {% if current_category or current_subcategory or current_tag or current_service_type %}
+                                <span class="w-2 h-2 bg-rose-500 rounded-full"></span>
+                            {% endif %}
+                        </button>
                         <button class="primary-gradient text-white px-5 md:px-8 py-3 rounded-[18px] font-bold text-[14px] shadow-md hover:shadow-lg active:scale-95 magic-ease ml-2 whitespace-nowrap">
                             <span class="hidden md:inline">Find Experts</span>
                             <span class="md:hidden">Search</span>
                         </button>
                     </form>
                 </div>
+                
+                <!-- Mobile Filter Toggle -->
+                <button onclick="toggleFilterDrawer()" class="md:hidden mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-[13px] transition-all active:scale-95 shadow-sm">
+                    <i data-lucide="filter" class="w-4 h-4"></i>
+                    <span>Filter by Category</span>
+                    {% if current_category or current_subcategory or current_tag or current_service_type %}
+                        <span class="w-2 h-2 bg-rose-500 rounded-full"></span>
+                    {% endif %}
+                </button>
             </section>
 
-            <!-- Service Feed Grid -->
-            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-gutter">
+            <!-- Active Filters Display -->
+            {% if current_category or current_subcategory or current_tag or current_service_type %}
+            <section class="animate-entrance mb-6 flex flex-wrap gap-2" style="animation-delay: 0.25s;">
+                {% if current_category %}
+                    <a href="?{% if search_query %}q={{ search_query }}&{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-bold text-[12px] hover:bg-blue-100 transition-colors">
+                        <span>{{ current_category.name }}</span>
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                    </a>
+                {% endif %}
+                {% if current_subcategory %}
+                    <a href="?category={{ current_category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-[12px] hover:bg-emerald-100 transition-colors">
+                        <span>{{ current_subcategory.name }}</span>
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                    </a>
+                {% endif %}
+                {% if current_tag %}
+                    <a href="?{% if search_query %}q={{ search_query }}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-700 font-bold text-[12px] hover:bg-purple-100 transition-colors">
+                        <span>{{ current_tag.name }}</span>
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                    </a>
+                {% endif %}
+                {% if current_service_type %}
+                    <a href="?{% if search_query %}q={{ search_query }}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-bold text-[12px] hover:bg-amber-100 transition-colors">
+                        <span>{{ current_service_type.name }}</span>
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                    </a>
+                {% endif %}
+                <a href="?{% if search_query %}q={{ search_query }}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-bold text-[12px] hover:bg-slate-200 transition-colors">
+                    <span>Clear All</span>
+                </a>
+            </section>
+            {% endif %}
+
+            <!-- Desktop Filter Sidebar -->
+            <aside class="hidden lg:block animate-entrance w-64 flex-shrink-0" style="animation-delay: 0.3s;">
+                <div class="glass-card rounded-[20px] p-6 sticky top-24">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-heading text-[16px] font-extrabold text-slate-900">Categories</h3>
+                        {% if current_category or current_subcategory %}
+                            <a href="?{% if search_query %}q={{ search_query }}{% endif %}" class="text-[12px] font-bold text-blue-600 hover:text-blue-700">Clear</a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Categories List -->
+                    <div class="space-y-2 mb-6">
+                        {% for category in categories %}
+                            <div class="category-group">
+                                <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {% if current_category == category %}bg-blue-50 text-blue-700 font-bold{% else %}hover:bg-slate-50 text-slate-700{% endif %}">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold" style="background-color: {{ category.color }}">
+                                        {{ category.name|slice:":1"|upper }}
+                                    </div>
+                                    <span class="flex-1 text-[13px]">{{ category.name }}</span>
+                                    {% if current_category == category %}
+                                        <i data-lucide="check" class="w-4 h-4"></i>
+                                    {% endif %}
+                                </a>
+                                
+                                <!-- Subcategories (shown when category is selected) -->
+                                {% if current_category == category %}
+                                    {% with subcategories=category.subcategories.all %}
+                                        {% if subcategories %}
+                                            <div class="ml-11 mt-1 space-y-1">
+                                                {% for subcategory in subcategories %}
+                                                    <a href="?category={{ category.slug }}&subcategory={{ subcategory.slug }}{% if search_query %}&q={{ search_query }}{% endif %}"
+                                                       class="block px-3 py-2 rounded-lg text-[12px] transition-all {% if current_subcategory == subcategory %}bg-emerald-50 text-emerald-700 font-bold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+                                                        {{ subcategory.name }}
+                                                        {% if current_subcategory == subcategory %}
+                                                            <i data-lucide="check" class="w-3 h-3 inline ml-1"></i>
+                                                        {% endif %}
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Service Types -->
+                    {% if service_types %}
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-heading text-[14px] font-extrabold text-slate-900 mb-4">Service Type</h3>
+                        <div class="space-y-2">
+                            {% for service_type in service_types %}
+                                <a href="?type={{ service_type.slug }}{% if search_query %}&q={{ search_query }}{% endif %}"
+                                   class="flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] transition-all {% if current_service_type == service_type %}bg-amber-50 text-amber-700 font-bold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">
+                                    <span>{{ service_type.icon }}</span>
+                                    <span>{{ service_type.name }}</span>
+                                    {% if current_service_type == service_type %}
+                                        <i data-lucide="check" class="w-3 h-3 ml-auto"></i>
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </aside>
+
+            <!-- Main Content Area with Sidebar -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Service Feed Grid -->
+                <section class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-gutter">
                 {% for service in services %}
                 <div class="animate-entrance group h-full" style="animation-delay: {{ forloop.counter0|add:3 }}00ms;">
                     <!-- CARD CONTAINER (Removed the anchor tag wrapping the whole card to allow nested buttons) -->
@@ -453,7 +587,8 @@
                         <p class="text-slate-500 font-medium text-sm mt-1">Check back later or adjust your search.</p>
                     </div>
                 {% endfor %}
-            </section>
+                </section>
+            </div>
 
             <!-- Pagination -->
             {% if services.has_other_pages %}
@@ -470,6 +605,128 @@
 
         </div>
     </main>
+
+    <script>
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+        // Filter Drawer Functions
+        function toggleFilterDrawer() {
+            const drawer = document.getElementById('filter-drawer');
+            const backdrop = document.getElementById('filter-backdrop');
+            
+            if (drawer.classList.contains('drawer-closed')) {
+                drawer.classList.remove('drawer-closed');
+                drawer.classList.add('drawer-open');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                backdrop.classList.add('opacity-100');
+                document.body.classList.add('body-lock');
+            } else {
+                drawer.classList.remove('drawer-open');
+                drawer.classList.add('drawer-closed');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                backdrop.classList.remove('opacity-100');
+                document.body.classList.remove('body-lock');
+            }
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeFilterAfterClick() {
+            // Small delay to allow the link to be followed
+            setTimeout(() => {
+                toggleFilterDrawer();
+            }, 100);
+        }
+    </script>
+
+    <!-- ========================================== -->
+    <!-- MOBILE FILTER DRAWER                       -->
+    <!-- ========================================== -->
+    <div id="filter-backdrop" onclick="toggleFilterDrawer()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[190] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm"></div>
+    <div id="filter-drawer" class="md:hidden filter-drawer drawer-closed transition-transform duration-300">
+        <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
+        
+        <div class="px-5 pb-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-heading text-[18px] font-extrabold text-slate-900">Filter Services</h3>
+                <button onclick="toggleFilterDrawer()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4 text-slate-600"></i>
+                </button>
+            </div>
+
+            <!-- Categories -->
+            <div class="mb-6">
+                <h4 class="font-heading text-[14px] font-extrabold text-slate-900 mb-3">Categories</h4>
+                <div class="space-y-2">
+                    {% for category in categories %}
+                        <div class="category-group">
+                            <a href="?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                               onclick="closeFilterAfterClick()"
+                               class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {% if current_category == category %}bg-blue-50 text-blue-700 font-bold{% else %}bg-slate-50 text-slate-700{% endif %}">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style="background-color: {{ category.color }}">
+                                    {{ category.name|slice:":1"|upper }}
+                                </div>
+                                <span class="flex-1 text-[14px]">{{ category.name }}</span>
+                                {% if current_category == category %}
+                                    <i data-lucide="check" class="w-5 h-5"></i>
+                                {% endif %}
+                            </a>
+                            
+                            <!-- Subcategories (shown when category is selected) -->
+                            {% if current_category == category %}
+                                {% with subcategories=category.subcategories.all %}
+                                    {% if subcategories %}
+                                        <div class="ml-14 mt-2 space-y-1">
+                                            {% for subcategory in subcategories %}
+                                                <a href="?category={{ category.slug }}&subcategory={{ subcategory.slug }}{% if search_query %}&q={{ search_query }}{% endif %}"
+                                                   onclick="closeFilterAfterClick()"
+                                                   class="block px-4 py-2.5 rounded-lg text-[13px] transition-all {% if current_subcategory == subcategory %}bg-emerald-50 text-emerald-700 font-bold{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
+                                                    {{ subcategory.name }}
+                                                    {% if current_subcategory == subcategory %}
+                                                        <i data-lucide="check" class="w-3 h-3 inline ml-1"></i>
+                                                    {% endif %}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Service Types -->
+            {% if service_types %}
+            <div class="border-t border-slate-100 pt-6">
+                <h4 class="font-heading text-[14px] font-extrabold text-slate-900 mb-3">Service Type</h4>
+                <div class="space-y-2">
+                    {% for service_type in service_types %}
+                        <a href="?type={{ service_type.slug }}{% if search_query %}&q={{ search_query }}{% endif %}"
+                           onclick="closeFilterAfterClick()"
+                           class="flex items-center gap-3 px-4 py-3 rounded-lg text-[13px] transition-all {% if current_service_type == service_type %}bg-amber-50 text-amber-700 font-bold{% else %}bg-slate-50 text-slate-600{% endif %}">
+                            <span class="text-lg">{{ service_type.icon }}</span>
+                            <span>{{ service_type.name }}</span>
+                            {% if current_service_type == service_type %}
+                                <i data-lucide="check" class="w-4 h-4 ml-auto"></i>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Clear All Button -->
+            {% if current_category or current_subcategory or current_tag or current_service_type %}
+            <div class="mt-6 pt-4 border-t border-slate-100">
+                <a href="?{% if search_query %}q={{ search_query }}{% endif %}" 
+                   class="w-full py-3.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-[14px] text-center hover:bg-slate-200 transition-colors">
+                    Clear All Filters
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 
     <!-- ========================================== -->
     <!-- MOBILE BOTTOM NAVIGATION                   -->
