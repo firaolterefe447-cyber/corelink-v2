@@ -119,8 +119,16 @@
     :root {
         --font-heading: 'Plus Jakarta Sans', sans-serif;
         --font-body: 'Inter', sans-serif;
-        --ease-magic: cubic-bezier(0.22, 1, 0.36, 1);
         --blue: #0A66C2;
+        --primary: #004e99;
+        --primary-container: #0a66c2;
+        --on-primary: #ffffff;
+        --on-surface: #191c21;
+        --on-surface-variant: #414752;
+        --surface: #f9f9ff;
+        --surface-container: #ecedf6;
+        --outline: #727783;
+        --outline-variant: #c1c6d4;
     }
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
@@ -134,13 +142,13 @@
 
     body {
         font-family: var(--font-body);
-        background-color: #F4F7FA;
+        background-color: #F0F4F8;
         background-image:
-            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.8) 0%, transparent 42%),
-            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.9) 0%, transparent 46%),
+            radial-gradient(circle at 12% 0%, rgba(219, 234, 254, 0.5) 0%, transparent 50%),
+            radial-gradient(circle at 88% 24%, rgba(241, 245, 249, 0.6) 0%, transparent 50%),
             radial-gradient(circle at 50% 100%, rgba(248, 250, 252, 1) 0%, transparent 100%);
         background-attachment: fixed;
-        color: #0F172A;
+        color: var(--on-surface);
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
     }
@@ -167,10 +175,25 @@
         .auth-canvas { padding-left: calc(280px + 4rem); padding-right: 4rem; max-width: 1400px; margin: 0 auto; }
     }
 
+    /* Glass Card - matching service_feed */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .glass-card:hover {
+        border-color: rgba(203, 213, 225, 1);
+        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
+        transform: translateY(-4px);
+    }
+
     /* Hero Gallery */
     .hero-gallery {
         position: relative;
-        border-radius: 2rem;
+        border-radius: 1.5rem;
         overflow: hidden;
         background: #e2e8f0;
     }
@@ -178,20 +201,6 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-    }
-
-    /* Premium Card */
-    .premium-card {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(226, 232, 240, 0.9);
-        border-radius: 1.5rem;
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .premium-card:hover {
-        border-color: rgba(203, 213, 225, 1);
-        box-shadow: 0 12px 30px rgba(10, 102, 194, 0.08);
-        transform: translateY(-4px);
     }
 
     /* Avatar */
@@ -211,7 +220,7 @@
     }
 
     @keyframes smoothAppear { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-    .anim-smooth-appear { animation: smoothAppear 0.6s var(--ease-magic) forwards; }
+    .anim-smooth-appear { animation: smoothAppear 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 </style>
 
 <!-- ==============================================
@@ -222,7 +231,7 @@
     <div class="max-w-4xl mx-auto w-full relative z-10">
 
         <!-- SERVICE INFO CARD -->
-        <div class="premium-card p-6 md:p-8 mb-8">
+        <div class="glass-card p-6 md:p-8 mb-8">
             <!-- Provider Info -->
             <div class="flex items-center gap-4 mb-6">
                 <a href="{% url 'public_profile' service.profile.slug %}" target="_blank" class="avatar-xl">
@@ -337,7 +346,7 @@
 
         <!-- GALLERY GRID (if more images) -->
         {% if service.gallery.count > 2 %}
-            <div class="premium-card p-6 md:p-8 mb-8">
+            <div class="glass-card p-6 md:p-8 mb-8">
                 <h2 class="text-[20px] font-black text-slate-900 mb-4">{% trans "Gallery" %}</h2>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {% for gallery_item in service.gallery.all %}
@@ -355,7 +364,7 @@
                 <h2 class="text-[20px] font-black text-slate-900 mb-4">{% trans "More Services from" %} {{ service.profile.user.first_name }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {% for related in related_services %}
-                        <a href="{% url 'services:public_service_detail' related.profile.slug related.id %}" class="premium-card p-5 block group">
+                        <a href="{% url 'services:feed_service_detail' related.id %}" class="glass-card p-5 block group">
                             <div class="flex items-start gap-4">
                                 {% if related.gallery.first %}
                                     <div class="w-20 h-20 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
