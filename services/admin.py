@@ -7,6 +7,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import ModelAdmin, TabularInline, StackedInline
 from django.contrib.admin.decorators import display
+from django import forms
 
 from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 
@@ -15,6 +16,46 @@ def get_admin_url(obj):
     """Get admin URL for an object."""
     from django.urls import reverse
     return reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=[obj.pk])
+
+
+class ServiceAdminForm(forms.ModelForm):
+    """Custom admin form for Service with dynamic subcategory filtering."""
+    
+    class Meta:
+        model = Service
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Dynamic subcategory filtering based on selected category
+        if 'category' in self.data:
+            try:
+                category_id = int(self.data.get('category'))
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
+                    category_id=category_id
+                ).order_by('order', 'name')
+            except (ValueError, TypeError):
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+        elif self.instance.pk and self.instance.category:
+            # For existing instances, show subcategories for the current category
+            self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
+                category=self.instance.category
+            ).order_by('order', 'name')
+        else:
+            # For new instances, start with empty subcategory
+            self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+    
+    def clean_subcategory(self):
+        """Ensure subcategory belongs to selected category."""
+        category = self.cleaned_data.get('category')
+        subcategory = self.cleaned_data.get('subcategory')
+        
+        if subcategory and category:
+            if subcategory.category != category:
+                raise forms.ValidationError(_("This subcategory does not belong to the selected category."))
+        
+        return subcategory
 
 
 class ServiceSubcategoryInline(TabularInline):
@@ -152,18 +193,39 @@ class ServiceGalleryInline(TabularInline):
 
 @admin.register(Service)
 class ServiceAdmin(ModelAdmin):
-    list_display = ('title', 'profile_link', 'category_badge', 'service_type_badge', 'is_active_badge', 'gallery_count', 'created_at')
-    list_filter = ('is_active', 'category', 'service_type', 'created_at')
+    form = ServiceAdminForm
+    list_display = ('title', 'profile_link', 'category_badge', 'is_active_badge', 'gallery_count', 'created_at')
+    list_filter = ('is_active', 'category', 'created_at')
     search_fields = ('title', 'description', 'profile__user__email', 'tags__name')
-    autocomplete_fields = ['profile', 'category', 'subcategory', 'service_type']
+    autocomplete_fields = ['profile', 'category']
     filter_horizontal = ['tags']
     inlines = [ServiceGalleryInline]
+    readonly_fields = ('created_at',)
 
     fieldsets = (
-        (None, {'fields': ('profile', 'title', 'description')}),
-        ('Classification', {'fields': ('category', 'subcategory', 'service_type', 'tags')}),
-        ('Settings', {'fields': (('is_active', 'order'),)}),
+        ('📝 Basic Information', {
+            'fields': ('profile', 'title', 'description'),
+            'classes': ('wide',),
+        }),
+        ('🏷️ Classification', {
+            'fields': ('category', 'subcategory', 'tags'),
+            'classes': ('wide',),
+        }),
+        ('⚙️ Settings', {
+            'fields': (('is_active', 'order'),),
+            'classes': ('collapse',),
+        }),
+        ('📅 Metadata', {
+            'fields': ('created_at',),
+            'classes': ('collapse',),
+        }),
     )
+
+    class Media:
+        js = ('admin/js/jquery.init.js', 'services/js/admin_service.js')
+        css = {
+            'all': ('services/css/admin_service.css',)
+        }
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
