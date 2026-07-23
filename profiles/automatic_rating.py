@@ -112,7 +112,7 @@ class CoreLinkOracle:
 
             # --- Services (Cap: 15 points) ---
             service_score = 0
-            for service in portfolio.services.all():
+            for service in portfolio.service_listings.all():
                 service_score += 1
                 # Use len(.all()) to prevent N+1 Query explosion
                 gallery_count = len(service.gallery.all())
@@ -176,7 +176,7 @@ class CoreLinkOracle:
                 'portfolio__skills',
                 'portfolio__languages',
                 'portfolio__content_posts',
-                'portfolio__services__gallery'
+                'portfolio__service_listings__gallery'
             ).get(id=user_id)
 
             if not hasattr(user, 'portfolio'):

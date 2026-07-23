@@ -31,6 +31,13 @@ from .models.user_profile import (
     RightNowComment,
 )
 
+# Import Service models for Oracle signals
+try:
+    from services.models import Service, ServiceGallery
+    SERVICE_MODELS_AVAILABLE = True
+except ImportError:
+    SERVICE_MODELS_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -117,6 +124,18 @@ def watch_right_now_ecosystem(sender, instance, **kwargs):
     if hasattr(instance, "profile"):
         logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
         _trigger_oracle(instance.profile.user_id)
+
+
+# ==========================================
+# 4. WATCH SERVICE ASSETS (if available)
+# ==========================================
+if SERVICE_MODELS_AVAILABLE:
+    @receiver([post_save, post_delete], sender=Service)
+    @receiver([post_save, post_delete], sender=ServiceGallery)
+    def watch_service_assets(sender, instance, **kwargs):
+        if hasattr(instance, "profile"):
+            logger.info(f"[ORACLE SIGNAL] {sender.__name__} signal fired for user_id: {instance.profile.user_id}")
+            _trigger_oracle(instance.profile.user_id)
 
 
 # ==========================================
