@@ -92,7 +92,8 @@
                 "body-lg": ["Inter"],
                 "display-xl": ["Plus Jakarta Sans"],
                 "headline-lg": ["Plus Jakarta Sans"],
-                "body-md": ["Inter"]
+                "body-md": ["Inter"],
+                "heading": ["Plus Jakarta Sans", "sans-serif"],
             },
             "fontSize": {
                 "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
@@ -112,6 +113,7 @@
         :root {
             --font-heading: 'Plus Jakarta Sans', sans-serif;
             --font-body: 'Inter', sans-serif;
+            --blue: #0A66C2;
         }
 
         body {
@@ -122,6 +124,7 @@
                 radial-gradient(circle at 0% 0%, rgba(219,234,254,0.5) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(241,245,249,0.6) 0%, transparent 50%);
             background-attachment: fixed;
+            color: #0F172A;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -131,51 +134,35 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        h1, h2, h3, h4, h5, h6, .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
+        .font-heading { font-family: var(--font-heading); letter-spacing: -0.03em; }
 
         /* Utilities */
         .prevent-select { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background-color: #E2E8F0; border-radius: 10px; }
+        .custom-scroll { scrollbar-width: thin; scrollbar-color: #E2E8F0 transparent; }
+        @media (max-width: 767px) { .custom-scroll::-webkit-scrollbar { display: none; } .custom-scroll { scrollbar-width: none; } }
+
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Nav Drawer specific */
+        .drawer-open  { transform: translate3d(0, 0, 0); }
+        .drawer-closed { transform: translate3d(0, 100%, 0); }
+        body.body-lock { overflow: hidden !important; touch-action: none !important; }
 
         /* Animations */
-        @keyframes smoothAppear {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-stagger > * {
-            opacity: 0;
-            animation: smoothAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
-        .animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
-        .animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
-        .animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
-        .animate-stagger > *:nth-child(5) { animation-delay: 0.5s; }
-
         @keyframes entrance-stagger {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-entrance {
-            animation: entrance-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
+        .animate-entrance { animation: entrance-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .magic-ease { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
-        .magic-ease, .magic-bezier { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-
-        .avatar-ring {
-            animation: rotate-ring 10s linear infinite;
-        }
-        @keyframes rotate-ring {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        .avatar-ring { animation: rotate-ring 10s linear infinite; }
+        @keyframes rotate-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         /* Design System Components */
         .glass-card {
@@ -191,230 +178,133 @@
 
 <body class="text-on-surface min-h-screen font-body-md selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
 
-    <!-- Desktop NavigationDrawer (Visible on PC) -->
-    <aside class="fixed left-0 top-0 h-full w-[280px] bg-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm hidden lg:flex flex-col p-8 z-50">
-        <div class="mb-12">
-            <span class="font-headline-md text-headline-md font-extrabold tracking-tighter text-on-surface">corelink</span>
-        </div>
-        <nav class="flex-1 space-y-2">
-            <a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">grid_view</span>
-                <span class="font-label-sm text-label-sm">Dashboard</span>
-            </a>
-            <a class="flex items-center gap-4 px-4 py-3 rounded-xl bg-surface-container-high/50 text-primary font-bold relative after:absolute after:left-0 after:h-6 after:w-1 after:bg-primary after:rounded-full after:transition-all cubic-bezier(0.22, 1, 0.36, 1) transform translate-x-1" href="#">
-                <span class="material-symbols-outlined">storefront</span>
-                <span class="font-label-sm text-label-sm">Marketplace</span>
-            </a>
-            <a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">chat_bubble</span>
-                <span class="font-label-sm text-label-sm">Messages</span>
-            </a>
-            <a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">description</span>
-                <span class="font-label-sm text-label-sm">Contracts</span>
-            </a>
-            <a class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-surface-container-high/50 transition-all duration-300 text-on-surface-variant group" href="#">
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">groups</span>
-                <span class="font-label-sm text-label-sm">Network</span>
-            </a>
-        </nav>
-        <div class="pt-8 mt-8 border-t border-outline-variant/20">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
-                    <img class="w-full h-full object-cover" data-alt="A professional headshot of a senior executive in a minimalist, high-key studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcfhZqEz5gCnc1uIqv02TiRhRp1NnDCKL16go4NK-quVEIbqPars-YvYTyeHerKrQow83o2rjAI3Uxe5SamSrkaoUvd6SwhFBDNtzT4WT7rHKRhD4GnLmo-wqxa1wVIN9BVoQXecJpjGleqLQS_x_WVA3frmYQM787_FEzSifg8TvjlIJCHDBngLLLHgghw50HXeww_Ph0fUVIQgoYF7CZEPvHtiz8jJRf4J_X5jbkVH5FmJw1CycMPOHVkI9uSYq4ygswV1ivGUom"/>
+    <!-- ========================================== -->
+    <!-- DESKTOP SIDE NAVIGATION                    -->
+    <!-- ========================================== -->
+    <aside class="hidden md:flex flex-col fixed top-0 left-0 w-[240px] lg:w-[260px] xl:w-[280px] h-[100dvh] bg-white/80 backdrop-blur-[20px] border-r border-slate-200/90 z-[100] shadow-[4px_0_24px_rgba(15,23,42,0.02)] overflow-y-auto hide-scrollbar">
+        <div class="flex flex-col h-full py-8 px-5 min-h-[600px]">
+            <div class="flex-1">
+                <div class="flex items-center mb-12 px-2 cursor-pointer select-none group" onclick="window.location.href='{% url 'dashboard' %}'">
+                    <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+                    <span class="font-heading font-black text-[28px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
                 </div>
-                <div>
-                    <p class="font-label-sm text-label-sm text-on-surface">Alex Rivera</p>
-                    <p class="text-[12px] text-on-surface-variant">Enterprise Account</p>
-                </div>
+                <nav class="flex flex-col gap-1.5">
+                    <a href="{% url 'dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-slate-600"></i></div>
+                        My profile
+                    </a>
+
+                    <!-- ACTIVE STATE for Discover Page -->
+                    <a href="{% url 'nexus_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] bg-blue-50/80 border border-blue-100/50 text-[#0A66C2] font-black transition-colors text-[14px]" aria-current="page">
+                        <div class="w-8 h-8 rounded-full bg-white border border-blue-200/50 flex items-center justify-center"><i data-lucide="compass" class="w-4 h-4 text-[#0A66C2]"></i></div>
+                        {% trans "Discover" %}
+                    </a>
+
+                    <a href="{% url 'right_now_feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-slate-600"></i></div>
+                        {% trans "Updates" %}
+                    </a>
+                    <a href="{% url 'opportunities:feed' %}" class="flex items-center gap-4 px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center"><i data-lucide="briefcase" class="w-4 h-4 text-slate-600"></i></div>
+                        {% trans "Opportunities" %}
+                    </a>
+                    <a href="/messages/" class="flex items-center justify-between px-4 py-3.5 rounded-[0.75rem] hover:bg-slate-100/80 text-slate-500 hover:text-slate-900 font-semibold transition-colors text-[14px]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center">
+                                <i data-lucide="mail" class="w-4 h-4 text-slate-600"></i>
+                            </div>
+                            {% trans "Inbox" %}
+                        </div>
+                        {% if unread_msg_count > 0 %}
+                            <span class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 bg-rose-500 text-white text-[11px] font-black rounded-full">
+                                {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                            </span>
+                        {% endif %}
+                    </a>
+                </nav>
+            </div>
+            <div class="pt-6 border-t border-slate-200/90 flex flex-col gap-1.5 mt-auto">
+                <a href="{% url 'profile_settings' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-colors">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>{% trans "Settings" %}</span>
+                </a>
+                <a href="{% url 'logout' %}" class="flex items-center gap-4 px-4 py-3 rounded-[0.75rem] text-[14px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-colors mt-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>{% trans "Logout" %}</span>
+                </a>
             </div>
         </div>
     </aside>
 
-    <!-- Mobile TopAppBar (Visible on Mobile) -->
-    <header class="lg:hidden flex justify-between items-center px-margin-mobile h-16 w-full sticky top-0 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/20 z-50 transition-shadow" id="mobile-header">
-        <button class="w-10 h-10 flex items-center justify-center rounded-full active:scale-95 transition-transform" onclick="toggleMobileNavDrawer()">
-            <span class="material-symbols-outlined text-primary">menu</span>
-        </button>
-        <h1 class="font-headline-lg-mobile text-headline-lg-mobile font-black lowercase text-on-surface">corelink</h1>
-        <div class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden active:scale-95 transition-transform">
-            <img class="w-full h-full object-cover" data-alt="Close up professional headshot of a diverse woman with a confident expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGYOGMkLPDX47wPEUxXhxOlEdvA8Alh3S1czlQ2iDVPaUuHx-c4Nie4_OxprYptF_oFyJe0JO4wlbJOYfoRMmg7Ruz7s6jE2wnjnZUGH_IfNXXTiMZEJP28518R0RuWsW0ZjOSmNsOOcqftvXVNchq9_Z1qlLBSBy4rIKYKP9t6bZkpwjzFrtyATGAdoLofJsKHZ-PPITZPNcLSerIhvIWYISXQx3zPrBtXmuL4fOjtd6U_r8ufbazvoJ_ixhSct-p0zXzeBch1aDh"/>
+    <!-- ========================================== -->
+    <!-- MOBILE TOP HEADER                          -->
+    <!-- ========================================== -->
+    <div class="md:hidden fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-[20px] border-b border-slate-200/90 flex items-center justify-between px-4 h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))] pt-[env(safe-area-inset-top)] prevent-select shadow-sm" id="mobile-header">
+        <div class="flex items-center cursor-pointer select-none" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-slate-900 lowercase">core</span>
+            <span class="font-heading font-black text-[20px] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-br from-[#0A66C2] to-blue-500 lowercase">link</span>
         </div>
-    </header>
+        <button onclick="toggleMobileNavDrawer()" aria-label="{% trans 'Open Navigation' %}" class="w-9 h-9 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-[0.75rem] flex items-center justify-center text-slate-700 transition-colors active:scale-95 shadow-sm">
+            <i data-lucide="menu" class="w-4.5 h-4.5 pointer-events-none"></i>
+        </button>
+    </div>
 
-    <!-- Main Content Area -->
-    <main class="lg:ml-[280px] min-h-screen relative pb-24 lg:pb-12">
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT AREA                          -->
+    <!-- ========================================== -->
+    <main class="md:ml-[240px] lg:ml-[260px] xl:ml-[280px] min-h-screen relative pb-24 pt-20 md:pt-4 px-4 md:px-8">
 
         <!-- Atmospheric Gradients (PC Background) -->
         <div class="hidden lg:block absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
         <div class="hidden lg:block absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
-        <!-- ========================================== -->
-        <!-- MOBILE VIEW CONTENT (Hidden on Desktop)    -->
-        <!-- ========================================== -->
-        <div class="block lg:hidden px-margin-mobile pt-8 space-y-8 animate-stagger">
+        <div class="max-w-container-max mx-auto py-8 lg:py-12">
 
-            <!-- Mobile Hero Section -->
-            <section class="text-center space-y-3">
-                <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Elite Marketplace</h2>
-                <p class="font-body-md text-on-surface-variant max-w-[300px] mx-auto opacity-80">Connect with the world's most talented independent professionals and boutique agencies.</p>
-            </section>
-
-            <!-- Mobile Magic Search -->
-            <section class="relative">
-                <div class="flex items-center bg-white rounded-full px-6 py-4 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05)] border border-outline-variant focus-within:ring-2 focus-within:ring-primary/10 transition-all duration-300">
-                    <span class="material-symbols-outlined text-outline mr-3">search</span>
-                    <input class="bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface placeholder:text-outline-variant" placeholder="Search elite services..." type="text"/>
-                    <button class="bg-surface-container rounded-full p-1 ml-2">
-                        <span class="material-symbols-outlined text-on-surface-variant text-[20px]">tune</span>
-                    </button>
-                </div>
-            </section>
-
-            <!-- Mobile Nav Tabs -->
-            <nav class="flex space-x-6 border-b border-outline-variant/30">
-                <button class="pb-3 text-on-surface-variant font-label-sm relative hover:text-on-surface transition-colors">
-                    Discover Updates
-                </button>
-                <button class="pb-3 text-primary font-bold font-label-sm relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary transition-all">
-                    Discover Services
-                </button>
-            </nav>
-
-            <!-- Mobile Feed: Service Cards -->
-            <section class="space-y-6">
-                <!-- Service Card 1 -->
-                <article class="glass-card rounded-3xl overflow-hidden shadow-sm group hover:-translate-y-1 magic-bezier transition-transform duration-500 mobile-card">
-                    <div class="relative h-56 w-full">
-                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJVXwxKrXf6Gq4_0L7B0xQ3bnEJJrhiiPNvjyI2U5cTCcRsXrefNFlY7dRchLLlI--tUThcyukxAgcDJbBikiuA1EQzFIPSzxybkhJ-UUpd75SyqVsyRUnCgME4eAtPW-BqWO5r-Ij0zMQv7e1Ux3RYQPmjuWydQk7R-70hgBKpaDqW4rxKGxQYsf3AmCGxMXBR8HOWnqmu6qcchwMF8uvHeIHOY8JPnFrAjNMspzaKZksm6uf-tVsaLhBsX_eg1B5GHnl4pUH67sw"/>
-                        <div class="absolute bottom-[-24px] left-6">
-                            <div class="h-12 w-12 rounded-full border-4 border-white shadow-md overflow-hidden bg-white">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOts0SxxoIlPxQy931c9jQIxIugHU7-u50GH3ocLx66cuBzWbfEGvBbCO5Gh6bWivSZO4HJM3IFd2ntlEiU66Fa_UEloSEhcUCPje7zKurLozMeoD9Og3XYKsGOVCSDY6AwkDnp-waoZ8aEzVI6htRl0yrklMlVcj-FyyNlFQ-ajRqokvinYfCWC0CU_yea4Ch4_PzDsfcxslXQG1E1SVpb3dEZbNdZwmD_RMGB27RN_WT9bMsHzXHs0nXzDwxeDA-EfxueHEXJZSb"/>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center space-x-1">
-                            <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="font-label-sm text-on-surface">4.9</span>
-                        </div>
-                    </div>
-                    <div class="pt-10 pb-6 px-6 space-y-4">
-                        <div class="space-y-1">
-                            <h3 class="font-headline-md text-headline-md text-on-surface font-extrabold">Executive Brand Identity</h3>
-                            <p class="font-body-md text-on-surface-variant">Strategic positioning and visual systems for Series A+ startups.</p>
-                        </div>
-                        <div class="flex items-center space-x-4 text-on-surface-variant text-[14px]">
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">payments</span> $150/hr</span>
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">verified</span> Verified</span>
-                        </div>
-                        <div class="flex space-x-3 pt-2">
-                            <button class="flex-1 py-3 px-4 rounded-xl bg-surface-container-high text-on-surface font-label-sm active:scale-95 transition-all magic-bezier">View</button>
-                            <button class="flex-[1.5] py-3 px-4 rounded-xl primary-gradient text-white font-label-sm active:scale-95 transition-all magic-bezier shadow-md shadow-primary/20">Request</button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Service Card 2 -->
-                <article class="glass-card rounded-3xl overflow-hidden shadow-sm group hover:-translate-y-1 magic-bezier transition-transform duration-500 mobile-card">
-                    <div class="relative h-56 w-full">
-                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtdL4KwXlgscgvHtFOWfDL2MKvLMFMSaeX8tamlgEO1v6dFgHo6HCCTNtBMvLZance6Qf6mb31xVe-J0ZSQ2GtmNIvzHtpD6moe1Ry2ipCGsfm5NepJk7mEDOvlMdI24EByo4vY-hyYYy0nywXh6SPSrjtNig09_qwLfu0T1IESQUrzL8pYLmExITKqP137CO741XfN5yFUwh26TuzmgfGwTAGkDGTDYx0nAn-Zha0Z7S_nhgz5GcupXehENf0IazLuLFra_jkg-e8"/>
-                        <div class="absolute bottom-[-24px] left-6">
-                            <div class="h-12 w-12 rounded-full border-4 border-white shadow-md overflow-hidden bg-white">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuYtomnwRoHUdC4Anyw2LM_e4eEC3lO_cH8Jcy-NgAndNtbTkACNokPRtFDjV5YAs-YytLIB1dKGfhtk98Z1hUmzWVuzNtYyH8G5a1nkg_DvbUZkRHSY6rR8YA_RIW_jS3d1dXybSFrzKLqoKedwPt4jkcRTSsZbYN1bp4SgZHhRTBAAXB2jrhRjSg08NROmbNPZrmEKY2DFIXNzo-1wUzEx3JtVN92TKKuYRiHceuGVSKmEon6BpPWq9SwJyyozGH7WzwD3L4mHJN"/>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center space-x-1">
-                            <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="font-label-sm text-on-surface">5.0</span>
-                        </div>
-                    </div>
-                    <div class="pt-10 pb-6 px-6 space-y-4">
-                        <div class="space-y-1">
-                            <h3 class="font-headline-md text-headline-md text-on-surface font-extrabold">Cloud Systems Architecture</h3>
-                            <p class="font-body-md text-on-surface-variant">Scalable AWS/GCP infrastructure with security-first implementation.</p>
-                        </div>
-                        <div class="flex items-center space-x-4 text-on-surface-variant text-[14px]">
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">payments</span> $220/hr</span>
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">schedule</span> Rapid Delivery</span>
-                        </div>
-                        <div class="flex space-x-3 pt-2">
-                            <button class="flex-1 py-3 px-4 rounded-xl bg-surface-container-high text-on-surface font-label-sm active:scale-95 transition-all magic-bezier">View</button>
-                            <button class="flex-[1.5] py-3 px-4 rounded-xl primary-gradient text-white font-label-sm active:scale-95 transition-all magic-bezier shadow-md shadow-primary/20">Request</button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Service Card 3 -->
-                <article class="glass-card rounded-3xl overflow-hidden shadow-sm group hover:-translate-y-1 magic-bezier transition-transform duration-500 mobile-card">
-                    <div class="relative h-56 w-full">
-                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwusY0GF7JFYLlYrT0NbZYeWy8uPJ-aNYgG4UPGAsG6tTvqkEI1EpyVVE7Fy56VsKWEg5bvry7-eKIwdgYEx3dj3sXEP5dXmAHalRr2xlo1rmoAA2yc7yQdL8aLyELdWY9BJSrLiaRYs4iDgKnmw9WT7XGYRUykKH4j0yPvZuYbZsIklxmZ4TC2eey2ma_4OuENUbe4e7dIihSnvzFYVl6zRQuH07wSpKKXnMDI-ep_hvIkrWyuxo88r_TTJYAcgXc4hiDQmfzEE-_"/>
-                        <div class="absolute bottom-[-24px] left-6">
-                            <div class="h-12 w-12 rounded-full border-4 border-white shadow-md overflow-hidden bg-white">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXxf6LGaAmqtVWVuoY_kDWJYFxgTrQurHX_0kJL8dcmWHMw0p_bRKxxiSdzQnklLWI6MoxpWEGEUxyGNzcBjIJia0w1z_Yhf1QdN_Dxu0QF-zgN8NWPU-WnXcj_JFcdc-7olqZxdKMsVqLQT9BvfJUwbgf89GoiKU71A5vqfgYYZVtWBXeJbcY90wPvmFhDUuEaiubsrt3CHEu95a8XgQH94zgUoI6SLDiZWeWbWEhkvY1XSAum5OpgdSlIxCLyG5HKO2FRZRdEIuf"/>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center space-x-1">
-                            <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                            <span class="font-label-sm text-on-surface">4.8</span>
-                        </div>
-                    </div>
-                    <div class="pt-10 pb-6 px-6 space-y-4">
-                        <div class="space-y-1">
-                            <h3 class="font-headline-md text-headline-md text-on-surface font-extrabold">IP &amp; Patent Strategy</h3>
-                            <p class="font-body-md text-on-surface-variant">Global intellectual property protection for innovative tech firms.</p>
-                        </div>
-                        <div class="flex items-center space-x-4 text-on-surface-variant text-[14px]">
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">payments</span> $300/hr</span>
-                            <span class="flex items-center"><span class="material-symbols-outlined mr-1 text-[18px]">public</span> Global</span>
-                        </div>
-                        <div class="flex space-x-3 pt-2">
-                            <button class="flex-1 py-3 px-4 rounded-xl bg-surface-container-high text-on-surface font-label-sm active:scale-95 transition-all magic-bezier">View</button>
-                            <button class="flex-[1.5] py-3 px-4 rounded-xl primary-gradient text-white font-label-sm active:scale-95 transition-all magic-bezier shadow-md shadow-primary/20">Request</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- DESKTOP VIEW CONTENT (Hidden on Mobile)    -->
-        <!-- ========================================== -->
-        <div class="hidden lg:block max-w-container-max mx-auto px-margin-desktop py-12">
-
-            <!-- PC Hero Section -->
-            <section class="animate-entrance mb-16" style="animation-delay: 0.1s;">
-                <h1 class="font-headline-lg text-headline-lg font-[900] text-on-surface mb-4 leading-tight">
+            <!-- Hero Section -->
+            <section class="animate-entrance mb-12 text-center md:text-left" style="animation-delay: 0.1s;">
+                <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg font-[900] text-on-surface mb-4 leading-tight">
                     Explore community <span class="text-transparent bg-clip-text primary-gradient">services</span>
                 </h1>
-                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                <p class="font-body-md md:font-body-lg text-body-md md:text-body-lg text-on-surface-variant max-w-2xl mx-auto md:mx-0 opacity-90 md:opacity-100">
                     Connect with world-class independent professionals curated for elite projects and high-performance teams.
                 </p>
             </section>
 
-            <!-- PC Premium Search Bar -->
-            <section class="animate-entrance mb-16 relative" style="animation-delay: 0.2s;">
-                <div class="glass-card p-2 rounded-[24px] shadow-sm flex items-center group focus-within:ring-2 focus-within:ring-primary/20 magic-ease">
-                    <div class="pl-6 pr-4 text-on-surface-variant">
-                        <span class="material-symbols-outlined text-[24px]">search</span>
+            <!-- Premium Search Bar -->
+            <section class="animate-entrance mb-12 relative" style="animation-delay: 0.2s;">
+                <div class="glass-card p-2 md:p-3 rounded-[24px] shadow-sm flex items-center group focus-within:ring-2 focus-within:ring-primary/20 magic-ease">
+                    <div class="pl-4 md:pl-6 pr-3 md:pr-4 text-on-surface-variant flex items-center">
+                        <i data-lucide="search" class="w-5 h-5 md:w-6 md:h-6 text-slate-400"></i>
                     </div>
                     <form action="" method="get" class="flex-1 flex items-center">
-                        <input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-4" name="q" placeholder="Search for 'Fractional CTO', 'UX Audit' or 'Cloud Migration'..." type="text" value="{{ search_query }}"/>
-                        <button class="primary-gradient text-on-primary px-8 py-3 rounded-[18px] font-label-sm text-label-sm shadow-md hover:shadow-lg active:scale-95 magic-ease">
-                            Find Experts
+                        <input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md placeholder:text-outline/60 py-3 md:py-4 w-full" name="q" placeholder="Search for 'Fractional CTO', 'UX Audit'..." type="text" value="{{ search_query }}"/>
+                        <button class="primary-gradient text-on-primary px-5 md:px-8 py-3 rounded-[18px] font-label-sm text-label-sm shadow-md hover:shadow-lg active:scale-95 magic-ease ml-2 whitespace-nowrap">
+                            <span class="hidden md:inline">Find Experts</span>
+                            <span class="md:hidden">Search</span>
                         </button>
                     </form>
                 </div>
             </section>
 
-            <!-- PC Service Feed Grid -->
-            <section class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+            <!-- Service Feed Grid -->
+            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-gutter">
                 {% for service in services %}
                 <div class="animate-entrance group" style="animation-delay: {{ forloop.counter0|add:3 }}00ms;">
                     <a href="{% url 'services:feed_service_detail' service_id=service.id %}" class="block h-full">
-                        <div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30">
+                        <div class="glass-card rounded-[24px] overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-xl magic-ease border border-outline-variant/30 relative">
+
+                            <!-- Rating Badge (Mobile/Desktop) -->
+                            {% if service.profile.oracle_score %}
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center space-x-1 shadow-sm z-20 border border-slate-100">
+                                <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+                                <span class="font-label-sm text-on-surface">{{ service.profile.oracle_score|floatformat:1 }}</span>
+                            </div>
+                            {% endif %}
+
                             {% if service.gallery.all %}
                                 <!-- Gallery Layout -->
-                                <div class="grid grid-cols-3 h-64 gap-1 p-1">
+                                <div class="grid grid-cols-3 h-56 md:h-64 gap-1 p-1">
                                     {% with gallery_images=service.gallery.all %}
                                         {% if gallery_images|length >= 3 %}
                                             <div class="col-span-2 rounded-l-[20px] overflow-hidden relative">
@@ -449,7 +339,7 @@
                                 </div>
                             {% else %}
                                 <!-- Avatar-focused Layout (no gallery) -->
-                                <div class="h-64 primary-gradient relative flex items-center justify-center overflow-hidden">
+                                <div class="h-56 md:h-64 primary-gradient relative flex items-center justify-center overflow-hidden rounded-t-[24px]">
                                     <div class="absolute inset-0 opacity-20">
                                         <svg height="100%" preserveaspectratio="none" viewbox="0 0 100 100" width="100%">
                                             <defs>
@@ -462,8 +352,7 @@
                                     </div>
                                     <div class="relative z-10">
                                         <div class="avatar-ring absolute -inset-6 border border-white/30 rounded-full"></div>
-                                        <div class="avatar-ring absolute -inset-10 border border-white/10 rounded-full" style="animation-direction: reverse; animation-duration: 15s;"></div>
-                                        <div class="w-32 h-32 rounded-full border-4 border-white/50 shadow-2xl overflow-hidden relative bg-white">
+                                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white/50 shadow-2xl overflow-hidden relative bg-white">
                                             {% if service.profile.user.avatar %}
                                                 <img class="w-full h-full object-cover" src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}"/>
                                             {% else %}
@@ -477,41 +366,42 @@
                             {% endif %}
 
                             <!-- Card Content -->
-                            <div class="p-8 flex flex-col flex-1">
+                            <div class="p-6 md:p-8 flex flex-col flex-1">
                                 <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-3 w-full">
                                         {% if service.gallery.all %}
-                                            <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden -mt-14 relative z-20 bg-white">
+                                            <div class="w-12 h-12 rounded-full border-[3px] border-white shadow-md overflow-hidden -mt-12 md:-mt-14 relative z-20 bg-white flex-shrink-0">
                                                 {% if service.profile.user.avatar %}
                                                     <img class="w-full h-full object-cover" src="{{ service.profile.user.avatar.url }}" alt="{{ service.profile.user.full_name }}"/>
                                                 {% else %}
-                                                    <div class="w-full h-full flex items-center justify-center bg-surface-container-highest text-on-surface-variant text-lg font-bold">
+                                                    <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 text-lg font-bold">
                                                         {{ service.profile.user.full_name|slice:":1"|upper }}
                                                     </div>
                                                 {% endif %}
                                             </div>
                                         {% endif %}
-                                        <div class="{% if service.gallery.all %}pt-2{% endif %}">
-                                            <h3 class="font-headline-md text-headline-md text-on-surface">{{ service.title }}</h3>
-                                            <p class="font-label-sm text-label-sm text-primary">{{ service.profile.user.full_name }}</p>
+                                        <div class="{% if service.gallery.all %}pt-1 md:pt-2{% endif %} flex-1">
+                                            <h3 class="font-headline-md text-[20px] md:text-headline-md text-on-surface font-extrabold leading-tight">{{ service.title }}</h3>
+                                            <p class="font-label-sm text-label-sm text-primary mt-0.5">{{ service.profile.user.full_name }}</p>
                                         </div>
                                     </div>
-                                    {% if service.profile.oracle_score %}
-                                        <div class="flex items-center gap-1 text-on-tertiary-fixed">
-                                            <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="font-bold">{{ service.profile.oracle_score|floatformat:1 }}</span>
-                                        </div>
-                                    {% endif %}
                                 </div>
                                 <p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">
                                     {{ service.description|truncatewords:20 }}
                                 </p>
-                                <div class="mt-auto flex items-center justify-between">
-                                    <div class="flex gap-2">
+
+                                <!-- Meta Information -->
+                                <div class="flex items-center space-x-4 text-on-surface-variant text-[13px] md:text-[14px] font-medium mb-6">
+                                    <span class="flex items-center"><i data-lucide="circle-dollar-sign" class="w-4 h-4 mr-1.5 text-slate-400"></i> Premium</span>
+                                    <span class="flex items-center"><i data-lucide="globe-2" class="w-4 h-4 mr-1.5 text-slate-400"></i> Global</span>
+                                </div>
+
+                                <div class="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
+                                    <div class="flex gap-2 flex-wrap">
                                         {% for headline in service.profile.headlines.all|slice:":2" %}
-                                            <span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">{{ headline.title }}</span>
+                                            <span class="px-3 py-1 bg-slate-100/80 rounded-full text-[11px] md:text-[12px] font-semibold text-slate-600">{{ headline.title }}</span>
                                         {% empty %}
-                                            <span class="px-3 py-1 bg-surface-container-high rounded-full text-[12px] font-semibold text-on-surface-variant">Professional Service</span>
+                                            <span class="px-3 py-1 bg-slate-100/80 rounded-full text-[11px] md:text-[12px] font-semibold text-slate-600">Professional Service</span>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -521,20 +411,24 @@
                 </div>
                 {% empty %}
                     <div class="col-span-full text-center py-16">
-                        <p class="text-on-surface-variant font-body-lg">No services found. Be the first to offer your services!</p>
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                            <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                        </div>
+                        <p class="text-on-surface-variant font-body-lg font-bold">No services found.</p>
+                        <p class="text-slate-500 font-medium text-sm mt-1">Check back later or adjust your search.</p>
                     </div>
                 {% endfor %}
             </section>
 
-            <!-- PC Pagination -->
+            <!-- Pagination -->
             {% if services.has_other_pages %}
-            <div class="flex justify-center items-center gap-4 mt-12">
+            <div class="flex justify-center items-center gap-4 mt-12 mb-8">
                 {% if services.has_previous %}
-                    <a href="?page={{ services.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all">Previous</a>
+                    <a href="?page={{ services.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all font-semibold text-sm">Previous</a>
                 {% endif %}
-                <span class="text-on-surface-variant font-label-sm">Page {{ services.number }} of {{ services.paginator.num_pages }}</span>
+                <span class="text-on-surface-variant font-label-sm bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">Page {{ services.number }} of {{ services.paginator.num_pages }}</span>
                 {% if services.has_next %}
-                    <a href="?page={{ services.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all">Next</a>
+                    <a href="?page={{ services.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface hover:bg-surface-container-high transition-all font-semibold text-sm">Next</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -542,33 +436,87 @@
         </div>
     </main>
 
-    <!-- Mobile BottomNavBar (Visible on Mobile) -->
-    <nav class="lg:hidden fixed bottom-0 w-full z-50 h-16 bg-surface/80 backdrop-blur-[20px] flex justify-around items-center px-4 border-t border-outline-variant/30 shadow-[0_-4px_20px_-2px_rgba(15,23,42,0.05)] pb-safe">
-        <a class="flex flex-col items-center justify-center text-primary font-bold" href="#">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
-            <span class="font-label-sm text-[10px]">Explore</span>
+    <!-- ========================================== -->
+    <!-- MOBILE BOTTOM NAVIGATION                   -->
+    <!-- ========================================== -->
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-slate-200/80 z-[100] flex items-center justify-around h-[62px] pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.06)] prevent-select px-1">
+
+        <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+            <i data-lucide="user" class="w-5 h-5 stroke-[2.5]"></i>
+            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">My profile</span>
         </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 magic-bezier" href="#">
-            <span class="material-symbols-outlined">mail</span>
-            <span class="font-label-sm text-[10px]">Inbox</span>
+
+        <!-- ACTIVE STATE for Discover Page -->
+        <a href="{% url 'nexus_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-[#0A66C2] relative">
+            <div class="absolute top-0 w-10 h-0.5 bg-[#0A66C2] rounded-b-full"></div>
+            <i data-lucide="compass" class="w-5 h-5 stroke-[2.5]"></i>
+            <span class="text-[11px] font-bold whitespace-nowrap tracking-wide">{% trans "Discover" %}</span>
         </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 magic-bezier" href="#">
-            <span class="material-symbols-outlined">assignment_turned_in</span>
-            <span class="font-label-sm text-[10px]">Projects</span>
+
+        <a href="{% url 'right_now_feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+            <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Updates" %}</span>
         </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 magic-bezier" href="#">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-label-sm text-[10px]">Profile</span>
+
+        <a href="{% url 'opportunities:feed' %}" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors">
+            <i data-lucide="briefcase" class="w-5 h-5 stroke-[2.5]"></i>
+            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Opportunities" %}</span>
+        </a>
+
+        <a href="/messages/" class="flex flex-col items-center justify-center w-full h-full gap-1 text-slate-400 hover:text-slate-800 active:scale-95 transition-colors relative">
+            <div class="relative">
+                <i data-lucide="mail" class="w-5 h-5 stroke-[2.5]"></i>
+                {% if unread_msg_count > 0 %}
+                    <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 bg-rose-500 text-white text-[8px] font-black rounded-full border-2 border-white">
+                        {% if unread_msg_count > 99 %}99+{% else %}{{ unread_msg_count }}{% endif %}
+                    </span>
+                {% endif %}
+            </div>
+            <span class="text-[11px] font-semibold whitespace-nowrap tracking-wide">{% trans "Inbox" %}</span>
         </a>
     </nav>
 
-    <!-- Micro-interaction Scripts Combined -->
+    <!-- ========================================== -->
+    <!-- MOBILE NAVIGATION DRAWER                   -->
+    <!-- ========================================== -->
+    <div id="mobile-nav-backdrop" onclick="closeAllDrawers()" class="md:hidden fixed inset-0 bg-slate-900/40 z-[110] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
+    <div id="mobile-nav-drawer" role="dialog" aria-modal="true" class="will-change-transform md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-[1.5rem] shadow-[0_-8px_32px_rgba(0,0,0,0.12)] z-[120] drawer-closed transition-transform duration-300 flex flex-col max-h-[85dvh] overscroll-contain pb-[max(1.5rem,env(safe-area-inset-bottom))] prevent-select p-5">
+        <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-5"></div>
+        <div class="space-y-1.5 w-full custom-scroll overflow-y-auto">
+
+            {% with first_membership=request.user.company_memberships.first %}
+                {% if first_membership %}
+                    <a href="{% url 'company_admin_dashboard' first_membership.company.slug %}" class="w-full text-left px-4 py-3.5 hover:bg-emerald-50/80 rounded-[0.85rem] text-[14.5px] font-black text-emerald-600 flex items-center gap-3.5 transition-colors">
+                        <div class="w-8 h-8 rounded-full bg-white border border-emerald-100/80 shadow-sm flex items-center justify-center pointer-events-none"><i data-lucide="building" class="w-4 h-4 text-emerald-600"></i></div>
+                        {% trans "Manage Company" %}
+                    </a>
+                {% endif %}
+            {% endwith %}
+
+            <a href="{% url 'profile_settings' %}" class="w-full text-left px-4 py-3.5 hover:bg-slate-50 rounded-[0.85rem] text-[14.5px] font-semibold text-slate-700 flex items-center gap-3 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5 text-slate-600"></i>
+                {% trans "Profile Settings" %}
+            </a>
+
+            <a href="{% url 'logout' %}" class="w-full text-left px-4 py-3.5 hover:bg-rose-50/80 rounded-[0.85rem] text-[14.5px] font-semibold text-rose-600 flex items-center gap-3 transition-colors mt-1">
+                <i data-lucide="log-out" class="w-5 h-5 text-rose-500"></i>
+                {% trans "Logout" %}
+            </a>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT & MICRO-INTERACTIONS            -->
+    <!-- ========================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize Lucide icons
-            lucide.createIcons();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
 
-            // Intersection Observer for scroll animations (PC elements)
+            // Intersection Observer for scroll animations (Feed Elements)
             const observerOptions = { threshold: 0.1 };
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -579,24 +527,6 @@
                 });
             }, observerOptions);
             document.querySelectorAll('.animate-entrance').forEach(el => observer.observe(el));
-
-            // Soft Hover Sound/Haptic feedback (simulation)
-            const cards = document.querySelectorAll('.glass-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    // Visual state is handled by CSS, logic could go here
-                });
-            });
-        });
-
-        // Micro-interaction for mobile cards (Touch scaling)
-        document.querySelectorAll('.mobile-card').forEach(card => {
-            card.addEventListener('touchstart', () => {
-                card.style.transform = 'scale(0.98) translateY(0px)';
-            });
-            card.addEventListener('touchend', () => {
-                card.style.transform = 'scale(1) translateY(-4px)';
-            });
         });
 
         // Simple scroll event to add background shadow to mobile top bar
@@ -611,13 +541,31 @@
             }
         });
 
-        // Mobile Navigation Drawer Toggle function (if hooked into a custom modal/sidebar later)
+        // Drawer Logic matching Platform UI
+        function closeAllDrawers() {
+            ['mobile-nav-drawer'].forEach(id => {
+                const d = document.getElementById(id);
+                if (d) { d.classList.add('drawer-closed'); d.classList.remove('drawer-open'); }
+            });
+            ['mobile-nav-backdrop'].forEach(id => {
+                const b = document.getElementById(id);
+                if (b) { b.classList.add('opacity-0', 'pointer-events-none'); b.classList.remove('opacity-100'); }
+            });
+            document.body.classList.remove('body-lock');
+        }
+
         function toggleMobileNavDrawer() {
-            // Note: Since no mobile drawer markup was originally provided besides standard navs,
-            // this is stubbed for custom implementation, keeping original JS references intact.
-            const drawer = document.getElementById('mobile-nav-drawer');
-            if (drawer) {
-                drawer.classList.toggle('hidden');
+            const dw = document.getElementById('mobile-nav-drawer');
+            const bd = document.getElementById('mobile-nav-backdrop');
+
+            if (dw.classList.contains('drawer-closed')) {
+                closeAllDrawers(); // Safely reset first
+                bd.classList.replace('opacity-0', 'opacity-100');
+                bd.classList.remove('pointer-events-none');
+                dw.classList.replace('drawer-closed', 'drawer-open');
+                document.body.classList.add('body-lock');
+            } else {
+                closeAllDrawers();
             }
         }
     </script>
