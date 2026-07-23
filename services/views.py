@@ -419,7 +419,17 @@ class FeedServiceDetailView(DetailView):
             profile__user__is_active=True
         ).exclude(id=service.id)[:4]
         
+        # Get unread message count
+        unread_count = 0
+        if self.request.user.is_authenticated:
+            try:
+                from chat.models import ChatMessage
+                unread_count = ChatMessage.objects.filter(receiver=self.request.user, is_read=False).count()
+            except ImportError:
+                pass
+        
         context.update({
             'related_services': related_services,
+            'unread_msg_count': unread_count,
         })
         return context
