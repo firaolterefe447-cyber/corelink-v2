@@ -89,27 +89,9 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Dynamically filter subcategories based on selected category
-        if 'category' in self.data:
-            try:
-                category_id = int(self.data.get('category'))
-                # Include all subcategories for this category to ensure selected value is valid
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                    category_id=category_id
-                ).order_by('order', 'name')
-            except (ValueError, TypeError):
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
-        elif self.instance.pk:
-            # For existing instances, show subcategories for the current category
-            if self.instance.category:
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                    category=self.instance.category
-                ).order_by('order', 'name')
-            else:
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
-        else:
-            # For new instances, start with empty subcategory
-            self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+        # For form validation, include ALL subcategories to ensure any selected value is valid
+        # The category-subcategory relationship will be validated in clean_subcategory()
+        self.fields['subcategory'].queryset = ServiceSubcategory.objects.all().order_by('order', 'name')
 
         # Filter to only show active categories
         self.fields['category'].queryset = ServiceCategory.objects.filter(is_active=True).order_by('order', 'name')
