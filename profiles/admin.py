@@ -522,6 +522,29 @@ class RightNowPostAdmin(ModelAdmin):
         extra_context['curation_url'] = reverse('admin_curation')
         return super().changelist_view(request, extra_context)
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after RightNow post changes
+        if obj.profile and obj.profile.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.profile.user.id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.profile.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        user_id = obj.profile.user.id if obj.profile and obj.profile.user else None
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update after RightNow post deletion
+        if user_id:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
+
     fieldsets = (
         (_("Author & Networking Intent"), {
             "fields": ("profile", ("current_search", "collaboration_status")),
@@ -634,6 +657,29 @@ class PortfolioProjectAdmin(ModelAdmin):
         ('Links', {'fields': ('link',)})
     )
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after project changes
+        if obj.profile and obj.profile.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.profile.user.id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.profile.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        user_id = obj.profile.user.id if obj.profile and obj.profile.user else None
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update after project deletion
+        if user_id:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
+
     @display(description=_("Profile"))
     def profile_link(self, obj):
         url = get_admin_url(obj.profile)
@@ -658,9 +704,40 @@ class ContentPostAdmin(ModelAdmin):
         ('Settings', {'fields': (('visibility', 'is_verified'), 'order')}),
     )
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after content post changes
+        if obj.profile and obj.profile.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.profile.user.id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.profile.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        user_id = obj.profile.user.id if obj.profile and obj.profile.user else None
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update after content post deletion
+        if user_id:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
+
     @admin.action(description="Verify selected content posts")
     def verify_posts(self, request, queryset):
         queryset.update(is_verified=True)
+        # Trigger Oracle update for all affected users
+        from profiles.automatic_rating import CoreLinkOracle
+        for post in queryset:
+            if post.profile and post.profile.user:
+                try:
+                    CoreLinkOracle.update_user_rating(post.profile.user.id, force_update=True)
+                except Exception as e:
+                    logger.error(f"[ORACLE ADMIN] Failed to update rating for user {post.profile.user.id}: {str(e)}", exc_info=True)
 
 @admin.register(Credential)
 class CredentialAdmin(ModelAdmin):
@@ -669,6 +746,29 @@ class CredentialAdmin(ModelAdmin):
     search_fields = ('title', 'issuer', 'profile__user__email')
     autocomplete_fields = ['profile']
     actions = ['verify_credentials']
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after credential changes
+        if obj.profile and obj.profile.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.profile.user.id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.profile.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        user_id = obj.profile.user.id if obj.profile and obj.profile.user else None
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update after credential deletion
+        if user_id:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
 
     @display(description='Status')
     def verification_status(self, obj):
@@ -679,6 +779,14 @@ class CredentialAdmin(ModelAdmin):
     @admin.action(description="Mark selected as Admin Verified")
     def verify_credentials(self, request, queryset):
         queryset.update(is_admin_verified=True)
+        # Trigger Oracle update for all affected users
+        from profiles.automatic_rating import CoreLinkOracle
+        for credential in queryset:
+            if credential.profile and credential.profile.user:
+                try:
+                    CoreLinkOracle.update_user_rating(credential.profile.user.id, force_update=True)
+                except Exception as e:
+                    logger.error(f"[ORACLE ADMIN] Failed to update rating for user {credential.profile.user.id}: {str(e)}", exc_info=True)
 
 @admin.register(LiveOpportunity)
 class LiveOpportunityAdmin(ModelAdmin):
@@ -763,6 +871,31 @@ class CompanyAdmin(ModelAdmin):
         CompanyMemberInline,
         CompanyMilestoneInline,
     ]
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update for all active company members
+        from profiles.automatic_rating import CoreLinkOracle
+        for member in obj.members.filter(is_active=True):
+            if member.user:
+                try:
+                    CoreLinkOracle.update_user_rating(member.user.id, force_update=True)
+                except Exception as e:
+                    logger.error(f"[ORACLE ADMIN] Failed to update rating for user {member.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        # Store user IDs before deletion
+        user_ids = [member.user.id for member in obj.members.filter(is_active=True) if member.user]
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update for all affected users
+        from profiles.automatic_rating import CoreLinkOracle
+        for user_id in user_ids:
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
 
     @display(description=_("Company"), ordering='name')
     def brand_identity(self, obj):

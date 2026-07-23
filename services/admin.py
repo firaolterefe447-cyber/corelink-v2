@@ -44,6 +44,33 @@ class ServiceAdmin(ModelAdmin):
         ('Settings', {'fields': (('is_active', 'order'),)}),
     )
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after service changes
+        if obj.profile and obj.profile.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.profile.user.id, force_update=True)
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.profile.user.id}: {str(e)}", exc_info=True)
+
+    def delete_model(self, request, obj):
+        user_id = obj.profile.user.id if obj.profile and obj.profile.user else None
+        super().delete_model(request, obj)
+        
+        # Trigger Oracle update after service deletion
+        if user_id:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(user_id, force_update=True)
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {user_id}: {str(e)}", exc_info=True)
+
     @display(description=_("Profile"))
     def profile_link(self, obj):
         url = get_admin_url(obj.profile)
