@@ -5,6 +5,7 @@ Service Forms - Professional services offered by users
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 
 from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 
@@ -87,12 +88,14 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
         # Dynamically filter subcategories based on selected category
         if 'category' in self.data:
             try:
                 category_id = int(self.data.get('category'))
+                # Include all subcategories for this category to ensure selected value is valid
                 self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                    category_id=category_id, is_active=True
+                    category_id=category_id
                 ).order_by('order', 'name')
             except (ValueError, TypeError):
                 self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
@@ -100,7 +103,7 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
             # For existing instances, show subcategories for the current category
             if self.instance.category:
                 self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                    category=self.instance.category, is_active=True
+                    category=self.instance.category
                 ).order_by('order', 'name')
             else:
                 self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
@@ -134,6 +137,17 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
         if len(title) < 3:
             raise ValidationError(_("Service title should be at least 3 characters."))
         return title
+
+    def clean_subcategory(self):
+        """Ensure subcategory belongs to selected category."""
+        category = self.cleaned_data.get('category')
+        subcategory = self.cleaned_data.get('subcategory')
+        
+        if subcategory and category:
+            if subcategory.category != category:
+                raise ValidationError(_("This subcategory does not belong to the selected category."))
+        
+        return subcategory
 
     def clean_description(self):
         """Ensure meaningful description."""
