@@ -45,11 +45,14 @@
                 // Get the admin URL for subcategories API
                 var url = '/api/subcategories/?category=' + categoryId;
                 
+                console.log('Loading subcategories from:', url);
+                
                 $.ajax({
                     url: url,
                     method: 'GET',
                     dataType: 'json',
                     success: function(data) {
+                        console.log('Subcategories loaded:', data);
                         subcategoryField.empty().append('<option value="">Select subcategory (optional)</option>');
                         
                         if (data.subcategories && data.subcategories.length > 0) {
@@ -74,7 +77,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error loading subcategories:', error);
+                        console.error('Error loading subcategories:', error, xhr.responseText);
                         subcategoryField.empty().append('<option value="">Error loading subcategories</option>');
                         subcategoryField.prop('disabled', true);
                         subcategoryField.parent().css('opacity', '0.5');
@@ -82,9 +85,20 @@
                 });
             }
             
+            // Handle both regular select and autocomplete fields
+            function getCategoryValue() {
+                // Check if it's an autocomplete field (hidden input)
+                if (categoryField.is('input[type="hidden"]')) {
+                    return categoryField.val();
+                }
+                // Regular select field
+                return categoryField.val();
+            }
+            
             // Load subcategories when category changes
             categoryField.on('change', function() {
-                var categoryId = $(this).val();
+                var categoryId = getCategoryValue();
+                console.log('Category changed to:', categoryId);
                 loadSubcategories(categoryId);
                 
                 // Visual feedback on category change
@@ -94,9 +108,34 @@
                 }, 300);
             });
             
+            // Also listen for autocomplete field changes via Django's event
+            if (categoryField.hasClass('autocomplete')) {
+                // Django autocomplete uses a different event system
+                categoryField.on('autocompletechange', function() {
+                    var categoryId = getCategoryValue();
+                    console.log('Autocomplete category changed to:', categoryId);
+                    loadSubcategories(categoryId);
+                });
+            }
+            
+            // Use MutationObserver to detect changes in autocomplete fields
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        var categoryId = getCategoryValue();
+                        console.log('Category value changed via observer:', categoryId);
+                        loadSubcategories(categoryId);
+                    }
+                });
+            });
+            
+            observer.observe(categoryField[0], { attributes: true, attributeFilter: ['value'] });
+            
             // Initial load if category is already selected
-            if (categoryField.val()) {
-                loadSubcategories(categoryField.val());
+            var initialCategoryId = getCategoryValue();
+            console.log('Initial category ID:', initialCategoryId);
+            if (initialCategoryId) {
+                loadSubcategories(initialCategoryId);
             } else {
                 subcategoryField.empty().append('<option value="">Select category first</option>');
                 subcategoryField.prop('disabled', true);

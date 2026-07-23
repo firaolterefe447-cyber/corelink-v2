@@ -198,7 +198,7 @@ class ServiceAdmin(ModelAdmin):
     list_display = ('title', 'profile_link', 'category_badge', 'is_active_badge', 'gallery_count', 'created_at')
     list_filter = ('is_active', 'category', 'created_at')
     search_fields = ('title', 'description', 'profile__user__email', 'tags__name')
-    autocomplete_fields = ['profile', 'category']
+    autocomplete_fields = ['profile']
     filter_horizontal = ['tags']
     inlines = [ServiceGalleryInline]
     readonly_fields = ('created_at',)
