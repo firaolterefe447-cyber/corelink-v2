@@ -1074,26 +1074,37 @@
                 
                 if (categoryId) {
                     // Fetch subcategories for this category
-                    fetch(`/services/api/subcategories/?category=${categoryId}`)
-                        .then(response => response.json())
+                    fetch(`/api/subcategories/?category=${categoryId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             // Clear existing options
                             subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>';
                             
                             // Add new options
-                            data.subcategories.forEach(sub => {
-                                const option = document.createElement('option');
-                                option.value = sub.id;
-                                option.textContent = sub.name;
-                                subcategorySelect.appendChild(option);
-                            });
-                            
-                            // Enable the subcategory select
-                            subcategorySelect.disabled = false;
+                            if (data.subcategories && data.subcategories.length > 0) {
+                                data.subcategories.forEach(sub => {
+                                    const option = document.createElement('option');
+                                    option.value = sub.id;
+                                    option.textContent = sub.name;
+                                    subcategorySelect.appendChild(option);
+                                });
+                                
+                                // Enable the subcategory select
+                                subcategorySelect.disabled = false;
+                            } else {
+                                subcategorySelect.innerHTML = '<option value="">No subcategories available</option>';
+                                subcategorySelect.disabled = true;
+                            }
                         })
                         .catch(error => {
                             console.error('Error loading subcategories:', error);
                             subcategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
+                            subcategorySelect.disabled = true;
                         });
                 } else {
                     // Reset subcategory select when no category selected

@@ -24,6 +24,7 @@ from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory
 from .forms import ServiceForm, ServiceGalleryForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -483,6 +484,7 @@ class FeedServiceDetailView(DetailView):
         return context
 
 
+@csrf_exempt
 @require_GET
 def get_subcategories_api(request):
     """
@@ -514,3 +516,6 @@ def get_subcategories_api(request):
     
     except ServiceCategory.DoesNotExist:
         return JsonResponse({'subcategories': []})
+    except Exception as e:
+        logger.error(f"Error fetching subcategories: {str(e)}")
+        return JsonResponse({'subcategories': [], 'error': str(e)})
