@@ -62,7 +62,7 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
     """Form for user services - distinct from company services."""
     class Meta:
         model = Service
-        fields = ['title', 'description', 'category', 'subcategory', 'service_type', 'tags', 'is_active']
+        fields = ['title', 'description', 'category', 'subcategory', 'service_type', 'is_active']
 
         labels = {
             'title': _("Service Title"),
@@ -70,7 +70,6 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
             'category': _("Primary Category"),
             'subcategory': _("Subcategory"),
             'service_type': _("Service Type"),
-            'tags': _("Tags"),
             'is_active': _("Currently Available"),
         }
 
@@ -80,14 +79,12 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
             'category': _("Select the main category that best describes your service."),
             'subcategory': _("Choose a specific subcategory within your selected category (optional)."),
             'service_type': _("How do you deliver this service? (e.g., One-time project, ongoing support)"),
-            'tags': _("Add relevant keywords to help clients discover your service (optional)."),
             'is_active': _("Uncheck this if you're not currently accepting new requests for this service."),
         }
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Professional Photography Services'}),
             'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Describe your service in detail...', 'class': 'markdown-editor'}),
-            'tags': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -115,10 +112,15 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
                 is_active=True
             ).order_by('category', 'order', 'name')
 
-        # Filter to only show active categories, types, and tags
+        # Filter to only show active categories and types
         self.fields['category'].queryset = ServiceCategory.objects.filter(is_active=True).order_by('order', 'name')
         self.fields['service_type'].queryset = ServiceType.objects.filter(is_active=True).order_by('order', 'name')
-        self.fields['tags'].queryset = ServiceTag.objects.all().order_by('-usage_count', 'name')
+
+        # Make subcategory optional with empty label
+        self.fields['subcategory'].required = False
+        self.fields['subcategory'].empty_label = "Select a category first"
+        self.fields['category'].empty_label = "Choose a category"
+        self.fields['service_type'].empty_label = "Choose service type"
 
     def clean_title(self):
         """Ensure title is meaningful."""
