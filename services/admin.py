@@ -8,13 +8,132 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import ModelAdmin, TabularInline, StackedInline
 from django.contrib.admin.decorators import display
 
-from .models import Service, ServiceGallery
+from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 
 
 def get_admin_url(obj):
     """Get admin URL for an object."""
     from django.urls import reverse
     return reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=[obj.pk])
+
+
+class ServiceSubcategoryInline(TabularInline):
+    """Inline for managing subcategories within a category."""
+    model = ServiceSubcategory
+    extra = 0
+    fields = ('name', 'slug', 'order', 'is_active')
+    readonly_fields = ()
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(ModelAdmin):
+    """Admin interface for Service Categories."""
+    list_display = ('name_with_icon', 'slug', 'service_count', 'is_active_badge', 'order', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('name', 'slug', 'description')
+    prepopulated_fields = {'slug': ('name',)}
+    inlines = [ServiceSubcategoryInline]
+    list_editable = ('order',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'slug', 'description')}),
+        ('Branding', {'fields': ('icon', 'color')}),
+        ('Settings', {'fields': (('is_active', 'order'),)}),
+    )
+
+    @display(description=_("Category"))
+    def name_with_icon(self, obj):
+        if obj.icon:
+            return format_html('<img src="{}" class="h-6 w-6 rounded inline mr-2" /> {}', obj.icon.url, obj.name)
+        return obj.name
+
+    @display(description=_("Services"))
+    def service_count(self, obj):
+        return obj.services.count()
+
+    @display(description=_("Status"))
+    def is_active_badge(self, obj):
+        if obj.is_active:
+            return format_html('<span class="bg-emerald-500 text-white px-2 py-1 rounded text-xs font-semibold">Active</span>')
+        return format_html('<span class="bg-gray-400 text-white px-2 py-1 rounded text-xs font-semibold">Inactive</span>')
+
+
+@admin.register(ServiceSubcategory)
+class ServiceSubcategoryAdmin(ModelAdmin):
+    """Admin interface for Service Subcategories."""
+    list_display = ('name', 'category_link', 'slug', 'service_count', 'is_active_badge', 'order')
+    list_filter = ('category', 'is_active')
+    search_fields = ('name', 'slug', 'description', 'category__name')
+    prepopulated_fields = {'slug': ('name',)}
+    autocomplete_fields = ['category']
+    list_editable = ('order',)
+
+    fieldsets = (
+        (None, {'fields': ('category', 'name', 'slug', 'description')}),
+        ('Settings', {'fields': (('is_active', 'order'),)}),
+    )
+
+    @display(description=_("Category"))
+    def category_link(self, obj):
+        url = get_admin_url(obj.category)
+        return format_html('<a href="{}" class="text-blue-600 hover:text-blue-900 font-medium">{}</a>', url, obj.category.name)
+
+    @display(description=_("Services"))
+    def service_count(self, obj):
+        return obj.services.count()
+
+    @display(description=_("Status"))
+    def is_active_badge(self, obj):
+        if obj.is_active:
+            return format_html('<span class="bg-emerald-500 text-white px-2 py-1 rounded text-xs font-semibold">Active</span>')
+        return format_html('<span class="bg-gray-400 text-white px-2 py-1 rounded text-xs font-semibold">Inactive</span>')
+
+
+@admin.register(ServiceTag)
+class ServiceTagAdmin(ModelAdmin):
+    """Admin interface for Service Tags."""
+    list_display = ('name', 'slug', 'usage_count', 'is_featured', 'created_at')
+    list_filter = ('is_featured', 'created_at')
+    search_fields = ('name', 'slug', 'description')
+    prepopulated_fields = {'slug': ('name',)}
+    list_editable = ('is_featured',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'slug', 'description')}),
+        ('Settings', {'fields': ('is_featured',)}),
+    )
+
+
+@admin.register(ServiceType)
+class ServiceTypeAdmin(ModelAdmin):
+    """Admin interface for Service Types."""
+    list_display = ('name_with_icon', 'slug', 'service_count', 'is_active_badge', 'order', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('name', 'slug', 'description')
+    prepopulated_fields = {'slug': ('name',)}
+    list_editable = ('order',)
+
+    fieldsets = (
+        (None, {'fields': ('name', 'slug', 'description')}),
+        ('Display', {'fields': ('icon',)}),
+        ('Settings', {'fields': (('is_active', 'order'),)}),
+    )
+
+    @display(description=_("Type"))
+    def name_with_icon(self, obj):
+        if obj.icon:
+            return format_html('{} {}', obj.icon, obj.name)
+        return obj.name
+
+    @display(description=_("Services"))
+    def service_count(self, obj):
+        return obj.services.count()
+
+    @display(description=_("Status"))
+    def is_active_badge(self, obj):
+        if obj.is_active:
+            return format_html('<span class="bg-emerald-500 text-white px-2 py-1 rounded text-xs font-semibold">Active</span>')
+        return format_html('<span class="bg-gray-400 text-white px-2 py-1 rounded text-xs font-semibold">Inactive</span>')
 
 
 class ServiceGalleryInline(TabularInline):
@@ -33,14 +152,16 @@ class ServiceGalleryInline(TabularInline):
 
 @admin.register(Service)
 class ServiceAdmin(ModelAdmin):
-    list_display = ('title', 'profile_link', 'is_active_badge', 'gallery_count', 'created_at')
-    list_filter = ('is_active', 'created_at')
-    search_fields = ('title', 'description', 'profile__user__email')
-    autocomplete_fields = ['profile']
+    list_display = ('title', 'profile_link', 'category_badge', 'service_type_badge', 'is_active_badge', 'gallery_count', 'created_at')
+    list_filter = ('is_active', 'category', 'service_type', 'created_at')
+    search_fields = ('title', 'description', 'profile__user__email', 'tags__name')
+    autocomplete_fields = ['profile', 'category', 'subcategory', 'service_type']
+    filter_horizontal = ['tags']
     inlines = [ServiceGalleryInline]
 
     fieldsets = (
         (None, {'fields': ('profile', 'title', 'description')}),
+        ('Classification', {'fields': ('category', 'subcategory', 'service_type', 'tags')}),
         ('Settings', {'fields': (('is_active', 'order'),)}),
     )
 
@@ -86,6 +207,22 @@ class ServiceAdmin(ModelAdmin):
     @display(description="Images")
     def gallery_count(self, obj):
         return obj.gallery.count()
+
+    @display(description=_("Category"))
+    def category_badge(self, obj):
+        if obj.category:
+            return format_html(
+                '<span class="px-2 py-1 rounded text-xs font-semibold" style="background-color: {}; color: white;">{}</span>',
+                obj.category.color, obj.category.name
+            )
+        return format_html('<span class="text-gray-400 text-xs">Uncategorized</span>')
+
+    @display(description=_("Type"))
+    def service_type_badge(self, obj):
+        if obj.service_type:
+            icon = obj.service_type.icon if obj.service_type.icon else ''
+            return format_html('<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-semibold">{} {}</span>', icon, obj.service_type.name)
+        return '-'
 
 
 @admin.register(ServiceGallery)

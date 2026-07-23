@@ -20,7 +20,7 @@ from django.db.models import FloatField
 
 from accounts.models import CustomUser
 from profiles.models.user_profile import UserProfile
-from .models import Service, ServiceGallery
+from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 from .forms import ServiceForm, ServiceGalleryForm
 
 logger = logging.getLogger(__name__)
@@ -300,8 +300,13 @@ def service_feed(request):
     Service Marketplace Feed: Browse professional services offered by users.
     Prioritizes services with gallery images and rich descriptions.
     Prevents consecutive listings from the same user.
+    Supports filtering by category, subcategory, tags, and service type.
     """
     raw_query = request.GET.get('q', '')
+    category_slug = request.GET.get('category')
+    subcategory_slug = request.GET.get('subcategory')
+    tag_slug = request.GET.get('tag')
+    service_type_slug = request.GET.get('type')
 
     base_services = Service.objects.filter(
         is_active=True,
@@ -311,13 +316,26 @@ def service_feed(request):
     ).exclude(
         profile__user__role='ADMIN'
     ).select_related(
-        'profile', 'profile__user'
+        'profile', 'profile__user', 'category', 'subcategory', 'service_type'
     ).prefetch_related(
-        'gallery', 'profile__headlines'
+        'gallery', 'profile__headlines', 'tags'
     ).annotate(
         gallery_count=Count('gallery'),
         description_length=Length('description')
     )
+
+    # Apply filters
+    if category_slug:
+        base_services = base_services.filter(category__slug=category_slug, category__is_active=True)
+    
+    if subcategory_slug:
+        base_services = base_services.filter(subcategory__slug=subcategory_slug, subcategory__is_active=True)
+    
+    if tag_slug:
+        base_services = base_services.filter(tags__slug=tag_slug)
+    
+    if service_type_slug:
+        base_services = base_services.filter(service_type__slug=service_type_slug, service_type__is_active=True)
 
     if raw_query:
         # Search across service title, description, and user profile info
@@ -327,7 +345,8 @@ def service_feed(request):
             SearchVector('title', weight='A') +
             SearchVector('description', weight='A') +
             SearchVector('profile__user__full_name', weight='B') +
-            SearchVector('profile__headlines__title', weight='C')
+            SearchVector('profile__headlines__title', weight='C') +
+            SearchVector('tags__name', weight='B')
         )
 
         search_query = SearchQuery(raw_query, search_type='websearch')
@@ -382,11 +401,38 @@ def service_feed(request):
         except ImportError:
             pass
 
+    # Get filter context for sidebar
+    categories = ServiceCategory.objects.filter(is_active=True).prefetch_related('subcategories').order_by('order', 'name')
+    service_types = ServiceType.objects.filter(is_active=True).order_by('order', 'name')
+    featured_tags = ServiceTag.objects.filter(is_featured=True).order_by('-usage_count', 'name')[:20]
+
+    # Get current filter objects for display
+    current_category = None
+    current_subcategory = None
+    current_tag = None
+    current_service_type = None
+    
+    if category_slug:
+        current_category = ServiceCategory.objects.filter(slug=category_slug, is_active=True).first()
+    if subcategory_slug:
+        current_subcategory = ServiceSubcategory.objects.filter(slug=subcategory_slug, is_active=True).first()
+    if tag_slug:
+        current_tag = ServiceTag.objects.filter(slug=tag_slug).first()
+    if service_type_slug:
+        current_service_type = ServiceType.objects.filter(slug=service_type_slug, is_active=True).first()
+
     return render(request, 'services/service_feed.html', {
         'services': services_page,
         'search_query': raw_query,
         'unread_msg_count': unread_count,
         'user': request.user if request.user.is_authenticated else None,
+        'categories': categories,
+        'service_types': service_types,
+        'featured_tags': featured_tags,
+        'current_category': current_category,
+        'current_subcategory': current_subcategory,
+        'current_tag': current_tag,
+        'current_service_type': current_service_type,
     })
 
 

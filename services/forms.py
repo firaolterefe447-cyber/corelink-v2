@@ -6,7 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from .models import Service, ServiceGallery
+from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 
 
 class TailwindFormMixin:
@@ -62,24 +62,63 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
     """Form for user services - distinct from company services."""
     class Meta:
         model = Service
-        fields = ['title', 'description', 'is_active']
+        fields = ['title', 'description', 'category', 'subcategory', 'service_type', 'tags', 'is_active']
 
         labels = {
             'title': _("Service Title"),
             'description': _("Service Description"),
+            'category': _("Primary Category"),
+            'subcategory': _("Subcategory"),
+            'service_type': _("Service Type"),
+            'tags': _("Tags"),
             'is_active': _("Currently Available"),
         }
 
         help_texts = {
             'title': _("The name of the service you offer (e.g., 'Web Development', 'Business Consulting', 'Graphic Design')."),
             'description': _("Provide a detailed explanation of your service, what you deliver, and how you help clients."),
+            'category': _("Select the main category that best describes your service."),
+            'subcategory': _("Choose a specific subcategory within your selected category (optional)."),
+            'service_type': _("How do you deliver this service? (e.g., One-time project, ongoing support)"),
+            'tags': _("Add relevant keywords to help clients discover your service (optional)."),
             'is_active': _("Uncheck this if you're not currently accepting new requests for this service."),
         }
 
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'e.g., Professional Photography Services'}),
             'description': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Describe your service in detail...', 'class': 'markdown-editor'}),
+            'tags': forms.CheckboxSelectMultiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dynamically filter subcategories based on selected category
+        if 'category' in self.data:
+            try:
+                category_id = int(self.data.get('category'))
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
+                    category_id=category_id, is_active=True
+                ).order_by('order', 'name')
+            except (ValueError, TypeError):
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+        elif self.instance.pk:
+            # For existing instances, show subcategories for the current category
+            if self.instance.category:
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
+                    category=self.instance.category, is_active=True
+                ).order_by('order', 'name')
+            else:
+                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+        else:
+            # For new instances, show all active subcategories
+            self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
+                is_active=True
+            ).order_by('category', 'order', 'name')
+
+        # Filter to only show active categories, types, and tags
+        self.fields['category'].queryset = ServiceCategory.objects.filter(is_active=True).order_by('order', 'name')
+        self.fields['service_type'].queryset = ServiceType.objects.filter(is_active=True).order_by('order', 'name')
+        self.fields['tags'].queryset = ServiceTag.objects.all().order_by('-usage_count', 'name')
 
     def clean_title(self):
         """Ensure title is meaningful."""
