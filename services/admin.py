@@ -194,6 +194,7 @@ class ServiceGalleryInline(TabularInline):
 @admin.register(Service)
 class ServiceAdmin(ModelAdmin):
     form = ServiceAdminForm
+    change_form_template = 'admin/services/change_form.html'
     list_display = ('title', 'profile_link', 'category_badge', 'is_active_badge', 'gallery_count', 'created_at')
     list_filter = ('is_active', 'category', 'created_at')
     search_fields = ('title', 'description', 'profile__user__email', 'tags__name')

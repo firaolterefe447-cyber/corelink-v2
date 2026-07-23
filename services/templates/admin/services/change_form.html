@@ -1,0 +1,350 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'services/css/admin_service.css' %}">
+<style>
+    /* World-class admin styling */
+    .service-admin-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .service-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 24px 32px;
+        margin: -20px -20px 30px -20px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .service-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .service-header .subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 8px;
+    }
+    
+    /* Enhanced fieldsets */
+    .module {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    
+    .module h2 {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3748;
+        border-bottom: 2px solid #667eea;
+        margin: 0;
+    }
+    
+    /* Enhanced form rows */
+    .form-row {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        transition: background-color 0.2s;
+    }
+    
+    .form-row:hover {
+        background-color: #f7fafc;
+    }
+    
+    .form-row:last-child {
+        border-bottom: none;
+    }
+    
+    .form-row label {
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 14px;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-row .help {
+        font-size: 13px;
+        color: #718096;
+        margin-top: 6px;
+        font-style: italic;
+    }
+    
+    /* Enhanced input fields */
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: white;
+    }
+    
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="url"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    /* Category and subcategory special styling */
+    .category-subcategory-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin: 24px 0;
+    }
+    
+    .category-field,
+    .subcategory-field {
+        position: relative;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .category-field:hover,
+    .subcategory-field:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+    
+    .category-field label,
+    .subcategory-field label {
+        font-weight: 700;
+        font-size: 14px;
+        color: #2d3748;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .category-field label::before,
+    .subcategory-field label::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+    }
+    
+    .category-field select,
+    .subcategory-field select {
+        padding: 16px 20px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .category-field select:focus,
+    .subcategory-field select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    .subcategory-field select:disabled {
+        background-color: #edf2f7;
+        color: #a0aec0;
+        cursor: not-allowed;
+        border-color: #cbd5e0;
+    }
+    
+    .subcategory-indicator {
+        position: absolute;
+        right: 28px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #718096;
+        pointer-events: none;
+        z-index: 10;
+    }
+    
+    /* Enhanced description field */
+    .description-field {
+        position: relative;
+    }
+    
+    .description-field textarea {
+        padding: 20px;
+        font-size: 15px;
+        line-height: 1.6;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        min-height: 200px;
+        transition: all 0.2s;
+    }
+    
+    .description-field textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    /* Enhanced title field */
+    .title-field input {
+        padding: 16px 20px;
+        font-size: 18px;
+        font-weight: 600;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+    
+    .title-field input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    /* Enhanced profile field */
+    .profile-field {
+        position: relative;
+    }
+    
+    .profile-field .related-widget-wrapper {
+        background: #f8f9fa;
+        padding: 16px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    /* Enhanced tags field */
+    .tags-field {
+        position: relative;
+    }
+    
+    .tags-field .selector {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+    }
+    
+    .tags-field .selector select {
+        border-radius: 8px;
+        padding: 12px;
+    }
+    
+    /* Enhanced horizontal filter widget */
+    .selector {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        background: white;
+    }
+    
+    .selector select {
+        min-height: 250px;
+        padding: 10px;
+    }
+    
+    .selector .selector-available h2,
+    .selector .selector-chosen h2 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4a5568;
+        padding: 8px 12px;
+        background: #f7fafc;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    
+    /* Enhanced buttons */
+    .submit-row input[type="submit"] {
+        padding: 12px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+    }
+    
+    .submit-row input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Enhanced inline styling */
+    .inline-group {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .inline-group h2 {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3748;
+        border-bottom: 2px solid #667eea;
+        margin: 0;
+    }
+    
+   /* Responsive design */
+    @media (max-width: 768px) {
+        .category-subcategory-wrapper {
+            grid-template-columns: 1fr;
+        }
+        
+        .service-header {
+            padding: 20px;
+        }
+        
+        .form-row {
+            padding: 16px 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="service-admin-container">
+    <div class="service-header">
+        <h1>{% if add %}Add New Service{% else %}Edit Service{% endif %}</h1>
+        <div class="subtitle">Manage your professional service listing</div>
+    </div>
+    
+    {{ block.super }}
+</div>
+{% endblock %}
