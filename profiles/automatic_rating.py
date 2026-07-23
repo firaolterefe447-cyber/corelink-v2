@@ -162,7 +162,7 @@ class CoreLinkOracle:
         return 0
 
     @classmethod
-    def update_user_rating(cls, user_id):
+    def update_user_rating(cls, user_id, force_update=False):
         try:
             # Prefetch perfectly to eliminate N+1 queries
             user = User.objects.prefetch_related(
@@ -180,23 +180,37 @@ class CoreLinkOracle:
             ).get(id=user_id)
 
             if not hasattr(user, 'portfolio'):
+                logger.warning(f"[ORACLE] User {user_id} has no portfolio, skipping update.")
                 return
 
             portfolio = user.portfolio
             power_score = cls.calculate_power_score(user)
             calculated_rating = cls.map_score_to_rating(power_score)
 
-            # --- THE MAGIC FIX: UPDATE INSTEAD OF SAVE ---
-            # By using .update(), we BYPASS the post_save signal.
-            # This completely eliminates the infinite loop crash.
-            if portfolio.oracle_score != power_score or portfolio.admin_rating != calculated_rating:
+            # Check if rating is locked - if so, only update oracle_score, not admin_rating
+            is_locked = getattr(portfolio, 'is_rating_locked', False)
+            
+            # Determine what to update
+            update_data = {'oracle_score': power_score}
+            
+            if not is_locked:
+                update_data['admin_rating'] = calculated_rating
+            else:
+                # Keep the existing admin_rating if locked
+                logger.info(f"[ORACLE] Rating locked for user {user.username}, only updating oracle_score")
+            
+            # Always update if force_update is True, otherwise check if values changed
+            should_update = force_update or (
+                portfolio.oracle_score != power_score or 
+                (not is_locked and portfolio.admin_rating != calculated_rating)
+            )
+            
+            if should_update:
+                logger.info(f"[ORACLE] Updating {user.username}: Score {portfolio.oracle_score}->{power_score}, Rating {portfolio.admin_rating}->{update_data.get('admin_rating', 'LOCKED')}")
                 
-                logger.info(f"[ORACLE] Updated {user.username}: Score {portfolio.oracle_score}->{power_score}, Stars {portfolio.admin_rating}->{calculated_rating}")
-                
-                UserProfile.objects.filter(pk=portfolio.pk).update(
-                    oracle_score=power_score,
-                    admin_rating=calculated_rating
-                )
+                UserProfile.objects.filter(pk=portfolio.pk).update(**update_data)
+            else:
+                logger.info(f"[ORACLE] No update needed for {user.username} (values unchanged)")
 
         except User.DoesNotExist:
             logger.error(f"[ORACLE FATAL] Target user {user_id} does not exist.")

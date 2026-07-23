@@ -607,10 +607,10 @@ class CustomUserAdmin(ModelAdmin):
             if update_fields:
                 profile.save(update_fields=update_fields)
                 
-                # Trigger Oracle update to recalculate oracle_score
+                # Trigger Oracle update to recalculate oracle_score and rating
                 from profiles.automatic_rating import CoreLinkOracle
                 try:
-                    CoreLinkOracle.update_user_rating(obj.id)
+                    CoreLinkOracle.update_user_rating(obj.id, force_update=True)
                 except Exception as e:
                     # Log error but don't fail the save
                     import logging
