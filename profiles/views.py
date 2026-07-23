@@ -224,25 +224,13 @@ def public_profile_view(request, identifier):
         social_links = UniversalSocialLink.objects.filter(user=target_user).order_by('order')
 
         # Get projects and annotate with PDF-only status
-        try:
-            # Limit to 50 projects to prevent memory/performance issues with many images
-            projects = profile.projects.all()[:50].prefetch_related('gallery')
-            project_count = len(projects)
-            logger.info(f"Loading {project_count} projects for user {target_user.id}")
-            
-            for project in projects:
-                try:
-                    valid_assets = project.gallery.all()
-                    project.all_pdfs = False
-                    if valid_assets.exists():
-                        # Check if all assets are PDF documents
-                        project.all_pdfs = all(asset.asset_type == 'DOCUMENT' for asset in valid_assets)
-                except Exception as e:
-                    logger.error(f"Error processing project {project.id}: {str(e)}", exc_info=True)
-                    project.all_pdfs = False
-        except Exception as e:
-            logger.error(f"Error loading projects for user {target_user.id}: {str(e)}", exc_info=True)
-            projects = []
+        projects = profile.projects.all().prefetch_related('gallery')
+        for project in projects:
+            valid_assets = project.gallery.all()
+            project.all_pdfs = False
+            if valid_assets.exists():
+                # Check if all assets are PDF documents
+                project.all_pdfs = all(asset.asset_type == 'DOCUMENT' for asset in valid_assets)
 
         # 5. Build Context with Modular Blocks
         context = {
