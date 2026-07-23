@@ -386,6 +386,7 @@ def service_feed(request):
         'services': services_page,
         'search_query': raw_query,
         'unread_msg_count': unread_count,
+        'user': request.user if request.user.is_authenticated else None,
     })
 
 
