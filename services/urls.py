@@ -15,6 +15,9 @@ urlpatterns = [
     # Public Service Detail (Profile-based)
     path('p/<str:identifier>/service/<uuid:pk>/', views.service_detail_view, name='public_service_detail'),
     
+    # API Endpoints
+    path('api/subcategories/', views.get_subcategories_api, name='get_subcategories_api'),
+    
     # Dashboard Services Management
     path('dashboard/services/', views.ServiceListView.as_view(), name='manage_services'),
     path('dashboard/services/new/', views.ServiceCreateView.as_view(), name='service_create'),

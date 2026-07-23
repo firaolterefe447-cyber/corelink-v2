@@ -22,6 +22,8 @@ from accounts.models import CustomUser
 from profiles.models.user_profile import UserProfile
 from .models import Service, ServiceGallery, ServiceCategory, ServiceSubcategory, ServiceTag, ServiceType
 from .forms import ServiceForm, ServiceGalleryForm
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 logger = logging.getLogger(__name__)
 
@@ -479,3 +481,36 @@ class FeedServiceDetailView(DetailView):
             'unread_msg_count': unread_count,
         })
         return context
+
+
+@require_GET
+def get_subcategories_api(request):
+    """
+    API endpoint to fetch subcategories for a given category.
+    Used for dynamic form loading.
+    """
+    category_id = request.GET.get('category')
+    
+    if not category_id:
+        return JsonResponse({'subcategories': []})
+    
+    try:
+        category = ServiceCategory.objects.get(id=category_id, is_active=True)
+        subcategories = ServiceSubcategory.objects.filter(
+            category=category,
+            is_active=True
+        ).order_by('order', 'name')
+        
+        subcategories_data = [
+            {
+                'id': sub.id,
+                'name': sub.name,
+                'slug': sub.slug
+            }
+            for sub in subcategories
+        ]
+        
+        return JsonResponse({'subcategories': subcategories_data})
+    
+    except ServiceCategory.DoesNotExist:
+        return JsonResponse({'subcategories': []})

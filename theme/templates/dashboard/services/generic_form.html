@@ -1059,6 +1059,56 @@
         }
 
         // =========================================================
+        // DYNAMIC SUBCATEGORY LOADING FOR SERVICES
+        // =========================================================
+        const categorySelect = document.getElementById('id_category');
+        const subcategorySelect = document.getElementById('id_subcategory');
+
+        if (categorySelect && subcategorySelect) {
+            // Store subcategories data for each category
+            const subcategoriesData = {};
+
+            // Load subcategories via AJAX when category changes
+            categorySelect.addEventListener('change', function() {
+                const categoryId = this.value;
+                
+                if (categoryId) {
+                    // Fetch subcategories for this category
+                    fetch(`/services/api/subcategories/?category=${categoryId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Clear existing options
+                            subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>';
+                            
+                            // Add new options
+                            data.subcategories.forEach(sub => {
+                                const option = document.createElement('option');
+                                option.value = sub.id;
+                                option.textContent = sub.name;
+                                subcategorySelect.appendChild(option);
+                            });
+                            
+                            // Enable the subcategory select
+                            subcategorySelect.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error loading subcategories:', error);
+                            subcategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
+                        });
+                } else {
+                    // Reset subcategory select when no category selected
+                    subcategorySelect.innerHTML = '<option value="">Select a category first</option>';
+                    subcategorySelect.disabled = true;
+                }
+            });
+
+            // Disable subcategory initially if no category is selected
+            if (!categorySelect.value) {
+                subcategorySelect.disabled = true;
+            }
+        }
+
+        // =========================================================
         // ROBUST ASSET VAULT GALLERY (100% BULLETPROOF)
         // =========================================================
         const fileInput = document.getElementById('gallery-upload');

@@ -62,14 +62,13 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
     """Form for user services - distinct from company services."""
     class Meta:
         model = Service
-        fields = ['title', 'description', 'category', 'subcategory', 'service_type', 'is_active']
+        fields = ['title', 'description', 'category', 'subcategory', 'is_active']
 
         labels = {
             'title': _("Service Title"),
             'description': _("Service Description"),
             'category': _("Primary Category"),
             'subcategory': _("Subcategory"),
-            'service_type': _("Service Type"),
             'is_active': _("Currently Available"),
         }
 
@@ -78,7 +77,6 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
             'description': _("Provide a detailed explanation of your service, what you deliver, and how you help clients."),
             'category': _("Select the main category that best describes your service."),
             'subcategory': _("Choose a specific subcategory within your selected category (optional)."),
-            'service_type': _("How do you deliver this service? (e.g., One-time project, ongoing support)"),
             'is_active': _("Uncheck this if you're not currently accepting new requests for this service."),
         }
 
@@ -107,20 +105,26 @@ class ServiceForm(TailwindFormMixin, forms.ModelForm):
             else:
                 self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
         else:
-            # For new instances, show all active subcategories
-            self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                is_active=True
-            ).order_by('category', 'order', 'name')
+            # For new instances, start with empty subcategory
+            self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
 
-        # Filter to only show active categories and types
+        # Filter to only show active categories
         self.fields['category'].queryset = ServiceCategory.objects.filter(is_active=True).order_by('order', 'name')
-        self.fields['service_type'].queryset = ServiceType.objects.filter(is_active=True).order_by('order', 'name')
 
         # Make subcategory optional with empty label
         self.fields['subcategory'].required = False
         self.fields['subcategory'].empty_label = "Select a category first"
         self.fields['category'].empty_label = "Choose a category"
-        self.fields['service_type'].empty_label = "Choose service type"
+
+        # Add data attributes for JavaScript
+        self.fields['category'].widget.attrs.update({
+            'data-category-select': 'true',
+            'id': 'id_category'
+        })
+        self.fields['subcategory'].widget.attrs.update({
+            'data-subcategory-select': 'true',
+            'id': 'id_subcategory'
+        })
 
     def clean_title(self):
         """Ensure title is meaningful."""
