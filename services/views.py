@@ -398,8 +398,7 @@ class FeedServiceDetailView(DetailView):
     model = Service
     template_name = 'services/feed_service_detail.html'
     context_object_name = 'service'
-    slug_url_kwarg = 'service_id'
-    slug_field = 'id'
+    pk_url_kwarg = 'service_id'
 
     def get_queryset(self):
         return Service.objects.filter(
