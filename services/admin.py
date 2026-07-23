@@ -28,23 +28,9 @@ class ServiceAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Dynamic subcategory filtering based on selected category
-        if 'category' in self.data:
-            try:
-                category_id = int(self.data.get('category'))
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                    category_id=category_id
-                ).order_by('order', 'name')
-            except (ValueError, TypeError):
-                self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
-        elif self.instance.pk and self.instance.category:
-            # For existing instances, show subcategories for the current category
-            self.fields['subcategory'].queryset = ServiceSubcategory.objects.filter(
-                category=self.instance.category
-            ).order_by('order', 'name')
-        else:
-            # For new instances, start with empty subcategory
-            self.fields['subcategory'].queryset = ServiceSubcategory.objects.none()
+        # Include all subcategories for validation purposes
+        # The category-subcategory relationship is validated in clean_subcategory
+        self.fields['subcategory'].queryset = ServiceSubcategory.objects.all().order_by('category', 'order', 'name')
     
     def clean_subcategory(self):
         """Ensure subcategory belongs to selected category."""
