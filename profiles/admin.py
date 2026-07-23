@@ -489,6 +489,15 @@ class UserProfileAdmin(ModelAdmin):
             if obj.user and UserProfile.objects.filter(user=obj.user).exists():
                 self.message_user(request, "Warning: This user already has a profile. You may be creating a duplicate.", messages.WARNING)
         super().save_model(request, obj, form, change)
+        
+        # Trigger Oracle update after profile changes
+        if obj.user:
+            from profiles.automatic_rating import CoreLinkOracle
+            try:
+                CoreLinkOracle.update_user_rating(obj.user.id)
+            except Exception as e:
+                # Log error but don't fail the save
+                logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.user.id}: {str(e)}", exc_info=True)
 
 
 # ==============================================================================

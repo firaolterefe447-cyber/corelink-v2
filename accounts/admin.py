@@ -606,6 +606,16 @@ class CustomUserAdmin(ModelAdmin):
 
             if update_fields:
                 profile.save(update_fields=update_fields)
+                
+                # Trigger Oracle update to recalculate oracle_score
+                from profiles.automatic_rating import CoreLinkOracle
+                try:
+                    CoreLinkOracle.update_user_rating(obj.id)
+                except Exception as e:
+                    # Log error but don't fail the save
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"[ORACLE ADMIN] Failed to update rating for user {obj.id}: {str(e)}", exc_info=True)
 
     STICKY_HEADER_CSS = mark_safe(
         str(_("User Identity")) +
