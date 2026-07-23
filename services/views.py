@@ -493,25 +493,33 @@ def get_subcategories_api(request):
     """
     category_id = request.GET.get('category')
     
+    print(f"[API] get_subcategories_api called with category_id: {category_id}")
+    
     if not category_id:
+        print("[API] No category_id provided")
         return JsonResponse({'subcategories': []})
     
     try:
         category = ServiceCategory.objects.get(id=category_id, is_active=True)
+        print(f"[API] Found category: {category.name}")
+        
         subcategories = ServiceSubcategory.objects.filter(
             category=category,
             is_active=True
         ).order_by('order', 'name')
         
+        print(f"[API] Found {subcategories.count()} subcategories")
+        
         subcategories_data = [
             {
-                'id': sub.id,
+                'id': str(sub.id),
                 'name': sub.name,
                 'slug': sub.slug
             }
             for sub in subcategories
         ]
         
+        print(f"[API] Returning subcategories: {subcategories_data}")
         return JsonResponse({'subcategories': subcategories_data})
     
     except ServiceCategory.DoesNotExist:

@@ -4,6 +4,77 @@
 {% block extrahead %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'services/css/admin_service.css' %}">
+<script>
+    // Inline JavaScript for subcategory loading
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing subcategory loading');
+        
+        var categoryField = document.getElementById('id_category');
+        var subcategoryField = document.getElementById('id_subcategory');
+        
+        console.log('Category field:', categoryField);
+        console.log('Subcategory field:', subcategoryField);
+        
+        if (categoryField && subcategoryField) {
+            function loadSubcategories(categoryId) {
+                console.log('Loading subcategories for category:', categoryId);
+                
+                if (!categoryId) {
+                    subcategoryField.innerHTML = '<option value="">Select category first</option>';
+                    subcategoryField.disabled = true;
+                    return;
+                }
+                
+                subcategoryField.innerHTML = '<option value="">Loading...</option>';
+                subcategoryField.disabled = true;
+                
+                var url = '/api/subcategories/?category=' + categoryId;
+                console.log('Fetching from:', url);
+                
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Subcategories loaded:', data);
+                        subcategoryField.innerHTML = '<option value="">Select subcategory (optional)</option>';
+                        
+                        if (data.subcategories && data.subcategories.length > 0) {
+                            data.subcategories.forEach(function(sub) {
+                                var option = document.createElement('option');
+                                option.value = sub.id;
+                                option.textContent = sub.name;
+                                subcategoryField.appendChild(option);
+                            });
+                            subcategoryField.disabled = false;
+                        } else {
+                            subcategoryField.innerHTML = '<option value="">No subcategories available</option>';
+                            subcategoryField.disabled = true;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading subcategories:', error);
+                        subcategoryField.innerHTML = '<option value="">Error loading subcategories</option>';
+                        subcategoryField.disabled = true;
+                    });
+            }
+            
+            categoryField.addEventListener('change', function() {
+                console.log('Category changed to:', this.value);
+                loadSubcategories(this.value);
+            });
+            
+            // Initial load if category is already selected
+            if (categoryField.value) {
+                console.log('Initial category:', categoryField.value);
+                loadSubcategories(categoryField.value);
+            } else {
+                subcategoryField.innerHTML = '<option value="">Select category first</option>';
+                subcategoryField.disabled = true;
+            }
+        } else {
+            console.error('Category or subcategory field not found');
+        }
+    });
+</script>
 <style>
     /* World-class admin styling */
     .service-admin-container {
